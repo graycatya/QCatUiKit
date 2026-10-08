@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+cmake_minimum_required(VERSION 3.24)
+project(QCatUiKitVersionConsumer LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(QCatUiKit 1 REQUIRED)
+message(STATUS "Installed QCatUiKit: ${QCatUiKit_VERSION_STRING}, ${QCatUiKit_RELEASE_CHANNEL}, ABI ${QCatUiKit_ABI_VERSION}")
+if(DEFINED EXPECTED_PACKAGE_CHANNEL AND NOT QCatUiKit_RELEASE_CHANNEL STREQUAL EXPECTED_PACKAGE_CHANNEL)
+    message(FATAL_ERROR "Unexpected installed release channel: ${QCatUiKit_RELEASE_CHANNEL}")
+endif()
+add_executable(version-consumer main.cpp)
+target_link_libraries(version-consumer PRIVATE QCatUiKit::QCatUiKit)

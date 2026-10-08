@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(Qt6 6.8 COMPONENTS Core Gui Qml Quick QuickControls2)
+include("${CMAKE_CURRENT_LIST_DIR}/QCatUiKitTargets.cmake")
+set(QCatUiKit_VERSION "@PROJECT_VERSION@")
+set(QCatUiKit_VERSION_STRING "@QCATUIKIT_VERSION_STRING@")
+set(QCatUiKit_RELEASE_CHANNEL "@QCATUIKIT_RELEASE_CHANNEL@")
+set(QCatUiKit_ABI_VERSION "@QCATUIKIT_ABI_VERSION@")
+set_and_check(QCatUiKit_QML_IMPORT_PATH "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@/qml")
+check_required_components(QCatUiKit)
