@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 cmake_minimum_required(VERSION 3.24)
-project(QCatUiKit VERSION 1.0.0 LANGUAGES CXX)
+include(.cmake.conf)
+project(QCatUiKit VERSION "${QCATUIKIT_REPO_MODULE_VERSION}" LANGUAGES CXX)
 
 # Release identity is independent of Debug/Release compiler configurations.
 set(QCATUIKIT_RELEASE_CHANNEL "experimental" CACHE STRING "Release channel: stable or experimental")
@@ -16,7 +17,6 @@ if(QCATUIKIT_RELEASE_CHANNEL STREQUAL "experimental")
     string(APPEND QCATUIKIT_VERSION_STRING "-experimental")
     set(QCATUIKIT_IS_EXPERIMENTAL 1)
 endif()
-configure_file(cmake/VersionData_p.h.in generated/VersionData_p.h @ONLY)
 message(STATUS "QCatUiKit ${QCATUIKIT_VERSION_STRING} (ABI ${QCATUIKIT_ABI_VERSION})")
 
 include(GNUInstallDirs)
@@ -37,7 +37,7 @@ set(QML_IMPORT_PATH "${QT_QML_OUTPUT_DIRECTORY}" CACHE STRING "QML tooling impor
 
 add_subdirectory(src)
 if(QCATUIKIT_BUILD_EXAMPLES)
-    add_subdirectory(examples/gallery)
+    add_subdirectory(examples)
 endif()
 if(BUILD_TESTING)
     find_package(Qt6 6.8 REQUIRED COMPONENTS Test QuickTest)
@@ -54,6 +54,5 @@ install(EXPORT QCatUiKitTargets NAMESPACE QCatUiKit::
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QCatUiKit")
-install(DIRECTORY include/QCatUiKit DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(FILES LICENSE NOTICE DESTINATION "${CMAKE_INSTALL_DATADIR}/QCatUiKit")
-install(DIRECTORY licenses/ DESTINATION "${CMAKE_INSTALL_DATADIR}/QCatUiKit/licenses")
+install(DIRECTORY LICENSES/ DESTINATION "${CMAKE_INSTALL_DATADIR}/QCatUiKit/licenses")

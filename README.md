@@ -1,19 +1,26 @@
 # QCatUiKit
 
+<img src="src/uikit/doc/images/brand/qcat-uikit/png/qcat-uikit-256.png" alt="QCatUiKit Logo" width="96" height="96">
+
 面向 Qt 6 的 QML 组件库。由 QCatGrayQuick 的能力重新设计，提供统一主题、桌面／嵌入式触摸／移动密度，以及采用 Pimpl 的 C++ 共享库。
 
 - Qt **6.8+**、CMake **3.24+**、C++ **17**；只支持 Qt 6。
 - 使用 `qt_add_qml_module` 生成 QML 注册、插件、类型信息和资源；`import QCatUiKit`。
 - `ThemePalette`、`ChatModel`、`TableModel` 的公开对象只包含私有实现指针；共享库 `SOVERSION 1`。
-- 27 个公开 QML 组件，统一颜色、尺寸、焦点、交互状态与减少动效设置。
+- 101 个公开 QML 组件（含 3 个原生图表类型），统一颜色、尺寸、焦点、交互状态与减少动效设置。
+- 覆盖 Fluent-Qt 的全部 78 种非 Charts 组件类型；[逐项对照与使用差异](src/uikit/doc/REFERENCE_COMPONENTS.md)。
+- 中英文 gallery（16 个分类）：分类导航、组件搜索、交互预览、QML 示例和运行时语言切换。
+- 图表支持 10 种类型、混合序列、实时环形缓冲、缩放／平移；使用 Qt Quick SceneGraph，无 Qt Charts／Graphs／WebEngine 依赖。[图表使用与迁移](src/uikit/doc/CHARTS.md)。
 - 不包含 QCatGrayQuickQrenCodeQml、lottie、Qt5Compat 或第三方图形特效库。
-- Apache License 2.0；旧项目的 MIT 归属说明保存在 `licenses/`。
+- Apache License 2.0；迁入代码保留原 MIT 许可与归属，存放在 `LICENSES/`。
 
-![桌面示例](docs/images/gallery-desktop.png)
+![桌面示例](src/uikit/doc/images/gallery-desktop.png)
 
-[暗色触摸布局](docs/images/gallery-touch.png) · [移动宽度布局](docs/images/gallery-mobile.png)
+[暗色触摸布局](src/uikit/doc/images/gallery-touch.png) · [移动宽度布局](src/uikit/doc/images/gallery-mobile.png)
 
 ## 构建与运行
+
+源码按 Qt 模块习惯组织：`src/uikit` 包含小写命名的 C++ 公开头与实现、`qml/` 和 `doc/`；示例位于 `examples/uikit`，自动测试位于 `tests/auto`。基础版本号集中在 `.cmake.conf`，私有头使用 `_p.h` 后缀。目录与命名约定详见 [架构文档](src/uikit/doc/ARCHITECTURE.md)。
 
 ```sh
 cmake -S . -B build -GNinja \
@@ -22,12 +29,18 @@ cmake -S . -B build -GNinja \
 cmake --build build
 ctest --test-dir build --output-on-failure
 cmake --build build --target QCatUiKit_qmllint qcat-gallery_qmllint
-./build/examples/gallery/qcat-gallery
+./build/examples/uikit/gallery/qcat-gallery
 ```
 
 Windows 多配置构建的可执行文件位于 `build/bin/<config>/`。
 
-需要 Qt Core、Gui、Qml、Quick、QuickControls2；测试还需要 Test、QuickTest。最小部署可传入 `-DBUILD_TESTING=OFF -DQCATUIKIT_BUILD_EXAMPLES=OFF`。交叉编译使用目标平台 Qt 的 CMake toolchain；不要把桌面 Qt 的动态库复制到其他架构。
+需要 Qt Core、Gui、Qml、Quick、QuickControls2；gallery 还需要 LinguistTools（文件浏览示例使用 QtQuick.Dialogs），测试还需要 Test、QuickTest。最小部署可传入 `-DBUILD_TESTING=OFF -DQCATUIKIT_BUILD_EXAMPLES=OFF`。交叉编译使用目标平台 Qt 的 CMake toolchain；不要把桌面 Qt 的动态库复制到其他架构。
+
+## 组件展示库
+
+顶部可切换中文 / English 和亮暗主题；默认跟随系统语言。16 个分类覆盖所有组件，每个组件都有交互预览和可复制的 QML 示例。设置页提供主题色、交互密度与减少动效。语言切换保留当前组件、输入内容、聊天草稿和所选日期。
+
+启动可传入 `--language zh_CN` 或 `--language en`；`--page calendar` 等参数直接打开组件。运行参数、源码入口与 TS 翻译维护流程见 [Gallery 说明](examples/uikit/gallery/README.md)。
 
 ## 使用
 
@@ -67,13 +80,15 @@ auto version = QCatUiKit::versionString();
 bool experimental = QCatUiKit::isExperimentalRelease();
 ```
 
-QML 使用 `LibraryInfo.version`、`LibraryInfo.releaseChannel`、`LibraryInfo.isStable` 和 `LibraryInfo.isExperimental`。查询返回实际加载的共享库信息；发布状态与 Debug/Release 编译模式独立。详见 [版本管理](docs/VERSIONING.md)。
+C++ 可使用 `<QCatUiKit/ThemePalette>` 或 `<QCatUiKit/qcatthemepalette.h>` 等 Qt 风格头路径；原有 `<QCatUiKit/ThemePalette.h>`、`<QCatUiKit/Version.h>` 等路径继续兼容。
+
+QML 使用 `QCatUiKit.version`、`QCatUiKit.releaseChannel`、`QCatUiKit.isStable` 和 `QCatUiKit.isExperimental`。旧名称 `LibraryInfo` 继续兼容；新增代码使用 `QCatUiKit`。查询返回实际加载的共享库信息；发布状态与 Debug/Release 编译模式独立。详见 [版本管理](src/uikit/doc/VERSIONING.md)。
 
 ## 安装与复用
 
 ```sh
 cmake --install build --prefix "$PWD/stage"
-cmake -S tests/consumer -B build-consumer \
+cmake -S tests/auto/cmake/consumer -B build-consumer \
   -DCMAKE_PREFIX_PATH="$PWD/stage;/path/to/Qt/6.x/gcc_64"
 cmake --build build-consumer
 ./build-consumer/consumer
@@ -83,12 +98,13 @@ cmake --build build-consumer
 
 ## 文档
 
-- [组件与公开行为](docs/COMPONENTS.md)
-- [主题架构](docs/THEMING.md)
-- [迁移对照与行为变化](docs/MIGRATION.md)
-- [版本号与正式／实验发布状态](docs/VERSIONING.md)
-- [ABI 边界及替换验证](docs/ABI.md)
-- [实现架构与维护约定](docs/ARCHITECTURE.md)
-- [本地验证记录](docs/VALIDATION.md)
+- [图表接口、数据约定与迁移](src/uikit/doc/CHARTS.md)
+- [组件与公开行为](src/uikit/doc/COMPONENTS.md)
+- [主题架构](src/uikit/doc/THEMING.md)
+- [迁移对照与行为变化](src/uikit/doc/MIGRATION.md)
+- [版本号与正式／实验发布状态](src/uikit/doc/VERSIONING.md)
+- [ABI 边界及替换验证](src/uikit/doc/ABI.md)
+- [实现架构与维护约定](src/uikit/doc/ARCHITECTURE.md)
+- [本地验证记录](src/uikit/doc/VALIDATION.md)
 
 参考文章 [AI 与开源贡献](https://ant.design/docs/blog/ai-open-source-contribution-cn) 主要用于公开契约、回归测试及审查方法；主题分层参考 [Ant Design 定制主题](https://ant.design/docs/react/customize-theme-cn/)。本库采用 Qt 的对象、焦点、模型和声明式绑定机制实现这些原则。

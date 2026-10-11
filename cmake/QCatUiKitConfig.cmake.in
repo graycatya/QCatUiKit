@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 @PACKAGE_INIT@
 include(CMakeFindDependencyMacro)
+# Dependency package configs can overwrite PACKAGE_PREFIX_DIR with CMake < 3.30.
+set(qcat_package_prefix "${PACKAGE_PREFIX_DIR}")
 find_dependency(Qt6 6.8 COMPONENTS Core Gui Qml Quick QuickControls2)
+set(PACKAGE_PREFIX_DIR "${qcat_package_prefix}")
+unset(qcat_package_prefix)
 include("${CMAKE_CURRENT_LIST_DIR}/QCatUiKitTargets.cmake")
 set(QCatUiKit_VERSION "@PROJECT_VERSION@")
 set(QCatUiKit_VERSION_STRING "@QCATUIKIT_VERSION_STRING@")
