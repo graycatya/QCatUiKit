@@ -60,6 +60,10 @@ Gallery 完整保存源数据，同时采用峰谷采样、等距抽样或分组
 
 三个页面都使用真实的 TableModel／ChatModel，记录完整保留在模型中；视图只按需创建可见项。
 
+![十万行表格的操作与压力参数](../../../src/uikit/doc/images/gallery-table.png)
+
+[一万条对话](../../../src/uikit/doc/images/gallery-chat.png) · [消息输入与提交历史](../../../src/uikit/doc/images/gallery-chatinput.png) · [暗色窄屏对话](../../../src/uikit/doc/images/gallery-mobile.png)
+
 | 页面 | 手动体验 | 容量及满容量行为 |
 | --- | --- | --- |
 | 表格 | 批量增删改、鼠标选行、首尾／行号定位、编辑名称／状态／数值、删除选中行、调整列宽 | 最多 100,000 行，满后继续更新已有行，编号保持稳定 |
@@ -123,3 +127,5 @@ GalleryLanguage 安装翻译、更新默认 QLocale 并刷新翻译绑定。项�
 | GalleryLogo.qml / GalleryIcon.qml | 品牌图片与界面图标 |
 
 自动测试位于 `tests/auto/gallery`，检查页面、示例创建、语言切换、输入保持、密度、弹出层和数据操作。当前覆盖范围见 [验证说明](../../../src/uikit/doc/VALIDATION.md)。
+
+文档图片由实际页面生成，更新整套图片的方法见 [截图指南](../../../src/uikit/doc/SCREENSHOTS.md)。

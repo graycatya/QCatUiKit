@@ -8,6 +8,8 @@ QCatUiKit 图表使用 Qt Quick SceneGraph，提供图表容器、坐标轴和�
 
 [中文暗色窄屏预览](images/gallery-charts-mobile.png)
 
+以上截图保留合计 1,000,000 条原始记录，以采样概览绘制；[截图环境与生成方法](SCREENSHOTS.md)。
+
 ## 入口
 
 | 类型 | C++ 类 | 公开头 |

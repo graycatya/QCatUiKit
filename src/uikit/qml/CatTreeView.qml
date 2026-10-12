@@ -12,6 +12,9 @@ TreeView {
     implicitWidth: 320
     implicitHeight: 240
     clip: true
+    MouseScrollImpl {
+        view: control
+    }
     delegate: B.TreeViewDelegate {
         id: entry
         implicitWidth: 240

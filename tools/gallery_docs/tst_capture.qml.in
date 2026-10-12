@@ -1,0 +1,66 @@
+// SPDX-License-Identifier: Apache-2.0
+import QtQuick
+import QtTest
+import QCatUiKit
+import QCatUiKit.Gallery
+
+TestCase {
+    name: "GalleryDocumentation"
+    when: windowShown
+    readonly property string outputDirectory: @CAPTURE_DIRECTORY@
+    Component { id: factory; Main {} }
+
+    function test_capture_data() {
+        return [
+            {tag: "desktop", page: "home", language: "zh_CN", width: 1200, height: 900, density: 0, dark: false},
+            {tag: "desktop-en", page: "home", language: "en", width: 1200, height: 900, density: 0, dark: false},
+            {tag: "touch", page: "settings", language: "en", width: 1200, height: 1100, density: 1, dark: true},
+            {tag: "mobile", page: "chat", language: "zh_CN", width: 420, height: 3000, density: 2, dark: true, fill: true},
+            {tag: "charts-desktop", page: "chart", language: "zh_CN", width: 1280, height: 1600, density: 0, dark: false, fill: true},
+            {tag: "charts-mobile", page: "chart", language: "zh_CN", width: 420, height: 2400, density: 2, dark: true, fill: true},
+            {tag: "table", page: "table", language: "zh_CN", width: 1280, height: 1500, density: 0, dark: false, fill: true},
+            {tag: "chat", page: "chat", language: "zh_CN", width: 1280, height: 1700, density: 0, dark: false, fill: true},
+            {tag: "chatinput", page: "chatinput", language: "zh_CN", width: 1280, height: 1500, density: 0, dark: false, fill: true}
+        ];
+    }
+
+    function test_capture(data) {
+        failOnWarning(/.*/);
+        Theme.reducedMotion = true;
+        GalleryLanguage.language = data.language;
+        const gallery = createTemporaryObject(factory, this, {
+            initialPage: data.page, width: data.width, height: data.height,
+            initialDensity: data.density, darkTheme: data.dark
+        });
+        verify(gallery !== null);
+        verify(waitForRendering(gallery.contentItem));
+        let demo = null;
+        try {
+            if (data.fill && data.page === "chart") {
+                demo = findChild(gallery.contentItem, "chartPreview").dataController;
+                demo.configureMillionSamples();
+                demo.clearData();
+                demo.startStress();
+                tryVerify(() => demo.sampleCount === 1000000, 60000);
+                demo.stopStress();
+                compare(demo.sampleCount, 1000000);
+            } else if (data.fill) {
+                demo = findChild(gallery.contentItem, "dataPreview").dataController;
+                demo.configureLargeData();
+                demo.clearData();
+                demo.startStress();
+                tryVerify(() => demo.count === demo.capacity, 60000);
+                demo.stopStress();
+                compare(demo.count, data.page === "table" ? 100000 : 10000);
+            }
+            if (demo) compare(demo.running, false);
+            wait(150);
+            verify(waitForPolish(gallery.contentItem));
+            // Qt Quick Test save() has no return value; the Python publisher validates each PNG.
+            grabImage(gallery.contentItem).save(outputDirectory + "/gallery-" + data.tag + ".png");
+        } finally {
+            if (demo) demo.stopStress();
+            gallery.close();
+        }
+    }
+}

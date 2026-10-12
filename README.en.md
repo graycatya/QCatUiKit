@@ -15,9 +15,11 @@ QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/
 
 The current default version is **1.0.0-experimental**, with **ABI major version 1**. The release channel is independent of the Debug/Release build configuration.
 
-![Gallery desktop preview](src/uikit/doc/images/gallery-desktop.png)
+![Gallery desktop preview](src/uikit/doc/images/gallery-desktop-en.png)
 
 [Dark touch preview](src/uikit/doc/images/gallery-touch.png) · [Narrow layout](src/uikit/doc/images/gallery-mobile.png) · [Charts preview](src/uikit/doc/images/gallery-charts-desktop.png)
+
+These images show the current Gallery; see [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md).
 
 ## Requirements
 
@@ -118,6 +120,12 @@ Use the [documentation index](src/uikit/doc/README.md) to find a guide by task. 
 - [Chart APIs and data conventions](src/uikit/doc/CHARTS.md)
 - [Architecture](src/uikit/doc/ARCHITECTURE.md), [versioning](src/uikit/doc/VERSIONING.md), and [ABI](src/uikit/doc/ABI.md)
 - [Validation and test commands](src/uikit/doc/VALIDATION.md), and [contributing](CONTRIBUTING.md)
+
+## Agent UI skill
+
+The repository includes [qcatuikit-ui](skills/qcatuikit-ui/SKILL.md), which guides agents through public components, themes, models, and charts to build working Qt Quick interfaces. It includes a complete application starter. Tools that read AGENTS.md can discover the repository entry point; you can also ask an agent to read the skill file directly.
+
+See the [Agent UI guide](src/uikit/doc/AGENT_UI.md) for usage and example prompts.
 
 ## License
 

@@ -1018,8 +1018,8 @@
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="527"/>
-        <source>Scroll caller-provided content with themed horizontal and vertical bars.</source>
-        <translation>Scroll caller-provided content with themed horizontal and vertical bars.</translation>
+        <source>Scroll content by mouse drag, wheel or touch with themed horizontal and vertical bars.</source>
+        <translation>Scroll content by mouse drag, wheel or touch with themed horizontal and vertical bars.</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="537"/>

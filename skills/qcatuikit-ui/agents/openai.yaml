@@ -1,0 +1,4 @@
+interface:
+  display_name: "QCatUiKit UI"
+  short_description: "Build Qt Quick interfaces with QCatUiKit components"
+  default_prompt: "Use $qcatuikit-ui to build a responsive Qt Quick interface with QCatUiKit."

@@ -12,6 +12,7 @@ T.ScrollBar {
     implicitHeight: horizontal ? 12 : 160
     padding: 3
     minimumSize: 0.05
+    visible: policy === T.ScrollBar.AlwaysOn || (policy === T.ScrollBar.AsNeeded && size < 1)
     hoverEnabled: tokens.hoverEnabled
     contentItem: Rectangle {
         implicitWidth: 6

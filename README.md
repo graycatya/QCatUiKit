@@ -19,6 +19,8 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 
 [暗色触摸预览](src/uikit/doc/images/gallery-touch.png) · [窄屏预览](src/uikit/doc/images/gallery-mobile.png) · [图表预览](src/uikit/doc/images/gallery-charts-desktop.png)
 
+截图来自当前 Gallery；[截图场景与生成方法](src/uikit/doc/SCREENSHOTS.md)。
+
 ## 环境要求
 
 | 项目 | 要求 |
@@ -118,6 +120,12 @@ Gallery 的每个组件页面包含交互预览和 QML 示例。顶部切换语�
 - [图表接口与数据约定](src/uikit/doc/CHARTS.md)
 - [架构](src/uikit/doc/ARCHITECTURE.md)、[版本](src/uikit/doc/VERSIONING.md)、[ABI](src/uikit/doc/ABI.md)
 - [验证范围与运行方法](src/uikit/doc/VALIDATION.md)、[贡献指南](CONTRIBUTING.md)
+
+## Agent UI 技能
+
+仓库内置 [qcatuikit-ui](skills/qcatuikit-ui/SKILL.md)，帮助 agent 按公开组件、主题、模型和图表规范编写可运行的 Qt Quick 界面，并附带完整应用模板。支持 AGENTS.md 的工具可通过仓库入口发现它；也可以明确让 agent 读取技能文件。
+
+使用方法与示例提示见 [Agent UI 指南](src/uikit/doc/AGENT_UI.md)。
 
 ## 许可证
 

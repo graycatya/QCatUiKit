@@ -55,6 +55,9 @@ Item {
         rowSpacing: 1
         resizableColumns: true
         boundsBehavior: Flickable.StopAtBounds
+        MouseScrollImpl {
+            view: table
+        }
         selectionModel: ItemSelectionModel {
             model: table.model
         }

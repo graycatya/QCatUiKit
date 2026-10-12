@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls.Basic as B
 import QtQuick.Layouts
 import QCatUiKit
 
@@ -57,7 +56,8 @@ CatButton {
                 Layout.fillWidth: true
                 placeholderText: qsTr("Search options")
             }
-            B.ScrollView {
+            CatScrollView {
+                theme: control.theme
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.min(240, options.implicitHeight)
                 contentWidth: availableWidth

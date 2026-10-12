@@ -20,6 +20,9 @@ ListView {
     currentIndex: -1
     spacing: 2
     boundsBehavior: Flickable.StopAtBounds
+    MouseScrollImpl {
+        view: control
+    }
     function labelFor(entry: var): string {
         if (textRole.length)
             return String(entry[textRole] === undefined ? "" : entry[textRole]);

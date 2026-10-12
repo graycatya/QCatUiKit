@@ -19,6 +19,9 @@ GridView {
     keyNavigationEnabled: true
     currentIndex: -1
     boundsBehavior: Flickable.StopAtBounds
+    MouseScrollImpl {
+        view: control
+    }
     delegate: CatButton {
         required property int index
         required property var model

@@ -20,6 +20,8 @@
 | 运行检查、了解已验证范围 | [验证说明](VALIDATION.md) |
 | 提交代码、维护示例与翻译 | [贡献指南](../../../CONTRIBUTING.md) |
 | 使用项目标识 | [品牌资源](images/brand/qcat-uikit/README.md) |
+| 让 agent 使用组件库编写 UI | [Agent UI 技能](AGENT_UI.md) |
+| 查看或更新当前界面截图 | [文档截图](SCREENSHOTS.md) |
 
 ## 接口范围
 

@@ -525,7 +525,7 @@ QtObject {
             category: "scrolling",
             title: qsTr("Scroll View"),
             description: qsTr(
-                             "Scroll caller-provided content with themed horizontal and vertical bars."),
+                             "Scroll content by mouse drag, wheel or touch with themed horizontal and vertical bars."),
             icon: "tools",
             code: "import QtQuick.Layouts\n\nCatScrollView {\n    implicitHeight: 220\n    contentWidth: availableWidth\n    Column { width: parent.width; spacing: 8\n        Repeater { model: 12; CatPane { id: rowItem; required property int index; width: parent.width; contentItem: CatLabel { text: qsTr(\"Item %1\").arg(rowItem.index + 1) } } }\n    }\n}"
         },

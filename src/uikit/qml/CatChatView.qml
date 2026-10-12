@@ -15,6 +15,9 @@ ListView {
     clip: true
     spacing: tokens.spacing
     boundsBehavior: Flickable.StopAtBounds
+    MouseScrollImpl {
+        view: control
+    }
     function followLatest(): void {
         if (followTail)
             positionViewAtEnd();

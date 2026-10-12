@@ -13,8 +13,8 @@
 | 共享库、Gallery 和全部测试构建 | 通过 |
 | QCatUiKit_qmllint / qcat-gallery_qmllint | 通过 |
 | 完整 CTest | 9/9 测试组通过 |
-| QML 控件 | 194 项通过 |
-| Gallery 页面与交互 | 563 项通过 |
+| QML 控件 | 226 项通过 |
+| Gallery 页面与交互 | 573 项通过 |
 | 图表核心 | 32 项通过 |
 | Gallery 图表数据控制器 | 26 项通过 |
 | Gallery 表格／对话控制器 | 13 项通过 |
@@ -64,6 +64,8 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 其他相关交互包括图表在可滚动父容器中的拖动、密度切换时搜索文字／选区及图标位置、关闭对话尾部跟随后保持历史位置、离开页面和隐藏窗口停止测试。
 
+滚动专项覆盖三种密度下的鼠标拖动与滚轮、横向滚动、滚动条拖动、模拟触摸、文字选取和多选下拉框。Gallery 还验证页面及两种导航布局的滚动、内层表格／对话独立滚动、长按后拖动、单击选行、列宽调整和图表平移。对应入口为 `tests/auto/qml/data/tst_scrolling.qml` 与 `tests/auto/gallery/data/tst_scrolling.qml`。
+
 上述结果验证数据保留与交互行为。Gallery 的最慢批次和操作频率不包含后续完整绘制，不能当作 GPU 帧率或网络性能。
 
 ## 视觉检查
@@ -104,6 +106,8 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 当前文档已检查本地链接、代码围栏和组件目录完整性；101 个 Cat 类型与 Gallery 目录一致。中英文 README 的构建／接入命令、功能数字和链接目标对应。
 
 从 README、模型、图表和版本说明直接提取的 7 段完整 QML 示例均成功创建。构建指南的 CMake／C++ 应用使用独立安装包编译并加载窗口；普通 C++ 消费者在匹配的 Qt 运行时下加载安装目录中的库，主题和模型检查通过。此项使用上述 Linux / Qt 6.12.0 Debug 环境。
+
+[UI 开发技能](../../../skills/qcatuikit-ui/SKILL.md) 通过技能格式检查。附带应用模板使用独立安装包构建，QML 检查通过；实际按钮操作验证空白拦截、添加、删除及密度切换后的草稿保持，并检查亮色桌面与暗色窄屏显示。文档的 9 个当前 Gallery 截图场景使用[截图工具](../../../tools/capture_gallery_docs.py)实际生成，包含百万图表、十万行表格及一万条消息／提交历史。
 
 ## 结果记录原则
 

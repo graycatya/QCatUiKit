@@ -8,6 +8,15 @@ T.ScrollView {
     id: control
     property ThemePalette theme: Theme
     clip: true
+    // Create the handler after ScrollView has connected its deferred Flickable
+    // and scroll bars; reading contentItem earlier can bypass that setup.
+    resources: Component {
+        id: mouseScroll
+        MouseScrollImpl {
+            view: control.contentItem as Flickable
+        }
+    }
+    Component.onCompleted: mouseScroll.createObject(control)
     T.ScrollBar.vertical: CatScrollBar {
         theme: control.theme
         parent: control

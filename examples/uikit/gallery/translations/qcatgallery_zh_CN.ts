@@ -1018,8 +1018,8 @@
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="527"/>
-        <source>Scroll caller-provided content with themed horizontal and vertical bars.</source>
-        <translation>使用主题水平、垂直滚动条浏览应用提供的内容。</translation>
+        <source>Scroll content by mouse drag, wheel or touch with themed horizontal and vertical bars.</source>
+        <translation>支持鼠标按住拖动、滚轮、触摸滑动及主题水平、垂直滚动条。</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="537"/>

@@ -104,8 +104,9 @@ B.ApplicationWindow {
                         }
                     }
                 }
-                B.ScrollView {
+                CatScrollView {
                     id: navigationScroll
+                    objectName: "galleryNavigationScroll"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     contentWidth: availableWidth
@@ -195,8 +196,9 @@ B.ApplicationWindow {
                 onTextEdited: window.searchQuery = text
                 Accessible.name: qsTr("Search components")
             }
-            B.ScrollView {
+            CatScrollView {
                 id: contentScroll
+                objectName: "galleryContentScroll"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 contentWidth: availableWidth
@@ -294,7 +296,7 @@ B.ApplicationWindow {
         width: Math.min(288, window.width - 40)
         height: window.height
         locale: window.locale
-        contentItem: B.ScrollView {
+        contentItem: CatScrollView {
             id: mobileNavigationScroll
             objectName: "mobileNavigationScroll"
             contentWidth: availableWidth
