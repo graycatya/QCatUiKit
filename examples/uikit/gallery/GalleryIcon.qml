@@ -34,8 +34,8 @@ Item {
     Shape {
         width: 24
         height: 24
-        scale: control.width / 24
-        transformOrigin: Item.TopLeft
+        anchors.centerIn: parent
+        scale: Math.min(control.width, control.height) / 24
         ShapePath {
             fillColor: "transparent"
             strokeColor: control.color

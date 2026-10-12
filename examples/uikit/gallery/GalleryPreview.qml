@@ -56,12 +56,8 @@ Item {
                 return popupScene;
             case "drawer":
                 return drawerScene;
-            case "table":
-                return tableScene;
-            case "chat":
-                return chatScene;
-            case "chatinput":
-                return chatInputScene;
+            case "table": case "chat": case "chatinput":
+                return dataScene;
             case "flip":
                 return flipScene;
             case "marquee":
@@ -530,110 +526,8 @@ Item {
         }
     }
     Component {
-        id: tableScene
-        ColumnLayout {
-            id: table
-            spacing: 16
-            readonly property var rows: [
-                {
-                    component: "CatButton",
-                    state: qsTr("Ready"),
-                    platform: qsTr("Desktop / Touch / Mobile")
-                },
-                {
-                    component: "ThemePalette",
-                    state: qsTr("Live"),
-                    platform: qsTr("Light / Dark")
-                },
-                {
-                    component: "TableModel",
-                    state: qsTr("Ready"),
-                    platform: "Qt 6"
-                }
-            ]
-            function updateRows(): void {
-                tableModel.clear();
-                for (const row of rows)
-                    tableModel.append(row);
-            }
-            onRowsChanged: updateRows()
-            Component.onCompleted: updateRows()
-            TableModel {
-                id: tableModel
-                columns: ["component", "state", "platform"]
-                headers: [qsTr("Component"), qsTr("Status"), qsTr("Platform")]
-            }
-            CatTableView {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 220
-                model: tableModel
-                columnWidthProvider: column => Math.max(90, (table.width - 8) / 3)
-            }
-        }
-    }
-    Component {
-        id: chatScene
-        ColumnLayout {
-            id: conversation
-            spacing: 16
-            readonly property string authorName: qsTr("You")
-            onAuthorNameChanged: {
-                for (let i = 0; i < messages.count; ++i)
-                    if (messages.get(i).sender === "me")
-                        messages.update(i, {
-                            username: authorName
-                        });
-            }
-            readonly property string greeting: qsTr("Welcome! Try switching languages while writing a message.")
-            onGreetingChanged: if (messages.count > 0)
-                messages.update(0, {
-                    content: greeting
-                })
-            Component.onCompleted: messages.append({
-                sender: "guide",
-                username: "QCatUiKit",
-                content: greeting,
-                status: ChatModel.Sent
-            })
-            ChatModel {
-                id: messages
-                objectName: "demoChatModel"
-            }
-            CatChatView {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 220
-                model: messages
-                currentUser: "me"
-            }
-            CatChatInput {
-                objectName: "demoChatInput"
-                Layout.fillWidth: true
-                onSubmitted: text => messages.append({
-                        sender: "me",
-                        username: conversation.authorName,
-                        content: text,
-                        status: ChatModel.Sent
-                    })
-            }
-        }
-    }
-    Component {
-        id: chatInputScene
-        ColumnLayout {
-            id: composer
-            property string lastMessage: ""
-            spacing: 20
-            CatChatInput {
-                Layout.fillWidth: true
-                onSubmitted: text => composer.lastMessage = text
-            }
-            CatLabel {
-                text: composer.lastMessage ? qsTr("Last message: %1").arg(composer.lastMessage) : qsTr("Write a message and press Send.")
-                color: Theme.tokens.textSecondary
-                wrapMode: Text.Wrap
-                Layout.fillWidth: true
-            }
-        }
+        id: dataScene
+        GalleryDataPreview { componentId: control.componentId }
     }
     Component {
         id: flipScene

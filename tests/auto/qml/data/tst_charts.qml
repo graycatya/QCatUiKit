@@ -23,7 +23,19 @@ TestCase {
             }
         }
     }
+    Component {
+        id: flickableFactory
+        Flickable {
+            width: 800; height: 600
+            contentWidth: 1200; contentHeight: 1200
+            boundsBehavior: Flickable.StopAtBounds
+        }
+    }
     Component { id: paletteFactory; ThemePalette {} }
+    Component {
+        id: offsetFactory
+        Rectangle { width: 800; height: 600; color: "magenta" }
+    }
     SignalSpy { id: clicked; signalName: "pointClicked" }
     function init() { failOnWarning(/.*/); }
     function cleanup() {
@@ -100,5 +112,76 @@ TestCase {
         compare(series.at(5).x, 5);
         chart.resetView();
         compare(chart.xAxis.automatic, true);
+    }
+    function test_updatesPreserveChartPlacement() {
+        const surface = createTemporaryObject(offsetFactory, test);
+        const chart = createTemporaryObject(factory, surface, {x: 100, y: 100});
+        verify(waitForRendering(chart));
+        compare(grabImage(surface).pixel(25, 25), Qt.rgba(1, 0, 1, 1));
+        for (let i = 0; i < 3; i++) {
+            verify(chart.series[0].append(4 + i, 2));
+            verify(waitForRendering(chart));
+            // Rebuilt scene graph children must retain the chart's inherited transform.
+            compare(grabImage(surface).pixel(25, 25), Qt.rgba(1, 0, 1, 1));
+        }
+    }
+    function test_dragInsideFlickable() {
+        const flickable = createTemporaryObject(flickableFactory, test);
+        const chart = createTemporaryObject(factory, flickable.contentItem);
+        clicked.target = chart;
+        verify(chart.setViewRange(-1, 5, -1, 6));
+        verify(waitForRendering(chart));
+        const plot = chart.plotRect();
+        const start = Qt.point(Math.round(plot.x + plot.width / 2),
+                               Math.round(plot.y + plot.height / 2));
+        const value = chart.mapToValue(start);
+        const sceneStart = chart.mapToItem(test, start.x, start.y);
+        mousePress(test, sceneStart.x, sceneStart.y);
+        try {
+            for (let step = 1; step <= 5; step++) {
+                mouseMove(test, sceneStart.x - step * 16, sceneStart.y - step * 12,
+                          20, Qt.LeftButton);
+                compare(flickable.contentX, 0, "Chart drag must not scroll its parent");
+                compare(flickable.contentY, 0, "Chart drag must not scroll its parent");
+                const at = chart.mapToPosition(value);
+                fuzzyCompare(at.x, start.x - step * 16, 1);
+                fuzzyCompare(at.y, start.y - step * 12, 1);
+            }
+        } finally {
+            mouseRelease(test, sceneStart.x - 80, sceneStart.y - 60);
+        }
+        compare(clicked.count, 0, "Panning must not trigger a point click");
+        const at = chart.mapToPosition(Qt.point(1, 4));
+        mouseClick(chart, at.x, at.y);
+        compare(clicked.count, 1);
+        compare(clicked.signalArguments[0][0].index, 1);
+        // Releasing the chart must leave scrolling elsewhere available.
+        mouseDrag(flickable, 740, 460, 0, -80);
+        verify(flickable.contentY > 0);
+        flickable.cancelFlick();
+    }
+    function test_nonPanningGesturesScrollParent_data() {
+        return [
+            {tag: "outside-plot", type: CatChartSeries.Line, interactive: true, outside: true},
+            {tag: "disabled", type: CatChartSeries.Line, interactive: false, outside: false},
+            {tag: "pie", type: CatChartSeries.Pie, interactive: true, outside: false},
+            {tag: "doughnut", type: CatChartSeries.Doughnut, interactive: true, outside: false},
+            {tag: "radar", type: CatChartSeries.Radar, interactive: true, outside: false}
+        ];
+    }
+    function test_nonPanningGesturesScrollParent(data) {
+        const flickable = createTemporaryObject(flickableFactory, test);
+        const chart = createTemporaryObject(factory, flickable.contentItem,
+            {chartType: data.type, interactive: data.interactive});
+        clicked.target = chart;
+        verify(waitForRendering(chart));
+        const plot = chart.plotRect();
+        mouseDrag(chart, data.outside ? 10 : plot.x + plot.width / 2,
+                  plot.y + plot.height / 2, 0, -80);
+        verify(flickable.contentY > 0, "Non-panning gestures must still scroll the parent");
+        compare(clicked.count, 0);
+        compare(chart.xAxis.automatic, true);
+        compare(chart.yAxis.automatic, true);
+        flickable.cancelFlick();
     }
 }

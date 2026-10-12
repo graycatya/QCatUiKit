@@ -1,5 +1,7 @@
 # 版本与发布状态
 
+[文档索引](README.md) · [ABI](ABI.md)
+
 版本数字统一定义在根 `.cmake.conf` 的 `QCATUIKIT_REPO_MODULE_VERSION`，由根 `CMakeLists.txt` 传入 `project(QCatUiKit VERSION ...)`。发布状态使用独立的 CMake 缓存变量 `QCATUIKIT_RELEASE_CHANNEL`，只接受 `stable`（正式）和 `experimental`（实验），默认 `experimental`。输入其他值会在配置阶段失败。
 
 | 构建配置 | 完整版本字符串 | 发布状态 |
@@ -11,14 +13,16 @@
 
 ```sh
 # 实验版：默认配置
-cmake -S . -B build -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64 \
-  -DQCATUIKIT_RELEASE_CHANNEL=experimental
-cmake --build build
+cmake -S . -B build/experimental -GNinja \
+  -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64 \
+  -DCMAKE_BUILD_TYPE=Release -DQCATUIKIT_RELEASE_CHANNEL=experimental
+cmake --build build/experimental
 
 # 正式版：使用独立目录
-cmake -S . -B build-stable -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64 \
+cmake -S . -B build/stable -GNinja \
+  -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64 \
   -DCMAKE_BUILD_TYPE=Release -DQCATUIKIT_RELEASE_CHANNEL=stable
-cmake --build build-stable
+cmake --build build/stable
 ```
 
 ## C++ 查询
@@ -47,7 +51,7 @@ Text {
 }
 ```
 
-`QCatUiKit` 是 QCatUiKit 模块信息的公开只读单例，属性从 C++ 运行时查询接口取得。C++ 实现类为 `QCatUiKitInfo`，通过 `QML_NAMED_ELEMENT(QCatUiKit)` 注册，定义在私有头 `qcatuikitinfo_p.h` 中，不作为 C++ 公开类安装。旧 QML 名称 `LibraryInfo` 通过同一实现注册为兼容入口；新代码使用 `QCatUiKit`。两个名称的属性值相同，每个 QML 引擎自行创建单例对象。
+`QCatUiKit` 是模块信息的公开只读单例，属性从 C++ 运行时查询接口取得。C++ 实现类为 `QCatUiKitInfo`，定义在私有头 `qcatuikitinfo_p.h` 中，不作为公开类安装。`LibraryInfo` 是提供相同属性的兼容入口；应用建议使用 `QCatUiKit`。每个 QML 引擎自行创建单例对象。
 
 使用命名空间导入 `import QCatUiKit as UiKit` 时，访问入口为 `UiKit.QCatUiKit.version`。
 
@@ -82,7 +86,7 @@ message(STATUS "${QCatUiKit_ABI_VERSION}")     # 1
 
 CMake 包版本匹配和动态库文件版本保持数字格式；`find_package` 的版本约束不区分正式／实验。需要正式依赖的应用可在配置时检查 `QCatUiKit_RELEASE_CHANNEL STREQUAL "stable"`。这些 CMake 变量描述找到的安装包，运行时身份应通过上述接口检查。
 
-## 后续版本管理
+## 发布规则
 
 - 修改版本数字只编辑根 `.cmake.conf` 的 `QCATUIKIT_REPO_MODULE_VERSION`；运行时信息、动态库文件版本和安装包版本由 CMake 同步生成。
 - 正式发行选择 stable；开发及实验构建保留 experimental。渠道变更不改变 ABI 版本。
@@ -92,14 +96,23 @@ CMake 包版本匹配和动态库文件版本保持数字格式；`find_package`
 
 ## 验证运行时替换
 
-`tests/auto/cmake/version_consumer` 是独立安装消费者。以实验版安装包编译一次后，执行：
+`tests/auto/cmake/version_consumer` 是独立安装消费者。先按[构建说明](BUILDING.md)分别安装实验版和正式版，再以实验版安装包编译一次：
+
+```sh
+cmake -S tests/auto/cmake/version_consumer -B build/version-consumer -GNinja \
+  -DCMAKE_PREFIX_PATH="/path/to/experimental;/path/to/Qt" \
+  -DCMAKE_BUILD_TYPE=Release
+cmake --build build/version-consumer
+```
+
+Linux 使用同一可执行文件切换运行库；按实际安装布局替换 lib：
 
 ```sh
 LD_LIBRARY_PATH=/path/to/experimental/lib:/path/to/Qt/lib \
-  ./version-consumer 1.0.0-experimental experimental
+  ./build/version-consumer/version-consumer 1.0.0-experimental experimental
 # Linux：同一可执行文件，使用正式版库；不重新编译
 LD_LIBRARY_PATH=/path/to/stable/lib:/path/to/Qt/lib \
-  ./version-consumer 1.0.0 stable
+  ./build/version-consumer/version-consumer 1.0.0 stable
 ```
 
 测试程序验证完整版本与发布状态，不匹配时返回非零状态。常规 `ctest` 中的 version 测试还会将 C++ 和两个 QML 引擎的结果与各自的 CMake 配置比较。

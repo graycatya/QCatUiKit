@@ -2,6 +2,7 @@
 #include "gallerychartdata.h"
 #include <QCoreApplication>
 #include <QDateTime>
+#include <algorithm>
 #include <cmath>
 
 using namespace QCatUiKit;
@@ -36,8 +37,8 @@ const Description &description(int index)
 {
     static const Description demos[] = {
         {"Line", "1",
-         "Two signals, 100,000 samples each. Start live to stream; zoom or drag to inspect "
-         "history."},
+         "Two signals, 100,000 initial samples each. Add or remove data, or start a continuous "
+         "stress test."},
         {"Area", "2",
          "Daily solar and wind output. Each area fills to zero; the two areas overlap."},
         {"Grouped bars", "3",
@@ -112,7 +113,7 @@ void populate(int index, ChartItem *chart, ChartSeries *first, ChartSeries *seco
     switch (index)
     {
     case Line:
-        chart->setTitle("Live signals - 100,000 samples per series");
+        chart->setTitle("Live signals");
         axes("Sample index", "Amplitude");
         for (int i = 0; i < 100000; ++i)
         {
@@ -210,8 +211,8 @@ void populate(int index, ChartItem *chart, ChartSeries *first, ChartSeries *seco
         first->setName("Intensity");
         second->setVisible(false);
         axes("Time step", "Frequency bin");
-        for (int y = 0; y < 40; ++y)
-            for (int x = 0; x < 100; ++x)
+        for (int x = 0; x < 100; ++x)
+            for (int y = 0; y < 40; ++y)
             {
                 const double center = 12 + 8 * std::sin(x * .07);
                 const double value =
@@ -338,7 +339,7 @@ namespace
     QT_TRANSLATE_NOOP("GalleryChartData", "Jun"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Least-squares fit"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Line"),
-    QT_TRANSLATE_NOOP("GalleryChartData", "Live signals - 100,000 samples per series"),
+    QT_TRANSLATE_NOOP("GalleryChartData", "Live signals"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Log axis"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Mar"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Marketing"),
@@ -417,8 +418,11 @@ namespace
     QT_TRANSLATE_NOOP(
         "GalleryChartData",
         "Two sensor populations: temperature versus power. Hover to inspect individual readings."),
-    QT_TRANSLATE_NOOP("GalleryChartData", "Two signals, 100,000 samples each. Start live to "
-                                          "stream; zoom or drag to inspect history."),
+    QT_TRANSLATE_NOOP("GalleryChartData", "Two signals, 100,000 initial samples each. Add or "
+                                          "remove data, or start a continuous stress test."),
+    QT_TRANSLATE_NOOP("GalleryChartData", "Category %1"),
+    QT_TRANSLATE_NOOP("GalleryChartData", "Dimension %1"),
+    QT_TRANSLATE_NOOP("GalleryChartData", "Slice %1"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Usability"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Value"),
     QT_TRANSLATE_NOOP("GalleryChartData", "Visits"),
@@ -426,16 +430,32 @@ namespace
 };
 }
 
-GalleryChartData::GalleryChartData(QObject *parent) : QObject(parent) {}
+GalleryChartData::GalleryChartData(QObject *parent) : QObject(parent)
+{
+    m_timer.setInterval(100);
+    connect(&m_timer, &QTimer::timeout, this, &GalleryChartData::stressTick);
+}
 void GalleryChartData::load(int mode, ChartItem *chart, ChartSeries *first, ChartSeries *second)
 {
     if (!chart || !first || !second || mode < 0 || mode >= GalleryDemos::Count)
         return;
+    stopStress();
     m_mode = mode;
     m_chart = chart;
-    m_first = first;
-    m_second = second;
+    m_first = m_previewFirst = first;
+    m_second = m_previewSecond = second;
+    m_bufferFirst.reset();
+    m_bufferSecond.reset();
+    static const int capacities[] = {200000, 2000, 48, 48,   2000, 128, 16,  16,
+                                     32,     200,  48, 2000, 2000, 48,  2000};
+    static const int batches[] = {500, 4, 1, 1, 10, 1, 1, 1, 1, 1, 1, 4, 4, 1, 10};
+    m_capacity = capacities[mode];
+    m_batchSize = batches[mode];
+    first->setCapacity(m_capacity * samplesPerUnit());
+    second->setCapacity(m_capacity);
     GalleryDemos::populate(mode, chart, first, second);
+    m_nextIndex = unitCount();
+    resetStatistics();
     m_title = chart->title();
     m_xTitle = chart->xAxis()->title();
     m_yTitle = chart->yAxis()->title();
@@ -457,6 +477,8 @@ void GalleryChartData::load(int mode, ChartItem *chart, ChartSeries *first, Char
             pair.second->clear();
     }
     retranslate();
+    emit settingsChanged();
+    emit statisticsChanged();
 }
 void GalleryChartData::retranslate()
 {
@@ -468,50 +490,624 @@ void GalleryChartData::retranslate()
     m_chart->setTitle(translated(m_title));
     m_chart->xAxis()->setTitle(translated(m_xTitle));
     m_chart->yAxis()->setTitle(translated(m_yTitle));
-    QStringList categories;
-    for (const auto &category : m_categories)
-        categories.append(translated(category));
-    m_chart->xAxis()->setCategories(categories);
     m_first->setName(translated(m_firstName));
     m_second->setName(translated(m_secondName));
-    for (auto pair :
-         {qMakePair(m_first.data(), &m_firstLabels), qMakePair(m_second.data(), &m_secondLabels)})
-    {
-        if (pair.second->isEmpty() || pair.second->size() != pair.first->count())
-            continue;
-        QVector<ChartSeries::Sample> samples;
-        for (int i = 0; i < pair.first->count(); ++i)
-        {
-            auto sample = pair.first->sampleAt(i);
-            const auto &label = pair.second->at(i);
-            if (label.startsWith("Core "))
-                sample.label = translated("Core %1").arg(i + 1);
-            else if (label.startsWith("New "))
-                sample.label = translated("New %1").arg(i + 1);
-            else
-                sample.label = translated(label);
-            samples.append(sample);
-        }
-        pair.first->replaceSamples(samples);
-    }
-}
-void GalleryChartData::advance()
-{
-    if (!m_first || !m_second)
-        return;
-    const double start = m_first->count() ? m_first->sampleAt(m_first->count() - 1).x + 1 : 0;
-    QVector<ChartSeries::Sample> a, b;
-    for (int i = 0; i < 17; ++i)
-    {
-        const double x = start + i;
-        a.append({x, std::sin(x * .007) * 8 + std::sin(x * .057) * 2, 1, {}});
-        b.append({x, std::cos(x * .008) * 5, 1, {}});
-    }
-    m_first->appendSamples(a);
-    m_second->appendSamples(b);
+    synchronizeMetadata();
+    updatePreview();
+    emit statisticsChanged();
 }
 
 QString GalleryChartData::hint() const
 {
     return QCoreApplication::translate("GalleryChartData", GalleryDemos::description(m_mode).hint);
+}
+
+namespace
+{
+QVector<ChartSeries::Sample> retainedSamples(ChartSeries *series, int count)
+{
+    QVector<ChartSeries::Sample> result;
+    result.reserve(count);
+    for (int i = 0; i < count; ++i)
+        result.append(series->sampleAt(i));
+    return result;
+}
+QString translatedLabel(const QString &source)
+{
+    for (const auto *prefix : {"Core ", "New ", "Category ", "Dimension ", "Slice "})
+        if (source.startsWith(QLatin1String(prefix)))
+            return QCoreApplication::translate("GalleryChartData",
+                                               (QByteArray(prefix) + "%1").constData())
+                .arg(source.mid(qstrlen(prefix)));
+    return QCoreApplication::translate("GalleryChartData", source.toUtf8().constData());
+}
+} // namespace
+
+bool GalleryChartData::categorical() const
+{
+    using namespace GalleryDemos;
+    return m_mode == Bar || m_mode == StackedBar || m_mode == Mixed || m_mode == SignedStack ||
+           m_mode == Radar;
+}
+bool GalleryChartData::singleSeries() const
+{
+    using namespace GalleryDemos;
+    return m_mode == Pie || m_mode == Doughnut || m_mode == Heatmap || m_mode == Trend;
+}
+int GalleryChartData::samplesPerUnit() const
+{
+    return m_mode == GalleryDemos::Heatmap ? 40 : 1;
+}
+int GalleryChartData::unitCount() const
+{
+    return m_first ? m_first->count() / samplesPerUnit() : 0;
+}
+int GalleryChartData::sampleCount() const
+{
+    return (m_first ? m_first->count() : 0) + (m_second ? m_second->count() : 0);
+}
+int GalleryChartData::maximumCapacity() const
+{
+    return 1000000 / samplesPerUnit();
+}
+int GalleryChartData::maximumBatchSize() const
+{
+    return std::min(m_capacity, 50000 / samplesPerUnit());
+}
+int GalleryChartData::displayedSampleCount() const
+{
+    return (m_previewFirst ? m_previewFirst->count() : 0) +
+           (m_previewSecond ? m_previewSecond->count() : 0);
+}
+int GalleryChartData::previewUnitLimit() const
+{
+    using namespace GalleryDemos;
+    if (m_mode == Radar)
+        return 32;
+    if (m_mode == Pie || m_mode == Doughnut)
+        return 64;
+    if (categorical() || m_mode == Bubble || m_mode == Heatmap)
+        return 128;
+    return 512;
+}
+bool GalleryChartData::aggregated() const
+{
+    return m_bufferFirst && unitCount() > previewUnitLimit();
+}
+QString GalleryChartData::previewDescription() const
+{
+    using namespace GalleryDemos;
+    if (m_mode == Radar)
+        return tr("Overview: adjacent dimensions are grouped by their mean.");
+    if (m_mode == Pie || m_mode == Doughnut || m_mode == Bar || m_mode == StackedBar ||
+        m_mode == Mixed)
+        return tr("Overview: adjacent records are grouped by their sum.");
+    if (m_mode == SignedStack)
+        return tr("Overview: adjacent records are summed, keeping positive and negative values "
+                  "separate.");
+    if (m_mode == Heatmap)
+        return tr("Overview: adjacent columns are averaged for each row.");
+    if (m_mode == Scatter || m_mode == Bubble || m_mode == Trend)
+        return tr("Overview: evenly spaced source records are shown; the trend uses all records.");
+    return tr(
+        "Overview: each group retains its minimum and maximum. Raw records remain available.");
+}
+QVariantMap GalleryChartData::sourceAt(int series, int index) const
+{
+    auto *source = series == 0 ? m_first.data() : series == 1 ? m_second.data() : nullptr;
+    return source ? source->at(index) : QVariantMap{};
+}
+void GalleryChartData::configureMillionSamples()
+{
+    stopStress();
+    const int samples = samplesPerUnit() + (singleSeries() ? 0 : 1);
+    setCapacity(1000000 / samples);
+    setBatchSize(50000 / samples);
+    setInterval(200);
+}
+void GalleryChartData::bufferSources()
+{
+    if (m_bufferFirst || !m_first || !m_second)
+        return;
+    const auto copy = [&](ChartSeries *source, const QStringList &labels)
+    {
+        auto buffer = std::make_unique<ChartSeries>();
+        buffer->setCapacity(source->capacity());
+        buffer->setName(source->name());
+        buffer->setType(source->type());
+        auto samples = retainedSamples(source, source->count());
+        for (int i = 0; i < samples.size(); ++i)
+        {
+            // Preserve original labels before switching to a bounded overview.
+            if (categorical() && i < m_categories.size())
+                samples[i].label = m_categories[i];
+            else if (i < labels.size())
+                samples[i].label = labels[i];
+        }
+        buffer->replaceSamples(samples);
+        return buffer;
+    };
+    m_bufferFirst = copy(m_first, m_firstLabels);
+    m_bufferSecond = copy(m_second, m_secondLabels);
+    m_first = m_bufferFirst.get();
+    m_second = m_bufferSecond.get();
+}
+void GalleryChartData::updatePreview()
+{
+    if (!m_bufferFirst || !m_chart || !m_previewFirst || !m_previewSecond)
+        return;
+    using namespace GalleryDemos;
+    const int units = unitCount(), limit = previewUnitLimit();
+    const bool reduce = aggregated();
+    QVector<ChartSeries::Sample> a, b;
+    QStringList categories;
+    const auto rangeLabel = [&](int from, int to)
+    {
+        return (m_mode == Heatmap ? tr("Columns %1–%2") : tr("Records %1–%2"))
+            .arg(from + 1)
+            .arg(to);
+    };
+    const auto curve = [&](ChartSeries *source)
+    {
+        const int count = source->count();
+        if (count <= limit)
+            return retainedSamples(source, count);
+        QVector<ChartSeries::Sample> result;
+        result.reserve(limit);
+        result.append(source->sampleAt(0));
+        const int buckets = (limit - 2) / 2;
+        for (int bucket = 0; bucket < buckets; ++bucket)
+        {
+            const int from = 1 + qint64(count - 2) * bucket / buckets;
+            const int to = 1 + qint64(count - 2) * (bucket + 1) / buckets;
+            int low = from, high = from;
+            for (int i = from + 1; i < to; ++i)
+            {
+                if (source->sampleAt(i).y < source->sampleAt(low).y)
+                    low = i;
+                if (source->sampleAt(i).y > source->sampleAt(high).y)
+                    high = i;
+            }
+            result.append(source->sampleAt(std::min(low, high)));
+            if (low != high)
+                result.append(source->sampleAt(std::max(low, high)));
+        }
+        result.append(source->sampleAt(count - 1));
+        return result;
+    };
+    if (!reduce)
+    {
+        a = retainedSamples(m_first, m_first->count());
+        b = retainedSamples(m_second, m_second->count());
+        if (categorical())
+        {
+            for (int i = 0; i < a.size(); ++i)
+                categories.append(a[i].label.isEmpty()
+                                      ? (m_mode == Radar ? tr("Dimension %1") : tr("Category %1"))
+                                            .arg(qint64(a[i].x) + 1)
+                                      : translatedLabel(a[i].label));
+            for (auto *samples : {&a, &b})
+                for (int i = 0; i < samples->size(); ++i)
+                    (*samples)[i].x = i;
+        }
+        for (auto *samples : {&a, &b})
+            for (int i = 0; i < samples->size(); ++i)
+            {
+                auto &sample = (*samples)[i];
+                if (!sample.label.isEmpty())
+                    sample.label = translatedLabel(sample.label);
+                else if (m_mode == Pie || m_mode == Doughnut)
+                    sample.label = tr("Slice %1").arg(qint64(sample.x) + 1);
+                else if (m_mode == Bubble)
+                    sample.label = rangeLabel(i, i + 1);
+            }
+    }
+    else if (m_mode == Line || m_mode == Area || m_mode == TimeSeries || m_mode == Logarithmic)
+    {
+        a = curve(m_first);
+        b = curve(m_second);
+    }
+    else if (m_mode == Scatter || m_mode == Bubble || m_mode == Trend)
+    {
+        const auto sample = [&](ChartSeries *source)
+        {
+            QVector<ChartSeries::Sample> result;
+            const int count = std::min(limit, source->count());
+            for (int i = 0; i < count; ++i)
+            {
+                const int index = count > 1 ? qint64(source->count() - 1) * i / (count - 1) : 0;
+                auto point = source->sampleAt(index);
+                point.label = rangeLabel(index, index + 1);
+                result.append(point);
+            }
+            return result;
+        };
+        a = sample(m_first);
+        b = m_mode == Trend ? retainedSamples(m_second, m_second->count()) : sample(m_second);
+    }
+    else
+    {
+        // Group every source record, including a partial final group. Signed stacks
+        // keep two entries per group so opposite signs never cancel each other out.
+        const int groups = m_mode == SignedStack ? limit / 2 : limit;
+        for (int group = 0; group < groups; ++group)
+        {
+            const int from = qint64(units) * group / groups;
+            const int to = qint64(units) * (group + 1) / groups;
+            const QString label = rangeLabel(from, to);
+            if (m_mode == Heatmap)
+            {
+                for (int row = 0; row < 40; ++row)
+                {
+                    double sum = 0;
+                    for (int column = from; column < to; ++column)
+                        sum += m_first->sampleAt(column * 40 + row).value;
+                    a.append({double(group), double(row), sum / (to - from), label});
+                }
+                categories.append(label);
+                continue;
+            }
+            for (auto pair : {qMakePair(m_first.data(), &a), qMakePair(m_second.data(), &b)})
+            {
+                if (pair.first == m_second && singleSeries())
+                    continue;
+                double positive = 0, negative = 0;
+                for (int i = from; i < to; ++i)
+                {
+                    const double value = pair.first->sampleAt(i).y;
+                    (value >= 0 ? positive : negative) += value;
+                }
+                if (m_mode == SignedStack)
+                {
+                    pair.second->append({double(group * 2), positive, 1, label + " (+)"});
+                    pair.second->append({double(group * 2 + 1), negative, 1, label + " (−)"});
+                }
+                else
+                {
+                    const double value =
+                        m_mode == Radar ? (positive + negative) / (to - from) : positive + negative;
+                    pair.second->append({double(group), value, 1, label});
+                }
+            }
+            if (categorical())
+            {
+                if (m_mode == SignedStack)
+                    categories << label + " (+)" << label + " (−)";
+                else
+                    categories.append(label);
+            }
+        }
+    }
+    if (m_mode == Heatmap)
+        m_chart->xAxis()->setScale(reduce ? ChartAxis::Category : ChartAxis::Linear);
+    if (categorical() || m_mode == Heatmap)
+        m_chart->xAxis()->setCategories(categories);
+    // Source capacities belong to the retained data; preview buffers only need
+    // enough room for the bounded overview and the optional fitted endpoints.
+    m_previewFirst->setCapacity(std::max(1, int(a.size())));
+    m_previewSecond->setCapacity(std::max(2, int(b.size())));
+    m_previewFirst->setName(m_first->name());
+    m_previewSecond->setName(m_second->name());
+    m_previewFirst->replaceSamples(a);
+    m_previewSecond->replaceSamples(b);
+}
+QString GalleryChartData::unitName() const
+{
+    using namespace GalleryDemos;
+    if (m_mode == Heatmap)
+        return tr("columns (40 cells each)");
+    if (m_mode == Radar)
+        return tr("dimensions");
+    if (m_mode == Pie || m_mode == Doughnut)
+        return tr("slices");
+    return categorical() ? tr("categories per series") : tr("points per series");
+}
+void GalleryChartData::setBatchSize(int value)
+{
+    value = std::clamp(value, 1, maximumBatchSize());
+    if (m_batchSize == value)
+        return;
+    m_batchSize = value;
+    emit settingsChanged();
+}
+void GalleryChartData::setInterval(int value)
+{
+    value = std::clamp(value, 16, 1000);
+    if (m_timer.interval() == value)
+        return;
+    m_timer.setInterval(value);
+    emit settingsChanged();
+}
+void GalleryChartData::setCapacity(int value)
+{
+    value = std::clamp(value, m_mode == GalleryDemos::Radar ? 3 : 1, maximumCapacity());
+    if (m_capacity == value || !m_first || !m_second)
+        return;
+    stopStress();
+    if (value > previewUnitLimit())
+        bufferSources();
+    m_capacity = value;
+    m_first->setCapacity(value * samplesPerUnit());
+    m_second->setCapacity(m_mode == GalleryDemos::Trend ? std::max(2, value) : value);
+    m_firstLabels = m_firstLabels.mid(std::max(0, int(m_firstLabels.size()) - m_first->count()));
+    m_secondLabels =
+        m_secondLabels.mid(std::max(0, int(m_secondLabels.size()) - m_second->count()));
+    m_categories = m_categories.mid(std::max(0, int(m_categories.size()) - unitCount()));
+    setBatchSize(m_batchSize);
+    synchronizeMetadata();
+    updateTrend();
+    emit settingsChanged();
+    QElapsedTimer timer;
+    timer.start();
+    finishMutation(0, 0, timer);
+}
+void GalleryChartData::synchronizeMetadata()
+{
+    if (m_bufferFirst || !m_chart || !m_first || !m_second)
+        return;
+    if (categorical())
+    {
+        QStringList categories;
+        for (const auto &category : m_categories)
+            categories.append(translatedLabel(category));
+        m_chart->xAxis()->setCategories(categories);
+        for (auto *series : {m_first.data(), m_second.data()})
+        {
+            auto samples = retainedSamples(series, series->count());
+            for (int i = 0; i < samples.size(); ++i)
+                samples[i].x = i;
+            series->replaceSamples(samples);
+        }
+    }
+    for (auto pair :
+         {qMakePair(m_first.data(), &m_firstLabels), qMakePair(m_second.data(), &m_secondLabels)})
+    {
+        if (pair.second->isEmpty() || pair.second->size() != pair.first->count())
+            continue;
+        auto samples = retainedSamples(pair.first, pair.first->count());
+        for (int i = 0; i < samples.size(); ++i)
+            samples[i].label = translatedLabel(pair.second->at(i));
+        pair.first->replaceSamples(samples);
+    }
+}
+void GalleryChartData::updateTrend()
+{
+    if (m_mode != GalleryDemos::Trend || !m_first || !m_second)
+        return;
+    const int count = m_first->count();
+    if (count < 2)
+    {
+        m_second->clear();
+        return;
+    }
+    // Center the regression to avoid cancellation as a long-running stream advances.
+    double meanX = 0, meanY = 0;
+    for (int i = 0; i < count; ++i)
+    {
+        meanX += m_first->sampleAt(i).x / count;
+        meanY += m_first->sampleAt(i).y / count;
+    }
+    double xx = 0, xy = 0;
+    for (int i = 0; i < count; ++i)
+    {
+        const auto &p = m_first->sampleAt(i);
+        xx += (p.x - meanX) * (p.x - meanX);
+        xy += (p.x - meanX) * (p.y - meanY);
+    }
+    const double slope = xx > 0 ? xy / xx : 0;
+    const double left = m_first->sampleAt(0).x, right = m_first->sampleAt(count - 1).x;
+    m_second->replacePoints(
+        {{left, meanY + slope * (left - meanX)}, {right, meanY + slope * (right - meanX)}});
+}
+void GalleryChartData::addData()
+{
+    if (!m_chart || !m_first || !m_second)
+        return;
+    using namespace GalleryDemos;
+    QElapsedTimer timer;
+    timer.start();
+    const int before = m_first->count() + (singleSeries() ? 0 : m_second->count());
+    QVector<ChartSeries::Sample> a, b;
+    a.reserve(m_batchSize * samplesPerUnit());
+    if (!singleSeries())
+        b.reserve(m_batchSize);
+    const double timeOrigin =
+        QDateTime::fromString("2026-10-01T00:00:00Z", Qt::ISODate).toMSecsSinceEpoch();
+    for (int i = 0; i < m_batchSize; ++i)
+    {
+        const qint64 n = m_nextIndex++;
+        const double x = double(n);
+        switch (m_mode)
+        {
+        case Line:
+            a.append({x, std::sin(x * .007) * 8 + std::sin(x * .057) * 2, 1, {}});
+            b.append({x, std::cos(x * .008) * 5, 1, {}});
+            break;
+        case Area:
+        {
+            const double hour = x / 4.;
+            a.append(
+                {hour, std::max(0., 70 * std::sin((hour - 6) * 3.141592653589793 / 12)), 1, {}});
+            b.append({hour, 22 + 8 * std::sin(hour * .5) + 4 * std::cos(hour * 1.7), 1, {}});
+            break;
+        }
+        case Bar:
+        case StackedBar:
+        case Mixed:
+        case SignedStack:
+        case Radar:
+        {
+            double av = 120 + 70 * std::sin(x * .6), bv = 90 + 40 * std::cos(x * .7);
+            if (m_mode == SignedStack)
+            {
+                av = 38 * std::sin(x * 1.3);
+                bv = 25 * std::cos(x * 1.7);
+            }
+            else if (m_mode == Radar)
+            {
+                av = 50 + 45 * std::sin(x * .7);
+                bv = 50 + 45 * std::cos(x * .9);
+            }
+            else if (m_mode == Mixed)
+                bv = 150 + 25 * std::sin(x * .3);
+            a.append({x, av, 1, {}});
+            b.append({x, bv, 1, {}});
+            if (!m_bufferFirst)
+                m_categories.append(
+                    QString(m_mode == Radar ? "Dimension %1" : "Category %1").arg(n + 1));
+            break;
+        }
+        case Scatter:
+        {
+            const double temperature = 18 + (n * 37 % 101) * .18;
+            a.append({temperature, 20 + temperature * 1.6 + 8 * std::sin(x * 2.4), 1, {}});
+            b.append({temperature + 3, 40 + temperature * 1.4 + 10 * std::cos(x * 1.7), 1, {}});
+            break;
+        }
+        case Bubble:
+            if (!m_bufferFirst)
+            {
+                m_firstLabels.append(QString("Core %1").arg(n + 1));
+                m_secondLabels.append(QString("New %1").arg(n + 1));
+            }
+            a.append({15. + (n * 23 % 85), 2. + (n * 7 % 19) * .35, 5. + (n % 12) * 1.3, {}});
+            b.append({10. + (n * 31 % 90), 1. + (n * 11 % 23) * .3, 5. + (n * 3 % 13), {}});
+            break;
+        case Pie:
+        case Doughnut:
+            if (!m_bufferFirst)
+                m_firstLabels.append(QString("Slice %1").arg(n + 1));
+            a.append({x, 50. + (n * 73 % 400), 1, {}});
+            break;
+        case Heatmap:
+            for (int y = 0; y < 40; ++y)
+            {
+                const double center = 12 + 8 * std::sin(x * .07);
+                const double value =
+                    std::exp(-std::pow((y - center) / 4., 2)) +
+                    .55 * std::exp(-std::pow((y - 30) / 3., 2)) * (.6 + .4 * std::cos(x * .12));
+                a.append({x, double(y), value, {}});
+            }
+            break;
+        case TimeSeries:
+        {
+            const double phase = (x / 4. - 8) * 3.141592653589793 / 12;
+            a.append({timeOrigin + x * 900000., 23 + 1.5 * std::sin(phase), 1, {}});
+            b.append({timeOrigin + x * 900000., 19 + 7 * std::sin(phase), 1, {}});
+            break;
+        }
+        case Logarithmic:
+            // Keep indefinitely streamed values finite and strictly positive.
+            a.append({x, std::pow(10., (n % 200) / 25.), 1, {}});
+            b.append({x, 3 * std::pow(10., (n % 200) / 35.), 1, {}});
+            break;
+        case Trend:
+            a.append({x * .5, 8 + x * .9 + 6 * std::sin(x * 2.1), 1, {}});
+            break;
+        }
+    }
+    m_first->appendSamples(a);
+    if (!singleSeries())
+        m_second->appendSamples(b);
+    m_categories = m_categories.mid(std::max(0, int(m_categories.size()) - unitCount()));
+    m_firstLabels = m_firstLabels.mid(std::max(0, int(m_firstLabels.size()) - m_first->count()));
+    m_secondLabels =
+        m_secondLabels.mid(std::max(0, int(m_secondLabels.size()) - m_second->count()));
+    synchronizeMetadata();
+    updateTrend();
+    const int after = m_first->count() + (singleSeries() ? 0 : m_second->count());
+    finishMutation(a.size() + b.size(),
+                   std::max<qsizetype>(0, before + a.size() + b.size() - after), timer);
+}
+void GalleryChartData::removeData()
+{
+    if (!m_chart || !m_first || !m_second)
+        return;
+    QElapsedTimer timer;
+    timer.start();
+    const int units = std::min(m_batchSize, unitCount());
+    m_first->replaceSamples(retainedSamples(m_first, m_first->count() - units * samplesPerUnit()));
+    if (!singleSeries())
+        m_second->replaceSamples(retainedSamples(m_second, std::max(0, m_second->count() - units)));
+    m_categories = m_categories.mid(0, unitCount());
+    m_firstLabels = m_firstLabels.mid(0, m_first->count());
+    m_secondLabels = m_secondLabels.mid(0, m_second->count());
+    synchronizeMetadata();
+    updateTrend();
+    finishMutation(0, units * (samplesPerUnit() + (singleSeries() ? 0 : 1)), timer);
+}
+void GalleryChartData::finishMutation(qint64 added, qint64 removed, const QElapsedTimer &timer)
+{
+    updatePreview();
+    if (m_mode == GalleryDemos::Pie || m_mode == GalleryDemos::Doughnut)
+    {
+        // Slice visibility is indexed: reset it when editing/reordering slices.
+        m_chart->clearSeries();
+        m_chart->addSeries(m_previewFirst);
+        m_chart->addSeries(m_previewSecond);
+    }
+    if (running())
+    {
+        m_added += added;
+        m_removed += removed;
+        ++m_updates;
+        m_elapsedMs = m_clock.elapsed();
+        m_maximumBatchMs = std::max(m_maximumBatchMs, timer.nsecsElapsed() / 1000000.);
+    }
+    emit statisticsChanged();
+}
+void GalleryChartData::clearData()
+{
+    stopStress();
+    if (!m_chart || !m_first || !m_second)
+        return;
+    m_first->clear();
+    m_second->clear();
+    m_categories.clear();
+    m_firstLabels.clear();
+    m_secondLabels.clear();
+    m_nextIndex = 0;
+    synchronizeMetadata();
+    QElapsedTimer timer;
+    timer.start();
+    finishMutation(0, 0, timer);
+}
+void GalleryChartData::resetData()
+{
+    load(m_mode, m_chart, m_previewFirst, m_previewSecond);
+}
+void GalleryChartData::resetStatistics()
+{
+    m_added = m_removed = m_updates = m_elapsedMs = 0;
+    m_maximumBatchMs = 0;
+}
+void GalleryChartData::startStress()
+{
+    if (running() || !m_chart || !m_first || !m_second)
+        return;
+    resetStatistics();
+    m_clock.start();
+    m_timer.start();
+    emit statisticsChanged();
+}
+void GalleryChartData::stopStress()
+{
+    if (!running())
+        return;
+    m_timer.stop();
+    m_elapsedMs = m_clock.elapsed();
+    emit statisticsChanged();
+}
+void GalleryChartData::stressTick()
+{
+    if (!m_chart || !m_first || !m_second)
+    {
+        stopStress();
+        return;
+    }
+    // Four additions followed by one deletion exercise growth, eviction and shrinking.
+    if (m_updates % 5 == 4 && unitCount() > 0)
+        removeData();
+    else
+        addData();
 }

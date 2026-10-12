@@ -27,7 +27,10 @@ T.SpinBox {
         readOnly: !control.editable
         validator: control.validator
         inputMethodHints: control.inputMethodHints
-        padding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         background: null
         horizontalAlignment: TextInput.AlignHCenter
         verticalAlignment: TextInput.AlignVCenter

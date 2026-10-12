@@ -15,8 +15,12 @@ ListView {
     clip: true
     spacing: tokens.spacing
     boundsBehavior: Flickable.StopAtBounds
+    function followLatest(): void {
+        if (followTail)
+            positionViewAtEnd();
+    }
     onCountChanged: if (followTail)
-                        Qt.callLater(positionViewAtEnd)
+                        Qt.callLater(followLatest)
     delegate: Item {
         id: entry
         required property string sender

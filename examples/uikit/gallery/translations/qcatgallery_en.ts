@@ -1455,517 +1455,600 @@
 <context>
     <name>GalleryChartData</name>
     <message>
-        <location filename="../gallerychartdata.cpp" line="296"/>
+        <location filename="../gallerychartdata.cpp" line="297"/>
         <source>A full day of indoor and outdoor temperatures, sampled every 15 minutes (UTC).</source>
         <translation>A full day of indoor and outdoor temperatures, sampled every 15 minutes (UTC).</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="299"/>
+        <location filename="../gallerychartdata.cpp" line="300"/>
         <source>Actual</source>
         <translation>Actual</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="300"/>
+        <location filename="../gallerychartdata.cpp" line="301"/>
         <source>Amplitude</source>
         <translation>Amplitude</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="301"/>
+        <location filename="../gallerychartdata.cpp" line="302"/>
         <source>Apr</source>
         <translation>Apr</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="302"/>
+        <location filename="../gallerychartdata.cpp" line="303"/>
         <source>Area</source>
         <translation>Area</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="303"/>
+        <location filename="../gallerychartdata.cpp" line="304"/>
         <source>Bar + line</source>
         <translation>Bar + line</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="304"/>
+        <location filename="../gallerychartdata.cpp" line="305"/>
         <source>Bubble</source>
         <translation>Bubble</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="305"/>
+        <location filename="../gallerychartdata.cpp" line="306"/>
         <source>Budget</source>
         <translation>Budget</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="306"/>
+        <location filename="../gallerychartdata.cpp" line="307"/>
         <source>Budget allocation with a central total. Hover over a segment to inspect its value.</source>
         <translation>Budget allocation with a central total. Hover over a segment to inspect its value.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="309"/>
+        <location filename="../gallerychartdata.cpp" line="310"/>
         <source>Change (thousands)</source>
         <translation>Change (thousands)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="310"/>
+        <location filename="../gallerychartdata.cpp" line="311"/>
         <source>Compare online and store orders by month. Click a legend entry to hide a series.</source>
         <translation>Compare online and store orders by month. Click a legend entry to hide a series.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="313"/>
+        <location filename="../gallerychartdata.cpp" line="314"/>
         <source>Compare two product profiles across six dimensions on a common 0-100 scale.</source>
         <translation>Compare two product profiles across six dimensions on a common 0-100 scale.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="316"/>
+        <location filename="../gallerychartdata.cpp" line="317"/>
         <source>Conversion (%)</source>
         <translation>Conversion (%)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="317"/>
+        <location filename="../gallerychartdata.cpp" line="318"/>
         <source>Core %1</source>
         <translation>Core %1</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="318"/>
+        <location filename="../gallerychartdata.cpp" line="319"/>
         <source>Core products</source>
         <translation>Core products</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="319"/>
+        <location filename="../gallerychartdata.cpp" line="320"/>
         <source>Daily solar and wind output. Each area fills to zero; the two areas overlap.</source>
         <translation>Daily solar and wind output. Each area fills to zero; the two areas overlap.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="322"/>
+        <location filename="../gallerychartdata.cpp" line="323"/>
         <source>Direct</source>
         <translation>Direct</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="323"/>
+        <location filename="../gallerychartdata.cpp" line="324"/>
         <source>Doughnut</source>
         <translation>Doughnut</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="324"/>
+        <location filename="../gallerychartdata.cpp" line="325"/>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="325"/>
+        <location filename="../gallerychartdata.cpp" line="326"/>
         <source>Engineering</source>
         <translation>Engineering</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="326"/>
+        <location filename="../gallerychartdata.cpp" line="327"/>
         <source>Features</source>
         <translation>Features</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="327"/>
+        <location filename="../gallerychartdata.cpp" line="328"/>
         <source>Feb</source>
         <translation>Feb</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="328"/>
+        <location filename="../gallerychartdata.cpp" line="329"/>
         <source>Frequency bin</source>
         <translation>Frequency bin</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="329"/>
+        <location filename="../gallerychartdata.cpp" line="330"/>
         <source>Grouped bars</source>
         <translation>Grouped bars</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="330"/>
+        <location filename="../gallerychartdata.cpp" line="331"/>
         <source>Growth A</source>
         <translation>Growth A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="331"/>
+        <location filename="../gallerychartdata.cpp" line="332"/>
         <source>Growth B</source>
         <translation>Growth B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="332"/>
+        <location filename="../gallerychartdata.cpp" line="333"/>
         <source>Heatmap</source>
         <translation>Heatmap</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="333"/>
+        <location filename="../gallerychartdata.cpp" line="334"/>
         <source>Hour of day</source>
         <translation>Hour of day</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="334"/>
+        <location filename="../gallerychartdata.cpp" line="335"/>
         <source>Indoor</source>
         <translation>Indoor</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="335"/>
+        <location filename="../gallerychartdata.cpp" line="336"/>
         <source>Input</source>
         <translation>Input</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="336"/>
+        <location filename="../gallerychartdata.cpp" line="337"/>
         <source>Intensity</source>
         <translation>Intensity</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="337"/>
+        <location filename="../gallerychartdata.cpp" line="338"/>
         <source>Jan</source>
         <translation>Jan</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="338"/>
+        <location filename="../gallerychartdata.cpp" line="339"/>
         <source>Jun</source>
         <translation>Jun</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="339"/>
+        <location filename="../gallerychartdata.cpp" line="340"/>
         <source>Least-squares fit</source>
         <translation>Least-squares fit</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="340"/>
+        <location filename="../gallerychartdata.cpp" line="341"/>
         <source>Line</source>
         <translation>Line</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="341"/>
-        <source>Live signals - 100,000 samples per series</source>
-        <translation>Live signals - 100,000 samples per series</translation>
+        <location filename="../gallerychartdata.cpp" line="342"/>
+        <source>Live signals</source>
+        <translation>Live signals</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="342"/>
+        <location filename="../gallerychartdata.cpp" line="343"/>
         <source>Log axis</source>
         <translation>Log axis</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="343"/>
+        <location filename="../gallerychartdata.cpp" line="344"/>
         <source>Mar</source>
         <translation>Mar</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="344"/>
+        <location filename="../gallerychartdata.cpp" line="345"/>
         <source>Marketing</source>
         <translation>Marketing</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="345"/>
+        <location filename="../gallerychartdata.cpp" line="346"/>
         <source>May</source>
         <translation>May</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="346"/>
+        <location filename="../gallerychartdata.cpp" line="347"/>
         <source>Measurements</source>
         <translation>Measurements</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="347"/>
+        <location filename="../gallerychartdata.cpp" line="348"/>
         <source>Month</source>
         <translation>Month</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="348"/>
+        <location filename="../gallerychartdata.cpp" line="349"/>
         <source>Monthly actual orders as bars and target orders as a line, sharing the same value axis.</source>
         <translation>Monthly actual orders as bars and target orders as a line, sharing the same value axis.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="351"/>
+        <location filename="../gallerychartdata.cpp" line="352"/>
         <source>Monthly orders stacked by channel. The column height represents the total.</source>
         <translation>Monthly orders stacked by channel. The column height represents the total.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="353"/>
+        <location filename="../gallerychartdata.cpp" line="354"/>
         <source>New %1</source>
         <translation>New %1</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="354"/>
+        <location filename="../gallerychartdata.cpp" line="355"/>
         <source>New products</source>
         <translation>New products</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="355"/>
+        <location filename="../gallerychartdata.cpp" line="356"/>
         <source>North</source>
         <translation>North</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="356"/>
+        <location filename="../gallerychartdata.cpp" line="357"/>
         <source>Observed measurements and their least-squares fitted line, sharing XY coordinates.</source>
         <translation>Observed measurements and their least-squares fitted line, sharing XY coordinates.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="359"/>
+        <location filename="../gallerychartdata.cpp" line="360"/>
         <source>Online</source>
         <translation>Online</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="360"/>
+        <location filename="../gallerychartdata.cpp" line="361"/>
         <source>Operations</source>
         <translation>Operations</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="361"/>
+        <location filename="../gallerychartdata.cpp" line="362"/>
         <source>Orders</source>
         <translation>Orders</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="362"/>
+        <location filename="../gallerychartdata.cpp" line="363"/>
         <source>Outdoor</source>
         <translation>Outdoor</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="363"/>
+        <location filename="../gallerychartdata.cpp" line="364"/>
         <source>Pie</source>
         <translation>Pie</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="364"/>
+        <location filename="../gallerychartdata.cpp" line="365"/>
         <source>Population (log scale)</source>
         <translation>Population (log scale)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="365"/>
+        <location filename="../gallerychartdata.cpp" line="366"/>
         <source>Positive / negative</source>
         <translation>Positive / negative</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="366"/>
+        <location filename="../gallerychartdata.cpp" line="367"/>
         <source>Power (W)</source>
         <translation>Power (W)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="367"/>
+        <location filename="../gallerychartdata.cpp" line="368"/>
         <source>Power (kW)</source>
         <translation>Power (kW)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="368"/>
+        <location filename="../gallerychartdata.cpp" line="369"/>
         <source>Product A</source>
         <translation>Product A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="369"/>
+        <location filename="../gallerychartdata.cpp" line="370"/>
         <source>Product B</source>
         <translation>Product B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="370"/>
+        <location filename="../gallerychartdata.cpp" line="371"/>
         <source>Product reach versus conversion. Bubble radius represents relative order volume.</source>
         <translation>Product reach versus conversion. Bubble radius represents relative order volume.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="373"/>
+        <location filename="../gallerychartdata.cpp" line="374"/>
         <source>Q1</source>
         <translation>Q1</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="374"/>
+        <location filename="../gallerychartdata.cpp" line="375"/>
         <source>Q2</source>
         <translation>Q2</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="375"/>
+        <location filename="../gallerychartdata.cpp" line="376"/>
         <source>Q3</source>
         <translation>Q3</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="376"/>
+        <location filename="../gallerychartdata.cpp" line="377"/>
         <source>Q4</source>
         <translation>Q4</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="377"/>
+        <location filename="../gallerychartdata.cpp" line="378"/>
         <source>Q5</source>
         <translation>Q5</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="378"/>
+        <location filename="../gallerychartdata.cpp" line="379"/>
         <source>Q6</source>
         <translation>Q6</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="379"/>
+        <location filename="../gallerychartdata.cpp" line="380"/>
         <source>Quality</source>
         <translation>Quality</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="380"/>
+        <location filename="../gallerychartdata.cpp" line="381"/>
         <source>Quarter</source>
         <translation>Quarter</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="381"/>
+        <location filename="../gallerychartdata.cpp" line="382"/>
         <source>Quarterly changes for two regions. Positive and negative values stack separately.</source>
         <translation>Quarterly changes for two regions. Positive and negative values stack separately.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="384"/>
+        <location filename="../gallerychartdata.cpp" line="385"/>
         <source>Radar</source>
         <translation>Radar</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="385"/>
+        <location filename="../gallerychartdata.cpp" line="386"/>
         <source>Reach (thousands)</source>
         <translation>Reach (thousands)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="386"/>
+        <location filename="../gallerychartdata.cpp" line="387"/>
         <source>Referral</source>
         <translation>Referral</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="387"/>
+        <location filename="../gallerychartdata.cpp" line="388"/>
         <source>Research</source>
         <translation>Research</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="388"/>
+        <location filename="../gallerychartdata.cpp" line="389"/>
         <source>Response</source>
         <translation>Response</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="389"/>
+        <location filename="../gallerychartdata.cpp" line="390"/>
         <source>Sample index</source>
         <translation>Sample index</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="390"/>
+        <location filename="../gallerychartdata.cpp" line="391"/>
         <source>Scatter</source>
         <translation>Scatter</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="391"/>
+        <location filename="../gallerychartdata.cpp" line="392"/>
         <source>Scatter + trend</source>
         <translation>Scatter + trend</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="392"/>
+        <location filename="../gallerychartdata.cpp" line="393"/>
         <source>Search</source>
         <translation>Search</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="393"/>
+        <location filename="../gallerychartdata.cpp" line="394"/>
         <source>Sensor A</source>
         <translation>Sensor A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="394"/>
+        <location filename="../gallerychartdata.cpp" line="395"/>
         <source>Sensor B</source>
         <translation>Sensor B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="395"/>
+        <location filename="../gallerychartdata.cpp" line="396"/>
         <source>Signal A</source>
         <translation>Signal A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="396"/>
+        <location filename="../gallerychartdata.cpp" line="397"/>
         <source>Signal B</source>
         <translation>Signal B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="397"/>
+        <location filename="../gallerychartdata.cpp" line="398"/>
         <source>Social</source>
         <translation>Social</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="398"/>
+        <location filename="../gallerychartdata.cpp" line="399"/>
         <source>Solar</source>
         <translation>Solar</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="399"/>
+        <location filename="../gallerychartdata.cpp" line="400"/>
         <source>South</source>
         <translation>South</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="400"/>
+        <location filename="../gallerychartdata.cpp" line="401"/>
         <source>Speed</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="401"/>
+        <location filename="../gallerychartdata.cpp" line="402"/>
         <source>Stacked bars</source>
         <translation>Stacked bars</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="402"/>
+        <location filename="../gallerychartdata.cpp" line="403"/>
         <source>Store</source>
         <translation>Store</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="403"/>
+        <location filename="../gallerychartdata.cpp" line="404"/>
         <source>Support</source>
         <translation>Support</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="404"/>
+        <location filename="../gallerychartdata.cpp" line="405"/>
         <source>Synthetic frequency intensity over time. Hover over cells; the color bar shows intensity.</source>
         <translation>Synthetic frequency intensity over time. Hover over cells; the color bar shows intensity.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="406"/>
+        <location filename="../gallerychartdata.cpp" line="407"/>
         <source>Target</source>
         <translation>Target</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="407"/>
+        <location filename="../gallerychartdata.cpp" line="408"/>
         <source>Temperature (C)</source>
         <translation>Temperature (C)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="408"/>
+        <location filename="../gallerychartdata.cpp" line="409"/>
         <source>Time (UTC)</source>
         <translation>Time (UTC)</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="409"/>
+        <location filename="../gallerychartdata.cpp" line="410"/>
         <source>Time axis</source>
         <translation>Time axis</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="410"/>
+        <location filename="../gallerychartdata.cpp" line="411"/>
         <source>Time step</source>
         <translation>Time step</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="411"/>
+        <location filename="../gallerychartdata.cpp" line="412"/>
         <source>Traffic sources as shares of a whole. Click legend entries to toggle individual slices.</source>
         <translation>Traffic sources as shares of a whole. Click legend entries to toggle individual slices.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="414"/>
+        <location filename="../gallerychartdata.cpp" line="415"/>
         <source>Two positive growth curves spanning orders of magnitude on a logarithmic Y axis.</source>
         <translation>Two positive growth curves spanning orders of magnitude on a logarithmic Y axis.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="417"/>
+        <location filename="../gallerychartdata.cpp" line="418"/>
         <source>Two sensor populations: temperature versus power. Hover to inspect individual readings.</source>
         <translation>Two sensor populations: temperature versus power. Hover to inspect individual readings.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="420"/>
-        <source>Two signals, 100,000 samples each. Start live to stream; zoom or drag to inspect history.</source>
-        <translation>Two signals, 100,000 samples each. Start live to stream; zoom or drag to inspect history.</translation>
+        <location filename="../gallerychartdata.cpp" line="421"/>
+        <source>Two signals, 100,000 initial samples each. Add or remove data, or start a continuous stress test.</source>
+        <translation>Two signals, 100,000 initial samples each. Add or remove data, or start a continuous stress test.</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="422"/>
+        <location filename="../gallerychartdata.cpp" line="423"/>
+        <location filename="../gallerychartdata.cpp" line="686"/>
+        <source>Category %1</source>
+        <translation>Category %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="424"/>
+        <location filename="../gallerychartdata.cpp" line="686"/>
+        <source>Dimension %1</source>
+        <translation>Dimension %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="425"/>
+        <location filename="../gallerychartdata.cpp" line="700"/>
+        <source>Slice %1</source>
+        <translation>Slice %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="581"/>
+        <source>Overview: adjacent dimensions are grouped by their mean.</source>
+        <translation>Overview: adjacent dimensions are grouped by their mean.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="584"/>
+        <source>Overview: adjacent records are grouped by their sum.</source>
+        <translation>Overview: adjacent records are grouped by their sum.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="586"/>
+        <source>Overview: adjacent records are summed, keeping positive and negative values separate.</source>
+        <translation>Overview: adjacent records are summed, keeping positive and negative values separate.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="589"/>
+        <source>Overview: adjacent columns are averaged for each row.</source>
+        <translation>Overview: adjacent columns are averaged for each row.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="591"/>
+        <source>Overview: evenly spaced source records are shown; the trend uses all records.</source>
+        <translation>Overview: evenly spaced source records are shown; the trend uses all records.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="592"/>
+        <source>Overview: each group retains its minimum and maximum. Raw records remain available.</source>
+        <translation>Overview: each group retains its minimum and maximum. Raw records remain available.</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="646"/>
+        <source>Records %1–%2</source>
+        <translation>Records %1–%2</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="646"/>
+        <source>Columns %1–%2</source>
+        <translation>Columns %1–%2</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="798"/>
+        <source>columns (40 cells each)</source>
+        <translation>columns (40 cells each)</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="800"/>
+        <source>dimensions</source>
+        <translation>dimensions</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="802"/>
+        <source>slices</source>
+        <translation>slices</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="803"/>
+        <source>categories per series</source>
+        <translation>categories per series</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="803"/>
+        <source>points per series</source>
+        <translation>points per series</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="426"/>
         <source>Usability</source>
         <translation>Usability</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="423"/>
+        <location filename="../gallerychartdata.cpp" line="427"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="424"/>
+        <location filename="../gallerychartdata.cpp" line="428"/>
         <source>Visits</source>
         <translation>Visits</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="425"/>
+        <location filename="../gallerychartdata.cpp" line="429"/>
         <source>Wind</source>
         <translation>Wind</translation>
     </message>
@@ -1973,132 +2056,233 @@
 <context>
     <name>GalleryChartPreview</name>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Line</source>
         <translation>Line</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Area</source>
         <translation>Area</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Grouped bars</source>
         <translation>Grouped bars</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Stacked bars</source>
         <translation>Stacked bars</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Scatter</source>
         <translation>Scatter</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Bubble</source>
         <translation>Bubble</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Pie</source>
         <translation>Pie</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Doughnut</source>
         <translation>Doughnut</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Radar</source>
         <translation>Radar</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Heatmap</source>
         <translation>Heatmap</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Bar + line</source>
         <translation>Bar + line</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Time axis</source>
         <translation>Time axis</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Log axis</source>
         <translation>Log axis</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Positive / negative</source>
         <translation>Positive / negative</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="16"/>
+        <location filename="../GalleryChartPreview.qml" line="18"/>
         <source>Scatter + trend</source>
         <translation>Scatter + trend</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="73"/>
+        <location filename="../GalleryChartPreview.qml" line="74"/>
+        <source>Add data</source>
+        <translation>Add data</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="80"/>
+        <source>Remove latest</source>
+        <translation>Remove latest</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="86"/>
+        <source>Clear data</source>
+        <translation>Clear data</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="92"/>
+        <source>Restore demo</source>
+        <translation>Restore demo</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="97"/>
+        <source>Million-sample preset</source>
+        <translation>Million-sample preset</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="103"/>
+        <location filename="../GalleryChartPreview.qml" line="270"/>
+        <source>Stop stress test</source>
+        <translation>Stop stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="103"/>
+        <location filename="../GalleryChartPreview.qml" line="270"/>
+        <source>Start stress test</source>
+        <translation>Start stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="111"/>
+        <source>%1 / %2 %3 · %4 samples in total</source>
+        <translation>%1 / %2 %3 · %4 samples in total</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="132"/>
+        <source>Radar needs at least 3 dimensions. Add more data.</source>
+        <translation>Radar needs at least 3 dimensions. Add more data.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="133"/>
+        <source>No data. Add data or restore the demo to begin.</source>
+        <translation>No data. Add data or restore the demo to begin.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="140"/>
+        <source>%1 raw samples · %2 preview samples
+%3</source>
+        <translation>%1 raw samples · %2 preview samples
+%3</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="150"/>
         <source>Zoom in</source>
         <translation>Zoom in</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="79"/>
+        <location filename="../GalleryChartPreview.qml" line="156"/>
         <source>Zoom out</source>
         <translation>Zoom out</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="86"/>
+        <location filename="../GalleryChartPreview.qml" line="161"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="91"/>
-        <source>Pause live</source>
-        <translation>Pause live</translation>
+        <location filename="../GalleryChartPreview.qml" line="179"/>
+        <source>Tooltips</source>
+        <translation>Tooltips</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="91"/>
-        <source>Start live</source>
-        <translation>Start live</translation>
+        <location filename="../GalleryChartPreview.qml" line="191"/>
+        <location filename="../GalleryChartPreview.qml" line="195"/>
+        <source>Batch size</source>
+        <translation>Batch size</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="101"/>
+        <location filename="../GalleryChartPreview.qml" line="205"/>
+        <location filename="../GalleryChartPreview.qml" line="209"/>
+        <source>Data limit</source>
+        <translation>Data limit</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="220"/>
+        <location filename="../GalleryChartPreview.qml" line="224"/>
+        <source>Update interval (ms)</source>
+        <translation>Update interval (ms)</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="235"/>
+        <source>Batch size and data limit use %1. At the limit, new data replaces the oldest data.</source>
+        <translation>Batch size and data limit use %1. At the limit, new data replaces the oldest data.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="242"/>
+        <source>The million-sample preset sets the total raw-data limit, batch size and interval. Start the stress test to fill it gradually. Large datasets use a sampled or grouped overview; all raw records are retained up to the limit.</source>
+        <translation>The million-sample preset sets the total raw-data limit, batch size and interval. Start the stress test to fill it gradually. Large datasets use a sampled or grouped overview; all raw records are retained up to the limit.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="263"/>
+        <source>Stress test running — stop at any time</source>
+        <translation>Stress test running — stop at any time</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="264"/>
+        <source>Stress test stopped — results retained</source>
+        <translation>Stress test stopped — results retained</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="265"/>
+        <source>Continuous stress test</source>
+        <translation>Continuous stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="286"/>
+        <source>Continuously adds 4 batches, then removes 1. Switching charts or leaving this page stops the test. Statistics measure data updates, not rendering FPS.</source>
+        <translation>Continuously adds 4 batches, then removes 1. Switching charts or leaving this page stops the test. Statistics measure data updates, not rendering FPS.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="163"/>
         <source>Legend</source>
         <translation>Legend</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="106"/>
+        <location filename="../GalleryChartPreview.qml" line="168"/>
         <source>Grid</source>
         <translation>Grid</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="111"/>
+        <location filename="../GalleryChartPreview.qml" line="173"/>
         <source>Crosshair</source>
         <translation>Crosshair</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="120"/>
-        <source>Capacity</source>
-        <translation>Capacity</translation>
+        <location filename="../GalleryChartPreview.qml" line="277"/>
+        <source>%1 s · %2 updates · %3 updates/s
+Total added: %4 samples · total removed/replaced: %5 samples
+Slowest data batch: %6 ms</source>
+        <translation>%1 s · %2 updates · %3 updates/s
+Total added: %4 samples · total removed/replaced: %5 samples
+Slowest data batch: %6 ms</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="142"/>
-        <source>%1 retained samples per series · display budget %2</source>
-        <translation>%1 retained samples per series · display budget %2</translation>
-    </message>
-    <message>
-        <location filename="../GalleryChartPreview.qml" line="149"/>
+        <location filename="../GalleryChartPreview.qml" line="295"/>
         <source>Scroll to zoom, drag to pan, click a legend to toggle visibility. Use +/−, arrow keys and Home when focused.</source>
         <translation>Scroll to zoom, drag to pan, click a legend to toggle visibility. Use +/−, arrow keys and Home when focused.</translation>
     </message>
@@ -2135,6 +2319,430 @@
         <location filename="../GalleryComponentPage.qml" line="110"/>
         <source>Copy</source>
         <translation>Copy</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataDemo</name>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Value</source>
+        <translation>Value</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="80"/>
+        <location filename="../gallerydatademo.cpp" line="118"/>
+        <source>Welcome! Try switching languages while writing a message.</source>
+        <translation>Welcome! Try switching languages while writing a message.</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="82"/>
+        <location filename="../gallerydatademo.cpp" line="152"/>
+        <source>You</source>
+        <translation>You</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="110"/>
+        <location filename="../gallerydatademo.cpp" line="170"/>
+        <source>Ready</source>
+        <translation>Ready</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="139"/>
+        <source>Message %1 · A local demo, with no network request. </source>
+        <translation>Message %1 · A local demo, with no network request. </translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="152"/>
+        <source>Demo contact</source>
+        <translation>Demo contact</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="169"/>
+        <source>Record %1</source>
+        <translation>Record %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="190"/>
+        <source>Updated</source>
+        <translation>Updated</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="308"/>
+        <source>Demo attachment %1</source>
+        <translation>Demo attachment %1</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataPreview</name>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="59"/>
+        <source>Edit real model cells, select and locate rows, resize columns, and keep scrolling while data changes.</source>
+        <translation>Edit real model cells, select and locate rows, resize columns, and keep scrolling while data changes.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="61"/>
+        <source>Try Send or Enter, whitespace rejection and long single-line text. Continuous submissions use this same composer and appear in the history below.</source>
+        <translation>Try Send or Enter, whitespace rejection and long single-line text. Continuous submissions use this same composer and appear in the history below.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="62"/>
+        <source>Try incoming and outgoing messages, delivery states, long text and attachment placeholders. Turn off tail following to read history during live updates.</source>
+        <translation>Try incoming and outgoing messages, delivery states, long text and attachment placeholders. Turn off tail following to read history during live updates.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="69"/>
+        <source>Add a batch</source>
+        <translation>Add a batch</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <source>Update a batch</source>
+        <translation>Update a batch</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <source>Change delivery states</source>
+        <translation>Change delivery states</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="83"/>
+        <source>Remove latest batch</source>
+        <translation>Remove latest batch</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="89"/>
+        <source>Clear data</source>
+        <translation>Clear data</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="95"/>
+        <source>Restore demo</source>
+        <translation>Restore demo</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <source>Stop stress test</source>
+        <translation>Stop stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <source>Start stress test</source>
+        <translation>Start stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="109"/>
+        <source>%1 / %2 rows</source>
+        <translation>%1 / %2 rows</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="110"/>
+        <source>%1 / %2 messages</source>
+        <translation>%1 / %2 messages</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <source>No rows. Add data to begin.</source>
+        <translation>No rows. Add data to begin.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <source>No messages yet. Send one to begin.</source>
+        <translation>No messages yet. Send one to begin.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="145"/>
+        <source>Resizable columns</source>
+        <translation>Resizable columns</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="146"/>
+        <source>First row</source>
+        <translation>First row</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="147"/>
+        <source>Last row</source>
+        <translation>Last row</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="152"/>
+        <source>Select a row, then edit a cell</source>
+        <translation>Select a row, then edit a cell</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="161"/>
+        <source>Row number</source>
+        <translation>Row number</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Value</source>
+        <translation>Value</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="168"/>
+        <source>Column to edit</source>
+        <translation>Column to edit</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="172"/>
+        <source>Delete selected row</source>
+        <translation>Delete selected row</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="183"/>
+        <source>Cell content</source>
+        <translation>Cell content</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="188"/>
+        <source>Apply cell edit</source>
+        <translation>Apply cell edit</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="201"/>
+        <source>Follow latest messages</source>
+        <translation>Follow latest messages</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="204"/>
+        <source>First message</source>
+        <translation>First message</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="205"/>
+        <source>Latest message</source>
+        <translation>Latest message</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Text</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Image placeholder</source>
+        <translation>Image placeholder</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Audio placeholder</source>
+        <translation>Audio placeholder</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Video placeholder</source>
+        <translation>Video placeholder</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="225"/>
+        <source>Message type</source>
+        <translation>Message type</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="229"/>
+        <source>Receive a message</source>
+        <translation>Receive a message</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="234"/>
+        <source>Send a sample</source>
+        <translation>Send a sample</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="238"/>
+        <source>Message length</source>
+        <translation>Message length</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="244"/>
+        <source>Generated message length</source>
+        <translation>Generated message length</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="258"/>
+        <source>Load long text</source>
+        <translation>Load long text</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="259"/>
+        <source>Long text with spaces, numbers 123 and punctuation. </source>
+        <translation>Long text with spaces, numbers 123 and punctuation. </translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="263"/>
+        <source>Try whitespace</source>
+        <translation>Try whitespace</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="266"/>
+        <source>Clear draft</source>
+        <translation>Clear draft</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="273"/>
+        <source>Draft: %1 characters · whitespace-only submissions are ignored</source>
+        <translation>Draft: %1 characters · whitespace-only submissions are ignored</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="278"/>
+        <source>Inspect a message and change its delivery state</source>
+        <translation>Inspect a message and change its delivery state</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="290"/>
+        <source>Message number</source>
+        <translation>Message number</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Pending</source>
+        <translation>Pending</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Sent</source>
+        <translation>Sent</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Failed</source>
+        <translation>Failed</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="299"/>
+        <source>Delivery state</source>
+        <translation>Delivery state</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="303"/>
+        <source>Delete selected message</source>
+        <translation>Delete selected message</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="318"/>
+        <source>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</source>
+        <translation>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataStressPanel</name>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="16"/>
+        <source>Continuous stress test</source>
+        <translation>Continuous stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="22"/>
+        <location filename="../GalleryDataStressPanel.qml" line="30"/>
+        <source>Maximum operations per batch</source>
+        <translation>Maximum operations per batch</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="35"/>
+        <location filename="../GalleryDataStressPanel.qml" line="43"/>
+        <source>Data limit</source>
+        <translation>Data limit</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="48"/>
+        <location filename="../GalleryDataStressPanel.qml" line="55"/>
+        <source>Update interval (ms)</source>
+        <translation>Update interval (ms)</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Continuous additions</source>
+        <translation>Continuous additions</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Mixed additions, updates and deletions</source>
+        <translation>Mixed additions, updates and deletions</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Continuous updates</source>
+        <translation>Continuous updates</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="67"/>
+        <source>Stress workload</source>
+        <translation>Stress workload</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="74"/>
+        <source>100,000-row preset</source>
+        <translation>100,000-row preset</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="74"/>
+        <source>10,000-message preset</source>
+        <translation>10,000-message preset</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="80"/>
+        <source>Stop stress test</source>
+        <translation>Stop stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="80"/>
+        <source>Start stress test</source>
+        <translation>Start stress test</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="89"/>
+        <source>%1 s · %2 batches · %3 operations/s
+Added: %4 · updated: %5 · removed: %6 · rejected blank submissions: %7
+Last batch: %8 operations · slowest data batch: %9 ms</source>
+        <translation>%1 s · %2 batches · %3 operations/s
+Added: %4 · updated: %5 · removed: %6 · rejected blank submissions: %7
+Last batch: %8 operations · slowest data batch: %9 ms</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="101"/>
+        <source>All rows remain in the table model. At the limit, additions update existing rows. Mixed mode adds four batches, updates one, then deletes one.</source>
+        <translation>All rows remain in the table model. At the limit, additions update existing rows. Mixed mode adds four batches, updates one, then deletes one.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="103"/>
+        <source>All retained messages remain in the model. At the limit, new messages remove the oldest. Mixed mode adds four batches, changes delivery states once, then deletes one batch.</source>
+        <translation>All retained messages remain in the model. At the limit, new messages remove the oldest. Mixed mode adds four batches, changes delivery states once, then deletes one batch.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="104"/>
+        <source>Calls the real composer submit action, with a blank attempt every fifth submission. The draft is restored when stopped. At the limit, the oldest history is removed.</source>
+        <translation>Calls the real composer submit action, with a blank attempt every fifth submission. The draft is restored when stopped. At the limit, the oldest history is removed.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="110"/>
+        <source>Presets configure the limit; Start fills it gradually. Batches yield after about 12 ms of data work. Clear data before lowering the limit below the current count. Leaving or hiding the page stops the test. Statistics cover data operations, not rendering FPS or network performance.</source>
+        <translation>Presets configure the limit; Start fills it gradually. Batches yield after about 12 ms of data work. Clear data before lowering the limit below the current count. Leaving or hiding the page stops the test. Statistics cover data operations, not rendering FPS or network performance.</translation>
     </message>
 </context>
 <context>
@@ -2965,419 +3573,363 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GalleryPreview</name>
     <message>
-        <location filename="../GalleryPreview.qml" line="108"/>
-        <location filename="../GalleryPreview.qml" line="269"/>
+        <location filename="../GalleryPreview.qml" line="104"/>
+        <location filename="../GalleryPreview.qml" line="265"/>
         <source>Continue</source>
         <translation>Continue</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="113"/>
+        <location filename="../GalleryPreview.qml" line="109"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="117"/>
+        <location filename="../GalleryPreview.qml" line="113"/>
         <source>Danger</source>
         <translation>Danger</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="122"/>
-        <location filename="../GalleryPreview.qml" line="144"/>
-        <location filename="../GalleryPreview.qml" line="154"/>
-        <location filename="../GalleryPreview.qml" line="163"/>
-        <location filename="../GalleryPreview.qml" line="173"/>
-        <location filename="../GalleryPreview.qml" line="183"/>
+        <location filename="../GalleryPreview.qml" line="118"/>
+        <location filename="../GalleryPreview.qml" line="140"/>
+        <location filename="../GalleryPreview.qml" line="150"/>
+        <location filename="../GalleryPreview.qml" line="159"/>
+        <location filename="../GalleryPreview.qml" line="169"/>
+        <location filename="../GalleryPreview.qml" line="179"/>
         <source>Disabled</source>
         <translation>Disabled</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="126"/>
+        <location filename="../GalleryPreview.qml" line="122"/>
         <source>Loading</source>
         <translation>Loading</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="131"/>
+        <location filename="../GalleryPreview.qml" line="127"/>
         <source>Activated %1 times</source>
         <translation>Activated %1 times</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="142"/>
+        <location filename="../GalleryPreview.qml" line="138"/>
         <source>Enable notifications</source>
         <translation>Enable notifications</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="143"/>
+        <location filename="../GalleryPreview.qml" line="139"/>
         <source>Select all</source>
         <translation>Select all</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="145"/>
+        <location filename="../GalleryPreview.qml" line="141"/>
         <source>Notifications enabled</source>
         <translation>Notifications enabled</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="145"/>
+        <location filename="../GalleryPreview.qml" line="141"/>
         <source>Notifications disabled</source>
         <translation>Notifications disabled</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="152"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="148"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Local workspace</source>
         <translation>Local workspace</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="153"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="149"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Cloud workspace</source>
         <translation>Cloud workspace</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="161"/>
+        <location filename="../GalleryPreview.qml" line="157"/>
         <source>Wi-Fi</source>
         <translation>Wi-Fi</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="162"/>
+        <location filename="../GalleryPreview.qml" line="158"/>
         <source>Airplane mode</source>
         <translation>Airplane mode</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="164"/>
+        <location filename="../GalleryPreview.qml" line="160"/>
         <source>Connected</source>
         <translation>Connected</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="164"/>
+        <location filename="../GalleryPreview.qml" line="160"/>
         <source>Disconnected</source>
         <translation>Disconnected</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="171"/>
+        <location filename="../GalleryPreview.qml" line="167"/>
         <source>Volume: %1%</source>
         <translation>Volume: %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="172"/>
+        <location filename="../GalleryPreview.qml" line="168"/>
         <source>Volume</source>
         <translation>Volume</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="180"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="176"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Workspace</source>
         <translation>Workspace</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Touch</source>
         <translation>Touch</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Mobile</source>
         <translation>Mobile</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Interaction density</source>
         <translation>Interaction density</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="191"/>
+        <location filename="../GalleryPreview.qml" line="187"/>
         <source>Your message</source>
         <translation>Your message</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="197"/>
+        <location filename="../GalleryPreview.qml" line="193"/>
         <source>Type something…</source>
         <translation>Type something…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="201"/>
+        <location filename="../GalleryPreview.qml" line="197"/>
         <source>%1 characters</source>
         <translation>%1 characters</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="211"/>
+        <location filename="../GalleryPreview.qml" line="207"/>
         <source>Server address</source>
         <translation>Server address</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="220"/>
+        <location filename="../GalleryPreview.qml" line="216"/>
         <source>Valid IPv4 address</source>
         <translation>Valid IPv4 address</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="220"/>
+        <location filename="../GalleryPreview.qml" line="216"/>
         <source>Enter an IPv4 address</source>
         <translation>Enter an IPv4 address</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="230"/>
+        <location filename="../GalleryPreview.qml" line="226"/>
         <source>Make room for good design.</source>
         <translation>Make room for good design.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="237"/>
+        <location filename="../GalleryPreview.qml" line="233"/>
         <source>Clear hierarchy makes an interface easier to read.</source>
         <translation>Clear hierarchy makes an interface easier to read.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="242"/>
+        <location filename="../GalleryPreview.qml" line="238"/>
         <source>Secondary text adds context without competing for attention.</source>
         <translation>Secondary text adds context without competing for attention.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="256"/>
+        <location filename="../GalleryPreview.qml" line="252"/>
         <source>A place for your content.</source>
         <translation>A place for your content.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="263"/>
+        <location filename="../GalleryPreview.qml" line="259"/>
         <source>Group related controls on a consistent surface.</source>
         <translation>Group related controls on a consistent surface.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Success</source>
         <translation>Success</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Warning</source>
         <translation>Warning</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="283"/>
+        <location filename="../GalleryPreview.qml" line="279"/>
         <source>Alert severity</source>
         <translation>Alert severity</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="287"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Your changes have been saved.</source>
         <translation>Your changes have been saved.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="294"/>
+        <location filename="../GalleryPreview.qml" line="290"/>
         <source>Show alert</source>
         <translation>Show alert</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="321"/>
+        <location filename="../GalleryPreview.qml" line="317"/>
         <source>Working on it…</source>
         <translation>Working on it…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="329"/>
+        <location filename="../GalleryPreview.qml" line="325"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="329"/>
+        <location filename="../GalleryPreview.qml" line="325"/>
         <source>Resume</source>
         <translation>Resume</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="334"/>
+        <location filename="../GalleryPreview.qml" line="330"/>
         <source>One turn every 900 ms. Reduced motion stops the animation.</source>
         <translation>One turn every 900 ms. Reduced motion stops the animation.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="355"/>
-        <location filename="../GalleryPreview.qml" line="377"/>
+        <location filename="../GalleryPreview.qml" line="351"/>
+        <location filename="../GalleryPreview.qml" line="373"/>
         <source>Progress</source>
         <translation>Progress</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="358"/>
+        <location filename="../GalleryPreview.qml" line="354"/>
         <source>%1% complete</source>
         <translation>%1% complete</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="387"/>
+        <location filename="../GalleryPreview.qml" line="383"/>
         <source>Hover over me</source>
         <translation>Hover over me</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="389"/>
+        <location filename="../GalleryPreview.qml" line="385"/>
         <source>A little context, right where you need it.</source>
         <translation>A little context, right where you need it.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="394"/>
+        <location filename="../GalleryPreview.qml" line="390"/>
         <source>Leave the pointer over the button to see the tooltip.</source>
         <translation>Leave the pointer over the button to see the tooltip.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="412"/>
+        <location filename="../GalleryPreview.qml" line="408"/>
         <source>Current page: %1</source>
         <translation>Current page: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="428"/>
+        <location filename="../GalleryPreview.qml" line="424"/>
         <source>Selected: %1</source>
         <translation>Selected: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="444"/>
+        <location filename="../GalleryPreview.qml" line="440"/>
         <source>Open popup</source>
         <translation>Open popup</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="449"/>
+        <location filename="../GalleryPreview.qml" line="445"/>
         <source>Escape or click outside to close.</source>
         <translation>Escape or click outside to close.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="463"/>
+        <location filename="../GalleryPreview.qml" line="459"/>
         <source>A moment of focus.</source>
         <translation>A moment of focus.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="470"/>
+        <location filename="../GalleryPreview.qml" line="466"/>
         <source>Keep the important action within reach.</source>
         <translation>Keep the important action within reach.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="475"/>
-        <location filename="../GalleryPreview.qml" line="522"/>
+        <location filename="../GalleryPreview.qml" line="471"/>
+        <location filename="../GalleryPreview.qml" line="518"/>
         <source>Close</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="491"/>
+        <location filename="../GalleryPreview.qml" line="487"/>
         <source>Open drawer</source>
         <translation>Open drawer</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="496"/>
+        <location filename="../GalleryPreview.qml" line="492"/>
         <source>A side panel keeps the current page in view.</source>
         <translation>A side panel keeps the current page in view.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="510"/>
+        <location filename="../GalleryPreview.qml" line="506"/>
         <source>More room for the details.</source>
         <translation>More room for the details.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="517"/>
+        <location filename="../GalleryPreview.qml" line="513"/>
         <source>Navigation, settings or supporting content can live here.</source>
         <translation>Navigation, settings or supporting content can live here.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="540"/>
-        <location filename="../GalleryPreview.qml" line="550"/>
-        <source>Ready</source>
-        <translation>Ready</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="541"/>
-        <source>Desktop / Touch / Mobile</source>
-        <translation>Desktop / Touch / Mobile</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="545"/>
-        <source>Live</source>
-        <translation>Live</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="546"/>
-        <source>Light / Dark</source>
-        <translation>Light / Dark</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Component</source>
-        <translation>Component</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Platform</source>
-        <translation>Platform</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="579"/>
-        <source>You</source>
-        <translation>You</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="587"/>
-        <source>Welcome! Try switching languages while writing a message.</source>
-        <translation>Welcome! Try switching languages while writing a message.</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="631"/>
-        <source>Last message: %1</source>
-        <translation>Last message: %1</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="631"/>
-        <source>Write a message and press Send.</source>
-        <translation>Write a message and press Send.</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="650"/>
+        <location filename="../GalleryPreview.qml" line="544"/>
         <source>Front</source>
         <translation>Front</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="658"/>
+        <location filename="../GalleryPreview.qml" line="552"/>
         <source>Back</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="665"/>
+        <location filename="../GalleryPreview.qml" line="559"/>
         <source>Flip card</source>
         <translation>Flip card</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="680"/>
+        <location filename="../GalleryPreview.qml" line="574"/>
         <source>Thoughtful details make everyday interfaces feel better.</source>
         <translation>Thoughtful details make everyday interfaces feel better.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="691"/>
+        <location filename="../GalleryPreview.qml" line="585"/>
         <source>Every good interface starts with a small detail.</source>
         <translation>Every good interface starts with a small detail.</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="697"/>
+        <location filename="../GalleryPreview.qml" line="591"/>
         <source>Restart</source>
         <translation>Restart</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="780"/>
+        <location filename="../GalleryPreview.qml" line="674"/>
         <source>Drag me</source>
         <translation>Drag me</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="806"/>
+        <location filename="../GalleryPreview.qml" line="700"/>
         <source>Resize me</source>
         <translation>Resize me</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="834"/>
+        <location filename="../GalleryPreview.qml" line="728"/>
         <source>The counter reports frame callbacks, not monitor refresh rate.</source>
         <translation>The counter reports frame callbacks, not monitor refresh rate.</translation>
     </message>
@@ -3541,7 +4093,7 @@ Keep notes, drafts and everyday details together.</translation>
         <translation>Choose a component to explore its behavior and QML example.</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="280"/>
+        <location filename="../Main.qml" line="284"/>
         <source>No components found. Try a different name.</source>
         <translation>No components found. Try a different name.</translation>
     </message>
@@ -3549,7 +4101,7 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>QCatUiKit::ChartItem</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="579"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
         <source>Intensity</source>
         <translation>Intensity</translation>
     </message>

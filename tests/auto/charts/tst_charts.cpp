@@ -4,20 +4,79 @@
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QQuickWindow>
+#include <QScopeGuard>
 #include <QtTest>
 #include <limits>
 using namespace QCatUiKit;
 class TestChart : public ChartItem
 {
   public:
+    using ChartItem::mouseMoveEvent;
     using ChartItem::mousePressEvent;
     using ChartItem::mouseReleaseEvent;
+    using ChartItem::mouseUngrabEvent;
     using ChartItem::updatePolish;
 };
 class ChartTests : public QObject
 {
     Q_OBJECT
   private slots:
+    void destructionWhileAttachedToWindow()
+    {
+        QQuickWindow window;
+        auto *chart = new ChartItem(window.contentItem());
+        chart->setSize({640, 400});
+        delete chart;
+        QVERIFY(window.contentItem()->childItems().isEmpty());
+    }
+    void canceledDrag_data()
+    {
+        QTest::addColumn<bool>("disableInteraction");
+        QTest::addColumn<bool>("moveBeforeCancel");
+        QTest::newRow("ungrab-press") << false << false;
+        QTest::newRow("ungrab-drag") << false << true;
+        QTest::newRow("disabled-press") << true << false;
+        QTest::newRow("disabled-drag") << true << true;
+    }
+    void canceledDrag()
+    {
+        QFETCH(bool, disableInteraction);
+        QFETCH(bool, moveBeforeCancel);
+        TestChart chart;
+        chart.setSize({640, 400});
+        QVERIFY(chart.setViewRange(0, 10, 0, 10));
+        const auto start = chart.plotRect().center();
+        QSignalSpy clicked(&chart, &ChartItem::pointClicked);
+        QMouseEvent press(QEvent::MouseButtonPress, start, start, Qt::LeftButton, Qt::LeftButton,
+                          Qt::NoModifier);
+        chart.mousePressEvent(&press);
+        const auto end = start + QPointF(30, 20);
+        QMouseEvent move(QEvent::MouseMove, end, end, Qt::NoButton, Qt::LeftButton, Qt::NoModifier);
+        if (moveBeforeCancel)
+            chart.mouseMoveEvent(&move);
+        if (disableInteraction)
+        {
+            chart.setInteractive(false);
+            chart.setInteractive(true);
+        }
+        else
+            chart.mouseUngrabEvent();
+        QVERIFY(!chart.keepMouseGrab());
+        const auto before = chart.mapToValue(start);
+        const auto next = end + QPointF(30, 20);
+        QMouseEvent furtherMove(QEvent::MouseMove, next, next, Qt::NoButton, Qt::LeftButton,
+                                Qt::NoModifier);
+        chart.mouseMoveEvent(&furtherMove);
+        QCOMPARE(chart.mapToValue(start), before);
+        QMouseEvent release(QEvent::MouseButtonRelease, end, end, Qt::LeftButton, Qt::NoButton,
+                            Qt::NoModifier);
+        chart.mouseReleaseEvent(&release);
+        QCOMPARE(clicked.size(), 0);
+        chart.mousePressEvent(&press);
+        chart.mouseReleaseEvent(&release);
+        QCOMPARE(clicked.size(), 1);
+        QVERIFY(!chart.keepMouseGrab());
+    }
     void themeAndOwnership()
     {
         TestChart chart;
@@ -112,6 +171,45 @@ class ChartTests : public QObject
         QCOMPARE(ticks, QVector<double>({1, 10, 100, 1000}));
         ticks = Detail::ticks({-3, 7}, ChartAxis::Linear, 6);
         QVERIFY(ticks.contains(0));
+    }
+    void largeAxisLabels_data()
+    {
+        QTest::addColumn<QString>("localeName");
+        QTest::newRow("english") << QStringLiteral("en_US");
+        QTest::newRow("chinese") << QStringLiteral("zh_CN");
+    }
+    void largeAxisLabels()
+    {
+        QFETCH(QString, localeName);
+        const QLocale previous;
+        const auto restore = qScopeGuard([previous] { QLocale::setDefault(previous); });
+        QLocale::setDefault(QLocale(localeName));
+        ChartAxis axis;
+        QCOMPARE(Detail::label(3300000, &axis, {0, 5000000}), QString("3,300,000"));
+        QCOMPARE(Detail::label(-1500000, &axis, {-2000000, 0}), QString("-1,500,000"));
+        QCOMPARE(Detail::label(1000002, &axis, {1000000, 1000010}), QString("1,000,002"));
+        QCOMPARE(Detail::label(1000004, &axis, {1000000, 1000010}), QString("1,000,004"));
+        const Detail::Range fractional{1000000, 1000000.01};
+        const auto values = Detail::ticks(fractional, axis.scale(), axis.tickCount());
+        QSet<QString> labels;
+        for (double value : values)
+        {
+            const auto label = Detail::label(value, &axis, fractional);
+            bool ok = false;
+            const double parsed = QLocale().toDouble(label, &ok);
+            QVERIFY(ok);
+            QVERIFY(std::abs(parsed - value) < .0001);
+            QVERIFY(!label.contains('e', Qt::CaseInsensitive));
+            labels.insert(label);
+        }
+        QCOMPARE(labels.size(), values.size());
+        axis.setScale(ChartAxis::Logarithmic);
+        QCOMPARE(Detail::label(1000000, &axis, {1, 100000000}), QString("1,000,000"));
+        QCOMPARE(Detail::label(.000001, &axis, {.000001, .00001}), QString("0.000001"));
+        axis.setScale(ChartAxis::Category);
+        QCOMPARE(Detail::label(1000000, &axis, {0, 2000000}), QString("1,000,000"));
+        axis.setCategories({"Original category"});
+        QCOMPARE(Detail::label(0, &axis, {0, 1}), QString("Original category"));
     }
     void chartNavigationAndLookup()
     {

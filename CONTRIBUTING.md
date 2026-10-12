@@ -1,9 +1,51 @@
-# 贡献约定
+# 贡献指南
 
-源码与公开头放在 `src/uikit`；C++ 文件使用小写名称，私有头以 `_p.h` 结尾。QML 文件保留类型名称。示例位于 `examples/uikit`，自动测试位于 `tests/auto`，模块文档位于 `src/uikit/doc`。新增公开头时同步维护模块 CMake 中的小写头、兼容头和无扩展名转发头列表。
+[项目首页](README.md) · [文档索引](src/uikit/doc/README.md)
 
-提交实现前先明确组件的公开属性、状态、交互与兼容范围。新增能力更新 COMPONENTS，迁移变化更新 MIGRATION，ABI 相关改动更新 ABI。
+## 开发入口
 
-本地检查：构建库与 gallery；ctest；QCatUiKit_qmllint 与 qcat-gallery_qmllint；安装后独立消费者；相关明暗／密度视觉验证。测试针对用户能观察到的行为，避免绑定内部对象树。ABI 变更保留旧消费者二进制执行替换检查。
+环境和构建步骤见 [构建与接入](src/uikit/doc/BUILDING.md)。库代码位于 `src/uikit`，QML 位于其 `qml/`，Gallery 位于 `examples/uikit/gallery`，自动测试位于 `tests/auto`。
 
-新源文件使用 `SPDX-License-Identifier: Apache-2.0`。引入代码或资源保留其来源和许可；不添加 Qt 5、QrenCodeQml 或 lottie 依赖。
+C++ 文件使用小写名称，私有头以 `_p.h` 结尾；QML 文件使用类型名。新源文件使用 `SPDX-License-Identifier: Apache-2.0`。包含外部代码或资源时保留来源、版权与许可证，并更新 NOTICE／LICENSES。
+
+## 实现约定
+
+先明确公开属性、信号、状态、输入和边界。修复缺陷时优先复现用户可见行为，再验证修复结果。
+
+- 使用主题 Token 和逻辑像素，支持明暗主题及需要的交互密度。
+- 复用 Qt Controls 的点击、键盘、焦点、禁用和可访问性行为。
+- 在 QObject 所属线程修改模型和图表；大批次处理注意事件循环响应。
+- 根据变更检查空数据、边界值、禁用、焦点、RTL、减少动效与对象销毁。
+- 公开头、导出符号、枚举、角色或对象布局发生变化时，按 [ABI](src/uikit/doc/ABI.md) 审查。
+
+新增公开头须同步维护模块 CMake 的真实头、带扩展名转发头和无扩展名转发头列表。新增 QML 类型须加入 qt_add_qml_module。
+
+## 组件与示例
+
+新增或改变组件功能时，同步维护：
+
+1. [组件目录](src/uikit/doc/COMPONENTS.md) 及对应主题、模型或图表说明。
+2. GalleryCatalog 的分类、描述和可复制示例。
+3. 实际交互预览，让用户能操作相应属性和状态。
+4. 中英文 TS 文案；保持占位符和运行时语言切换。
+5. 有必要的可观察行为测试，例如信号、数据、选择、输入与生命周期。
+
+新增测试应验证行为，避免只重复实现或依赖私有对象层级。Gallery 页面可用稳定 objectName 定位演示交互。大容量验证应分批进行，避免让模型检查器在大数据上产生无关的二次复杂度开销。
+
+## 检查
+
+```sh
+cmake --build build/release --parallel
+cmake --build build/release --target QCatUiKit_qmllint qcat-gallery_qmllint
+ctest --test-dir build/release --output-on-failure
+```
+
+按改动补充检查：界面变更查看相关明暗／密度与窄屏布局；安装规则或公开 C++ 接口变更检查独立安装消费者；兼容性变更检查已编译消费者的动态库替换。多配置生成器为构建及测试指定同一配置。完整方法见 [验证说明](src/uikit/doc/VALIDATION.md)。
+
+C++ 遵循根目录 .clang-format。不要提交构建产物、本机 Qt 路径、临时截图或生成的本地分析数据。
+
+## 文档与提交
+
+文档描述当前接口与可复现用法。中英文 README 保持功能、要求、命令与链接一致；详细接口放在对应专题，公共入口放在文档索引。验证说明区分自动测试、视觉检查和未覆盖的平台，不以演示容量推导通用性能结论。
+
+提交说明先写具体问题与修改后的行为，再列与变更相关的验证和限制。发布前核对数字版本、渠道与 ABI 版本，见 [版本管理](src/uikit/doc/VERSIONING.md)。

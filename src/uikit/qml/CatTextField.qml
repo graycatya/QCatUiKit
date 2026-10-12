@@ -20,6 +20,7 @@ T.TextField {
     selectionColor: tokens.primary
     selectedTextColor: tokens.onPrimary
     font.pixelSize: tokens.fontSize
+    verticalAlignment: TextInput.AlignVCenter
     selectByMouse: true
     hoverEnabled: tokens.hoverEnabled
     Text {
@@ -31,7 +32,7 @@ T.TextField {
         font: control.font
         color: control.placeholderTextColor
         visible: control.length === 0 && control.preeditText.length === 0
-        verticalAlignment: Text.AlignVCenter
+        verticalAlignment: control.verticalAlignment
         horizontalAlignment: control.effectiveHorizontalAlignment
         elide: Text.ElideRight
         textFormat: Text.PlainText

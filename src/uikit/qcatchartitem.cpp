@@ -18,6 +18,7 @@
 #include <QSGRendererInterface>
 #include <QSGSimpleRectNode>
 #include <QSGSimpleTextureNode>
+#include <QSGTransformNode>
 #include <QSGVertexColorMaterial>
 #include <QSet>
 #include <QWheelEvent>
@@ -141,7 +142,8 @@ QVariantMap pointMap(ChartSeries *s, int seriesIndex, int i)
     m.insert("seriesName", s->name());
     return m;
 }
-struct Root : QSGNode
+// Keep inherited transform/clip/opacity state when the software renderer adds new children.
+struct Root : QSGTransformNode
 {
     QHash<QString, QSGTexture *> textures;
     QSGTexture *softwareTexture = nullptr;
@@ -243,7 +245,8 @@ class ChartItem::Impl
         const auto rotated = [&](qreal offset)
         {
             return QColor::fromHslF(std::fmod(std::max<qreal>(0., primary.hslHueF()) + offset, 1.),
-                                    std::max<qreal>(.5, primary.hslSaturationF()), primary.lightnessF());
+                                    std::max<qreal>(.5, primary.hslSaturationF()),
+                                    primary.lightnessF());
         };
         const QColor colors[] = {primary,
                                  tokens.value("success").value<QColor>(),
@@ -409,16 +412,40 @@ class ChartItem::Impl
         }
         return h;
     }
-    void axes()
+    void axes(qreal width)
     {
         Batch gridBatch{gridColor, {}, false}, border{borderColor, {}, false};
-        for (double t : ticks(xr, x->scale(), x->tickCount()))
+        QFont tickFont = textFont;
+        tickFont.setPixelSize(std::max(9, textFont.pixelSize() - 1));
+        const QFontMetricsF metrics(tickFont);
+        const auto xText = [&](double t)
         {
+            const QString value = label(t, x, xr);
+            const double w =
+                std::min(std::max(1., double(width) - 8), metrics.horizontalAdvance(value) + 6);
+            const double left =
+                std::clamp(map(t, yr.min).x() - w / 2, 4., std::max(4., double(width) - w - 4));
+            return Text{value, QRectF(left, plot.bottom() + 6, w, 22), text, 11};
+        };
+        const auto xValues = ticks(xr, x->scale(), x->tickCount());
+        const double lastLabelLeft = xValues.isEmpty() ? 0 : xText(xValues.last()).rect.left();
+        double previousRight = -INFINITY;
+        for (int i = 0; i < xValues.size(); ++i)
+        {
+            const double t = xValues[i];
             const double px = map(t, yr.min).x();
             if (grid)
                 segment(gridBatch, {px, plot.top()}, {px, plot.bottom()}, 1, smoothing);
             segment(border, {px, plot.bottom()}, {px, plot.bottom() + 4}, 1, smoothing);
-            labels.append({label(t, x, xr), QRectF(px - 45, plot.bottom() + 6, 90, 22), text, 11});
+            const auto entry = xText(t);
+            // Keep full values inside the item and leave space between labels,
+            // reserving the final tick when the axis is narrow.
+            if (entry.rect.left() >= previousRight + 8 &&
+                (i == xValues.size() - 1 || entry.rect.right() + 8 <= lastLabelLeft))
+            {
+                labels.append(entry);
+                previousRight = entry.rect.right();
+            }
         }
         for (double t : ticks(yr, y->scale(), y->tickCount()))
         {
@@ -708,14 +735,24 @@ class ChartItem::Impl
         ranges();
         const double legendH = makeLegend(q->width(), q->height());
         const double top = title.isEmpty() ? 38 : 60;
-        plot = QRectF(radial() ? 20 : 76, top, std::max(1., q->width() - (radial() ? 40 : 100)),
+        double left = radial() ? 20 : 76;
+        if (!radial())
+        {
+            QFont tickFont = textFont;
+            tickFont.setPixelSize(std::max(9, textFont.pixelSize() - 1));
+            const QFontMetricsF metrics(tickFont);
+            for (double t : ticks(yr, y->scale(), y->tickCount()))
+                left = std::max(left, metrics.horizontalAdvance(label(t, y, yr)) + 16);
+            left = std::min(left, std::max(76., q->width() - 120));
+        }
+        plot = QRectF(left, top, std::max(1., q->width() - left - (radial() ? 20 : 24)),
                       std::max(1., q->height() - top - legendH - (radial() ? 15 : 60)));
         labels.append({title, QRectF(16, 6, std::max(1., q->width() - 32), 28), text, 18});
         if (radial())
             polar();
         else
         {
-            axes();
+            axes(q->width());
             cartesian();
         }
         dirty = false;
@@ -747,6 +784,8 @@ ChartItem::ChartItem(QQuickItem *parent) : QQuickItem(parent), d(new Impl)
 }
 ChartItem::~ChartItem()
 {
+    // QQuickItem emits windowChanged while detaching, after our Impl is destroyed.
+    disconnect(this, &QQuickItem::windowChanged, this, nullptr);
     for (auto connection : d->themeConnections)
         disconnect(connection);
     for (auto list : d->connections)
@@ -944,8 +983,27 @@ BOOL_PROPERTY(legendVisible, setLegendVisible, legend)
 BOOL_PROPERTY(gridVisible, setGridVisible, grid)
 BOOL_PROPERTY(tooltipsEnabled, setTooltipsEnabled, tooltips)
 BOOL_PROPERTY(crosshairEnabled, setCrosshairEnabled, crosshair)
-BOOL_PROPERTY(interactive, setInteractive, interactive)
 #undef BOOL_PROPERTY
+bool ChartItem::interactive() const
+{
+    return d->interactive;
+}
+void ChartItem::setInteractive(bool value)
+{
+    if (d->interactive == value)
+        return;
+    d->interactive = value;
+    if (!value)
+    {
+        d->dragging = false;
+        d->moved = false;
+        setKeepMouseGrab(false);
+        d->hover = {-1, -1};
+        emit pointHovered({});
+    }
+    invalidate();
+    emit appearanceChanged();
+}
 QColor ChartItem::backgroundColor() const
 {
     return d->backgroundOverride.isValid() ? d->backgroundOverride
@@ -1385,6 +1443,8 @@ void ChartItem::mousePressEvent(QMouseEvent *e)
         d->press = d->last = e->position();
         d->dragging = true;
         d->moved = false;
+        // A parent Flickable must not steal a chart pan partway through the gesture.
+        setKeepMouseGrab(!d->radial());
         e->accept();
     }
     else
@@ -1407,11 +1467,25 @@ void ChartItem::mouseMoveEvent(QMouseEvent *e)
 }
 void ChartItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (d->dragging && !d->moved)
-        emit pointClicked(dataAt(e->position()));
+    const bool clicked = d->interactive && d->dragging && !d->moved;
     d->dragging = false;
+    d->moved = false;
+    setKeepMouseGrab(false);
+    if (clicked)
+        emit pointClicked(dataAt(e->position()));
     update();
     e->accept();
+}
+void ChartItem::mouseUngrabEvent()
+{
+    setKeepMouseGrab(false);
+    if (!d->dragging)
+        return;
+    d->dragging = false;
+    d->moved = false;
+    d->hover = {-1, -1};
+    emit pointHovered({});
+    update();
 }
 void ChartItem::mouseDoubleClickEvent(QMouseEvent *e)
 {

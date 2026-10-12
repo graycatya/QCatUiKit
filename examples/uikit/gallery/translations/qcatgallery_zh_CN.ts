@@ -1455,517 +1455,600 @@
 <context>
     <name>GalleryChartData</name>
     <message>
-        <location filename="../gallerychartdata.cpp" line="296"/>
+        <location filename="../gallerychartdata.cpp" line="297"/>
         <source>A full day of indoor and outdoor temperatures, sampled every 15 minutes (UTC).</source>
         <translation>室内外全天温度，每 15 分钟采样一次（UTC）。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="299"/>
+        <location filename="../gallerychartdata.cpp" line="300"/>
         <source>Actual</source>
         <translation>实际值</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="300"/>
+        <location filename="../gallerychartdata.cpp" line="301"/>
         <source>Amplitude</source>
         <translation>幅度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="301"/>
+        <location filename="../gallerychartdata.cpp" line="302"/>
         <source>Apr</source>
         <translation>四月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="302"/>
+        <location filename="../gallerychartdata.cpp" line="303"/>
         <source>Area</source>
         <translation>面积图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="303"/>
+        <location filename="../gallerychartdata.cpp" line="304"/>
         <source>Bar + line</source>
         <translation>柱状与折线混合</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="304"/>
+        <location filename="../gallerychartdata.cpp" line="305"/>
         <source>Bubble</source>
         <translation>气泡图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="305"/>
+        <location filename="../gallerychartdata.cpp" line="306"/>
         <source>Budget</source>
         <translation>预算</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="306"/>
+        <location filename="../gallerychartdata.cpp" line="307"/>
         <source>Budget allocation with a central total. Hover over a segment to inspect its value.</source>
         <translation>预算分配，中心显示合计；悬停查看各项数值。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="309"/>
+        <location filename="../gallerychartdata.cpp" line="310"/>
         <source>Change (thousands)</source>
         <translation>变化量（千）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="310"/>
+        <location filename="../gallerychartdata.cpp" line="311"/>
         <source>Compare online and store orders by month. Click a legend entry to hide a series.</source>
         <translation>按月比较线上与门店订单，点击图例切换序列显示。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="313"/>
+        <location filename="../gallerychartdata.cpp" line="314"/>
         <source>Compare two product profiles across six dimensions on a common 0-100 scale.</source>
         <translation>在统一的 0–100 刻度上，比较两款产品的六项指标。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="316"/>
+        <location filename="../gallerychartdata.cpp" line="317"/>
         <source>Conversion (%)</source>
         <translation>转化率（%）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="317"/>
+        <location filename="../gallerychartdata.cpp" line="318"/>
         <source>Core %1</source>
         <translation>主力产品 %1</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="318"/>
+        <location filename="../gallerychartdata.cpp" line="319"/>
         <source>Core products</source>
         <translation>主力产品</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="319"/>
+        <location filename="../gallerychartdata.cpp" line="320"/>
         <source>Daily solar and wind output. Each area fills to zero; the two areas overlap.</source>
         <translation>每日太阳能与风能产出。面积填充到零线，两组面积相互叠加显示。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="322"/>
+        <location filename="../gallerychartdata.cpp" line="323"/>
         <source>Direct</source>
         <translation>直接访问</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="323"/>
+        <location filename="../gallerychartdata.cpp" line="324"/>
         <source>Doughnut</source>
         <translation>环形图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="324"/>
+        <location filename="../gallerychartdata.cpp" line="325"/>
         <source>Email</source>
         <translation>邮件</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="325"/>
+        <location filename="../gallerychartdata.cpp" line="326"/>
         <source>Engineering</source>
         <translation>研发</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="326"/>
+        <location filename="../gallerychartdata.cpp" line="327"/>
         <source>Features</source>
         <translation>功能</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="327"/>
+        <location filename="../gallerychartdata.cpp" line="328"/>
         <source>Feb</source>
         <translation>二月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="328"/>
+        <location filename="../gallerychartdata.cpp" line="329"/>
         <source>Frequency bin</source>
         <translation>频率区间</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="329"/>
+        <location filename="../gallerychartdata.cpp" line="330"/>
         <source>Grouped bars</source>
         <translation>分组柱状图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="330"/>
+        <location filename="../gallerychartdata.cpp" line="331"/>
         <source>Growth A</source>
         <translation>增长 A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="331"/>
+        <location filename="../gallerychartdata.cpp" line="332"/>
         <source>Growth B</source>
         <translation>增长 B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="332"/>
+        <location filename="../gallerychartdata.cpp" line="333"/>
         <source>Heatmap</source>
         <translation>热力图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="333"/>
+        <location filename="../gallerychartdata.cpp" line="334"/>
         <source>Hour of day</source>
         <translation>小时</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="334"/>
+        <location filename="../gallerychartdata.cpp" line="335"/>
         <source>Indoor</source>
         <translation>室内</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="335"/>
+        <location filename="../gallerychartdata.cpp" line="336"/>
         <source>Input</source>
         <translation>输入</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="336"/>
+        <location filename="../gallerychartdata.cpp" line="337"/>
         <source>Intensity</source>
         <translation>强度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="337"/>
+        <location filename="../gallerychartdata.cpp" line="338"/>
         <source>Jan</source>
         <translation>一月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="338"/>
+        <location filename="../gallerychartdata.cpp" line="339"/>
         <source>Jun</source>
         <translation>六月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="339"/>
+        <location filename="../gallerychartdata.cpp" line="340"/>
         <source>Least-squares fit</source>
         <translation>最小二乘拟合</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="340"/>
+        <location filename="../gallerychartdata.cpp" line="341"/>
         <source>Line</source>
         <translation>折线图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="341"/>
-        <source>Live signals - 100,000 samples per series</source>
-        <translation>实时信号 · 每条序列 100,000 个采样点</translation>
+        <location filename="../gallerychartdata.cpp" line="342"/>
+        <source>Live signals</source>
+        <translation>实时信号</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="342"/>
+        <location filename="../gallerychartdata.cpp" line="343"/>
         <source>Log axis</source>
         <translation>对数坐标轴</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="343"/>
+        <location filename="../gallerychartdata.cpp" line="344"/>
         <source>Mar</source>
         <translation>三月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="344"/>
+        <location filename="../gallerychartdata.cpp" line="345"/>
         <source>Marketing</source>
         <translation>市场</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="345"/>
+        <location filename="../gallerychartdata.cpp" line="346"/>
         <source>May</source>
         <translation>五月</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="346"/>
+        <location filename="../gallerychartdata.cpp" line="347"/>
         <source>Measurements</source>
         <translation>测量值</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="347"/>
+        <location filename="../gallerychartdata.cpp" line="348"/>
         <source>Month</source>
         <translation>月份</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="348"/>
+        <location filename="../gallerychartdata.cpp" line="349"/>
         <source>Monthly actual orders as bars and target orders as a line, sharing the same value axis.</source>
         <translation>每月实际订单用柱状图显示，目标订单用折线显示，共用数值轴。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="351"/>
+        <location filename="../gallerychartdata.cpp" line="352"/>
         <source>Monthly orders stacked by channel. The column height represents the total.</source>
         <translation>按渠道堆叠月度订单，柱高表示合计。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="353"/>
+        <location filename="../gallerychartdata.cpp" line="354"/>
         <source>New %1</source>
         <translation>新品 %1</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="354"/>
+        <location filename="../gallerychartdata.cpp" line="355"/>
         <source>New products</source>
         <translation>新品</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="355"/>
+        <location filename="../gallerychartdata.cpp" line="356"/>
         <source>North</source>
         <translation>北区</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="356"/>
+        <location filename="../gallerychartdata.cpp" line="357"/>
         <source>Observed measurements and their least-squares fitted line, sharing XY coordinates.</source>
         <translation>测量散点与最小二乘拟合趋势线，共用 XY 坐标。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="359"/>
+        <location filename="../gallerychartdata.cpp" line="360"/>
         <source>Online</source>
         <translation>线上</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="360"/>
+        <location filename="../gallerychartdata.cpp" line="361"/>
         <source>Operations</source>
         <translation>运营</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="361"/>
+        <location filename="../gallerychartdata.cpp" line="362"/>
         <source>Orders</source>
         <translation>订单</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="362"/>
+        <location filename="../gallerychartdata.cpp" line="363"/>
         <source>Outdoor</source>
         <translation>室外</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="363"/>
+        <location filename="../gallerychartdata.cpp" line="364"/>
         <source>Pie</source>
         <translation>饼图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="364"/>
+        <location filename="../gallerychartdata.cpp" line="365"/>
         <source>Population (log scale)</source>
         <translation>数量（对数刻度）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="365"/>
+        <location filename="../gallerychartdata.cpp" line="366"/>
         <source>Positive / negative</source>
         <translation>正负堆叠</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="366"/>
+        <location filename="../gallerychartdata.cpp" line="367"/>
         <source>Power (W)</source>
         <translation>功率（W）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="367"/>
+        <location filename="../gallerychartdata.cpp" line="368"/>
         <source>Power (kW)</source>
         <translation>功率（kW）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="368"/>
+        <location filename="../gallerychartdata.cpp" line="369"/>
         <source>Product A</source>
         <translation>产品 A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="369"/>
+        <location filename="../gallerychartdata.cpp" line="370"/>
         <source>Product B</source>
         <translation>产品 B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="370"/>
+        <location filename="../gallerychartdata.cpp" line="371"/>
         <source>Product reach versus conversion. Bubble radius represents relative order volume.</source>
         <translation>比较产品触达量与转化率，气泡半径表示相对订单量。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="373"/>
+        <location filename="../gallerychartdata.cpp" line="374"/>
         <source>Q1</source>
         <translation>第 1 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="374"/>
+        <location filename="../gallerychartdata.cpp" line="375"/>
         <source>Q2</source>
         <translation>第 2 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="375"/>
+        <location filename="../gallerychartdata.cpp" line="376"/>
         <source>Q3</source>
         <translation>第 3 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="376"/>
+        <location filename="../gallerychartdata.cpp" line="377"/>
         <source>Q4</source>
         <translation>第 4 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="377"/>
+        <location filename="../gallerychartdata.cpp" line="378"/>
         <source>Q5</source>
         <translation>第 5 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="378"/>
+        <location filename="../gallerychartdata.cpp" line="379"/>
         <source>Q6</source>
         <translation>第 6 季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="379"/>
+        <location filename="../gallerychartdata.cpp" line="380"/>
         <source>Quality</source>
         <translation>质量</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="380"/>
+        <location filename="../gallerychartdata.cpp" line="381"/>
         <source>Quarter</source>
         <translation>季度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="381"/>
+        <location filename="../gallerychartdata.cpp" line="382"/>
         <source>Quarterly changes for two regions. Positive and negative values stack separately.</source>
         <translation>两地区的季度变化，正值与负值分别堆叠。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="384"/>
+        <location filename="../gallerychartdata.cpp" line="385"/>
         <source>Radar</source>
         <translation>雷达图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="385"/>
+        <location filename="../gallerychartdata.cpp" line="386"/>
         <source>Reach (thousands)</source>
         <translation>触达量（千）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="386"/>
+        <location filename="../gallerychartdata.cpp" line="387"/>
         <source>Referral</source>
         <translation>引荐访问</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="387"/>
+        <location filename="../gallerychartdata.cpp" line="388"/>
         <source>Research</source>
         <translation>研究</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="388"/>
+        <location filename="../gallerychartdata.cpp" line="389"/>
         <source>Response</source>
         <translation>响应</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="389"/>
+        <location filename="../gallerychartdata.cpp" line="390"/>
         <source>Sample index</source>
         <translation>采样序号</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="390"/>
+        <location filename="../gallerychartdata.cpp" line="391"/>
         <source>Scatter</source>
         <translation>散点图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="391"/>
+        <location filename="../gallerychartdata.cpp" line="392"/>
         <source>Scatter + trend</source>
         <translation>散点与趋势线</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="392"/>
+        <location filename="../gallerychartdata.cpp" line="393"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="393"/>
+        <location filename="../gallerychartdata.cpp" line="394"/>
         <source>Sensor A</source>
         <translation>传感器 A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="394"/>
+        <location filename="../gallerychartdata.cpp" line="395"/>
         <source>Sensor B</source>
         <translation>传感器 B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="395"/>
+        <location filename="../gallerychartdata.cpp" line="396"/>
         <source>Signal A</source>
         <translation>信号 A</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="396"/>
+        <location filename="../gallerychartdata.cpp" line="397"/>
         <source>Signal B</source>
         <translation>信号 B</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="397"/>
+        <location filename="../gallerychartdata.cpp" line="398"/>
         <source>Social</source>
         <translation>社交媒体</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="398"/>
+        <location filename="../gallerychartdata.cpp" line="399"/>
         <source>Solar</source>
         <translation>太阳能</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="399"/>
+        <location filename="../gallerychartdata.cpp" line="400"/>
         <source>South</source>
         <translation>南区</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="400"/>
+        <location filename="../gallerychartdata.cpp" line="401"/>
         <source>Speed</source>
         <translation>速度</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="401"/>
+        <location filename="../gallerychartdata.cpp" line="402"/>
         <source>Stacked bars</source>
         <translation>堆叠柱状图</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="402"/>
+        <location filename="../gallerychartdata.cpp" line="403"/>
         <source>Store</source>
         <translation>门店</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="403"/>
+        <location filename="../gallerychartdata.cpp" line="404"/>
         <source>Support</source>
         <translation>支持</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="404"/>
+        <location filename="../gallerychartdata.cpp" line="405"/>
         <source>Synthetic frequency intensity over time. Hover over cells; the color bar shows intensity.</source>
         <translation>随时间变化的合成频率强度。悬停查看单元格，色条表示强度范围。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="406"/>
+        <location filename="../gallerychartdata.cpp" line="407"/>
         <source>Target</source>
         <translation>目标值</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="407"/>
+        <location filename="../gallerychartdata.cpp" line="408"/>
         <source>Temperature (C)</source>
         <translation>温度（℃）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="408"/>
+        <location filename="../gallerychartdata.cpp" line="409"/>
         <source>Time (UTC)</source>
         <translation>时间（UTC）</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="409"/>
+        <location filename="../gallerychartdata.cpp" line="410"/>
         <source>Time axis</source>
         <translation>时间坐标轴</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="410"/>
+        <location filename="../gallerychartdata.cpp" line="411"/>
         <source>Time step</source>
         <translation>时间步</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="411"/>
+        <location filename="../gallerychartdata.cpp" line="412"/>
         <source>Traffic sources as shares of a whole. Click legend entries to toggle individual slices.</source>
         <translation>访问来源的占比，点击图例切换扇区显示。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="414"/>
+        <location filename="../gallerychartdata.cpp" line="415"/>
         <source>Two positive growth curves spanning orders of magnitude on a logarithmic Y axis.</source>
         <translation>两条正值增长曲线跨越多个数量级，Y 轴使用对数刻度。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="417"/>
+        <location filename="../gallerychartdata.cpp" line="418"/>
         <source>Two sensor populations: temperature versus power. Hover to inspect individual readings.</source>
         <translation>两组传感器的温度与功率，悬停查看各个读数。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="420"/>
-        <source>Two signals, 100,000 samples each. Start live to stream; zoom or drag to inspect history.</source>
-        <translation>两路信号，各有 100,000 个采样点。启动实时追加，缩放或拖动查看历史。</translation>
+        <location filename="../gallerychartdata.cpp" line="421"/>
+        <source>Two signals, 100,000 initial samples each. Add or remove data, or start a continuous stress test.</source>
+        <translation>两路信号，初始各有 100,000 个采样点。可以增删数据，或启动持续压力测试。</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="422"/>
+        <location filename="../gallerychartdata.cpp" line="423"/>
+        <location filename="../gallerychartdata.cpp" line="686"/>
+        <source>Category %1</source>
+        <translation>类别 %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="424"/>
+        <location filename="../gallerychartdata.cpp" line="686"/>
+        <source>Dimension %1</source>
+        <translation>维度 %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="425"/>
+        <location filename="../gallerychartdata.cpp" line="700"/>
+        <source>Slice %1</source>
+        <translation>扇区 %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="581"/>
+        <source>Overview: adjacent dimensions are grouped by their mean.</source>
+        <translation>概览：相邻维度分组后取平均值。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="584"/>
+        <source>Overview: adjacent records are grouped by their sum.</source>
+        <translation>概览：相邻记录分组后求和。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="586"/>
+        <source>Overview: adjacent records are summed, keeping positive and negative values separate.</source>
+        <translation>概览：相邻记录分组求和，正值与负值分别统计。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="589"/>
+        <source>Overview: adjacent columns are averaged for each row.</source>
+        <translation>概览：合并相邻列，对每行分别取平均值。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="591"/>
+        <source>Overview: evenly spaced source records are shown; the trend uses all records.</source>
+        <translation>概览：按记录顺序等距抽样；趋势线仍使用全部原始记录拟合。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="592"/>
+        <source>Overview: each group retains its minimum and maximum. Raw records remain available.</source>
+        <translation>概览：每组保留最小值和最大值，原始记录完整保留。</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="646"/>
+        <source>Records %1–%2</source>
+        <translation>记录 %1–%2</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="646"/>
+        <source>Columns %1–%2</source>
+        <translation>列 %1–%2</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="798"/>
+        <source>columns (40 cells each)</source>
+        <translation>列（每列 40 个单元格）</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="800"/>
+        <source>dimensions</source>
+        <translation>个维度</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="802"/>
+        <source>slices</source>
+        <translation>个扇区</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="803"/>
+        <source>categories per series</source>
+        <translation>个类别／序列</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="803"/>
+        <source>points per series</source>
+        <translation>个点／序列</translation>
+    </message>
+    <message>
+        <location filename="../gallerychartdata.cpp" line="426"/>
         <source>Usability</source>
         <translation>易用性</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="423"/>
+        <location filename="../gallerychartdata.cpp" line="427"/>
         <source>Value</source>
         <translation>价值</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="424"/>
+        <location filename="../gallerychartdata.cpp" line="428"/>
         <source>Visits</source>
         <translation>访问量</translation>
     </message>
     <message>
-        <location filename="../gallerychartdata.cpp" line="425"/>
+        <location filename="../gallerychartdata.cpp" line="429"/>
         <source>Wind</source>
         <translation>风能</translation>
     </message>
@@ -1973,132 +2056,233 @@
 <context>
     <name>GalleryChartPreview</name>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Line</source>
         <translation>折线图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Area</source>
         <translation>面积图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Grouped bars</source>
         <translation>分组柱状图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="13"/>
+        <location filename="../GalleryChartPreview.qml" line="15"/>
         <source>Stacked bars</source>
         <translation>堆叠柱状图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Scatter</source>
         <translation>散点图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Bubble</source>
         <translation>气泡图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Pie</source>
         <translation>饼图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Doughnut</source>
         <translation>环形图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="14"/>
+        <location filename="../GalleryChartPreview.qml" line="16"/>
         <source>Radar</source>
         <translation>雷达图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Heatmap</source>
         <translation>热力图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Bar + line</source>
         <translation>柱状与折线混合</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Time axis</source>
         <translation>时间坐标轴</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Log axis</source>
         <translation>对数坐标轴</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="15"/>
+        <location filename="../GalleryChartPreview.qml" line="17"/>
         <source>Positive / negative</source>
         <translation>正负堆叠</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="16"/>
+        <location filename="../GalleryChartPreview.qml" line="18"/>
         <source>Scatter + trend</source>
         <translation>散点与趋势线</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="73"/>
+        <location filename="../GalleryChartPreview.qml" line="74"/>
+        <source>Add data</source>
+        <translation>添加数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="80"/>
+        <source>Remove latest</source>
+        <translation>删除最新数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="86"/>
+        <source>Clear data</source>
+        <translation>清空数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="92"/>
+        <source>Restore demo</source>
+        <translation>恢复演示数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="97"/>
+        <source>Million-sample preset</source>
+        <translation>百万数据预设</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="103"/>
+        <location filename="../GalleryChartPreview.qml" line="270"/>
+        <source>Stop stress test</source>
+        <translation>停止压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="103"/>
+        <location filename="../GalleryChartPreview.qml" line="270"/>
+        <source>Start stress test</source>
+        <translation>启动压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="111"/>
+        <source>%1 / %2 %3 · %4 samples in total</source>
+        <translation>%1 / %2 %3 · 共 %4 个数据点</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="132"/>
+        <source>Radar needs at least 3 dimensions. Add more data.</source>
+        <translation>雷达图至少需要 3 个维度，请继续添加数据。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="133"/>
+        <source>No data. Add data or restore the demo to begin.</source>
+        <translation>暂无数据，请添加数据或恢复演示数据。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="140"/>
+        <source>%1 raw samples · %2 preview samples
+%3</source>
+        <translation>%1 条原始数据 · %2 个预览数据点
+%3</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="150"/>
         <source>Zoom in</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="79"/>
+        <location filename="../GalleryChartPreview.qml" line="156"/>
         <source>Zoom out</source>
         <translation>缩小</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="86"/>
+        <location filename="../GalleryChartPreview.qml" line="161"/>
         <source>Reset view</source>
         <translation>重置视图</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="91"/>
-        <source>Pause live</source>
-        <translation>暂停实时追加</translation>
+        <location filename="../GalleryChartPreview.qml" line="179"/>
+        <source>Tooltips</source>
+        <translation>数据提示</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="91"/>
-        <source>Start live</source>
-        <translation>启动实时追加</translation>
+        <location filename="../GalleryChartPreview.qml" line="191"/>
+        <location filename="../GalleryChartPreview.qml" line="195"/>
+        <source>Batch size</source>
+        <translation>每批数量</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="101"/>
+        <location filename="../GalleryChartPreview.qml" line="205"/>
+        <location filename="../GalleryChartPreview.qml" line="209"/>
+        <source>Data limit</source>
+        <translation>数据量上限</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="220"/>
+        <location filename="../GalleryChartPreview.qml" line="224"/>
+        <source>Update interval (ms)</source>
+        <translation>更新间隔（毫秒）</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="235"/>
+        <source>Batch size and data limit use %1. At the limit, new data replaces the oldest data.</source>
+        <translation>每批数量和数据量上限的单位为%1。达到上限后，新数据会覆盖最旧数据。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="242"/>
+        <source>The million-sample preset sets the total raw-data limit, batch size and interval. Start the stress test to fill it gradually. Large datasets use a sampled or grouped overview; all raw records are retained up to the limit.</source>
+        <translation>百万数据预设会设置原始数据总量上限、批次和间隔，启动压力测试后逐步填充。大数据采用抽样或分组概览，容量范围内的原始记录完整保留。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="263"/>
+        <source>Stress test running — stop at any time</source>
+        <translation>压力测试运行中，可随时停止</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="264"/>
+        <source>Stress test stopped — results retained</source>
+        <translation>压力测试已停止，结果已保留</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="265"/>
+        <source>Continuous stress test</source>
+        <translation>持续压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="286"/>
+        <source>Continuously adds 4 batches, then removes 1. Switching charts or leaving this page stops the test. Statistics measure data updates, not rendering FPS.</source>
+        <translation>循环添加 4 批、删除 1 批，持续运行。切换图表或离开页面会停止测试。统计反映数据更新情况，不代表渲染帧率。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartPreview.qml" line="163"/>
         <source>Legend</source>
         <translation>图例</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="106"/>
+        <location filename="../GalleryChartPreview.qml" line="168"/>
         <source>Grid</source>
         <translation>网格</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="111"/>
+        <location filename="../GalleryChartPreview.qml" line="173"/>
         <source>Crosshair</source>
         <translation>十字光标</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="120"/>
-        <source>Capacity</source>
-        <translation>容量</translation>
+        <location filename="../GalleryChartPreview.qml" line="277"/>
+        <source>%1 s · %2 updates · %3 updates/s
+Total added: %4 samples · total removed/replaced: %5 samples
+Slowest data batch: %6 ms</source>
+        <translation>%1 秒 · 更新 %2 次 · 每秒 %3 次更新
+累计添加 %4 个数据点 · 累计删除／覆盖 %5 个数据点
+最慢数据批次耗时：%6 毫秒</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="142"/>
-        <source>%1 retained samples per series · display budget %2</source>
-        <translation>每条序列保留 %1 个采样点 · 显示预算 %2</translation>
-    </message>
-    <message>
-        <location filename="../GalleryChartPreview.qml" line="149"/>
+        <location filename="../GalleryChartPreview.qml" line="295"/>
         <source>Scroll to zoom, drag to pan, click a legend to toggle visibility. Use +/−, arrow keys and Home when focused.</source>
         <translation>滚轮缩放，拖动平移，点击图例切换显示。聚焦后可使用 +/−、方向键与 Home 键。</translation>
     </message>
@@ -2135,6 +2319,430 @@
         <location filename="../GalleryComponentPage.qml" line="110"/>
         <source>Copy</source>
         <translation>复制</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataDemo</name>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>ID</source>
+        <translation>编号</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="74"/>
+        <source>Value</source>
+        <translation>数值</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="80"/>
+        <location filename="../gallerydatademo.cpp" line="118"/>
+        <source>Welcome! Try switching languages while writing a message.</source>
+        <translation>欢迎！试试在编写消息时切换语言。</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="82"/>
+        <location filename="../gallerydatademo.cpp" line="152"/>
+        <source>You</source>
+        <translation>你</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="110"/>
+        <location filename="../gallerydatademo.cpp" line="170"/>
+        <source>Ready</source>
+        <translation>就绪</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="139"/>
+        <source>Message %1 · A local demo, with no network request. </source>
+        <translation>消息 %1 · 本地演示，不发送网络请求。 </translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="152"/>
+        <source>Demo contact</source>
+        <translation>演示联系人</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="169"/>
+        <source>Record %1</source>
+        <translation>记录 %1</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="190"/>
+        <source>Updated</source>
+        <translation>已更新</translation>
+    </message>
+    <message>
+        <location filename="../gallerydatademo.cpp" line="308"/>
+        <source>Demo attachment %1</source>
+        <translation>演示附件 %1</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataPreview</name>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="59"/>
+        <source>Edit real model cells, select and locate rows, resize columns, and keep scrolling while data changes.</source>
+        <translation>编辑真实模型的单元格，选取和定位行，调整列宽，并在数据更新时继续滚动。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="61"/>
+        <source>Try Send or Enter, whitespace rejection and long single-line text. Continuous submissions use this same composer and appear in the history below.</source>
+        <translation>体验按钮或回车发送、空白校验和单行长文本。连续提交使用同一个输入框，提交结果显示在历史记录中。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="62"/>
+        <source>Try incoming and outgoing messages, delivery states, long text and attachment placeholders. Turn off tail following to read history during live updates.</source>
+        <translation>体验消息收发、发送状态、长文本和附件占位。关闭尾部跟随后，可在持续更新时阅读历史消息。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="69"/>
+        <source>Add a batch</source>
+        <translation>添加一批</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <source>Update a batch</source>
+        <translation>更新一批</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <source>Change delivery states</source>
+        <translation>批量切换发送状态</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="83"/>
+        <source>Remove latest batch</source>
+        <translation>删除最新一批</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="89"/>
+        <source>Clear data</source>
+        <translation>清空数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="95"/>
+        <source>Restore demo</source>
+        <translation>恢复演示数据</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <source>Stop stress test</source>
+        <translation>停止压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <source>Start stress test</source>
+        <translation>启动压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="109"/>
+        <source>%1 / %2 rows</source>
+        <translation>%1 / %2 行</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="110"/>
+        <source>%1 / %2 messages</source>
+        <translation>%1 / %2 条消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <source>No rows. Add data to begin.</source>
+        <translation>暂无行，请添加数据。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <source>No messages yet. Send one to begin.</source>
+        <translation>暂无消息，发送一条试试。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="145"/>
+        <source>Resizable columns</source>
+        <translation>允许调整列宽</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="146"/>
+        <source>First row</source>
+        <translation>首行</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="147"/>
+        <source>Last row</source>
+        <translation>末行</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="152"/>
+        <source>Select a row, then edit a cell</source>
+        <translation>选取一行，再编辑单元格</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="161"/>
+        <source>Row number</source>
+        <translation>行号</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <source>Value</source>
+        <translation>数值</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="168"/>
+        <source>Column to edit</source>
+        <translation>编辑列</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="172"/>
+        <source>Delete selected row</source>
+        <translation>删除选中行</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="183"/>
+        <source>Cell content</source>
+        <translation>单元格内容</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="188"/>
+        <source>Apply cell edit</source>
+        <translation>保存单元格</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="201"/>
+        <source>Follow latest messages</source>
+        <translation>跟随最新消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="204"/>
+        <source>First message</source>
+        <translation>首条消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="205"/>
+        <source>Latest message</source>
+        <translation>最新消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Text</source>
+        <translation>文本</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Image placeholder</source>
+        <translation>图片占位</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Audio placeholder</source>
+        <translation>音频占位</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <source>Video placeholder</source>
+        <translation>视频占位</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="225"/>
+        <source>Message type</source>
+        <translation>消息类型</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="229"/>
+        <source>Receive a message</source>
+        <translation>接收一条消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="234"/>
+        <source>Send a sample</source>
+        <translation>发送示例消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="238"/>
+        <source>Message length</source>
+        <translation>消息长度</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="244"/>
+        <source>Generated message length</source>
+        <translation>生成消息长度</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="258"/>
+        <source>Load long text</source>
+        <translation>填入长文本</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="259"/>
+        <source>Long text with spaces, numbers 123 and punctuation. </source>
+        <translation>包含空格、数字 123 和标点的长文本。 </translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="263"/>
+        <source>Try whitespace</source>
+        <translation>试填空白</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="266"/>
+        <source>Clear draft</source>
+        <translation>清空草稿</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="273"/>
+        <source>Draft: %1 characters · whitespace-only submissions are ignored</source>
+        <translation>草稿：%1 个字符 · 纯空白内容不会提交</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="278"/>
+        <source>Inspect a message and change its delivery state</source>
+        <translation>查看消息并修改发送状态</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="290"/>
+        <source>Message number</source>
+        <translation>消息序号</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Pending</source>
+        <translation>发送中</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Sent</source>
+        <translation>已发送</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <source>Failed</source>
+        <translation>发送失败</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="299"/>
+        <source>Delivery state</source>
+        <translation>发送状态</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="303"/>
+        <source>Delete selected message</source>
+        <translation>删除选中消息</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataPreview.qml" line="318"/>
+        <source>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</source>
+        <translation>图片、音频和视频条目用于展示附件信息；此组件不下载或播放媒体。</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDataStressPanel</name>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="16"/>
+        <source>Continuous stress test</source>
+        <translation>持续压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="22"/>
+        <location filename="../GalleryDataStressPanel.qml" line="30"/>
+        <source>Maximum operations per batch</source>
+        <translation>每批操作上限</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="35"/>
+        <location filename="../GalleryDataStressPanel.qml" line="43"/>
+        <source>Data limit</source>
+        <translation>数据量上限</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="48"/>
+        <location filename="../GalleryDataStressPanel.qml" line="55"/>
+        <source>Update interval (ms)</source>
+        <translation>更新间隔（毫秒）</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Continuous additions</source>
+        <translation>持续添加</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Mixed additions, updates and deletions</source>
+        <translation>混合增删改</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="64"/>
+        <source>Continuous updates</source>
+        <translation>持续更新</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="67"/>
+        <source>Stress workload</source>
+        <translation>压力测试模式</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="74"/>
+        <source>100,000-row preset</source>
+        <translation>十万行预设</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="74"/>
+        <source>10,000-message preset</source>
+        <translation>一万条消息预设</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="80"/>
+        <source>Stop stress test</source>
+        <translation>停止压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="80"/>
+        <source>Start stress test</source>
+        <translation>启动压力测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="89"/>
+        <source>%1 s · %2 batches · %3 operations/s
+Added: %4 · updated: %5 · removed: %6 · rejected blank submissions: %7
+Last batch: %8 operations · slowest data batch: %9 ms</source>
+        <translation>%1 秒 · %2 批次 · 每秒 %3 次操作
+累计添加：%4 · 更新：%5 · 删除：%6 · 拦截空白提交：%7
+上批操作：%8 次 · 最慢数据批次：%9 毫秒</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="101"/>
+        <source>All rows remain in the table model. At the limit, additions update existing rows. Mixed mode adds four batches, updates one, then deletes one.</source>
+        <translation>所有行均保留在表格模型中。达到上限后，添加操作改为更新已有行。混合模式循环添加四批、更新一批、删除一批。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="103"/>
+        <source>All retained messages remain in the model. At the limit, new messages remove the oldest. Mixed mode adds four batches, changes delivery states once, then deletes one batch.</source>
+        <translation>保留的消息均存放在模型中。达到上限后，新消息会替换最旧消息。混合模式循环添加四批、切换一批发送状态、删除一批。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="104"/>
+        <source>Calls the real composer submit action, with a blank attempt every fifth submission. The draft is restored when stopped. At the limit, the oldest history is removed.</source>
+        <translation>调用输入框的实际提交操作，每第五次尝试提交空白内容。停止后恢复原草稿；历史记录达到上限后删除最旧消息。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDataStressPanel.qml" line="110"/>
+        <source>Presets configure the limit; Start fills it gradually. Batches yield after about 12 ms of data work. Clear data before lowering the limit below the current count. Leaving or hiding the page stops the test. Statistics cover data operations, not rendering FPS or network performance.</source>
+        <translation>预设只配置容量，启动后逐步填充。每批数据操作约 12 毫秒后让出界面线程。若需将容量调至低于当前数量，请先清空数据。离开或隐藏页面会停止测试。统计仅反映数据操作，不代表渲染帧率或网络性能。</translation>
     </message>
 </context>
 <context>
@@ -2965,419 +3573,363 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>GalleryPreview</name>
     <message>
-        <location filename="../GalleryPreview.qml" line="108"/>
-        <location filename="../GalleryPreview.qml" line="269"/>
+        <location filename="../GalleryPreview.qml" line="104"/>
+        <location filename="../GalleryPreview.qml" line="265"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="113"/>
+        <location filename="../GalleryPreview.qml" line="109"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="117"/>
+        <location filename="../GalleryPreview.qml" line="113"/>
         <source>Danger</source>
         <translation>危险操作</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="122"/>
-        <location filename="../GalleryPreview.qml" line="144"/>
-        <location filename="../GalleryPreview.qml" line="154"/>
-        <location filename="../GalleryPreview.qml" line="163"/>
-        <location filename="../GalleryPreview.qml" line="173"/>
-        <location filename="../GalleryPreview.qml" line="183"/>
+        <location filename="../GalleryPreview.qml" line="118"/>
+        <location filename="../GalleryPreview.qml" line="140"/>
+        <location filename="../GalleryPreview.qml" line="150"/>
+        <location filename="../GalleryPreview.qml" line="159"/>
+        <location filename="../GalleryPreview.qml" line="169"/>
+        <location filename="../GalleryPreview.qml" line="179"/>
         <source>Disabled</source>
         <translation>禁用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="126"/>
+        <location filename="../GalleryPreview.qml" line="122"/>
         <source>Loading</source>
         <translation>加载中</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="131"/>
+        <location filename="../GalleryPreview.qml" line="127"/>
         <source>Activated %1 times</source>
         <translation>已触发 %1 次</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="142"/>
+        <location filename="../GalleryPreview.qml" line="138"/>
         <source>Enable notifications</source>
         <translation>启用通知</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="143"/>
+        <location filename="../GalleryPreview.qml" line="139"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="145"/>
+        <location filename="../GalleryPreview.qml" line="141"/>
         <source>Notifications enabled</source>
         <translation>通知已启用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="145"/>
+        <location filename="../GalleryPreview.qml" line="141"/>
         <source>Notifications disabled</source>
         <translation>通知已禁用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="152"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="148"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Local workspace</source>
         <translation>本地工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="153"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="149"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Cloud workspace</source>
         <translation>云端工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="161"/>
+        <location filename="../GalleryPreview.qml" line="157"/>
         <source>Wi-Fi</source>
         <translation>无线网络</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="162"/>
+        <location filename="../GalleryPreview.qml" line="158"/>
         <source>Airplane mode</source>
         <translation>飞行模式</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="164"/>
+        <location filename="../GalleryPreview.qml" line="160"/>
         <source>Connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="164"/>
+        <location filename="../GalleryPreview.qml" line="160"/>
         <source>Disconnected</source>
         <translation>已断开</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="171"/>
+        <location filename="../GalleryPreview.qml" line="167"/>
         <source>Volume: %1%</source>
         <translation>音量：%1%</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="172"/>
+        <location filename="../GalleryPreview.qml" line="168"/>
         <source>Volume</source>
         <translation>音量</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="180"/>
-        <location filename="../GalleryPreview.qml" line="181"/>
+        <location filename="../GalleryPreview.qml" line="176"/>
+        <location filename="../GalleryPreview.qml" line="177"/>
         <source>Workspace</source>
         <translation>工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Touch</source>
         <translation>触摸</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Mobile</source>
         <translation>移动</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="178"/>
         <source>Interaction density</source>
         <translation>交互密度</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="191"/>
+        <location filename="../GalleryPreview.qml" line="187"/>
         <source>Your message</source>
         <translation>你的消息</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="197"/>
+        <location filename="../GalleryPreview.qml" line="193"/>
         <source>Type something…</source>
         <translation>输入一些内容…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="201"/>
+        <location filename="../GalleryPreview.qml" line="197"/>
         <source>%1 characters</source>
         <translation>%1 个字符</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="211"/>
+        <location filename="../GalleryPreview.qml" line="207"/>
         <source>Server address</source>
         <translation>服务器地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="220"/>
+        <location filename="../GalleryPreview.qml" line="216"/>
         <source>Valid IPv4 address</source>
         <translation>有效的 IPv4 地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="220"/>
+        <location filename="../GalleryPreview.qml" line="216"/>
         <source>Enter an IPv4 address</source>
         <translation>请输入 IPv4 地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="230"/>
+        <location filename="../GalleryPreview.qml" line="226"/>
         <source>Make room for good design.</source>
         <translation>给好设计，留一点空间。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="237"/>
+        <location filename="../GalleryPreview.qml" line="233"/>
         <source>Clear hierarchy makes an interface easier to read.</source>
         <translation>清楚的层次，让界面更容易阅读。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="242"/>
+        <location filename="../GalleryPreview.qml" line="238"/>
         <source>Secondary text adds context without competing for attention.</source>
         <translation>辅助文本补充信息，同时保持主次分明。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="256"/>
+        <location filename="../GalleryPreview.qml" line="252"/>
         <source>A place for your content.</source>
         <translation>让内容，各得其所。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="263"/>
+        <location filename="../GalleryPreview.qml" line="259"/>
         <source>Group related controls on a consistent surface.</source>
         <translation>在统一的内容容器中组织相关控件。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Success</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="281"/>
+        <location filename="../GalleryPreview.qml" line="277"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="283"/>
+        <location filename="../GalleryPreview.qml" line="279"/>
         <source>Alert severity</source>
         <translation>提示级别</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="287"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Your changes have been saved.</source>
         <translation>你的更改已保存。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="294"/>
+        <location filename="../GalleryPreview.qml" line="290"/>
         <source>Show alert</source>
         <translation>显示提示</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="321"/>
+        <location filename="../GalleryPreview.qml" line="317"/>
         <source>Working on it…</source>
         <translation>正在处理中…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="329"/>
+        <location filename="../GalleryPreview.qml" line="325"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="329"/>
+        <location filename="../GalleryPreview.qml" line="325"/>
         <source>Resume</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="334"/>
+        <location filename="../GalleryPreview.qml" line="330"/>
         <source>One turn every 900 ms. Reduced motion stops the animation.</source>
         <translation>每 900 毫秒旋转一圈。开启减少动效后停止旋转。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="355"/>
-        <location filename="../GalleryPreview.qml" line="377"/>
+        <location filename="../GalleryPreview.qml" line="351"/>
+        <location filename="../GalleryPreview.qml" line="373"/>
         <source>Progress</source>
         <translation>进度</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="358"/>
+        <location filename="../GalleryPreview.qml" line="354"/>
         <source>%1% complete</source>
         <translation>已完成 %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="387"/>
+        <location filename="../GalleryPreview.qml" line="383"/>
         <source>Hover over me</source>
         <translation>将鼠标停在这里</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="389"/>
+        <location filename="../GalleryPreview.qml" line="385"/>
         <source>A little context, right where you need it.</source>
         <translation>恰到好处的说明，就在你需要的地方。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="394"/>
+        <location filename="../GalleryPreview.qml" line="390"/>
         <source>Leave the pointer over the button to see the tooltip.</source>
         <translation>将鼠标停留在按钮上，查看工具提示。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="412"/>
+        <location filename="../GalleryPreview.qml" line="408"/>
         <source>Current page: %1</source>
         <translation>当前第 %1 页</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="428"/>
+        <location filename="../GalleryPreview.qml" line="424"/>
         <source>Selected: %1</source>
         <translation>已选择：%1</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="444"/>
+        <location filename="../GalleryPreview.qml" line="440"/>
         <source>Open popup</source>
         <translation>打开弹出层</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="449"/>
+        <location filename="../GalleryPreview.qml" line="445"/>
         <source>Escape or click outside to close.</source>
         <translation>按 Esc 或点击外部区域关闭。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="463"/>
+        <location filename="../GalleryPreview.qml" line="459"/>
         <source>A moment of focus.</source>
         <translation>让注意力，停留片刻。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="470"/>
+        <location filename="../GalleryPreview.qml" line="466"/>
         <source>Keep the important action within reach.</source>
         <translation>让重要操作触手可及。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="475"/>
-        <location filename="../GalleryPreview.qml" line="522"/>
+        <location filename="../GalleryPreview.qml" line="471"/>
+        <location filename="../GalleryPreview.qml" line="518"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="491"/>
+        <location filename="../GalleryPreview.qml" line="487"/>
         <source>Open drawer</source>
         <translation>打开抽屉</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="496"/>
+        <location filename="../GalleryPreview.qml" line="492"/>
         <source>A side panel keeps the current page in view.</source>
         <translation>侧边面板展开时，当前页面依然可见。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="510"/>
+        <location filename="../GalleryPreview.qml" line="506"/>
         <source>More room for the details.</source>
         <translation>给细节，多一点空间。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="517"/>
+        <location filename="../GalleryPreview.qml" line="513"/>
         <source>Navigation, settings or supporting content can live here.</source>
         <translation>这里可以放置导航、设置或辅助内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="540"/>
-        <location filename="../GalleryPreview.qml" line="550"/>
-        <source>Ready</source>
-        <translation>就绪</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="541"/>
-        <source>Desktop / Touch / Mobile</source>
-        <translation>桌面 / 触摸 / 移动</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="545"/>
-        <source>Live</source>
-        <translation>实时更新</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="546"/>
-        <source>Light / Dark</source>
-        <translation>亮色 / 暗色</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Component</source>
-        <translation>组件</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Status</source>
-        <translation>状态</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="564"/>
-        <source>Platform</source>
-        <translation>平台</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="579"/>
-        <source>You</source>
-        <translation>你</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="587"/>
-        <source>Welcome! Try switching languages while writing a message.</source>
-        <translation>欢迎！试试在编写消息时切换语言。</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="631"/>
-        <source>Last message: %1</source>
-        <translation>上一条消息：%1</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="631"/>
-        <source>Write a message and press Send.</source>
-        <translation>输入消息，然后点击发送。</translation>
-    </message>
-    <message>
-        <location filename="../GalleryPreview.qml" line="650"/>
+        <location filename="../GalleryPreview.qml" line="544"/>
         <source>Front</source>
         <translation>正面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="658"/>
+        <location filename="../GalleryPreview.qml" line="552"/>
         <source>Back</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="665"/>
+        <location filename="../GalleryPreview.qml" line="559"/>
         <source>Flip card</source>
         <translation>翻转卡片</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="680"/>
+        <location filename="../GalleryPreview.qml" line="574"/>
         <source>Thoughtful details make everyday interfaces feel better.</source>
         <translation>用心打磨细节，让日常使用的界面更舒适。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="691"/>
+        <location filename="../GalleryPreview.qml" line="585"/>
         <source>Every good interface starts with a small detail.</source>
         <translation>每一个好界面，都从一个小细节开始。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="697"/>
+        <location filename="../GalleryPreview.qml" line="591"/>
         <source>Restart</source>
         <translation>重新播放</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="780"/>
+        <location filename="../GalleryPreview.qml" line="674"/>
         <source>Drag me</source>
         <translation>拖动我</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="806"/>
+        <location filename="../GalleryPreview.qml" line="700"/>
         <source>Resize me</source>
         <translation>调整我的尺寸</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="834"/>
+        <location filename="../GalleryPreview.qml" line="728"/>
         <source>The counter reports frame callbacks, not monitor refresh rate.</source>
         <translation>这里显示 Qt Quick 的帧回调速率，而非显示器刷新率。</translation>
     </message>
@@ -3541,7 +4093,7 @@ Keep notes, drafts and everyday details together.</source>
         <translation>选择一个组件，体验交互并查看 QML 示例。</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="280"/>
+        <location filename="../Main.qml" line="284"/>
         <source>No components found. Try a different name.</source>
         <translation>没有找到组件，请换个名称试试。</translation>
     </message>
@@ -3549,7 +4101,7 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>QCatUiKit::ChartItem</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="579"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
         <source>Intensity</source>
         <translation>强度</translation>
     </message>

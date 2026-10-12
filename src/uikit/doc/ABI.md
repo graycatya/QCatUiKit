@@ -1,33 +1,43 @@
-# ABI 与动态库替换
+# ABI 与公开接口兼容
 
-## 支持范围
+[文档索引](README.md) · [版本管理](VERSIONING.md)
 
-QCatUiKit 的 ABI 承诺覆盖同一主版本内导出的 **C++ 公开接口**。发布库采用 `VERSION 1.x.y` 和 `SOVERSION 1`，Windows 使用相同 DLL 名称。公开状态类的成员布局是 Qt 基类加一个 `const std::unique_ptr<Impl>`；Impl 定义只存在于 `.cpp`，构造和析构在共享库中执行。导出宏同时支持 Windows import/export 与 ELF 隐藏默认符号可见性。
+## 边界
 
-替换前提：相同 CPU 架构、平台、编译器 ABI、C++ 运行时、兼容的 Qt 动态运行时和一致的构建模式。Pimpl 不承诺跨编译器、跨 Qt 主版本、Windows Debug/Release 混用或进程运行中卸载热替换。先关闭应用，再替换安装包中的库和 QML 模块文件。
+C++ 公开接口由安装头和导出符号定义。共享库当前数字版本为 1.0.0，SOVERSION 为 1；Windows 使用对应 DLL。ThemePalette、TableModel、ChatModel、ChartItem、ChartAxis、ChartSeries 的对象布局为 Qt 基类加一个 `const std::unique_ptr<Impl>`，状态和容器保存在实现中。
 
-## 兼容纪律
+同一主版本的兼容维护要求保留已发布公开接口。替换库的前提为相同架构、平台、编译器 ABI、C++ 运行时、兼容 Qt 运行时及一致的构建模式。Pimpl 不能提供跨工具链或 Windows Debug／Release 混用能力。
 
-- 同一主版本保留类名、命名空间、基类、公开符号、函数签名、对象大小及既有虚函数布局。
-- 不给公开对象追加数据成员，不把访问 Impl 的函数改为头文件内联实现。
-- 不改变已发布枚举数值、模型角色数值和名称、信号参数及现有属性语义。
-- 可在 Impl 内改变存储、算法或缓存；新非虚函数和新 QML 能力仍需逐项审核。
-- QML 控件维护属性／信号／方法的源码和行为兼容性。QML 不具有与 C++ 对象内存布局相同的 ABI 概念。
-- `SurfaceImpl` 为模块内部类型；控件视觉树、内部 id、内部子对象和 CMake 构建目录不是公开 API。
-- QML 编译缓存与 Qt 版本有关。部署共享库、插件、qmldir、qmltypes 和匹配资源为同一发行单元。
-- 打破兼容的变更提升主版本与 SOVERSION；`SameMajorVersion` 的包版本规则不是自动 ABI 检查器。
+QML 维护属性、信号、方法与可观察行为的兼容性。内部视觉树、id、SurfaceImpl、私有 C++ 头和 Gallery 控制器不属于公开接口。
 
-## 实际替换检查（Linux）
+## 变更规则
 
-`tests/auto/cmake/check_abi_replacement.sh BASELINE_PREFIX CANDIDATE_PREFIX QT_PREFIX [WORK_DIR]`：
+- 保留公开类名、命名空间、基类、导出符号、函数签名、对象大小及虚函数布局。
+- 不向公开对象添加状态成员，不将访问 Impl 的实现放到公开内联函数中。
+- 保留已发布枚举、模型角色的数值和名称，以及属性和信号语义。
+- ChartSeries::Sample 是公开值类型，其字段布局也属于兼容边界。
+- 内部容器、算法和缓存可修改；新增非虚函数或 QML 属性仍须检查源码与行为兼容性。
+- 打破兼容时提升主版本与 QCATUIKIT_ABI_VERSION；CMake 的 SameMajorVersion 规则本身不检查 ABI。
 
-1. 只用基线安装包的公开头文件与库编译独立 consumer。
-2. 保存该可执行文件，不用候选头文件重新编译。
-3. 以候选库目录优先的 `LD_LIBRARY_PATH` 运行原可执行文件。
-4. 检查进程打印的实际库路径属于候选目录，并验证主题与两种模型行为。
+发布渠道从 experimental 改为 stable 不改变 SONAME。渠道只是运行时身份的一部分，不能替代兼容性检查。
 
-此检查证明所测 consumer 的二进制替换路径。发布时还应对完整导出符号、类型信息和既有 QML 契约做差异检查，不能仅凭一个 smoke consumer 声称所有历史客户端兼容。当前项目没有已发布的 QCatUiKit 基线，首次迁移不承诺与旧 QCatGrayQuick 的 C++ ABI 或 QML API 兼容。
+## 部署单元
 
-版本查询函数位于 `qcatuikitversion.h`（兼容路径 `Version.h`），均在共享库内实现。QCatUiKit 是公开的只读 QML 单例，C++ 实现类 QCatUiKitInfo 为私有实现且不导出；旧 QML 名称 LibraryInfo 保留兼容。渠道从 experimental 改为 stable 不改变 SONAME，ABI 仍为同一版本；渠道和数字版本都由运行时查询返回。参见 [版本管理](VERSIONING.md)。
+库、QML 插件、qmldir、类型信息、QML 文件及资源须成套部署，并匹配所用 Qt。QML 编译缓存与 Qt 版本有关。先退出应用再替换发行文件；不支持进程运行中卸载热替换。
 
-新增公开图表类 `ChartItem`／`ChartAxis`／`ChartSeries` 沿用 Qt 基类 + `const std::unique_ptr<Impl>` 的对象布局，不暴露缓存和数据容器。`ChartSeries::Sample` 是公开的值类型，其字段及枚举数值纳入后续兼容约定。图表公共头继承 QQuickItem，因此 Qt Quick 是共享库的公开链接依赖；CMake 包同步传递该依赖。旧 QtNativeCharts 测试版不纳入本库 ABI 承诺。独立安装消费者位于 `tests/auto/cmake/charts-consumer`。
+版本函数在共享库中执行，返回实际加载库的信息。QML 的 QCatUiKit 和 LibraryInfo 单例提供相同只读属性；其 C++ 实现不作为公开类安装。
+
+## Linux 动态替换检查
+
+脚本 [check_abi_replacement.sh](../../../tests/auto/cmake/check_abi_replacement.sh) 接受：
+
+```sh
+bash tests/auto/cmake/check_abi_replacement.sh \
+  /absolute/baseline /absolute/candidate /path/to/Qt /tmp/qcat-abi-check
+```
+
+流程为：仅用基线安装包编译消费者，保存可执行文件，然后令候选库路径优先，运行同一可执行文件。检查实际加载路径、主题和两种模型行为。
+
+基线应为需要保持兼容的发布安装包，候选为待发布安装包。该脚本验证所用消费者，不覆盖所有符号和调用方式；发布还需检查导出符号、类型信息、公开头与 QML 行为。
+
+图表安装消费者位于 [charts-consumer](../../../tests/auto/cmake/charts-consumer)，版本消费者位于 [version_consumer](../../../tests/auto/cmake/version_consumer)。相关命令见 [验证说明](VALIDATION.md)。

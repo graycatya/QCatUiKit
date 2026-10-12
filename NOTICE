@@ -1,13 +1,15 @@
 QCatUiKit
 Copyright 2026 QCatUiKit contributors
 
-This project redesigns the capabilities of QCatGrayQuick (Copyright (c) 2023 cat).
-QCatGrayQuick's MIT attribution is retained in LICENSES/MIT.txt.
-New QCatUiKit code is licensed under Apache License 2.0.
+QCatUiKit code is licensed under Apache License 2.0, except for included code
+covered by the notices below.
 Qt is a separately licensed dependency and is not relicensed by this project.
-Ant Design documentation informed the design; no Ant Design source or assets are bundled.
 
-ChartAxis, ChartSeries, ChartItem, private chart math and gallery demonstration
-data were migrated from
-QCatUiKit.Charts / QtNativeCharts, Copyright (c) 2026 QtChartJs Contributors.
-Their MIT license is retained in LICENSES/QtNativeCharts-MIT.txt.
+Included code attributions:
+
+QCatGrayQuick — Copyright (c) 2023 cat.
+MIT license: LICENSES/MIT.txt.
+
+ChartAxis, ChartSeries, ChartItem, private chart math and gallery demonstration data:
+QCatUiKit.Charts / QtNativeCharts — Copyright (c) 2026 QtChartJs Contributors.
+MIT license: LICENSES/QtNativeCharts-MIT.txt.

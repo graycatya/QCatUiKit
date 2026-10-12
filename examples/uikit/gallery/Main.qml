@@ -258,6 +258,7 @@ B.ApplicationWindow {
                 Layout.fillWidth: true
             }
             GridLayout {
+                visible: window.matchingComponents.length > 0
                 Layout.fillWidth: true
                 columns: window.width - (window.compact ? 40 : 296) >= 840 ? 3 : window.width - (window.compact ? 40 : 296) >= 500 ? 2 : 1
                 columnSpacing: 16
@@ -274,11 +275,15 @@ B.ApplicationWindow {
                 }
             }
             CatPane {
+                objectName: "searchEmptyState"
                 visible: window.matchingComponents.length === 0
                 Layout.fillWidth: true
-                contentItem: CatLabel {
-                    text: qsTr("No components found. Try a different name.")
-                    wrapMode: Text.Wrap
+                contentItem: ColumnLayout {
+                    CatLabel {
+                        Layout.fillWidth: true
+                        text: qsTr("No components found. Try a different name.")
+                        wrapMode: Text.Wrap
+                    }
                 }
             }
         }

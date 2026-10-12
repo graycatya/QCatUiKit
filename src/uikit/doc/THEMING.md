@@ -1,4 +1,6 @@
-# 主题架构
+# 主题与交互密度
+
+[文档索引](README.md) · [组件目录](COMPONENTS.md)
 
 主题从 Seed（品牌色、字号、圆角、明暗模式、密度）推导语义 Token，再由组件消费。`Theme` 是每个 QML 引擎独立的默认 `ThemePalette` 单例，不是跨引擎全局 QObject。
 
@@ -29,6 +31,8 @@ Component.onCompleted: {
 | Mobile | 44 | 16 | 12 | false |
 
 高度是控件的隐式最小高度。调用方显式设置 `height`、`implicitHeight` 或布局限制时可以覆盖它；触摸界面应避免把尺寸压到推荐值以下。
+
+单行输入框的内容与占位提示默认垂直居中，运行时切换密度时保持输入和选区；显式设置 `verticalAlignment` 时，两者使用相同的对齐方式。密度由应用显式选择，窗口宽度和设备类型不会自动改变 Theme.density；布局响应应根据可用空间实现。
 
 颜色 Token：`primary`、`primaryHover`、`primaryPressed`、`onPrimary`、`background`、`surface`、`surfaceHover`、`text`、`textSecondary`、`textDisabled`、`border`、`disabled`、`success`、`warning`、`danger`。尺寸及行为 Token：`radius`、`fontSize`、`controlHeight`、`spacing`、`padding`、`motionDuration`、`hoverEnabled`。
 

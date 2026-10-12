@@ -79,6 +79,42 @@ TestCase {
         compare(field.text, "我的输入 / keep this text");
         compare(field.placeholderText, "Type something…");
     }
+    function test_densityKeepsHeaderSearchAligned() {
+        const search = findControl("componentSearch");
+        search.forceActiveFocus();
+        keyClick(Qt.Key_C);
+        keyClick(Qt.Key_A);
+        keyClick(Qt.Key_T);
+        compare(search.text, "cat");
+        compare(gallery.searchQuery, "cat");
+        search.select(1, 3);
+        for (const density of [ThemePalette.Touch, ThemePalette.Mobile, ThemePalette.Desktop,
+                               ThemePalette.Mobile, ThemePalette.Touch, ThemePalette.Desktop]) {
+            Theme.density = density;
+            verify(waitForRendering(gallery.contentItem));
+            compare(search.text, "cat");
+            compare(gallery.searchQuery, "cat");
+            compare(search.selectedText, "at");
+            compare(search.activeFocus, true);
+            const cursor = search.cursorRectangle;
+            fuzzyCompare(cursor.y + cursor.height / 2, search.height / 2, 1,
+                         "Header search text must stay centered at density " + density);
+        }
+        gallery.searchQuery = "no-such-component";
+        compare(gallery.matchingComponents.length, 0);
+        const empty = findControl("searchEmptyState");
+        for (const density of [ThemePalette.Touch, ThemePalette.Mobile, ThemePalette.Desktop]) {
+            Theme.density = density;
+            verify(waitForRendering(gallery.contentItem));
+            const cursor = search.cursorRectangle;
+            fuzzyCompare(cursor.y + cursor.height / 2, search.height / 2, 1);
+            compare(empty.visible, true);
+            const position = empty.mapToItem(gallery.contentItem, 0, 0);
+            verify(empty.height > 0);
+            verify(position.y + empty.height <= gallery.height,
+                   "Empty search results must not retain the previous result grid's height");
+        }
+    }
     function test_languagePreservesExtendedEditors_data() {
         return [{ tag: "multiline", id: "text-edit", name: "demoTextArea" },
                 { tag: "tab_draft", id: "tab-view", name: "demoTabDraft" }];

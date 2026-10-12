@@ -52,4 +52,24 @@ TestCase {
         compare(field.color, Theme.tokens.textDisabled);
         compare(field.placeholderTextColor, Theme.tokens.textDisabled);
     }
+    function test_fieldAlignmentAcrossDensity_data() {
+        return [{tag: "latin", text: "Input text"},
+                {tag: "chinese", text: "输入内容"},
+                {tag: "arabic", text: "مرحبا"}];
+    }
+    function test_fieldAlignmentAcrossDensity(data) {
+        const field = createTemporaryObject(fieldFactory, test, {text: data.text});
+        field.forceActiveFocus();
+        field.select(1, 3);
+        const selected = field.selectedText;
+        for (const density of [0, 1, 2, 0, 2, 1, 0]) {
+            Theme.density = density;
+            verify(waitForRendering(field));
+            compare(field.text, data.text);
+            compare(field.selectedText, selected);
+            const cursor = field.cursorRectangle;
+            fuzzyCompare(cursor.y + cursor.height / 2, field.height / 2, 1,
+                         "Input text must remain vertically centered at density " + density);
+        }
+    }
 }

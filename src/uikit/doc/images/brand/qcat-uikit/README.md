@@ -1,6 +1,8 @@
 # QCatUiKit Logo
 
-项目标识由项目作者设计，导入自同工作区的 `CatCommStudio/assets/brand/qcat-uikit`。这里保存自包含的原始 SVG、Windows ICO 与 PNG 导出，gallery 和文档直接使用本仓库的副本。
+[文档索引](../../../README.md)
+
+项目标识由项目作者设计。本目录保存完整 SVG、Windows ICO 与 PNG 导出，Gallery 和文档直接使用这些资源。
 
 - `qcat-uikit.svg`：完整标识，灰猫和阴影为内嵌 PNG，蓝色底座与组件角标为矢量。
 - `qcat-uikit.ico`：Windows exe 图标，包含 16、24、32、48、64、128、256 px。

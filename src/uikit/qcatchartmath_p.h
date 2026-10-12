@@ -4,6 +4,7 @@
 #include <QCatUiKit/qcatchartaxis.h>
 #include <QCatUiKit/qcatchartseries.h>
 #include <QDateTime>
+#include <QLocale>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -82,7 +83,12 @@ inline QVector<double> ticks(Range range, ChartAxis::Scale scale, int count)
 inline QString label(double v, ChartAxis *axis, Range range)
 {
     if (axis->scale() == ChartAxis::Category)
-        return axis->categories().value(int(std::round(v)), QString::number(v, 'g', 6));
+    {
+        const auto categories = axis->categories();
+        const double index = std::round(v);
+        if (index >= 0 && index < categories.size())
+            return categories[int(index)];
+    }
     if (axis->scale() == ChartAxis::DateTime)
     {
         // Date/time coordinates are UTC Unix milliseconds.
@@ -93,7 +99,22 @@ inline QString label(double v, ChartAxis *axis, Range range)
                       : range.max - range.min < 86400000 ? "HH:mm:ss"
                                                          : "MM-dd HH:mm");
     }
-    return QString::number(v, 'g', 6);
+    // Keep large tick values readable and distinct when zooming into a small
+    // interval at a large offset. General-format precision rounds these alike.
+    const auto values = ticks(range, axis->scale(), axis->tickCount());
+    double step = std::numeric_limits<double>::infinity();
+    for (int i = 1; i < values.size(); ++i)
+        if (values[i] > values[i - 1])
+            step = std::min(step, values[i] - values[i - 1]);
+    if (!std::isfinite(step))
+        step = (range.max - range.min) / std::max(1, axis->tickCount() - 1);
+    const QLocale locale;
+    if (!(step > 0) || !std::isfinite(step))
+        return locale.toString(v, 'g', 15);
+    const int decimals = std::max(0, int(std::ceil(-std::log10(step) - 1e-9)));
+    // Extremely small ranges still need scientific notation to avoid rounding
+    // nonzero ticks to zero or producing hundreds of leading fractional zeros.
+    return decimals <= 12 ? locale.toString(v, 'f', decimals) : locale.toString(v, 'g', 15);
 }
 // Keep endpoints and extrema in source order; never modify the raw data.
 inline QVector<int> visibleIndices(const ChartSeries *s, Range x, int budget)
