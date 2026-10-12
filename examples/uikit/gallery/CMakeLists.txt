@@ -11,11 +11,13 @@ qt_add_qml_module(qcat-gallery-ui
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit/Gallery
     SOURCES gallerylanguage.h gallerylanguage.cpp gallerychartdata.h gallerychartdata.cpp
         gallerydatademo.h gallerydatademo.cpp
+        galleryleddemo.h galleryleddemo.cpp
     QML_FILES
         Main.qml GalleryCatalog.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
         GallerySettingsPage.qml GalleryComponentPage.qml GalleryPreview.qml GalleryExtendedPreview.qml GalleryChartPreview.qml
         GalleryDataPreview.qml GalleryDataStressPanel.qml
+        GalleryLedPreview.qml
     RESOURCES assets/preview-art.svg)
 set(qcat_gallery_brand_dir "${QCatUiKit_SOURCE_DIR}/src/uikit/doc/images/brand/qcat-uikit")
 set(qcat_gallery_brand_files)

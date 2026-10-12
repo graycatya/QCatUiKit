@@ -1,5 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "gallerylanguage.h"
+#include "galleryleddemo.h"
+#include <QCatUiKit/qcatledpreview.h>
+#include <QElapsedTimer>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <atomic>
 #include <QCommandLineParser>
 #include <QFontDatabase>
 #include <QDir>
@@ -31,6 +39,11 @@ int main(int argc, char **argv)
     parser.addOption({"smoke-test", "Load the gallery and exit after rendering."});
     parser.addOption({"screenshot", "Save a rendered gallery image and exit.", "path"});
     parser.addOption({"chart-demo", "Choose a chart demonstration (0-14); use with a chart page.", "index"});
+    parser.addOption({"led-count", "LED count (0-100000); use --page led-preview.", "count", "4096"});
+    parser.addOption({"led-layout", "LED layout: matrix or sphere.", "layout", "matrix"});
+    parser.addOption({"led-interval", "Producer interval in milliseconds (4-1000).", "ms", "16"});
+    parser.addOption({"led-benchmark", "Measure LED passes and window presentation after a 2s warmup, print JSON and exit.", "seconds"});
+    parser.addOption({"led-report", "Also save the LED benchmark JSON to this file.", "path"});
     parser.addOption({"dark", "Use the dark theme."});
     parser.addOption({"density", "Use desktop, touch or mobile density.", "density", "desktop"});
     parser.addOption({"width", "Initial window width.", "pixels", "1200"});
@@ -48,6 +61,9 @@ int main(int argc, char **argv)
     if (!validWidth || width < 360)
         parser.showHelp(2);
 
+    // Direct frameSwapped callbacks can still run during engine/window teardown.
+    // Keep this counter alive until after the engine has destroyed its windows.
+    std::atomic<quint64> presented{0};
     QQmlApplicationEngine engine;
     const QDir executableDirectory(QCoreApplication::applicationDirPath());
     engine.addImportPath(executableDirectory.filePath(QStringLiteral(QCAT_GALLERY_QML_RELATIVE_PATH)));
@@ -76,6 +92,79 @@ int main(int argc, char **argv)
         if (!valid || index < 0 || index > 14 || !picker)
             parser.showHelp(2);
         QMetaObject::invokeMethod(picker, "activated", Q_ARG(int, index));
+    }
+    const bool ledOptions = parser.isSet("led-count") || parser.isSet("led-layout")
+                            || parser.isSet("led-interval") || parser.isSet("led-benchmark") || parser.isSet("led-report");
+    auto *ledDemo = engine.rootObjects().first()->findChild<GalleryLedDemo *>(QStringLiteral("ledDemoData"));
+    auto *ledWindow = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
+    QElapsedTimer benchmarkClock;
+    QList<quint64> initialFrames, initialColors;
+    if (ledOptions)
+    {
+        bool countValid = false, intervalValid = false, secondsValid = true;
+        const int count = parser.value("led-count").toInt(&countValid);
+        const int interval = parser.value("led-interval").toInt(&intervalValid);
+        const int seconds = parser.isSet("led-benchmark")
+            ? parser.value("led-benchmark").toInt(&secondsValid) : 0;
+        const QString layout = parser.value("led-layout");
+        if (!ledDemo || !countValid || count < 0 || count > 100000 || !intervalValid
+            || interval < 4 || interval > 1000 || !secondsValid
+            || (parser.isSet("led-benchmark") && (seconds < 1 || seconds > 3600))
+            || (parser.isSet("led-report") && !parser.isSet("led-benchmark"))
+            || (layout != "matrix" && layout != "sphere"))
+            parser.showHelp(2);
+        ledDemo->setPointCount(count);
+        ledDemo->setSpatial(layout == "sphere");
+        ledDemo->setInterval(interval);
+        if (parser.isSet("led-benchmark"))
+        {
+            if (!ledWindow || parser.isSet("smoke-test") || parser.isSet("screenshot"))
+                parser.showHelp(2);
+            QObject::connect(ledWindow, &QQuickWindow::frameSwapped, &app,
+                             [&] { presented.fetch_add(1); }, Qt::DirectConnection);
+            QTimer::singleShot(2000, &app, [&, seconds] {
+                for (const auto *name : {"ledDeckA", "ledOutput", "ledDeckB"})
+                {
+                    const auto *item = ledWindow->findChild<QCatLedPreview *>(QString::fromLatin1(name));
+                    if (!item) { QCoreApplication::exit(3); return; }
+                    initialFrames.append(item->renderedFrames());
+                    initialColors.append(item->source()->submittedFrames());
+                }
+                presented.store(0);
+                benchmarkClock.start();
+                QTimer::singleShot(seconds * 1000, &app, [&] {
+                    const double elapsed = benchmarkClock.elapsed() / 1000.0;
+                    QJsonArray previews;
+                    int index = 0;
+                    bool valid = true;
+                    for (const auto *name : {"ledDeckA", "ledOutput", "ledDeckB"})
+                    {
+                        const auto *item = ledWindow->findChild<QCatLedPreview *>(QString::fromLatin1(name));
+                        const quint64 passes = item->renderedFrames() - initialFrames[index];
+                        const quint64 colors = item->source()->submittedFrames() - initialColors[index++];
+                        valid = valid && passes > 0 && item->renderError().isEmpty();
+                        previews.append(QJsonObject{{"name", QString::fromLatin1(name)},
+                            {"points", item->source()->pointCount()}, {"renderPassFps", passes / elapsed},
+                            {"colorUpdateHz", colors / elapsed}, {"renderingInfo", item->renderingInfo()},
+                            {"error", item->renderError()}});
+                    }
+                    const QJsonObject report{{"qt", QString::fromLatin1(qVersion())},
+                        {"seconds", elapsed}, {"layout", parser.value("led-layout")},
+                        {"producerIntervalMs", ledDemo->interval()},
+                        {"windowPresentedFps", presented.load() / elapsed}, {"previews", previews},
+                        {"valid", valid}};
+                    const QByteArray json = QJsonDocument(report).toJson(QJsonDocument::Indented);
+                    qInfo().noquote() << json;
+                    if (parser.isSet("led-report"))
+                    {
+                        QFile file(parser.value("led-report"));
+                        if (!file.open(QIODevice::WriteOnly) || file.write(json) != json.size())
+                        { QCoreApplication::exit(4); return; }
+                    }
+                    QCoreApplication::exit(valid ? 0 : 3);
+                });
+            });
+        }
     }
     if (parser.isSet("smoke-test") || parser.isSet("screenshot"))
     {

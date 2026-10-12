@@ -88,6 +88,15 @@ QtObject {
     ]
     readonly property var components: [
         {
+            id: "led-preview",
+            name: "LedPreview",
+            category: "spatial",
+            title: qsTr("LED preview"),
+            description: qsTr("Preview live RGBA frames with GPU instancing, 2D/3D camera controls and three-deck stress presets."),
+            icon: "media",
+            code: "LedPreview {\n    width: 640; height: 360\n    source: LedSource { id: leds }\n    pointSize: 6\n    previewBrightness: 1\n    showStatistics: true\n}\n// Submit XYZ layouts and packed RGBA8 frames from C++ (see LEDPREVIEW.md)."
+        },
+        {
             id: "chart",
             name: "CatChart",
             category: "charts",

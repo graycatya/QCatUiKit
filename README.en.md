@@ -7,6 +7,7 @@
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
 - **101 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs, C++ RGBA8 frames, and a three-deck Gallery demo with 10k/100k stress presets.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 chart types, mixed series, streaming data, zoom, pan, and tooltips, rendered with Qt Quick SceneGraph.
 - **Data models**: table, message, and tree models, with Qt Quick views that create visible delegates on demand.
@@ -25,7 +26,7 @@ These images show the current Gallery; see [capture scenarios and regeneration](
 
 | Item | Requirement |
 | --- | --- |
-| Qt | 6.8 or later: Core, Gui, Qml, Quick, QuickControls2 |
+| Qt | 6.8 or later: Core, Gui, Qml, Quick, QuickControls2, ShaderTools, matching GuiPrivate development headers |
 | CMake / C++ | CMake 3.24 or later and a C++17 compiler |
 | Gallery | Qt LinguistTools; file dialog examples use QtQuick.Dialogs |
 | Automated tests | Qt Test and QuickTest |

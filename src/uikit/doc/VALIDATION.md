@@ -39,6 +39,8 @@ ctest --test-dir build/release --output-on-failure
 | --- | --- |
 | models | 主题 Token、TableModel／ChatModel 数据与通知协议 |
 | charts | 原始数据、容量、批次校验、坐标范围、采样、交互及对象生命周期 |
+| led_source | RGBA8 长度、布局/帧版本、坐标校验、最新快照和跨线程通知合并 |
+| led_render（可选） | 真实 GPU 三路像素、深度遮挡、颜色/混合、相机输入、DPR 和资源重建；需 `QCATUIKIT_TEST_LED_GPU=ON` |
 | version | C++ 与 QML 的实际库版本、渠道和 ABI 信息 |
 | qml_contracts | 类型创建、输入、状态、主题、布局、图表与密度 |
 | qml_busy_timing | BusyIndicator 实际帧时序、可见性和减少动效 |

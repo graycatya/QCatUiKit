@@ -25,6 +25,8 @@
 
 ## 接口范围
 
+GPU 灯点布局、实时颜色帧、相机及线程模型见 [LED 预览](LEDPREVIEW.md)。
+
 - **QML**：101 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel 和版本信息单例。
 - **C++**：主题、表格、消息、图表、坐标轴、序列和版本查询接口；公开头安装到 `include/QCatUiKit`。
 - **Gallery**：独立示例应用，数据生成器、压力测试控制器、导航和翻译管理属于示例实现，不是安装库 API。

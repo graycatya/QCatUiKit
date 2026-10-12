@@ -54,22 +54,22 @@
 <context>
     <name>CatChatView</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="45"/>
+        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="52"/>
         <source>Attachment: %1</source>
         <translation>附件：%1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="52"/>
+        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="59"/>
         <source>Failed</source>
         <translation>发送失败</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="53"/>
+        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="60"/>
         <source>Pending</source>
         <translation>发送中</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="55"/>
+        <location filename="../../../../src/uikit/qml/CatChatView.qml" line="62"/>
         <source>Sent</source>
         <translation>已发送</translation>
     </message>
@@ -171,12 +171,12 @@
 <context>
     <name>CatMultiSelectComboBox</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMultiSelectComboBox.qml" line="13"/>
+        <location filename="../../../../src/uikit/qml/CatMultiSelectComboBox.qml" line="12"/>
         <source>Select options</source>
         <translation>选择选项</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMultiSelectComboBox.qml" line="58"/>
+        <location filename="../../../../src/uikit/qml/CatMultiSelectComboBox.qml" line="57"/>
         <source>Search options</source>
         <translation>搜索选项</translation>
     </message>
@@ -432,337 +432,337 @@
         <translation>交互工具</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="123"/>
+        <location filename="../GalleryCatalog.qml" line="132"/>
         <source>Accordion</source>
         <translation>手风琴</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="132"/>
+        <location filename="../GalleryCatalog.qml" line="141"/>
         <source>Annotated Scroll Bar</source>
         <translation>标注滚动条</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="141"/>
+        <location filename="../GalleryCatalog.qml" line="150"/>
         <source>Auto Suggest Box</source>
         <translation>自动建议输入框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="151"/>
+        <location filename="../GalleryCatalog.qml" line="160"/>
         <source>Avatar</source>
         <translation>头像</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="160"/>
+        <location filename="../GalleryCatalog.qml" line="169"/>
         <source>Breadcrumb</source>
         <translation>面包屑</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="169"/>
+        <location filename="../GalleryCatalog.qml" line="178"/>
         <source>Calendar Date Picker</source>
         <translation>日历日期选择器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="178"/>
+        <location filename="../GalleryCatalog.qml" line="187"/>
         <source>Flip View</source>
         <translation>轮播视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="187"/>
+        <location filename="../GalleryCatalog.qml" line="196"/>
         <source>Coach Mark</source>
         <translation>引导标记</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="196"/>
+        <location filename="../GalleryCatalog.qml" line="205"/>
         <source>Color Picker</source>
         <translation>颜色选择器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="205"/>
+        <location filename="../GalleryCatalog.qml" line="214"/>
         <source>Command Bar</source>
         <translation>命令栏</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="214"/>
+        <location filename="../GalleryCatalog.qml" line="223"/>
         <source>Command Bar Flyout</source>
         <translation>命令浮层</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="223"/>
+        <location filename="../GalleryCatalog.qml" line="232"/>
         <source>Compound Button</source>
         <translation>复合按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="232"/>
+        <location filename="../GalleryCatalog.qml" line="241"/>
         <source>Content Dialog</source>
         <translation>内容对话框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="242"/>
+        <location filename="../GalleryCatalog.qml" line="251"/>
         <source>Date Picker</source>
         <translation>日期选择器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="251"/>
+        <location filename="../GalleryCatalog.qml" line="260"/>
         <source>Dialog</source>
         <translation>对话框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="261"/>
+        <location filename="../GalleryCatalog.qml" line="270"/>
         <source>Divider</source>
         <translation>分隔线</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="270"/>
+        <location filename="../GalleryCatalog.qml" line="279"/>
         <source>Drop Down Button</source>
         <translation>下拉按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="279"/>
+        <location filename="../GalleryCatalog.qml" line="288"/>
         <source>Expander</source>
         <translation>折叠区</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="288"/>
+        <location filename="../GalleryCatalog.qml" line="297"/>
         <source>Field</source>
         <translation>表单项</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="297"/>
+        <location filename="../GalleryCatalog.qml" line="306"/>
         <source>File Drop Zone</source>
         <translation>文件拖放区</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="307"/>
+        <location filename="../GalleryCatalog.qml" line="316"/>
         <source>File List View</source>
         <translation>文件列表</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="316"/>
+        <location filename="../GalleryCatalog.qml" line="325"/>
         <source>Flow View</source>
         <translation>流式视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="325"/>
+        <location filename="../GalleryCatalog.qml" line="334"/>
         <source>Flyout</source>
         <translation>锚定浮层</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="334"/>
+        <location filename="../GalleryCatalog.qml" line="343"/>
         <source>Font Icon</source>
         <translation>字体图标</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="343"/>
+        <location filename="../GalleryCatalog.qml" line="352"/>
         <source>Grid View</source>
         <translation>网格视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="352"/>
+        <location filename="../GalleryCatalog.qml" line="361"/>
         <source>Hyperlink Button</source>
         <translation>链接按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="361"/>
+        <location filename="../GalleryCatalog.qml" line="370"/>
         <source>Info Badge</source>
         <translation>信息徽标</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="370"/>
+        <location filename="../GalleryCatalog.qml" line="379"/>
         <source>List View</source>
         <translation>列表视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="380"/>
+        <location filename="../GalleryCatalog.qml" line="389"/>
         <source>Menu</source>
         <translation>菜单</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="389"/>
+        <location filename="../GalleryCatalog.qml" line="398"/>
         <source>Menu Bar</source>
         <translation>菜单栏</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="398"/>
+        <location filename="../GalleryCatalog.qml" line="407"/>
         <source>Menu Bar Item</source>
         <translation>菜单栏项</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="407"/>
+        <location filename="../GalleryCatalog.qml" line="416"/>
         <source>Menu Item</source>
         <translation>菜单项</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="416"/>
+        <location filename="../GalleryCatalog.qml" line="425"/>
         <source>Menu Separator</source>
         <translation>菜单分隔线</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="425"/>
+        <location filename="../GalleryCatalog.qml" line="434"/>
         <source>Multi Select Combo Box</source>
         <translation>多选下拉框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="434"/>
+        <location filename="../GalleryCatalog.qml" line="443"/>
         <source>Navigation View</source>
         <translation>导航视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="443"/>
+        <location filename="../GalleryCatalog.qml" line="452"/>
         <source>Number Box</source>
         <translation>数值输入框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="453"/>
+        <location filename="../GalleryCatalog.qml" line="462"/>
         <source>Particle Backdrop</source>
         <translation>粒子背景</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="462"/>
+        <location filename="../GalleryCatalog.qml" line="471"/>
         <source>Password Box</source>
         <translation>密码输入框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="471"/>
+        <location filename="../GalleryCatalog.qml" line="480"/>
         <source>Pips Pager</source>
         <translation>圆点分页器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="480"/>
+        <location filename="../GalleryCatalog.qml" line="489"/>
         <source>Pivot</source>
         <translation>枢轴导航</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="489"/>
+        <location filename="../GalleryCatalog.qml" line="498"/>
         <source>Progress Ring</source>
         <translation>进度环</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="498"/>
+        <location filename="../GalleryCatalog.qml" line="507"/>
         <source>Rating Control</source>
         <translation>评分控件</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="508"/>
+        <location filename="../GalleryCatalog.qml" line="517"/>
         <source>Repeat Button</source>
         <translation>重复按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="517"/>
+        <location filename="../GalleryCatalog.qml" line="526"/>
         <source>Scroll Bar</source>
         <translation>滚动条</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="526"/>
+        <location filename="../GalleryCatalog.qml" line="535"/>
         <source>Scroll View</source>
         <translation>滚动容器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="536"/>
+        <location filename="../GalleryCatalog.qml" line="545"/>
         <source>Selector Bar</source>
         <translation>选择栏</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="545"/>
+        <location filename="../GalleryCatalog.qml" line="554"/>
         <source>Shimmer</source>
         <translation>骨架闪光</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="554"/>
+        <location filename="../GalleryCatalog.qml" line="563"/>
         <source>Spatial Item</source>
         <translation>空间面板</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="563"/>
+        <location filename="../GalleryCatalog.qml" line="572"/>
         <source>Spatial View</source>
         <translation>空间视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="572"/>
+        <location filename="../GalleryCatalog.qml" line="581"/>
         <source>Spin Box</source>
         <translation>整数步进框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="581"/>
+        <location filename="../GalleryCatalog.qml" line="590"/>
         <source>Splash Screen</source>
         <translation>启动界面</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="590"/>
+        <location filename="../GalleryCatalog.qml" line="599"/>
         <source>Split Button</source>
         <translation>分离按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="599"/>
+        <location filename="../GalleryCatalog.qml" line="608"/>
         <source>Split View</source>
         <translation>分栏视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="608"/>
+        <location filename="../GalleryCatalog.qml" line="617"/>
         <source>Stack View</source>
         <translation>页面栈</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="617"/>
+        <location filename="../GalleryCatalog.qml" line="626"/>
         <source>Stepper</source>
         <translation>步骤导航</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="626"/>
+        <location filename="../GalleryCatalog.qml" line="635"/>
         <source>Tab View</source>
         <translation>页签视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="635"/>
+        <location filename="../GalleryCatalog.qml" line="644"/>
         <source>Teaching Tip</source>
         <translation>教学提示</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="644"/>
+        <location filename="../GalleryCatalog.qml" line="653"/>
         <source>Text Edit</source>
         <translation>多行文本</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="654"/>
+        <location filename="../GalleryCatalog.qml" line="663"/>
         <source>Time Picker</source>
         <translation>时间选择器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="663"/>
+        <location filename="../GalleryCatalog.qml" line="672"/>
         <source>Timeline</source>
         <translation>时间线</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="672"/>
+        <location filename="../GalleryCatalog.qml" line="681"/>
         <source>Title Bar</source>
         <translation>标题栏</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="681"/>
+        <location filename="../GalleryCatalog.qml" line="690"/>
         <source>Toast</source>
         <translation>短暂通知</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="690"/>
+        <location filename="../GalleryCatalog.qml" line="699"/>
         <source>Toggle Button</source>
         <translation>切换按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="699"/>
+        <location filename="../GalleryCatalog.qml" line="708"/>
         <source>Toggle Split Button</source>
         <translation>切换分离按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="708"/>
+        <location filename="../GalleryCatalog.qml" line="717"/>
         <source>Tree View</source>
         <translation>树形视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="717"/>
+        <location filename="../GalleryCatalog.qml" line="726"/>
         <source>Window</source>
         <translation>应用窗口</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="124"/>
+        <location filename="../GalleryCatalog.qml" line="133"/>
         <source>Coordinate expandable sections, with one or several open at a time.</source>
         <translation>协调折叠区，支持同时展开一个或多个区块。</translation>
     </message>
@@ -773,681 +773,691 @@
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="94"/>
+        <source>LED preview</source>
+        <translation>LED 灯点预览</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="95"/>
+        <source>Preview live RGBA frames with GPU instancing, 2D/3D camera controls and three-deck stress presets.</source>
+        <translation>通过 GPU 实例化预览实时 RGBA 帧，支持二维／三维相机控制和三路压测预设。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="103"/>
         <source>Chart</source>
         <translation>图表</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="95"/>
+        <location filename="../GalleryCatalog.qml" line="104"/>
         <source>Explore ten chart types, mixed series and live data with zoom, pan and tooltips.</source>
         <translation>探索十种图表、混合序列和实时数据，支持缩放、平移与数据提示。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="104"/>
+        <location filename="../GalleryCatalog.qml" line="113"/>
         <source>Chart axis</source>
         <translation>图表坐标轴</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="105"/>
+        <location filename="../GalleryCatalog.qml" line="114"/>
         <source>Configure linear, logarithmic, UTC time and category axes.</source>
         <translation>配置线性、对数、UTC 时间和分类坐标轴。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="113"/>
+        <location filename="../GalleryCatalog.qml" line="122"/>
         <source>Chart series</source>
         <translation>图表数据序列</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="114"/>
+        <location filename="../GalleryCatalog.qml" line="123"/>
         <source>Retain raw samples in a bounded buffer and append or replace validated batches.</source>
         <translation>在有容量限制的缓冲区中保留原始数据，并批量校验、追加或替换。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="133"/>
+        <location filename="../GalleryCatalog.qml" line="142"/>
         <source>Jump to labeled positions along a scroll range.</source>
         <translation>通过标签定位到滚动范围中的指定位置。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="142"/>
+        <location filename="../GalleryCatalog.qml" line="151"/>
         <source>Filter suggestions while typing and select with arrow keys or Enter.</source>
         <translation>输入时筛选建议，使用方向键或回车选择。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="152"/>
+        <location filename="../GalleryCatalog.qml" line="161"/>
         <source>Show initials or a circular photo with optional presence status.</source>
         <translation>展示姓名缩写或圆形照片，并可显示在线状态。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="161"/>
+        <location filename="../GalleryCatalog.qml" line="170"/>
         <source>Navigate a path and optionally trim it after selection.</source>
         <translation>沿路径导航，并可在选择后截短路径。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="170"/>
+        <location filename="../GalleryCatalog.qml" line="179"/>
         <source>Choose a date from a calendar with explicit date bounds.</source>
         <translation>通过日历选择日期，并限制可选日期范围。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="179"/>
+        <location filename="../GalleryCatalog.qml" line="188"/>
         <source>Swipe between persistent pages and connect a page indicator.</source>
         <translation>滑动切换保留状态的页面，并可配合页码指示器。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="188"/>
+        <location filename="../GalleryCatalog.qml" line="197"/>
         <source>Draw attention to a target with a modal guidance surface.</source>
         <translation>用模态引导浮层突出指定操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="197"/>
+        <location filename="../GalleryCatalog.qml" line="206"/>
         <source>Choose a swatch or edit RGB, opacity and hex values.</source>
         <translation>选择预设颜色，或编辑 RGB、透明度和十六进制值。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="206"/>
+        <location filename="../GalleryCatalog.qml" line="215"/>
         <source>Compose primary actions and an overflow menu for secondary actions.</source>
         <translation>组织主要操作，并将次要操作放入更多菜单。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="215"/>
+        <location filename="../GalleryCatalog.qml" line="224"/>
         <source>Present contextual actions in an anchored flyout.</source>
         <translation>在锚定浮层中展示上下文操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="224"/>
+        <location filename="../GalleryCatalog.qml" line="233"/>
         <source>Combine an action title with a supporting description.</source>
         <translation>在操作标题下补充说明文字。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="233"/>
+        <location filename="../GalleryCatalog.qml" line="242"/>
         <source>Present content with application-defined primary, secondary and close actions.</source>
         <translation>展示内容，并配置主要、次要及关闭操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="243"/>
+        <location filename="../GalleryCatalog.qml" line="252"/>
         <source>Confirm a bounded date using month, day and year editors.</source>
         <translation>通过月、日、年编辑器确认范围内的日期。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="252"/>
+        <location filename="../GalleryCatalog.qml" line="261"/>
         <source>Use a themed modal dialog with Qt standard accept and cancel buttons.</source>
         <translation>使用统一主题的模态对话框及 Qt 标准确认、取消按钮。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="262"/>
+        <location filename="../GalleryCatalog.qml" line="271"/>
         <source>Separate sections with a horizontal or vertical rule.</source>
         <translation>使用水平或垂直线划分区块。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="271"/>
+        <location filename="../GalleryCatalog.qml" line="280"/>
         <source>Open a menu from a keyboard-accessible action button.</source>
         <translation>通过支持键盘操作的按钮打开菜单。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="280"/>
+        <location filename="../GalleryCatalog.qml" line="289"/>
         <source>Reveal persistent content below a disclosure header.</source>
         <translation>展开标题下的内容，保留内部控件状态。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="289"/>
+        <location filename="../GalleryCatalog.qml" line="298"/>
         <source>Compose a label, editor, helper text and validation message.</source>
         <translation>组合标签、编辑器、辅助说明和校验信息。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="298"/>
+        <location filename="../GalleryCatalog.qml" line="307"/>
         <source>Accept filtered local file drops and delegate browsing to the application.</source>
         <translation>接收符合筛选条件的本地文件拖放，并向应用请求文件浏览。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="308"/>
+        <location filename="../GalleryCatalog.qml" line="317"/>
         <source>Show names and descriptions from an application-owned file model.</source>
         <translation>展示应用提供的文件名称及说明。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="317"/>
+        <location filename="../GalleryCatalog.qml" line="326"/>
         <source>Wrap selectable items across the available width.</source>
         <translation>在可用宽度内自动换行展示可选条目。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="326"/>
+        <location filename="../GalleryCatalog.qml" line="335"/>
         <source>Place contextual content beside a target and dismiss it easily.</source>
         <translation>在目标旁展示上下文内容，并方便关闭。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="335"/>
+        <location filename="../GalleryCatalog.qml" line="344"/>
         <source>Render a glyph using the selected font, size and theme color.</source>
         <translation>使用指定字体、字号及主题颜色显示字形。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="344"/>
+        <location filename="../GalleryCatalog.qml" line="353"/>
         <source>Browse and select items in a scrollable grid.</source>
         <translation>在可滚动网格中浏览、选择条目。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="353"/>
+        <location filename="../GalleryCatalog.qml" line="362"/>
         <source>Activate a text link and optionally open an assigned URL.</source>
         <translation>激活文字链接，并可打开指定网址。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="362"/>
+        <location filename="../GalleryCatalog.qml" line="371"/>
         <source>Display a count, status dot or compact symbol.</source>
         <translation>展示数量、状态圆点或简洁符号。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="371"/>
+        <location filename="../GalleryCatalog.qml" line="380"/>
         <source>Browse a list with keyboard navigation and optional multiple selection.</source>
         <translation>浏览列表，支持键盘导航及多选。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="381"/>
+        <location filename="../GalleryCatalog.qml" line="390"/>
         <source>Organize actions, checked options, separators and nested menus.</source>
         <translation>组织操作、勾选项、分隔线及子菜单。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="390"/>
+        <location filename="../GalleryCatalog.qml" line="399"/>
         <source>Expose application menus through mouse and keyboard navigation.</source>
         <translation>通过鼠标及键盘访问应用菜单。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="399"/>
+        <location filename="../GalleryCatalog.qml" line="408"/>
         <source>Use a themed entry in an application menu bar.</source>
         <translation>在应用菜单栏中使用统一主题的入口。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="408"/>
+        <location filename="../GalleryCatalog.qml" line="417"/>
         <source>Trigger an action or toggle a checked option from a menu.</source>
         <translation>从菜单触发操作，或切换勾选项。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="417"/>
+        <location filename="../GalleryCatalog.qml" line="426"/>
         <source>Group related menu actions with a visual separator.</source>
         <translation>用分隔线划分相关菜单操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="426"/>
+        <location filename="../GalleryCatalog.qml" line="435"/>
         <source>Choose several options and optionally filter them by text.</source>
         <translation>选择多个选项，并可通过文字筛选。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="435"/>
+        <location filename="../GalleryCatalog.qml" line="444"/>
         <source>Host navigation and content, with a drawer on compact layouts.</source>
         <translation>组合导航与页面内容，在紧凑布局下使用抽屉。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="444"/>
+        <location filename="../GalleryCatalog.qml" line="453"/>
         <source>Edit bounded decimal values with steps, locale formatting and arithmetic.</source>
         <translation>编辑有范围限制的小数，支持步进、本地格式及算术表达式。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="454"/>
+        <location filename="../GalleryCatalog.qml" line="463"/>
         <source>Animate lightweight themed particles and respect reduced motion.</source>
         <translation>展示轻量主题粒子动画，并响应减少动效设置。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="463"/>
+        <location filename="../GalleryCatalog.qml" line="472"/>
         <source>Enter a password and reveal it with a keyboard-accessible toggle.</source>
         <translation>输入密码，并通过支持键盘操作的开关显示明文。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="472"/>
+        <location filename="../GalleryCatalog.qml" line="481"/>
         <source>Navigate pages with a bounded set of selectable indicators.</source>
         <translation>通过数量有限的可选指示点切换页面。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="481"/>
+        <location filename="../GalleryCatalog.qml" line="490"/>
         <source>Switch sections using a text selector with an active underline.</source>
         <translation>使用带活动下划线的文字选项切换区块。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="490"/>
+        <location filename="../GalleryCatalog.qml" line="499"/>
         <source>Switch between an active loading arc and determinate progress.</source>
         <translation>在加载圆弧与确定进度之间切换。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="499"/>
+        <location filename="../GalleryCatalog.qml" line="508"/>
         <source>Select or clear a rating, including fractional display and keyboard steps.</source>
         <translation>选择或清除评分，支持小数显示及键盘步进。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="509"/>
+        <location filename="../GalleryCatalog.qml" line="518"/>
         <source>Repeat an action while a mouse button or key is held.</source>
         <translation>在按住鼠标或按键期间重复触发操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="518"/>
+        <location filename="../GalleryCatalog.qml" line="527"/>
         <source>Drag a themed scroll thumb or attach it to a flickable view.</source>
         <translation>拖动主题滑块，或将其附加到可滚动视图。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="527"/>
+        <location filename="../GalleryCatalog.qml" line="536"/>
         <source>Scroll content by mouse drag, wheel or touch with themed horizontal and vertical bars.</source>
         <translation>支持鼠标按住拖动、滚轮、触摸滑动及主题水平、垂直滚动条。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="537"/>
+        <location filename="../GalleryCatalog.qml" line="546"/>
         <source>Choose one section from a group of labeled options.</source>
         <translation>从一组带标签的选项中选择一个区块。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="546"/>
+        <location filename="../GalleryCatalog.qml" line="555"/>
         <source>Show a loading skeleton that stays still under reduced motion.</source>
         <translation>展示加载骨架，在减少动效时保持静止。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="555"/>
+        <location filename="../GalleryCatalog.qml" line="564"/>
         <source>Transform a live surface in depth, with a flat rendering fallback.</source>
         <translation>对实时界面进行空间变换，并提供平面渲染回退。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="564"/>
+        <location filename="../GalleryCatalog.qml" line="573"/>
         <source>Compose interactive surfaces with perspective and pointer tilt.</source>
         <translation>组合可交互的面板，提供透视及指针倾斜效果。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="573"/>
+        <location filename="../GalleryCatalog.qml" line="582"/>
         <source>Edit an integer within bounds using text, buttons or keys.</source>
         <translation>通过文字、按钮或键盘编辑范围内的整数。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="582"/>
+        <location filename="../GalleryCatalog.qml" line="591"/>
         <source>Cover a window with branding, startup text and progress.</source>
         <translation>使用品牌图、启动说明及进度覆盖窗口内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="591"/>
+        <location filename="../GalleryCatalog.qml" line="600"/>
         <source>Keep a primary action separate from its additional menu actions.</source>
         <translation>将主要操作与更多菜单操作分开。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="600"/>
+        <location filename="../GalleryCatalog.qml" line="609"/>
         <source>Resize adjacent panes while preserving their minimum sizes.</source>
         <translation>调整相邻面板大小，并保留最小尺寸限制。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="609"/>
+        <location filename="../GalleryCatalog.qml" line="618"/>
         <source>Push, pop or replace pages with theme-controlled transitions.</source>
         <translation>压入、弹出或替换页面，过渡遵循主题动效设置。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="618"/>
+        <location filename="../GalleryCatalog.qml" line="627"/>
         <source>Request a step change while the application owns workflow state.</source>
         <translation>请求切换步骤，由应用决定流程状态。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="627"/>
+        <location filename="../GalleryCatalog.qml" line="636"/>
         <source>Preserve page state and request tab creation or closing.</source>
         <translation>切换页面时保留状态，并向应用请求新增、关闭页签。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="636"/>
+        <location filename="../GalleryCatalog.qml" line="645"/>
         <source>Explain a target action in an anchored, dismissible surface.</source>
         <translation>在可关闭的锚定浮层中解释指定操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="645"/>
+        <location filename="../GalleryCatalog.qml" line="654"/>
         <source>Write and select multiline text with themed focus and validation states.</source>
         <translation>编辑、选择多行文本，并显示主题焦点及校验状态。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="655"/>
+        <location filename="../GalleryCatalog.qml" line="664"/>
         <source>Confirm an hour and minute with configurable minute steps.</source>
         <translation>确认小时、分钟，并可配置分钟步长。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="664"/>
+        <location filename="../GalleryCatalog.qml" line="673"/>
         <source>Present ordered events with descriptions and timestamps.</source>
         <translation>按顺序展示事件、说明及时间信息。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="673"/>
+        <location filename="../GalleryCatalog.qml" line="682"/>
         <source>Move a window and access minimize, maximize and close actions.</source>
         <translation>移动窗口，并执行最小化、最大化及关闭操作。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="682"/>
+        <location filename="../GalleryCatalog.qml" line="691"/>
         <source>Show a timed notification with an action and optional hover pause.</source>
         <translation>展示带操作的定时通知，并可在悬停时暂停计时。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="691"/>
+        <location filename="../GalleryCatalog.qml" line="700"/>
         <source>Keep a checked state or cycle through three selection states.</source>
         <translation>保持选中状态，或在三种选择状态之间循环。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="700"/>
+        <location filename="../GalleryCatalog.qml" line="709"/>
         <source>Toggle a primary action while keeping its menu independent.</source>
         <translation>切换主要操作的选中状态，同时保留独立菜单。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="709"/>
+        <location filename="../GalleryCatalog.qml" line="718"/>
         <source>Expand and select hierarchical rows from a Qt item model.</source>
         <translation>展开、选择 Qt 数据模型提供的树形条目。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="718"/>
+        <location filename="../GalleryCatalog.qml" line="727"/>
         <source>Host content with themed colors and an optional custom title bar.</source>
         <translation>用主题颜色承载内容，并可启用自定义标题栏。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="726"/>
+        <location filename="../GalleryCatalog.qml" line="735"/>
         <source>Check box</source>
         <translation>复选框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="727"/>
+        <location filename="../GalleryCatalog.qml" line="736"/>
         <source>Select independent options, including a mixed state.</source>
         <translation>选择独立选项，支持半选状态。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="735"/>
+        <location filename="../GalleryCatalog.qml" line="744"/>
         <source>Radio button</source>
         <translation>单选按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="736"/>
+        <location filename="../GalleryCatalog.qml" line="745"/>
         <source>Choose one option from an exclusive group.</source>
         <translation>在一组选项中选择一项。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="744"/>
+        <location filename="../GalleryCatalog.qml" line="753"/>
         <source>Switch</source>
         <translation>开关</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="745"/>
+        <location filename="../GalleryCatalog.qml" line="754"/>
         <source>Turn settings on and off with mouse, touch or keyboard.</source>
         <translation>使用鼠标、触摸或键盘切换设置。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="753"/>
+        <location filename="../GalleryCatalog.qml" line="762"/>
         <source>Slider</source>
         <translation>滑条</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="754"/>
+        <location filename="../GalleryCatalog.qml" line="763"/>
         <source>Adjust a value with a themed track and handle.</source>
         <translation>通过统一主题的轨道和滑块调整数值。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="762"/>
+        <location filename="../GalleryCatalog.qml" line="771"/>
         <source>Combo box</source>
         <translation>下拉框</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="763"/>
+        <location filename="../GalleryCatalog.qml" line="772"/>
         <source>Choose or edit a value in a themed dropdown.</source>
         <translation>在下拉列表中选择或编辑内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="771"/>
+        <location filename="../GalleryCatalog.qml" line="780"/>
         <source>Button</source>
         <translation>按钮</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="772"/>
+        <location filename="../GalleryCatalog.qml" line="781"/>
         <source>Actions with primary, default, disabled and loading states.</source>
         <translation>主按钮、默认、禁用和加载状态，让操作清晰可见。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="780"/>
+        <location filename="../GalleryCatalog.qml" line="789"/>
         <source>Text field</source>
         <translation>文本输入</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="781"/>
+        <location filename="../GalleryCatalog.qml" line="790"/>
         <source>Keyboard-friendly text entry with focus and placeholder states.</source>
         <translation>支持键盘焦点与占位提示的文本输入。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="789"/>
+        <location filename="../GalleryCatalog.qml" line="798"/>
         <source>IP address</source>
         <translation>IP 地址输入</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="790"/>
+        <location filename="../GalleryCatalog.qml" line="799"/>
         <source>A focused editor for IPv4 addresses.</source>
         <translation>用于编辑 IPv4 地址的专用输入框。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="798"/>
+        <location filename="../GalleryCatalog.qml" line="807"/>
         <source>Typography</source>
         <translation>文本与排版</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="799"/>
+        <location filename="../GalleryCatalog.qml" line="808"/>
         <source>Readable text that follows your theme.</source>
         <translation>随主题变化的文本，保持清晰易读。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="807"/>
+        <location filename="../GalleryCatalog.qml" line="816"/>
         <source>Surface</source>
         <translation>内容容器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="808"/>
+        <location filename="../GalleryCatalog.qml" line="817"/>
         <source>A themed surface for grouping related content.</source>
         <translation>用统一的背景与间距组织相关内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="816"/>
+        <location filename="../GalleryCatalog.qml" line="825"/>
         <source>Alert</source>
         <translation>提示条</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="817"/>
+        <location filename="../GalleryCatalog.qml" line="826"/>
         <source>Inline information, success, warning and error messages.</source>
         <translation>在页面中展示信息、成功、警告和错误提示。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="825"/>
+        <location filename="../GalleryCatalog.qml" line="834"/>
         <source>Loading indicator</source>
         <translation>加载指示器</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="826"/>
+        <location filename="../GalleryCatalog.qml" line="835"/>
         <source>A steady loading arc that respects reduced motion.</source>
         <translation>匀速旋转的加载圆环，支持减少动效。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="834"/>
+        <location filename="../GalleryCatalog.qml" line="843"/>
         <source>Progress bar</source>
         <translation>进度条</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="835"/>
+        <location filename="../GalleryCatalog.qml" line="844"/>
         <source>Make the progress of a task visible.</source>
         <translation>清楚呈现任务的完成进度。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="843"/>
+        <location filename="../GalleryCatalog.qml" line="852"/>
         <source>Circular progress</source>
         <translation>环形进度</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="844"/>
+        <location filename="../GalleryCatalog.qml" line="853"/>
         <source>A compact circular view of task completion.</source>
         <translation>以紧凑的圆环展示完成比例。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="852"/>
+        <location filename="../GalleryCatalog.qml" line="861"/>
         <source>Tooltip</source>
         <translation>工具提示</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="853"/>
+        <location filename="../GalleryCatalog.qml" line="862"/>
         <source>Contextual help when you hover over a control.</source>
         <translation>悬停时显示相关说明，保持页面简洁。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="861"/>
+        <location filename="../GalleryCatalog.qml" line="870"/>
         <source>Pagination</source>
         <translation>分页</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="862"/>
+        <location filename="../GalleryCatalog.qml" line="871"/>
         <source>Navigate larger collections one page at a time.</source>
         <translation>将较大的内容集合分成便于浏览的页面。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="870"/>
+        <location filename="../GalleryCatalog.qml" line="879"/>
         <source>Calendar</source>
         <translation>日历</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="871"/>
+        <location filename="../GalleryCatalog.qml" line="880"/>
         <source>Browse months and select dates in your language.</source>
         <translation>用当前语言浏览月份并选择日期。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="879"/>
+        <location filename="../GalleryCatalog.qml" line="888"/>
         <source>Popup</source>
         <translation>弹出层</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="880"/>
+        <location filename="../GalleryCatalog.qml" line="889"/>
         <source>Focused content above the current page.</source>
         <translation>在当前页面上方展示需要关注的内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="888"/>
+        <location filename="../GalleryCatalog.qml" line="897"/>
         <source>Drawer</source>
         <translation>侧边抽屉</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="889"/>
+        <location filename="../GalleryCatalog.qml" line="898"/>
         <source>Extra space for navigation or contextual content.</source>
         <translation>为导航与辅助内容提供额外空间。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="897"/>
+        <location filename="../GalleryCatalog.qml" line="906"/>
         <source>Table</source>
         <translation>表格</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="898"/>
+        <location filename="../GalleryCatalog.qml" line="907"/>
         <source>Structured data backed by a C++ table model.</source>
         <translation>通过 C++ 表格模型展示结构化数据。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="906"/>
+        <location filename="../GalleryCatalog.qml" line="915"/>
         <source>Conversation</source>
         <translation>对话列表</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="907"/>
+        <location filename="../GalleryCatalog.qml" line="916"/>
         <source>Messages with sender, delivery state and a composer.</source>
         <translation>展示消息、发送者与状态，并体验消息输入。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="915"/>
+        <location filename="../GalleryCatalog.qml" line="924"/>
         <source>Message input</source>
         <translation>消息输入</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="916"/>
+        <location filename="../GalleryCatalog.qml" line="925"/>
         <source>A message composer with a submit action.</source>
         <translation>包含发送操作的消息编辑器。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="924"/>
+        <location filename="../GalleryCatalog.qml" line="933"/>
         <source>Flip view</source>
         <translation>翻转视图</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="925"/>
+        <location filename="../GalleryCatalog.qml" line="934"/>
         <source>Switch between two faces of the same surface.</source>
         <translation>在同一内容卡片的正面和背面之间切换。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="933"/>
+        <location filename="../GalleryCatalog.qml" line="942"/>
         <source>Marquee</source>
         <translation>滚动文本</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="934"/>
+        <location filename="../GalleryCatalog.qml" line="943"/>
         <source>Let longer text move through a compact space.</source>
         <translation>让长文本在有限的空间里流动。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="942"/>
+        <location filename="../GalleryCatalog.qml" line="951"/>
         <source>Typewriter</source>
         <translation>打字机效果</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="943"/>
+        <location filename="../GalleryCatalog.qml" line="952"/>
         <source>Reveal text gradually with a restart action.</source>
         <translation>逐字呈现文本，支持重新播放。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="951"/>
+        <location filename="../GalleryCatalog.qml" line="960"/>
         <source>Image motion</source>
         <translation>图片动效</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="952"/>
+        <location filename="../GalleryCatalog.qml" line="961"/>
         <source>A gentle scale and opacity animation for images.</source>
         <translation>为图片添加轻柔的缩放与透明度动效。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="960"/>
+        <location filename="../GalleryCatalog.qml" line="969"/>
         <source>Image</source>
         <translation>图片</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="961"/>
+        <location filename="../GalleryCatalog.qml" line="970"/>
         <source>Asynchronous images with aspect-ratio preservation.</source>
         <translation>异步加载图片并保持原始宽高比。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="969"/>
+        <location filename="../GalleryCatalog.qml" line="978"/>
         <source>Conical gradient</source>
         <translation>锥形渐变</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="970"/>
+        <location filename="../GalleryCatalog.qml" line="979"/>
         <source>A color sweep around the center of a surface.</source>
         <translation>围绕中心展开的色彩渐变。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="978"/>
+        <location filename="../GalleryCatalog.qml" line="987"/>
         <source>Visual effect</source>
         <translation>视觉效果</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="979"/>
+        <location filename="../GalleryCatalog.qml" line="988"/>
         <source>Add a soft shadow to a rendered source.</source>
         <translation>为渲染内容添加柔和的阴影。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="987"/>
+        <location filename="../GalleryCatalog.qml" line="996"/>
         <source>Drag handle</source>
         <translation>拖动手柄</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="988"/>
+        <location filename="../GalleryCatalog.qml" line="997"/>
         <source>Move an item with mouse or touch.</source>
         <translation>通过鼠标或触摸移动内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="996"/>
+        <location filename="../GalleryCatalog.qml" line="1005"/>
         <source>Resize handle</source>
         <translation>缩放手柄</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="997"/>
+        <location filename="../GalleryCatalog.qml" line="1006"/>
         <source>Resize a surface within explicit bounds.</source>
         <translation>在指定范围内调整内容尺寸。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="1005"/>
+        <location filename="../GalleryCatalog.qml" line="1014"/>
         <source>Frame counter</source>
         <translation>帧率计数</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="1006"/>
+        <location filename="../GalleryCatalog.qml" line="1015"/>
         <source>Observe the rate of Qt Quick frame callbacks.</source>
         <translation>观察 Qt Quick 帧回调速率。</translation>
     </message>
     <message>
-        <location filename="../GalleryCatalog.qml" line="1016"/>
+        <location filename="../GalleryCatalog.qml" line="1025"/>
         <source>All components</source>
         <translation>全部组件</translation>
     </message>
@@ -2345,44 +2355,45 @@ Slowest data batch: %6 ms</source>
     </message>
     <message>
         <location filename="../gallerydatademo.cpp" line="80"/>
-        <location filename="../gallerydatademo.cpp" line="118"/>
+        <location filename="../gallerydatademo.cpp" line="120"/>
         <source>Welcome! Try switching languages while writing a message.</source>
         <translation>欢迎！试试在编写消息时切换语言。</translation>
     </message>
     <message>
         <location filename="../gallerydatademo.cpp" line="82"/>
-        <location filename="../gallerydatademo.cpp" line="152"/>
+        <location filename="../gallerydatademo.cpp" line="154"/>
         <source>You</source>
         <translation>你</translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="110"/>
-        <location filename="../gallerydatademo.cpp" line="170"/>
+        <location filename="../gallerydatademo.cpp" line="112"/>
+        <location filename="../gallerydatademo.cpp" line="172"/>
         <source>Ready</source>
         <translation>就绪</translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="139"/>
+        <location filename="../gallerydatademo.cpp" line="141"/>
         <source>Message %1 · A local demo, with no network request. </source>
         <translation>消息 %1 · 本地演示，不发送网络请求。 </translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="152"/>
+        <location filename="../gallerydatademo.cpp" line="84"/>
+        <location filename="../gallerydatademo.cpp" line="154"/>
         <source>Demo contact</source>
         <translation>演示联系人</translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="169"/>
+        <location filename="../gallerydatademo.cpp" line="171"/>
         <source>Record %1</source>
         <translation>记录 %1</translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="190"/>
+        <location filename="../gallerydatademo.cpp" line="192"/>
         <source>Updated</source>
         <translation>已更新</translation>
     </message>
     <message>
-        <location filename="../gallerydatademo.cpp" line="308"/>
+        <location filename="../gallerydatademo.cpp" line="310"/>
         <source>Demo attachment %1</source>
         <translation>演示附件 %1</translation>
     </message>
@@ -3543,6 +3554,109 @@ Keep notes, drafts and everyday details together.</source>
     </message>
 </context>
 <context>
+    <name>GalleryLedPreview</name>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="30"/>
+        <source>2D matrix</source>
+        <translation>二维矩阵</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="30"/>
+        <source>3D sphere</source>
+        <translation>三维球形</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <source>4,096 LEDs</source>
+        <translation>4,096 个灯点</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <source>10,000 LEDs</source>
+        <translation>10,000 个灯点</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <source>100,000 LEDs</source>
+        <translation>100,000 个灯点</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <source>Empty layout</source>
+        <translation>空布局</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <source>Single LED</source>
+        <translation>单个灯点</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="40"/>
+        <source>3D view</source>
+        <translation>三维视图</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="40"/>
+        <source>2D view</source>
+        <translation>二维视图</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="44"/>
+        <source>Reset view</source>
+        <translation>重置视角</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="49"/>
+        <source>Pause colors</source>
+        <translation>暂停颜色</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="49"/>
+        <source>Start colors</source>
+        <translation>启动颜色</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="54"/>
+        <source>Recreate previews</source>
+        <translation>重建预览</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="63"/>
+        <source>Point diameter: %1 px</source>
+        <translation>灯点直径：%1 像素</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="68"/>
+        <source>A/B mix: %1%</source>
+        <translation>A/B 混合：%1%</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="73"/>
+        <source>Output brightness: %1%</source>
+        <translation>输出亮度：%1%</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="84"/>
+        <source>Deck A</source>
+        <translation>Deck A</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="100"/>
+        <source>Output</source>
+        <translation>输出</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="117"/>
+        <source>Deck B</source>
+        <translation>Deck B</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="136"/>
+        <source>Left drag: orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: reset. Color Hz counts accepted CPU frames; render FPS counts LED render passes, not monitor presentation or GPU timing.</source>
+        <translation>左键拖动：三维旋转 · 中键拖动：平移 · 滚轮：缩放 · 双击：重置。颜色 Hz 为 CPU 接受帧频率；渲染 FPS 为灯点绘制频率，不代表显示器刷新率或 GPU 耗时。</translation>
+    </message>
+</context>
+<context>
     <name>GalleryNavigation</name>
     <message>
         <location filename="../GalleryNavigation.qml" line="16"/>
@@ -3573,363 +3687,363 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>GalleryPreview</name>
     <message>
-        <location filename="../GalleryPreview.qml" line="104"/>
-        <location filename="../GalleryPreview.qml" line="265"/>
+        <location filename="../GalleryPreview.qml" line="110"/>
+        <location filename="../GalleryPreview.qml" line="271"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="109"/>
+        <location filename="../GalleryPreview.qml" line="115"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="113"/>
+        <location filename="../GalleryPreview.qml" line="119"/>
         <source>Danger</source>
         <translation>危险操作</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="118"/>
-        <location filename="../GalleryPreview.qml" line="140"/>
-        <location filename="../GalleryPreview.qml" line="150"/>
-        <location filename="../GalleryPreview.qml" line="159"/>
-        <location filename="../GalleryPreview.qml" line="169"/>
-        <location filename="../GalleryPreview.qml" line="179"/>
+        <location filename="../GalleryPreview.qml" line="124"/>
+        <location filename="../GalleryPreview.qml" line="146"/>
+        <location filename="../GalleryPreview.qml" line="156"/>
+        <location filename="../GalleryPreview.qml" line="165"/>
+        <location filename="../GalleryPreview.qml" line="175"/>
+        <location filename="../GalleryPreview.qml" line="185"/>
         <source>Disabled</source>
         <translation>禁用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="122"/>
+        <location filename="../GalleryPreview.qml" line="128"/>
         <source>Loading</source>
         <translation>加载中</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="127"/>
+        <location filename="../GalleryPreview.qml" line="133"/>
         <source>Activated %1 times</source>
         <translation>已触发 %1 次</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="138"/>
+        <location filename="../GalleryPreview.qml" line="144"/>
         <source>Enable notifications</source>
         <translation>启用通知</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="139"/>
+        <location filename="../GalleryPreview.qml" line="145"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="141"/>
+        <location filename="../GalleryPreview.qml" line="147"/>
         <source>Notifications enabled</source>
         <translation>通知已启用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="141"/>
+        <location filename="../GalleryPreview.qml" line="147"/>
         <source>Notifications disabled</source>
         <translation>通知已禁用</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="148"/>
-        <location filename="../GalleryPreview.qml" line="177"/>
+        <location filename="../GalleryPreview.qml" line="154"/>
+        <location filename="../GalleryPreview.qml" line="183"/>
         <source>Local workspace</source>
         <translation>本地工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="149"/>
-        <location filename="../GalleryPreview.qml" line="177"/>
+        <location filename="../GalleryPreview.qml" line="155"/>
+        <location filename="../GalleryPreview.qml" line="183"/>
         <source>Cloud workspace</source>
         <translation>云端工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="157"/>
+        <location filename="../GalleryPreview.qml" line="163"/>
         <source>Wi-Fi</source>
         <translation>无线网络</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="158"/>
+        <location filename="../GalleryPreview.qml" line="164"/>
         <source>Airplane mode</source>
         <translation>飞行模式</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="160"/>
+        <location filename="../GalleryPreview.qml" line="166"/>
         <source>Connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="160"/>
+        <location filename="../GalleryPreview.qml" line="166"/>
         <source>Disconnected</source>
         <translation>已断开</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="167"/>
+        <location filename="../GalleryPreview.qml" line="173"/>
         <source>Volume: %1%</source>
         <translation>音量：%1%</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="168"/>
+        <location filename="../GalleryPreview.qml" line="174"/>
         <source>Volume</source>
         <translation>音量</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="176"/>
-        <location filename="../GalleryPreview.qml" line="177"/>
+        <location filename="../GalleryPreview.qml" line="182"/>
+        <location filename="../GalleryPreview.qml" line="183"/>
         <source>Workspace</source>
         <translation>工作区</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="178"/>
+        <location filename="../GalleryPreview.qml" line="184"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="178"/>
+        <location filename="../GalleryPreview.qml" line="184"/>
         <source>Touch</source>
         <translation>触摸</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="178"/>
+        <location filename="../GalleryPreview.qml" line="184"/>
         <source>Mobile</source>
         <translation>移动</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="178"/>
+        <location filename="../GalleryPreview.qml" line="184"/>
         <source>Interaction density</source>
         <translation>交互密度</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="187"/>
+        <location filename="../GalleryPreview.qml" line="193"/>
         <source>Your message</source>
         <translation>你的消息</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="193"/>
+        <location filename="../GalleryPreview.qml" line="199"/>
         <source>Type something…</source>
         <translation>输入一些内容…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="197"/>
+        <location filename="../GalleryPreview.qml" line="203"/>
         <source>%1 characters</source>
         <translation>%1 个字符</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="207"/>
+        <location filename="../GalleryPreview.qml" line="213"/>
         <source>Server address</source>
         <translation>服务器地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="216"/>
+        <location filename="../GalleryPreview.qml" line="222"/>
         <source>Valid IPv4 address</source>
         <translation>有效的 IPv4 地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="216"/>
+        <location filename="../GalleryPreview.qml" line="222"/>
         <source>Enter an IPv4 address</source>
         <translation>请输入 IPv4 地址</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="226"/>
+        <location filename="../GalleryPreview.qml" line="232"/>
         <source>Make room for good design.</source>
         <translation>给好设计，留一点空间。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="233"/>
+        <location filename="../GalleryPreview.qml" line="239"/>
         <source>Clear hierarchy makes an interface easier to read.</source>
         <translation>清楚的层次，让界面更容易阅读。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="238"/>
+        <location filename="../GalleryPreview.qml" line="244"/>
         <source>Secondary text adds context without competing for attention.</source>
         <translation>辅助文本补充信息，同时保持主次分明。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="252"/>
+        <location filename="../GalleryPreview.qml" line="258"/>
         <source>A place for your content.</source>
         <translation>让内容，各得其所。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="259"/>
+        <location filename="../GalleryPreview.qml" line="265"/>
         <source>Group related controls on a consistent surface.</source>
         <translation>在统一的内容容器中组织相关控件。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="277"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="277"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Success</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="277"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="277"/>
+        <location filename="../GalleryPreview.qml" line="283"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="279"/>
+        <location filename="../GalleryPreview.qml" line="285"/>
         <source>Alert severity</source>
         <translation>提示级别</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="283"/>
+        <location filename="../GalleryPreview.qml" line="289"/>
         <source>Your changes have been saved.</source>
         <translation>你的更改已保存。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="290"/>
+        <location filename="../GalleryPreview.qml" line="296"/>
         <source>Show alert</source>
         <translation>显示提示</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="317"/>
+        <location filename="../GalleryPreview.qml" line="323"/>
         <source>Working on it…</source>
         <translation>正在处理中…</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="325"/>
+        <location filename="../GalleryPreview.qml" line="331"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="325"/>
+        <location filename="../GalleryPreview.qml" line="331"/>
         <source>Resume</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="330"/>
+        <location filename="../GalleryPreview.qml" line="336"/>
         <source>One turn every 900 ms. Reduced motion stops the animation.</source>
         <translation>每 900 毫秒旋转一圈。开启减少动效后停止旋转。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="351"/>
-        <location filename="../GalleryPreview.qml" line="373"/>
+        <location filename="../GalleryPreview.qml" line="357"/>
+        <location filename="../GalleryPreview.qml" line="379"/>
         <source>Progress</source>
         <translation>进度</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="354"/>
+        <location filename="../GalleryPreview.qml" line="360"/>
         <source>%1% complete</source>
         <translation>已完成 %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="383"/>
+        <location filename="../GalleryPreview.qml" line="389"/>
         <source>Hover over me</source>
         <translation>将鼠标停在这里</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="385"/>
+        <location filename="../GalleryPreview.qml" line="391"/>
         <source>A little context, right where you need it.</source>
         <translation>恰到好处的说明，就在你需要的地方。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="390"/>
+        <location filename="../GalleryPreview.qml" line="396"/>
         <source>Leave the pointer over the button to see the tooltip.</source>
         <translation>将鼠标停留在按钮上，查看工具提示。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="408"/>
+        <location filename="../GalleryPreview.qml" line="414"/>
         <source>Current page: %1</source>
         <translation>当前第 %1 页</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="424"/>
+        <location filename="../GalleryPreview.qml" line="430"/>
         <source>Selected: %1</source>
         <translation>已选择：%1</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="440"/>
+        <location filename="../GalleryPreview.qml" line="446"/>
         <source>Open popup</source>
         <translation>打开弹出层</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="445"/>
+        <location filename="../GalleryPreview.qml" line="451"/>
         <source>Escape or click outside to close.</source>
         <translation>按 Esc 或点击外部区域关闭。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="459"/>
+        <location filename="../GalleryPreview.qml" line="465"/>
         <source>A moment of focus.</source>
         <translation>让注意力，停留片刻。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="466"/>
+        <location filename="../GalleryPreview.qml" line="472"/>
         <source>Keep the important action within reach.</source>
         <translation>让重要操作触手可及。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="471"/>
-        <location filename="../GalleryPreview.qml" line="518"/>
+        <location filename="../GalleryPreview.qml" line="477"/>
+        <location filename="../GalleryPreview.qml" line="524"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="487"/>
+        <location filename="../GalleryPreview.qml" line="493"/>
         <source>Open drawer</source>
         <translation>打开抽屉</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="492"/>
+        <location filename="../GalleryPreview.qml" line="498"/>
         <source>A side panel keeps the current page in view.</source>
         <translation>侧边面板展开时，当前页面依然可见。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="506"/>
+        <location filename="../GalleryPreview.qml" line="512"/>
         <source>More room for the details.</source>
         <translation>给细节，多一点空间。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="513"/>
+        <location filename="../GalleryPreview.qml" line="519"/>
         <source>Navigation, settings or supporting content can live here.</source>
         <translation>这里可以放置导航、设置或辅助内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="544"/>
+        <location filename="../GalleryPreview.qml" line="550"/>
         <source>Front</source>
         <translation>正面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="552"/>
+        <location filename="../GalleryPreview.qml" line="558"/>
         <source>Back</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="559"/>
+        <location filename="../GalleryPreview.qml" line="565"/>
         <source>Flip card</source>
         <translation>翻转卡片</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="574"/>
+        <location filename="../GalleryPreview.qml" line="580"/>
         <source>Thoughtful details make everyday interfaces feel better.</source>
         <translation>用心打磨细节，让日常使用的界面更舒适。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="585"/>
+        <location filename="../GalleryPreview.qml" line="591"/>
         <source>Every good interface starts with a small detail.</source>
         <translation>每一个好界面，都从一个小细节开始。</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="591"/>
+        <location filename="../GalleryPreview.qml" line="597"/>
         <source>Restart</source>
         <translation>重新播放</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="674"/>
+        <location filename="../GalleryPreview.qml" line="680"/>
         <source>Drag me</source>
         <translation>拖动我</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="700"/>
+        <location filename="../GalleryPreview.qml" line="706"/>
         <source>Resize me</source>
         <translation>调整我的尺寸</translation>
     </message>
     <message>
-        <location filename="../GalleryPreview.qml" line="728"/>
+        <location filename="../GalleryPreview.qml" line="734"/>
         <source>The counter reports frame callbacks, not monitor refresh rate.</source>
         <translation>这里显示 Qt Quick 的帧回调速率，而非显示器刷新率。</translation>
     </message>
@@ -4024,6 +4138,16 @@ Keep notes, drafts and everyday details together.</source>
     </message>
 </context>
 <context>
+    <name>LedPreview</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="38"/>
+        <source>%1 LEDs · color %2 Hz · render %3 FPS
+%4</source>
+        <translation>%1 个灯点 · 颜色 %2 Hz · 渲染 %3 FPS
+%4</translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <location filename="../Main.qml" line="19"/>
@@ -4046,54 +4170,54 @@ Keep notes, drafts and everyday details together.</source>
         <translation>组件展示库</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="140"/>
+        <location filename="../Main.qml" line="141"/>
         <source>Open navigation</source>
         <translation>打开导航</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="165"/>
-        <location filename="../Main.qml" line="193"/>
+        <location filename="../Main.qml" line="166"/>
+        <location filename="../Main.qml" line="194"/>
         <source>Search components…</source>
         <translation>搜索组件…</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="168"/>
-        <location filename="../Main.qml" line="196"/>
+        <location filename="../Main.qml" line="169"/>
+        <location filename="../Main.qml" line="197"/>
         <source>Search components</source>
         <translation>搜索组件</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="175"/>
+        <location filename="../Main.qml" line="176"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="181"/>
+        <location filename="../Main.qml" line="182"/>
         <source>Switch to light theme</source>
         <translation>切换到亮色主题</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="181"/>
+        <location filename="../Main.qml" line="182"/>
         <source>Switch to dark theme</source>
         <translation>切换到暗色主题</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="248"/>
+        <location filename="../Main.qml" line="250"/>
         <source>Search results</source>
         <translation>搜索结果</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="255"/>
+        <location filename="../Main.qml" line="257"/>
         <source>%1 results for “%2”</source>
         <translation>“%2”的搜索结果：%1 项</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="255"/>
+        <location filename="../Main.qml" line="257"/>
         <source>Choose a component to explore its behavior and QML example.</source>
         <translation>选择一个组件，体验交互并查看 QML 示例。</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="284"/>
+        <location filename="../Main.qml" line="286"/>
         <source>No components found. Try a different name.</source>
         <translation>没有找到组件，请换个名称试试。</translation>
     </message>

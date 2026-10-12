@@ -7,6 +7,7 @@
 QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触摸／移动交互密度、C++ 数据模型和原生图表。配套 Gallery 可交互体验组件、复制 QML 示例，并运行可配置的数据压力测试。
 
 - **101 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
+- **[LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)**：QRhi 实例化二维/三维灯点，C++ 实时 RGBA8 帧，Gallery 三路混合演示与 1 万／10 万点压测。
 - **主题系统**：亮暗模式、品牌色、语义 Token、局部主题和减少动效。
 - **原生图表**：10 种图表类型、混合序列、实时数据、缩放、平移和数据提示，使用 Qt Quick SceneGraph。
 - **数据模型**：表格、消息和树模型，配合 Qt Quick 视图按需创建可见项。
@@ -25,7 +26,7 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 
 | 项目 | 要求 |
 | --- | --- |
-| Qt | 6.8 或更高，Core、Gui、Qml、Quick、QuickControls2 |
+| Qt | 6.8 或更高，Core、Gui、Qml、Quick、QuickControls2、ShaderTools、匹配版本的 GuiPrivate 开发头 |
 | CMake / C++ | CMake 3.24 或更高，C++17 编译器 |
 | Gallery | Qt LinguistTools；文件对话框示例使用 QtQuick.Dialogs |
 | 自动测试 | Qt Test、QuickTest |

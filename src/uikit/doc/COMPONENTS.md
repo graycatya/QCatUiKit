@@ -175,6 +175,8 @@
 
 ## 空间
 
+[LedPreview](../qml/LedPreview.qml) / [LedSource](../qcatledsource.h) 提供 `source`、`viewMode`、`pointSize`、`previewBrightness`、`backgroundColor`、`showStatistics`、`resetView()`；使用 RHI 实例化灯点和独立 RGBA8 实时帧。详见 [LED 预览](LEDPREVIEW.md)。
+
 | 组件 | 主要 API / 行为 |
 | --- | --- |
 | [CatSpatialItem](../qml/CatSpatialItem.qml) | `position`, `rotation3d`, `cameraDistance`, `spatialEnabled`, `spatialHost`, `effectiveCameraDistance`, `flatMode`；对实时界面进行空间变换，并提供平面渲染回退。 |

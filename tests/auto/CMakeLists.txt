@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 add_subdirectory(models)
 add_subdirectory(charts)
+add_subdirectory(led)
 add_subdirectory(version)
 add_subdirectory(qml)
 

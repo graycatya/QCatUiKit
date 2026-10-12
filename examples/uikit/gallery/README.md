@@ -27,12 +27,17 @@ Windows 单配置程序位于 `<build>/bin/qcat-gallery.exe`，多配置程序�
 | `--width <pixels>` | 初始宽度，默认 1200，最小 360 |
 | `--page <id>` | home、all、settings 或组件 ID |
 | `--chart-demo <0–14>` | 图表演示编号，须配合图表页面 |
+| `--led-count <0–100000>` / `--led-layout matrix\|sphere` | LED 页面每路数量及布局，须配合 `--page led-preview` |
+| `--led-interval <4–1000>` | C++ LED 生产线程帧间隔，单位 ms |
+| `--led-benchmark <seconds>` / `--led-report <path>` | 2 秒暖机后测量 LED 渲染/提交频率，可保存 JSON 并退出 |
 | `--smoke-test` | 加载后自动退出 |
 | `--screenshot <path>` | 保存窗口截图后退出 |
 
 组件 ID 见 [GalleryCatalog.qml](GalleryCatalog.qml)，例如 `button`、`calendar`、`table`、`chat`、`chatinput`、`chart`、`chart-axis`、`chart-series`。可用 `--width 420 --density mobile` 检查窄屏。截图参数只保存窗口当前可见区域。
 
 ## 图表体验
+
+LED 三路演示、构建、接口和压测方法见 [LED 预览](../../../src/uikit/doc/LEDPREVIEW.md)。
 
 CatChart、CatChartAxis、CatChartSeries 页面共享图表演示。选择器包含以下 15 个配置：
 

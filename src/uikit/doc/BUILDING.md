@@ -4,7 +4,7 @@
 
 ## 环境与选项
 
-需要 CMake 3.24+、C++17 编译器和 Qt 6.8+。Qt 组件为 Core、Gui、Qml、Quick、QuickControls2。开启 Gallery 时需要 LinguistTools；开启测试时需要 Test、QuickTest。Ninja 可作为单配置或多配置生成器。
+需要 CMake 3.24+、C++17 编译器和 Qt 6.8+。Qt 组件为 Core、Gui、Qml、Quick、QuickControls2、ShaderTools，以及匹配版本的 GuiPrivate 开发头（LED RHI 渲染）。开启 Gallery 时需要 LinguistTools；开启测试时需要 Test、QuickTest。Ninja 可作为单配置或多配置生成器。
 
 | CMake 选项 | 默认值 | 用途 |
 | --- | --- | --- |

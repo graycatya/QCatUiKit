@@ -16,6 +16,8 @@ Item {
         width: Math.max(0, control.width - 8)
         sourceComponent: {
             switch (control.componentId) {
+            case "led-preview":
+                return ledScene;
             case "chart": case "chart-axis": case "chart-series":
                 return chartScene;
             case "button":
@@ -82,6 +84,10 @@ Item {
                 return extendedScene;
             }
         }
+    }
+    Component {
+        id: ledScene
+        GalleryLedPreview {}
     }
     Component {
         id: chartScene
