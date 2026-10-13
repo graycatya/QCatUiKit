@@ -4,6 +4,7 @@
 #include "qcatuikitglobal.h"
 #include <QByteArray>
 #include <QObject>
+#include <QVariantMap>
 #include <QVector>
 #include <QtQml/qqmlregistration.h>
 #include <memory>
@@ -29,6 +30,8 @@ class QCATUIKIT_EXPORT QCatLedSource : public QObject
 
     // Thread-safe. Returns 0 on invalid coordinates. Empty layouts are valid.
     quint64 setLayout(const QVector<Position> &positions);
+    quint64 setLayout(const QVector<Position> &positions, const QVariantMap &metadata);
+    Q_INVOKABLE QVariantMap layoutMetadata() const;
     // RGBA byte order, exactly 4 * pointCount bytes. IDs must increase per layout.
     // Pass the setLayout return value to reject frames for an obsolete layout.
     bool submitFrame(const QByteArray &rgba, quint64 frameId, quint64 layoutId = 0);

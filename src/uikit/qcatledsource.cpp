@@ -42,7 +42,16 @@ void QCatLedSource::scheduleNotification()
 
 quint64 QCatLedSource::setLayout(const QVector<Position> &positions)
 {
+    return setLayout(positions, {});
+}
+QVariantMap QCatLedSource::layoutMetadata() const
+{
+    return snapshot()->layout->metadata;
+}
+quint64 QCatLedSource::setLayout(const QVector<Position> &positions, const QVariantMap &metadata)
+{
     auto layout = std::make_shared<QCatLedLayout>();
+    layout->metadata = metadata;
     // Own the memory even when the caller uses fromRawData or retains a pointer.
     QVector3D minimum, maximum;
     bool first = true;

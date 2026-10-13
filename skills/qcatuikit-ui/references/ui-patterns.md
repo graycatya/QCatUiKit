@@ -85,3 +85,12 @@ Keep antialiasing at its default true unless the task specifically requires a co
 Use bounded batches on the QObject's owning thread, delivering worker results through
 queued connections. A stop button must get an event-loop opportunity to run. For streaming
 views, separately define retained capacity, append rate, drawing budget and history policy.
+
+
+## LED 工作流
+
+需要灯点布局、预设、双 Deck 或多通道输出时，阅读 `src/uikit/doc/LEDWORKFLOW.md`。
+使用公共 `LedProject` 可选装配或独立注入 LayoutModel/Registry/Repository/Deck/Mixer；不要依赖
+`GalleryLedDemo`。`LedDeck`、`LedMixer`、`LedStorageBrowser` 及三个设置面板可直接复用。
+预览亮度与 Deck/Place/Master 不同；RGBA alpha 不代表 W。设备分支读取公共 LightingFrame，
+不用截图或 renderer 私有头，MemoryOutputBackend 只表示内存验证。

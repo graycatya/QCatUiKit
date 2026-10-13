@@ -177,6 +177,8 @@
 
 [LedPreview](../qml/LedPreview.qml) / [LedSource](../qcatledsource.h) 提供 `source`、`viewMode`、`pointSize`、`previewBrightness`、`backgroundColor`、`showStatistics`、`resetView()`；使用 RHI 实例化灯点和独立 RGBA8 实时帧。详见 [LED 预览](LEDPREVIEW.md)。
 
+公共 `LedDeck`、`LedMixer`、`LedStorageBrowser` 和 `LedLayoutSettings` / `LedPreviewSettings` / `LedOutputSettings` 提供独立播放、Storage 预设、共享布局与灯具配置交互。`LedProject` 可选装配多通道管线，支持 RGB、RGBW、RGB＋冷白＋暖白，并通过 `MemoryOutputBackend` 验证设备分支。完整接口和最小示例见 [LED 工作流](LEDWORKFLOW.md)。
+
 | 组件 | 主要 API / 行为 |
 | --- | --- |
 | [CatSpatialItem](../qml/CatSpatialItem.qml) | `position`, `rotation3d`, `cameraDistance`, `spatialEnabled`, `spatialHost`, `effectiveCameraDistance`, `flatMode`；对实时界面进行空间变换，并提供平面渲染回退。 |

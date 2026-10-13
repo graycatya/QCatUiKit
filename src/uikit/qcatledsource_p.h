@@ -7,6 +7,7 @@ struct QCatLedLayout
 {
     QVector<QCatLedSource::Position> positions;
     QVector3D center;
+    QVariantMap metadata;
     float radius = 1;
     quint64 id = 0;
 };

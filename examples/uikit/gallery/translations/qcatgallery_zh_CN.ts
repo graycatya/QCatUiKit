@@ -355,6 +355,14 @@
     </message>
 </context>
 <context>
+    <name>ChartItem</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
+        <source>Intensity</source>
+        <translation>强度</translation>
+    </message>
+</context>
+<context>
     <name>GalleryCatalog</name>
     <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
@@ -430,6 +438,11 @@
         <location filename="../GalleryCatalog.qml" line="45"/>
         <source>Interaction tools</source>
         <translation>交互工具</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="95"/>
+        <source>Shared LED layouts, independent Decks, Storage presets, multichannel mixing and memory output.</source>
+        <translation>共享灯点布局、独立 Deck、Storage 预设、多通道混合与内存输出。</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="132"/>
@@ -775,11 +788,6 @@
         <location filename="../GalleryCatalog.qml" line="94"/>
         <source>LED preview</source>
         <translation>LED 灯点预览</translation>
-    </message>
-    <message>
-        <location filename="../GalleryCatalog.qml" line="95"/>
-        <source>Preview live RGBA frames with GPU instancing, 2D/3D camera controls and three-deck stress presets.</source>
-        <translation>通过 GPU 实例化预览实时 RGBA 帧，支持二维／三维相机控制和三路压测预设。</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="103"/>
@@ -3556,104 +3564,188 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>GalleryLedPreview</name>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="30"/>
-        <source>2D matrix</source>
-        <translation>二维矩阵</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="30"/>
-        <source>3D sphere</source>
-        <translation>三维球形</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
-        <source>4,096 LEDs</source>
-        <translation>4,096 个灯点</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
-        <source>10,000 LEDs</source>
-        <translation>10,000 个灯点</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>100,000 LEDs</source>
         <translation>100,000 个灯点</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>Empty layout</source>
         <translation>空布局</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>Single LED</source>
         <translation>单个灯点</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="40"/>
-        <source>3D view</source>
-        <translation>三维视图</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>64 × 32 matrix</source>
+        <translation>64 × 32 二维矩阵</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="40"/>
-        <source>2D view</source>
-        <translation>二维视图</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>16 × 16 × 8 matrix</source>
+        <translation>16 × 16 × 8 三维矩阵</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="44"/>
-        <source>Reset view</source>
-        <translation>重置视角</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Ring</source>
+        <translation>圆环</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="49"/>
-        <source>Pause colors</source>
-        <translation>暂停颜色</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Disk</source>
+        <translation>圆盘</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="49"/>
-        <source>Start colors</source>
-        <translation>启动颜色</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Sphere surface</source>
+        <translation>球面布局</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="54"/>
-        <source>Recreate previews</source>
-        <translation>重建预览</translation>
+        <location filename="../GalleryLedPreview.qml" line="65"/>
+        <source>Layout…</source>
+        <translation>布局…</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="63"/>
-        <source>Point diameter: %1 px</source>
-        <translation>灯点直径：%1 像素</translation>
+        <location filename="../GalleryLedPreview.qml" line="66"/>
+        <source>Profiles / patch…</source>
+        <translation>灯具配置 / 映射…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="67"/>
+        <source>Save / restore project…</source>
+        <translation>保存 / 恢复项目…</translation>
     </message>
     <message>
         <location filename="../GalleryLedPreview.qml" line="68"/>
-        <source>A/B mix: %1%</source>
-        <translation>A/B 混合：%1%</translation>
+        <source>Sync appearance from A</source>
+        <translation>同步 A 的预览外观</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="69"/>
+        <source>Fit all</source>
+        <translation>适配全部视图</translation>
     </message>
     <message>
         <location filename="../GalleryLedPreview.qml" line="73"/>
-        <source>Output brightness: %1%</source>
-        <translation>输出亮度：%1%</translation>
+        <source>%1 LEDs · layout revision %2%3</source>
+        <translation>%1 个灯点 · 布局版本 %2%3</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="84"/>
+        <location filename="../GalleryLedPreview.qml" line="73"/>
+        <source> · generating…</source>
+        <translation> · 正在生成…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="83"/>
+        <location filename="../GalleryLedPreview.qml" line="116"/>
+        <source>Memory repository</source>
+        <translation>内存预设库</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="83"/>
+        <location filename="../GalleryLedPreview.qml" line="116"/>
+        <source>JSON working repository</source>
+        <translation>JSON 工作预设库</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="92"/>
+        <source>Memory channel monitor</source>
+        <translation>内存通道监视器</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="93"/>
+        <source>%1 received · frame %2 · mapping %3</source>
+        <translation>已接收 %1 帧 · 当前帧 %2 · 映射版本 %3</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="94"/>
+        <source>Output point 0: %1</source>
+        <translation>输出灯点 0：%1</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="100"/>
+        <source>%1 / %2 · %3 channels at address %4
+%5</source>
+        <translation>%1 / %2 · %3 个通道，起始地址 %4
+%5</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="103"/>
+        <source>Enable device branch</source>
+        <translation>启用设备输出分支</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="104"/>
+        <source>Repeat held frames</source>
+        <translation>重复发送保持帧</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="105"/>
+        <source>Send interval (ms)</source>
+        <translation>发送间隔（毫秒）</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="108"/>
+        <source>Memory verification only. No hardware protocol is connected. Preview settings do not change these values.</source>
+        <translation>仅验证内存输出，未连接硬件协议。预览设置不会改变这些通道值。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="120"/>
+        <source>Left drag: pan in 2D / orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: fit · Right click: preview settings. Browsing a storage does not change playback.</source>
+        <translation>左键拖动：二维平移 / 三维旋转 · 中键：平移 · 滚轮：缩放 · 双击：适配 · 右键：预览设置。浏览预设集合不改变当前播放。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="125"/>
+        <source>Versioned project JSON</source>
+        <translation>带版本号的项目 JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="130"/>
+        <source>Restores layout, profiles, presets, working copies and preview preferences. Playback resumes paused at t=0; Blackout and Freeze reset.</source>
+        <translation>恢复布局、灯具配置、预设、工作副本和预览偏好。播放恢复为 t=0 的暂停状态，关闭全黑和冻结。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="132"/>
+        <source>Local file URL, e.g. file:///tmp/led-project.json</source>
+        <translation>本地文件 URL，例如 file:///tmp/led-project.json</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="137"/>
+        <source>Refresh JSON</source>
+        <translation>刷新 JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="138"/>
+        <source>Restore JSON</source>
+        <translation>恢复 JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="139"/>
+        <source>Save file</source>
+        <translation>保存文件</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="140"/>
+        <source>Load file</source>
+        <translation>加载文件</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="141"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="82"/>
         <source>Deck A</source>
         <translation>Deck A</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="100"/>
-        <source>Output</source>
-        <translation>输出</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="117"/>
+        <location filename="../GalleryLedPreview.qml" line="115"/>
         <source>Deck B</source>
         <translation>Deck B</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="136"/>
-        <source>Left drag: orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: reset. Color Hz counts accepted CPU frames; render FPS counts LED render passes, not monitor presentation or GPU timing.</source>
-        <translation>左键拖动：三维旋转 · 中键拖动：平移 · 滚轮：缩放 · 双击：重置。颜色 Hz 为 CPU 接受帧频率；渲染 FPS 为灯点绘制频率，不代表显示器刷新率或 GPU 耗时。</translation>
     </message>
 </context>
 <context>
@@ -4138,13 +4230,806 @@ Keep notes, drafts and everyday details together.</source>
     </message>
 </context>
 <context>
+    <name>LedDeck</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="9"/>
+        <source>Deck</source>
+        <translation>Deck</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="22"/>
+        <source>Loading…</source>
+        <translation>正在加载…</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="22"/>
+        <source>No preset</source>
+        <translation>未加载预设</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="27"/>
+        <source>Previous</source>
+        <translation>上一个</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="28"/>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="28"/>
+        <source>Play</source>
+        <translation>播放</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="29"/>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="30"/>
+        <source>Restart</source>
+        <translation>从头播放</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="31"/>
+        <source>Next</source>
+        <translation>下一个</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="32"/>
+        <source>Unload</source>
+        <translation>卸载预设</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="36"/>
+        <source>Deck speed</source>
+        <translation>Deck 速度</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="39"/>
+        <source>Deck brightness: %1%</source>
+        <translation>Deck 亮度：%1%</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="51"/>
+        <source>Unsaved working preset</source>
+        <translation>未保存的工作预设</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="51"/>
+        <source>Active: %1
+%2</source>
+        <translation>当前预设：%1
+%2</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="61"/>
+        <source>Select effect</source>
+        <translation>选择效果</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB + white</source>
+        <translation>RGB＋单白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB + cold white + warm white</source>
+        <translation>RGB＋冷白＋暖白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="75"/>
+        <source>Place speed</source>
+        <translation>预设速度</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="78"/>
+        <source>Place brightness</source>
+        <translation>预设亮度</translation>
+    </message>
+</context>
+<context>
+    <name>LedLayoutSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="13"/>
+        <source>Shared LED layout</source>
+        <translation>共享灯点布局</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>2D matrix</source>
+        <translation>二维矩阵</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>3D matrix</source>
+        <translation>三维矩阵</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Ring</source>
+        <translation>圆环</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Disk</source>
+        <translation>圆盘</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Sphere surface</source>
+        <translation>球面布局</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Custom XYZ</source>
+        <translation>自定义 XYZ</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="31"/>
+        <source>Count X</source>
+        <translation>X 方向数量</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="32"/>
+        <source>Count Y</source>
+        <translation>Y 方向数量</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="33"/>
+        <source>Count Z</source>
+        <translation>Z 方向数量</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="34"/>
+        <source>Layout spacing X</source>
+        <translation>X 布局间距</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="35"/>
+        <source>Layout spacing Y</source>
+        <translation>Y 布局间距</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="36"/>
+        <source>Layout spacing Z</source>
+        <translation>Z 布局间距</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="37"/>
+        <source>Point count</source>
+        <translation>灯点数量</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="38"/>
+        <source>Radius</source>
+        <translation>半径</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="39"/>
+        <source>Start angle (degrees)</source>
+        <translation>起始角度（度）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="40"/>
+        <source>Rings outside center</source>
+        <translation>中心外的径向层数</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="41"/>
+        <source>Points per ring</source>
+        <translation>每层角向点数</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="57"/>
+        <source>Clockwise</source>
+        <translation>顺时针</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="58"/>
+        <source>XYZ triples as JSON; custom layouts have no implicit grid dimensions.</source>
+        <translation>输入 XYZ 三元组 JSON；自定义布局不推测矩阵维度。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="67"/>
+        <source>Draft: %1 × %2 × %3 = %4 LEDs</source>
+        <translation>草稿：%1 × %2 × %3 = %4 个灯点</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="68"/>
+        <source>Draft: 1 center + %1 rings × %2 = %3 LEDs</source>
+        <translation>草稿：1 个中心点＋%1 层 × %2 点 = %3 个灯点</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="70"/>
+        <source>Origin is centered. Matrix index = x + countX × (y + countY × z); rows run downward. Apply updates all channels to one shared layout.</source>
+        <translation>原点位于中心。矩阵索引 = x + countX × (y + countY × z)，行向下排列。应用后全部通道使用同一共享布局。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="76"/>
+        <source>Defaults</source>
+        <translation>恢复默认值</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="77"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="79"/>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="83"/>
+        <source>Invalid XYZ JSON</source>
+        <translation>XYZ JSON 格式无效</translation>
+    </message>
+</context>
+<context>
+    <name>LedMixer</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="14"/>
+        <source>Output / Mixer</source>
+        <translation>输出 / 混合器</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="16"/>
+        <source>Crossfader: %1% B</source>
+        <translation>交叉混合：B 占 %1%</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="18"/>
+        <source>Master: %1%</source>
+        <translation>总输出亮度：%1%</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="22"/>
+        <source>Blackout</source>
+        <translation>全黑</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="23"/>
+        <source>Freeze mix</source>
+        <translation>冻结混合结果</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="25"/>
+        <source>Freeze holds the mixed channels. Master and Blackout still affect output.</source>
+        <translation>冻结保持全部混合通道，总输出亮度与全黑仍然生效。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB</source>
+        <translation>工作模型：RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB + white</source>
+        <translation>工作模型：RGB＋单白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB + cold + warm white</source>
+        <translation>工作模型：RGB＋冷白＋暖白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>Strict: matching schemas only</source>
+        <translation>严格模式：颜色模型必须一致</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>RGB expansion: extra whites = 0</source>
+        <translation>RGB 扩展：附加白通道为 0</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>Approximate white conversion</source>
+        <translation>白光近似转换</translation>
+    </message>
+</context>
+<context>
+    <name>LedOutputSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="13"/>
+        <source>Fixture profiles and patch</source>
+        <translation>灯具配置与通道映射</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="25"/>
+        <source>Add group</source>
+        <translation>添加分组</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="26"/>
+        <source>Remove group</source>
+        <translation>删除分组</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Group ID</source>
+        <translation>分组 ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Device ID</source>
+        <translation>设备 ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Port ID</source>
+        <translation>端口 ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB + white</source>
+        <translation>RGB＋单白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB + cold white + warm white</source>
+        <translation>RGB＋冷白＋暖白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="44"/>
+        <source>Channel order (comma separated)</source>
+        <translation>通道排列（逗号分隔）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="47"/>
+        <source>First logical point (0-based)</source>
+        <translation>起始逻辑灯点（从 0 起）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="48"/>
+        <source>Point count</source>
+        <translation>灯点数量</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="49"/>
+        <source>Start address (1-based)</source>
+        <translation>起始通道地址（从 1 起）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="50"/>
+        <source>Single white reference (K)</source>
+        <translation>单白参考色温（K）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="51"/>
+        <source>Cold white reference (K)</source>
+        <translation>冷白参考色温（K）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="52"/>
+        <source>Warm white reference (K)</source>
+        <translation>暖白参考色温（K）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Strict</source>
+        <translation>严格模式</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Extra whites = 0</source>
+        <translation>附加白通道为 0</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Approximate white mapping</source>
+        <translation>白光近似映射</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="62"/>
+        <source>Approximation: CW/WW add with reference colors for RGB; CW + WW clamp to W. This is not calibrated fixture colorimetry. Memory output does not send to hardware.</source>
+        <translation>近似规则：CW/WW 按参考颜色合成 RGB；CW＋WW 截断后映射到 W。不代表灯具色度校准结果。内存输出不发送到硬件。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="68"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="69"/>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+</context>
+<context>
     <name>LedPreview</name>
     <message>
-        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="38"/>
+        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="66"/>
+        <source>View</source>
+        <translation>视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="77"/>
         <source>%1 LEDs · color %2 Hz · render %3 FPS
 %4</source>
         <translation>%1 个灯点 · 颜色 %2 Hz · 渲染 %3 FPS
 %4</translation>
+    </message>
+</context>
+<context>
+    <name>LedPreviewSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="12"/>
+        <source>Preview settings</source>
+        <translation>预览设置</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="35"/>
+        <source>Unsupported preview settings version</source>
+        <translation>不支持的预览设置版本</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="41"/>
+        <source>%1: value outside allowed range</source>
+        <translation>%1：数值超出允许范围</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="45"/>
+        <source>Background: use #RRGGBB or #AARRGGBB</source>
+        <translation>背景颜色：使用 #RRGGBB 或 #AARRGGBB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="51"/>
+        <source>Invalid camera settings</source>
+        <translation>相机设置无效</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="72"/>
+        <source>2D view</source>
+        <translation>二维视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="72"/>
+        <source>3D view</source>
+        <translation>三维视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Square</source>
+        <translation>方片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Circle</source>
+        <translation>圆片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Cube</source>
+        <translation>立方体</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Sphere (12 × 24)</source>
+        <translation>球体（12 × 24 网格）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="84"/>
+        <source>Fixed screen pixels</source>
+        <translation>固定屏幕像素</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="84"/>
+        <source>Scene units</source>
+        <translation>场景单位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Camera: current</source>
+        <translation>相机：当前视角</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Front</source>
+        <translation>正视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Isometric</source>
+        <translation>等轴视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Right</source>
+        <translation>右视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Top</source>
+        <translation>俯视图</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="96"/>
+        <source>Point diameter (px)</source>
+        <translation>灯点直径（像素）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="97"/>
+        <source>Scene diameter / cube edge</source>
+        <translation>场景直径 / 立方体边长</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="98"/>
+        <source>Display spacing X</source>
+        <translation>X 显示间距因子</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="99"/>
+        <source>Display spacing Y</source>
+        <translation>Y 显示间距因子</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="100"/>
+        <source>Display spacing Z</source>
+        <translation>Z 显示间距因子</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="101"/>
+        <source>Matrix X gap ratio</source>
+        <translation>矩阵 X 间隙比例</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="102"/>
+        <source>Matrix Y gap ratio</source>
+        <translation>矩阵 Y 间隙比例</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="103"/>
+        <source>Preview brightness</source>
+        <translation>预览亮度</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="104"/>
+        <source>Maximum preview FPS</source>
+        <translation>预览最高帧率</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>XY projection (overlapping layers)</source>
+        <translation>XY 投影（各层重叠）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold X slices</source>
+        <translation>展开 X 切片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold Y slices</source>
+        <translation>展开 Y 切片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold Z slices</source>
+        <translation>展开 Z 切片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="132"/>
+        <source>Arrange slices vertically</source>
+        <translation>纵向排列切片</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="134"/>
+        <source>Enable preview</source>
+        <translation>启用预览</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="134"/>
+        <source>Statistics</source>
+        <translation>统计信息</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="135"/>
+        <source>Screen reference grid</source>
+        <translation>屏幕参考网格</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="135"/>
+        <source>Axis legend</source>
+        <translation>坐标轴指示</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="142"/>
+        <source>Background color</source>
+        <translation>背景颜色</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="144"/>
+        <source>Background image URL (optional)</source>
+        <translation>背景图片 URL（可选）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="148"/>
+        <source>Display spacing changes centers without refitting. Gap ratios reduce point size; round shapes use the smaller fill. VSync is controlled by the window/backend.</source>
+        <translation>显示间距改变点中心距离，不自动重新适配。间隙比例缩小灯点尺寸，圆形使用较小填充比例。垂直同步由窗口 / 后端统一管理。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="155"/>
+        <source>Defaults</source>
+        <translation>恢复默认值</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="156"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="157"/>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+</context>
+<context>
+    <name>LedStorageBrowser</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="29"/>
+        <source>+ Storage</source>
+        <translation>＋预设集合</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="31"/>
+        <source>New storage</source>
+        <translation>新建预设集合</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="54"/>
+        <source>Place %1: %2</source>
+        <translation>槽位 %1：%2</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="54"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="68"/>
+        <source>Empty</source>
+        <translation>空槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="70"/>
+        <source>Unavailable</source>
+        <translation>不可播放</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="79"/>
+        <source>Load paused</source>
+        <translation>加载并暂停</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="80"/>
+        <source>Save / new place</source>
+        <translation>保存 / 新建预设</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="81"/>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="82"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="99"/>
+        <source>Rename</source>
+        <translation>重命名</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="83"/>
+        <source>Clear slot</source>
+        <translation>清空槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="84"/>
+        <source>Import / export</source>
+        <translation>导入 / 导出</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="88"/>
+        <source>Read-only source. Save a working copy to the writable repository.</source>
+        <translation>当前数据源只读，可将工作副本另存到可写预设库。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="93"/>
+        <source>Rename selected place</source>
+        <translation>重命名选中槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="98"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="115"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="104"/>
+        <source>Save to a specific slot</source>
+        <translation>保存到指定槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="107"/>
+        <source>The destination slot will be replaced. Loaded Deck snapshots stay unchanged.</source>
+        <translation>将替换目标槽位；已加载的 Deck 快照保持不变。</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="109"/>
+        <source>Slot %1</source>
+        <translation>槽位 %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="109"/>
+        <source>Select a slot</source>
+        <translation>选择槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="110"/>
+        <source>Preset name</source>
+        <translation>预设名称</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="117"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="132"/>
+        <source>Storage / Place JSON</source>
+        <translation>预设集合 / 槽位 JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Whole repository</source>
+        <translation>整个预设库</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Browsing storage</source>
+        <translation>当前浏览的集合</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Selected place</source>
+        <translation>选中的槽位</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="138"/>
+        <source>Local file URL, e.g. file:///tmp/presets.json</source>
+        <translation>本地文件 URL，例如 file:///tmp/presets.json</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="144"/>
+        <source>Export JSON</source>
+        <translation>导出 JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="145"/>
+        <source>Import JSON</source>
+        <translation>导入 JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="146"/>
+        <source>Save file</source>
+        <translation>保存文件</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="147"/>
+        <source>Load file</source>
+        <translation>加载文件</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="148"/>
+        <source>Close</source>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -4223,11 +5108,107 @@ Keep notes, drafts and everyday details together.</source>
     </message>
 </context>
 <context>
-    <name>QCatUiKit::ChartItem</name>
+    <name>QCatLedDeck</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
-        <source>Intensity</source>
-        <translation>强度</translation>
+        <location filename="../../../../src/uikit/qcatleddeck.cpp" line="266"/>
+        <source>Storage %1: %2 · Place %3</source>
+        <translation>集合 %1：%2 · 槽位 %3</translation>
+    </message>
+</context>
+<context>
+    <name>QCatLedStorageRepository</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="451"/>
+        <source>Basic effects</source>
+        <translation>基础效果</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="452"/>
+        <source>White and space</source>
+        <translation>白光与空间</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="471"/>
+        <source>Prism</source>
+        <translation>棱镜彩虹</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="472"/>
+        <source>Pastel rainbow</source>
+        <translation>柔和彩虹</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="474"/>
+        <source>Ocean ripple</source>
+        <translation>海洋波纹</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="475"/>
+        <source>Amber</source>
+        <translation>琥珀色</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="476"/>
+        <source>Cold white</source>
+        <translation>冷白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="477"/>
+        <source>Warm white</source>
+        <translation>暖白</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="478"/>
+        <source>White chase</source>
+        <translation>白光追逐</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="480"/>
+        <source>Single white</source>
+        <translation>单白光</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="95"/>
+        <source>Frequency</source>
+        <translation>频率</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="97"/>
+        <source>Saturation</source>
+        <translation>饱和度</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="100"/>
+        <source>Animated channel (0-based)</source>
+        <translation>动画通道（从 0 起）</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="101"/>
+        <source>Animation level</source>
+        <translation>动画强度</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="103"/>
+        <source>Rainbow</source>
+        <translation>彩虹</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="104"/>
+        <source>Ripple</source>
+        <translation>波纹</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="105"/>
+        <source>Independent channels</source>
+        <translation>独立通道纯色</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="106"/>
+        <source>Channel chase</source>
+        <translation>通道追逐</translation>
     </message>
 </context>
 </TS>

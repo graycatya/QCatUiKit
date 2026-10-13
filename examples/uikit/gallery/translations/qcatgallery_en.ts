@@ -355,6 +355,14 @@
     </message>
 </context>
 <context>
+    <name>ChartItem</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
+        <source>Intensity</source>
+        <translation>Intensity</translation>
+    </message>
+</context>
+<context>
     <name>GalleryCatalog</name>
     <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
@@ -430,6 +438,11 @@
         <location filename="../GalleryCatalog.qml" line="45"/>
         <source>Interaction tools</source>
         <translation>Interaction tools</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="95"/>
+        <source>Shared LED layouts, independent Decks, Storage presets, multichannel mixing and memory output.</source>
+        <translation>Shared LED layouts, independent Decks, Storage presets, multichannel mixing and memory output.</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="132"/>
@@ -775,11 +788,6 @@
         <location filename="../GalleryCatalog.qml" line="94"/>
         <source>LED preview</source>
         <translation>LED preview</translation>
-    </message>
-    <message>
-        <location filename="../GalleryCatalog.qml" line="95"/>
-        <source>Preview live RGBA frames with GPU instancing, 2D/3D camera controls and three-deck stress presets.</source>
-        <translation>Preview live RGBA frames with GPU instancing, 2D/3D camera controls and three-deck stress presets.</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="103"/>
@@ -3556,104 +3564,188 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GalleryLedPreview</name>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="30"/>
-        <source>2D matrix</source>
-        <translation>2D matrix</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="30"/>
-        <source>3D sphere</source>
-        <translation>3D sphere</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
-        <source>4,096 LEDs</source>
-        <translation>4,096 LEDs</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
-        <source>10,000 LEDs</source>
-        <translation>10,000 LEDs</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>100,000 LEDs</source>
         <translation>100,000 LEDs</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>Empty layout</source>
         <translation>Empty layout</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="35"/>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
         <source>Single LED</source>
         <translation>Single LED</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="40"/>
-        <source>3D view</source>
-        <translation>3D view</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>64 × 32 matrix</source>
+        <translation>64 × 32 matrix</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="40"/>
-        <source>2D view</source>
-        <translation>2D view</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>16 × 16 × 8 matrix</source>
+        <translation>16 × 16 × 8 matrix</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="44"/>
-        <source>Reset view</source>
-        <translation>Reset view</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Ring</source>
+        <translation>Ring</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="49"/>
-        <source>Pause colors</source>
-        <translation>Pause colors</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Disk</source>
+        <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="49"/>
-        <source>Start colors</source>
-        <translation>Start colors</translation>
+        <location filename="../GalleryLedPreview.qml" line="52"/>
+        <source>Sphere surface</source>
+        <translation>Sphere surface</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="54"/>
-        <source>Recreate previews</source>
-        <translation>Recreate previews</translation>
+        <location filename="../GalleryLedPreview.qml" line="65"/>
+        <source>Layout…</source>
+        <translation>Layout…</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="63"/>
-        <source>Point diameter: %1 px</source>
-        <translation>Point diameter: %1 px</translation>
+        <location filename="../GalleryLedPreview.qml" line="66"/>
+        <source>Profiles / patch…</source>
+        <translation>Profiles / patch…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="67"/>
+        <source>Save / restore project…</source>
+        <translation>Save / restore project…</translation>
     </message>
     <message>
         <location filename="../GalleryLedPreview.qml" line="68"/>
-        <source>A/B mix: %1%</source>
-        <translation>A/B mix: %1%</translation>
+        <source>Sync appearance from A</source>
+        <translation>Sync appearance from A</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="69"/>
+        <source>Fit all</source>
+        <translation>Fit all</translation>
     </message>
     <message>
         <location filename="../GalleryLedPreview.qml" line="73"/>
-        <source>Output brightness: %1%</source>
-        <translation>Output brightness: %1%</translation>
+        <source>%1 LEDs · layout revision %2%3</source>
+        <translation>%1 LEDs · layout revision %2%3</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="84"/>
+        <location filename="../GalleryLedPreview.qml" line="73"/>
+        <source> · generating…</source>
+        <translation> · generating…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="83"/>
+        <location filename="../GalleryLedPreview.qml" line="116"/>
+        <source>Memory repository</source>
+        <translation>Memory repository</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="83"/>
+        <location filename="../GalleryLedPreview.qml" line="116"/>
+        <source>JSON working repository</source>
+        <translation>JSON working repository</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="92"/>
+        <source>Memory channel monitor</source>
+        <translation>Memory channel monitor</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="93"/>
+        <source>%1 received · frame %2 · mapping %3</source>
+        <translation>%1 received · frame %2 · mapping %3</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="94"/>
+        <source>Output point 0: %1</source>
+        <translation>Output point 0: %1</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="100"/>
+        <source>%1 / %2 · %3 channels at address %4
+%5</source>
+        <translation>%1 / %2 · %3 channels at address %4
+%5</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="103"/>
+        <source>Enable device branch</source>
+        <translation>Enable device branch</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="104"/>
+        <source>Repeat held frames</source>
+        <translation>Repeat held frames</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="105"/>
+        <source>Send interval (ms)</source>
+        <translation>Send interval (ms)</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="108"/>
+        <source>Memory verification only. No hardware protocol is connected. Preview settings do not change these values.</source>
+        <translation>Memory verification only. No hardware protocol is connected. Preview settings do not change these values.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="120"/>
+        <source>Left drag: pan in 2D / orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: fit · Right click: preview settings. Browsing a storage does not change playback.</source>
+        <translation>Left drag: pan in 2D / orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: fit · Right click: preview settings. Browsing a storage does not change playback.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="125"/>
+        <source>Versioned project JSON</source>
+        <translation>Versioned project JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="130"/>
+        <source>Restores layout, profiles, presets, working copies and preview preferences. Playback resumes paused at t=0; Blackout and Freeze reset.</source>
+        <translation>Restores layout, profiles, presets, working copies and preview preferences. Playback resumes paused at t=0; Blackout and Freeze reset.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="132"/>
+        <source>Local file URL, e.g. file:///tmp/led-project.json</source>
+        <translation>Local file URL, e.g. file:///tmp/led-project.json</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="137"/>
+        <source>Refresh JSON</source>
+        <translation>Refresh JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="138"/>
+        <source>Restore JSON</source>
+        <translation>Restore JSON</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="139"/>
+        <source>Save file</source>
+        <translation>Save file</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="140"/>
+        <source>Load file</source>
+        <translation>Load file</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="141"/>
+        <source>Close</source>
+        <translation>Close</translation>
+    </message>
+    <message>
+        <location filename="../GalleryLedPreview.qml" line="82"/>
         <source>Deck A</source>
         <translation>Deck A</translation>
     </message>
     <message>
-        <location filename="../GalleryLedPreview.qml" line="100"/>
-        <source>Output</source>
-        <translation>Output</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="117"/>
+        <location filename="../GalleryLedPreview.qml" line="115"/>
         <source>Deck B</source>
         <translation>Deck B</translation>
-    </message>
-    <message>
-        <location filename="../GalleryLedPreview.qml" line="136"/>
-        <source>Left drag: orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: reset. Color Hz counts accepted CPU frames; render FPS counts LED render passes, not monitor presentation or GPU timing.</source>
-        <translation>Left drag: orbit in 3D · Middle drag: pan · Wheel: zoom · Double click: reset. Color Hz counts accepted CPU frames; render FPS counts LED render passes, not monitor presentation or GPU timing.</translation>
     </message>
 </context>
 <context>
@@ -4138,13 +4230,806 @@ Keep notes, drafts and everyday details together.</translation>
     </message>
 </context>
 <context>
+    <name>LedDeck</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="9"/>
+        <source>Deck</source>
+        <translation>Deck</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="22"/>
+        <source>Loading…</source>
+        <translation>Loading…</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="22"/>
+        <source>No preset</source>
+        <translation>No preset</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="27"/>
+        <source>Previous</source>
+        <translation>Previous</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="28"/>
+        <source>Pause</source>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="28"/>
+        <source>Play</source>
+        <translation>Play</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="29"/>
+        <source>Stop</source>
+        <translation>Stop</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="30"/>
+        <source>Restart</source>
+        <translation>Restart</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="31"/>
+        <source>Next</source>
+        <translation>Next</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="32"/>
+        <source>Unload</source>
+        <translation>Unload</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="36"/>
+        <source>Deck speed</source>
+        <translation>Deck speed</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="39"/>
+        <source>Deck brightness: %1%</source>
+        <translation>Deck brightness: %1%</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="51"/>
+        <source>Unsaved working preset</source>
+        <translation>Unsaved working preset</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="51"/>
+        <source>Active: %1
+%2</source>
+        <translation>Active: %1
+%2</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="61"/>
+        <source>Select effect</source>
+        <translation>Select effect</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB + white</source>
+        <translation>RGB + white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="69"/>
+        <source>RGB + cold white + warm white</source>
+        <translation>RGB + cold white + warm white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="75"/>
+        <source>Place speed</source>
+        <translation>Place speed</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedDeck.qml" line="78"/>
+        <source>Place brightness</source>
+        <translation>Place brightness</translation>
+    </message>
+</context>
+<context>
+    <name>LedLayoutSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="13"/>
+        <source>Shared LED layout</source>
+        <translation>Shared LED layout</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>2D matrix</source>
+        <translation>2D matrix</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>3D matrix</source>
+        <translation>3D matrix</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Ring</source>
+        <translation>Ring</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Disk</source>
+        <translation>Disk</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Sphere surface</source>
+        <translation>Sphere surface</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="25"/>
+        <source>Custom XYZ</source>
+        <translation>Custom XYZ</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="31"/>
+        <source>Count X</source>
+        <translation>Count X</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="32"/>
+        <source>Count Y</source>
+        <translation>Count Y</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="33"/>
+        <source>Count Z</source>
+        <translation>Count Z</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="34"/>
+        <source>Layout spacing X</source>
+        <translation>Layout spacing X</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="35"/>
+        <source>Layout spacing Y</source>
+        <translation>Layout spacing Y</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="36"/>
+        <source>Layout spacing Z</source>
+        <translation>Layout spacing Z</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="37"/>
+        <source>Point count</source>
+        <translation>Point count</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="38"/>
+        <source>Radius</source>
+        <translation>Radius</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="39"/>
+        <source>Start angle (degrees)</source>
+        <translation>Start angle (degrees)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="40"/>
+        <source>Rings outside center</source>
+        <translation>Rings outside center</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="41"/>
+        <source>Points per ring</source>
+        <translation>Points per ring</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="57"/>
+        <source>Clockwise</source>
+        <translation>Clockwise</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="58"/>
+        <source>XYZ triples as JSON; custom layouts have no implicit grid dimensions.</source>
+        <translation>XYZ triples as JSON; custom layouts have no implicit grid dimensions.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="67"/>
+        <source>Draft: %1 × %2 × %3 = %4 LEDs</source>
+        <translation>Draft: %1 × %2 × %3 = %4 LEDs</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="68"/>
+        <source>Draft: 1 center + %1 rings × %2 = %3 LEDs</source>
+        <translation>Draft: 1 center + %1 rings × %2 = %3 LEDs</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="70"/>
+        <source>Origin is centered. Matrix index = x + countX × (y + countY × z); rows run downward. Apply updates all channels to one shared layout.</source>
+        <translation>Origin is centered. Matrix index = x + countX × (y + countY × z); rows run downward. Apply updates all channels to one shared layout.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="76"/>
+        <source>Defaults</source>
+        <translation>Defaults</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="77"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="79"/>
+        <source>Apply</source>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedLayoutSettings.qml" line="83"/>
+        <source>Invalid XYZ JSON</source>
+        <translation>Invalid XYZ JSON</translation>
+    </message>
+</context>
+<context>
+    <name>LedMixer</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="14"/>
+        <source>Output / Mixer</source>
+        <translation>Output / Mixer</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="16"/>
+        <source>Crossfader: %1% B</source>
+        <translation>Crossfader: %1% B</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="18"/>
+        <source>Master: %1%</source>
+        <translation>Master: %1%</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="22"/>
+        <source>Blackout</source>
+        <translation>Blackout</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="23"/>
+        <source>Freeze mix</source>
+        <translation>Freeze mix</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="25"/>
+        <source>Freeze holds the mixed channels. Master and Blackout still affect output.</source>
+        <translation>Freeze holds the mixed channels. Master and Blackout still affect output.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB</source>
+        <translation>Working RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB + white</source>
+        <translation>Working RGB + white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="28"/>
+        <source>Working RGB + cold + warm white</source>
+        <translation>Working RGB + cold + warm white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>Strict: matching schemas only</source>
+        <translation>Strict: matching schemas only</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>RGB expansion: extra whites = 0</source>
+        <translation>RGB expansion: extra whites = 0</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedMixer.qml" line="34"/>
+        <source>Approximate white conversion</source>
+        <translation>Approximate white conversion</translation>
+    </message>
+</context>
+<context>
+    <name>LedOutputSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="13"/>
+        <source>Fixture profiles and patch</source>
+        <translation>Fixture profiles and patch</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="25"/>
+        <source>Add group</source>
+        <translation>Add group</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="26"/>
+        <source>Remove group</source>
+        <translation>Remove group</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Group ID</source>
+        <translation>Group ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Device ID</source>
+        <translation>Device ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="29"/>
+        <source>Port ID</source>
+        <translation>Port ID</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB + white</source>
+        <translation>RGB + white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="40"/>
+        <source>RGB + cold white + warm white</source>
+        <translation>RGB + cold white + warm white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="44"/>
+        <source>Channel order (comma separated)</source>
+        <translation>Channel order (comma separated)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="47"/>
+        <source>First logical point (0-based)</source>
+        <translation>First logical point (0-based)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="48"/>
+        <source>Point count</source>
+        <translation>Point count</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="49"/>
+        <source>Start address (1-based)</source>
+        <translation>Start address (1-based)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="50"/>
+        <source>Single white reference (K)</source>
+        <translation>Single white reference (K)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="51"/>
+        <source>Cold white reference (K)</source>
+        <translation>Cold white reference (K)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="52"/>
+        <source>Warm white reference (K)</source>
+        <translation>Warm white reference (K)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Strict</source>
+        <translation>Strict</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Extra whites = 0</source>
+        <translation>Extra whites = 0</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="61"/>
+        <source>Approximate white mapping</source>
+        <translation>Approximate white mapping</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="62"/>
+        <source>Approximation: CW/WW add with reference colors for RGB; CW + WW clamp to W. This is not calibrated fixture colorimetry. Memory output does not send to hardware.</source>
+        <translation>Approximation: CW/WW add with reference colors for RGB; CW + WW clamp to W. This is not calibrated fixture colorimetry. Memory output does not send to hardware.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="68"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedOutputSettings.qml" line="69"/>
+        <source>Apply</source>
+        <translation>Apply</translation>
+    </message>
+</context>
+<context>
     <name>LedPreview</name>
     <message>
-        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="38"/>
+        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="66"/>
+        <source>View</source>
+        <translation>View</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreview.qml" line="77"/>
         <source>%1 LEDs · color %2 Hz · render %3 FPS
 %4</source>
         <translation>%1 LEDs · color %2 Hz · render %3 FPS
 %4</translation>
+    </message>
+</context>
+<context>
+    <name>LedPreviewSettings</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="12"/>
+        <source>Preview settings</source>
+        <translation>Preview settings</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="35"/>
+        <source>Unsupported preview settings version</source>
+        <translation>Unsupported preview settings version</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="41"/>
+        <source>%1: value outside allowed range</source>
+        <translation>%1: value outside allowed range</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="45"/>
+        <source>Background: use #RRGGBB or #AARRGGBB</source>
+        <translation>Background: use #RRGGBB or #AARRGGBB</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="51"/>
+        <source>Invalid camera settings</source>
+        <translation>Invalid camera settings</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="72"/>
+        <source>2D view</source>
+        <translation>2D view</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="72"/>
+        <source>3D view</source>
+        <translation>3D view</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Square</source>
+        <translation>Square</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Circle</source>
+        <translation>Circle</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Cube</source>
+        <translation>Cube</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="78"/>
+        <source>Sphere (12 × 24)</source>
+        <translation>Sphere (12 × 24)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="84"/>
+        <source>Fixed screen pixels</source>
+        <translation>Fixed screen pixels</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="84"/>
+        <source>Scene units</source>
+        <translation>Scene units</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Camera: current</source>
+        <translation>Camera: current</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Front</source>
+        <translation>Front</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Isometric</source>
+        <translation>Isometric</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Right</source>
+        <translation>Right</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="90"/>
+        <source>Top</source>
+        <translation>Top</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="96"/>
+        <source>Point diameter (px)</source>
+        <translation>Point diameter (px)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="97"/>
+        <source>Scene diameter / cube edge</source>
+        <translation>Scene diameter / cube edge</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="98"/>
+        <source>Display spacing X</source>
+        <translation>Display spacing X</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="99"/>
+        <source>Display spacing Y</source>
+        <translation>Display spacing Y</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="100"/>
+        <source>Display spacing Z</source>
+        <translation>Display spacing Z</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="101"/>
+        <source>Matrix X gap ratio</source>
+        <translation>Matrix X gap ratio</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="102"/>
+        <source>Matrix Y gap ratio</source>
+        <translation>Matrix Y gap ratio</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="103"/>
+        <source>Preview brightness</source>
+        <translation>Preview brightness</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="104"/>
+        <source>Maximum preview FPS</source>
+        <translation>Maximum preview FPS</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>XY projection (overlapping layers)</source>
+        <translation>XY projection (overlapping layers)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold X slices</source>
+        <translation>Unfold X slices</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold Y slices</source>
+        <translation>Unfold Y slices</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="128"/>
+        <source>Unfold Z slices</source>
+        <translation>Unfold Z slices</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="132"/>
+        <source>Arrange slices vertically</source>
+        <translation>Arrange slices vertically</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="134"/>
+        <source>Enable preview</source>
+        <translation>Enable preview</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="134"/>
+        <source>Statistics</source>
+        <translation>Statistics</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="135"/>
+        <source>Screen reference grid</source>
+        <translation>Screen reference grid</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="135"/>
+        <source>Axis legend</source>
+        <translation>Axis legend</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="142"/>
+        <source>Background color</source>
+        <translation>Background color</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="144"/>
+        <source>Background image URL (optional)</source>
+        <translation>Background image URL (optional)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="148"/>
+        <source>Display spacing changes centers without refitting. Gap ratios reduce point size; round shapes use the smaller fill. VSync is controlled by the window/backend.</source>
+        <translation>Display spacing changes centers without refitting. Gap ratios reduce point size; round shapes use the smaller fill. VSync is controlled by the window/backend.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="155"/>
+        <source>Defaults</source>
+        <translation>Defaults</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="156"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedPreviewSettings.qml" line="157"/>
+        <source>Apply</source>
+        <translation>Apply</translation>
+    </message>
+</context>
+<context>
+    <name>LedStorageBrowser</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="29"/>
+        <source>+ Storage</source>
+        <translation>+ Storage</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="31"/>
+        <source>New storage</source>
+        <translation>New storage</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="54"/>
+        <source>Place %1: %2</source>
+        <translation>Place %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="54"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="68"/>
+        <source>Empty</source>
+        <translation>Empty</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="70"/>
+        <source>Unavailable</source>
+        <translation>Unavailable</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="79"/>
+        <source>Load paused</source>
+        <translation>Load paused</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="80"/>
+        <source>Save / new place</source>
+        <translation>Save / new place</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="81"/>
+        <source>Copy</source>
+        <translation>Copy</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="82"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="99"/>
+        <source>Rename</source>
+        <translation>Rename</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="83"/>
+        <source>Clear slot</source>
+        <translation>Clear slot</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="84"/>
+        <source>Import / export</source>
+        <translation>Import / export</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="88"/>
+        <source>Read-only source. Save a working copy to the writable repository.</source>
+        <translation>Read-only source. Save a working copy to the writable repository.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="93"/>
+        <source>Rename selected place</source>
+        <translation>Rename selected place</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="98"/>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="115"/>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="104"/>
+        <source>Save to a specific slot</source>
+        <translation>Save to a specific slot</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="107"/>
+        <source>The destination slot will be replaced. Loaded Deck snapshots stay unchanged.</source>
+        <translation>The destination slot will be replaced. Loaded Deck snapshots stay unchanged.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="109"/>
+        <source>Slot %1</source>
+        <translation>Slot %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="109"/>
+        <source>Select a slot</source>
+        <translation>Select a slot</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="110"/>
+        <source>Preset name</source>
+        <translation>Preset name</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="117"/>
+        <source>Save</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="132"/>
+        <source>Storage / Place JSON</source>
+        <translation>Storage / Place JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Whole repository</source>
+        <translation>Whole repository</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Browsing storage</source>
+        <translation>Browsing storage</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="136"/>
+        <source>Selected place</source>
+        <translation>Selected place</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="138"/>
+        <source>Local file URL, e.g. file:///tmp/presets.json</source>
+        <translation>Local file URL, e.g. file:///tmp/presets.json</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="144"/>
+        <source>Export JSON</source>
+        <translation>Export JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="145"/>
+        <source>Import JSON</source>
+        <translation>Import JSON</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="146"/>
+        <source>Save file</source>
+        <translation>Save file</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="147"/>
+        <source>Load file</source>
+        <translation>Load file</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/LedStorageBrowser.qml" line="148"/>
+        <source>Close</source>
+        <translation>Close</translation>
     </message>
 </context>
 <context>
@@ -4223,11 +5108,107 @@ Keep notes, drafts and everyday details together.</translation>
     </message>
 </context>
 <context>
-    <name>QCatUiKit::ChartItem</name>
+    <name>QCatLedDeck</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="606"/>
-        <source>Intensity</source>
-        <translation>Intensity</translation>
+        <location filename="../../../../src/uikit/qcatleddeck.cpp" line="266"/>
+        <source>Storage %1: %2 · Place %3</source>
+        <translation>Storage %1: %2 · Place %3</translation>
+    </message>
+</context>
+<context>
+    <name>QCatLedStorageRepository</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="451"/>
+        <source>Basic effects</source>
+        <translation>Basic effects</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="452"/>
+        <source>White and space</source>
+        <translation>White and space</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="471"/>
+        <source>Prism</source>
+        <translation>Prism</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="472"/>
+        <source>Pastel rainbow</source>
+        <translation>Pastel rainbow</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="474"/>
+        <source>Ocean ripple</source>
+        <translation>Ocean ripple</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="475"/>
+        <source>Amber</source>
+        <translation>Amber</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="476"/>
+        <source>Cold white</source>
+        <translation>Cold white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="477"/>
+        <source>Warm white</source>
+        <translation>Warm white</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="478"/>
+        <source>White chase</source>
+        <translation>White chase</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledstorage.cpp" line="480"/>
+        <source>Single white</source>
+        <translation>Single white</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="95"/>
+        <source>Frequency</source>
+        <translation>Frequency</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="97"/>
+        <source>Saturation</source>
+        <translation>Saturation</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="100"/>
+        <source>Animated channel (0-based)</source>
+        <translation>Animated channel (0-based)</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="101"/>
+        <source>Animation level</source>
+        <translation>Animation level</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="103"/>
+        <source>Rainbow</source>
+        <translation>Rainbow</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="104"/>
+        <source>Ripple</source>
+        <translation>Ripple</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="105"/>
+        <source>Independent channels</source>
+        <translation>Independent channels</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="106"/>
+        <source>Channel chase</source>
+        <translation>Channel chase</translation>
     </message>
 </context>
 </TS>

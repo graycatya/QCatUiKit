@@ -43,3 +43,8 @@ bash tests/auto/cmake/check_abi_replacement.sh \
 基线应为需要保持兼容的发布安装包，候选为待发布安装包。该脚本验证所用消费者，不覆盖所有符号和调用方式；发布还需检查导出符号、类型信息、公开头与 QML 行为。
 
 图表安装消费者位于 [charts-consumer](../../../tests/auto/cmake/charts-consumer)，版本消费者位于 [version_consumer](../../../tests/auto/cmake/version_consumer)。相关命令见 [验证说明](VALIDATION.md)。
+
+
+LED 工作流迭代保留 LedSource/LedPreview 既有成员签名、枚举值、Position 布局和 Pimpl 对象大小。
+新增属性及非虚函数通过现有 Impl 存储；SOVERSION 不变。新增 Layout/Frame/Registry/Repository/Deck/Mixer/Output/Project
+类型与转发头作为同一安装包交付，应用不应依赖 `_p.h`。新公开值结构的字段同样成为后续 ABI 维护边界。

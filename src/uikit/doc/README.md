@@ -25,7 +25,7 @@
 
 ## 接口范围
 
-GPU 灯点布局、实时颜色帧、相机及线程模型见 [LED 预览](LEDPREVIEW.md)。
+GPU 渲染和兼容 RGBA8 接口见 [LED 预览](LEDPREVIEW.md)；共享布局、Deck/Storage、多通道混合及设备内存输出见 [LED 工作流](LEDWORKFLOW.md)。
 
 - **QML**：101 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel 和版本信息单例。
 - **C++**：主题、表格、消息、图表、坐标轴、序列和版本查询接口；公开头安装到 `include/QCatUiKit`。

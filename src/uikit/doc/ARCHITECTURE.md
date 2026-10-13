@@ -77,3 +77,9 @@ GalleryChartData 保存演示源数据并生成采样／聚合预览；GalleryDa
 ## 维护入口
 
 新增组件同步维护模块 CMake、组件目录、GalleryCatalog、交互预览、翻译及相关检查。布局使用逻辑像素和主题 Token，输入优先采用 Qt Controls 的焦点、键盘、禁用与可访问性协议。详见 [贡献指南](../../../CONTRIBUTING.md) 和 [验证说明](VALIDATION.md)。
+
+
+LED 工作流由 `qcatledlayoutmodel`、`qcatlightingframe`、`qcatledeffectregistry`、`qcatledstorage`、
+`qcatleddeck`、`qcatledmixer`、`qcatledoutput` 组成。实时数据走不可变连续缓冲，低频配置走 QObject / ListModel；
+预览 RGBA 转换和设备 Patch 从同一最终 LightingFrame 分支。`qcatledproject` 是可选装配，不是 Deck 的强制依赖。
+Gallery 只选择示例配置，旧 `GalleryLedDemo` 保留为旧 RGBA 回归演示 helper。详见 [LED 工作流](LEDWORKFLOW.md)。

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "gallerylanguage.h"
 #include "galleryleddemo.h"
+#include <QCatUiKit/qcatledproject.h>
+#include <cmath>
 #include <QCatUiKit/qcatledpreview.h>
 #include <QElapsedTimer>
 #include <QFile>
@@ -95,7 +97,7 @@ int main(int argc, char **argv)
     }
     const bool ledOptions = parser.isSet("led-count") || parser.isSet("led-layout")
                             || parser.isSet("led-interval") || parser.isSet("led-benchmark") || parser.isSet("led-report");
-    auto *ledDemo = engine.rootObjects().first()->findChild<GalleryLedDemo *>(QStringLiteral("ledDemoData"));
+    auto *ledDemo = engine.rootObjects().first()->findChild<QCatLedProject *>(QStringLiteral("ledProjectData"));
     auto *ledWindow = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
     QElapsedTimer benchmarkClock;
     QList<quint64> initialFrames, initialColors;
@@ -113,9 +115,12 @@ int main(int argc, char **argv)
             || (parser.isSet("led-report") && !parser.isSet("led-benchmark"))
             || (layout != "matrix" && layout != "sphere"))
             parser.showHelp(2);
-        ledDemo->setPointCount(count);
-        ledDemo->setSpatial(layout == "sphere");
-        ledDemo->setInterval(interval);
+        auto config=ledDemo->layout()->configuration();
+        if(layout=="sphere"){config["type"]="SphereSurface";config["count"]=count;}
+        else {int x=qMax(1,int(std::sqrt(count)));while(count && count%x)--x;config["type"]="Matrix2D";config["countX"]=count?x:0;config["countY"]=count?count/x:1;}
+        ledDemo->layout()->applyNow(config);
+        ledDemo->deckA()->setProductionInterval(interval);
+        ledDemo->deckB()->setProductionInterval(interval);
         if (parser.isSet("led-benchmark"))
         {
             if (!ledWindow || parser.isSet("smoke-test") || parser.isSet("screenshot"))
@@ -144,13 +149,13 @@ int main(int argc, char **argv)
                         const quint64 colors = item->source()->submittedFrames() - initialColors[index++];
                         valid = valid && passes > 0 && item->renderError().isEmpty();
                         previews.append(QJsonObject{{"name", QString::fromLatin1(name)},
-                            {"points", item->source()->pointCount()}, {"renderPassFps", passes / elapsed},
+                            {"points", item->source()->pointCount()}, {"shape",int(item->pointShape())}, {"sizeMode",int(item->sizeMode())}, {"renderPassFps", passes / elapsed},
                             {"colorUpdateHz", colors / elapsed}, {"renderingInfo", item->renderingInfo()},
                             {"error", item->renderError()}});
                     }
                     const QJsonObject report{{"qt", QString::fromLatin1(qVersion())},
                         {"seconds", elapsed}, {"layout", parser.value("led-layout")},
-                        {"producerIntervalMs", ledDemo->interval()},
+                        {"producerIntervalMs", ledDemo->deckA()->productionInterval()},
                         {"windowPresentedFps", presented.load() / elapsed}, {"previews", previews},
                         {"valid", valid}};
                     const QByteArray json = QJsonDocument(report).toJson(QJsonDocument::Indented);

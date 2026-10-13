@@ -28,7 +28,7 @@ Windows 单配置程序位于 `<build>/bin/qcat-gallery.exe`，多配置程序�
 | `--page <id>` | home、all、settings 或组件 ID |
 | `--chart-demo <0–14>` | 图表演示编号，须配合图表页面 |
 | `--led-count <0–100000>` / `--led-layout matrix\|sphere` | LED 页面每路数量及布局，须配合 `--page led-preview` |
-| `--led-interval <4–1000>` | C++ LED 生产线程帧间隔，单位 ms |
+| `--led-interval <4–1000>` | 独立 Deck 效果调度间隔，单位 ms |
 | `--led-benchmark <seconds>` / `--led-report <path>` | 2 秒暖机后测量 LED 渲染/提交频率，可保存 JSON 并退出 |
 | `--smoke-test` | 加载后自动退出 |
 | `--screenshot <path>` | 保存窗口截图后退出 |
@@ -37,7 +37,9 @@ Windows 单配置程序位于 `<build>/bin/qcat-gallery.exe`，多配置程序�
 
 ## 图表体验
 
-LED 三路演示、构建、接口和压测方法见 [LED 预览](../../../src/uikit/doc/LEDPREVIEW.md)。
+LED 页面默认使用 64×32 共享布局；A/B 独立播放、Storage/Place 管理、中央混合和内存通道监视器均可操作。布局、预览、灯具映射和项目保存进入独立面板。
+
+接口及预设/多通道流程见 [LED 工作流](../../../src/uikit/doc/LEDWORKFLOW.md)，GPU 与压测见 [LED 预览](../../../src/uikit/doc/LEDPREVIEW.md)。
 
 CatChart、CatChartAxis、CatChartSeries 页面共享图表演示。选择器包含以下 15 个配置：
 

@@ -11,9 +11,9 @@ set(qcat_public_headers
     qcatthemepalette.h
     qcatchatmodel.h
     qcattablemodel.h
-    qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h)
-set(qcat_compat_headers Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h)
-set(qcat_class_headers Export Version ThemePalette ChatModel TableModel ChartAxis ChartSeries ChartItem LedSource LedPreview)
+    qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h qcatledlayoutmodel.h qcatlightingframe.h qcatledeffectregistry.h qcatledstorage.h qcatleddeck.h qcatledmixer.h qcatledoutput.h qcatledproject.h)
+set(qcat_compat_headers Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
+set(qcat_class_headers Export Version ThemePalette ChatModel TableModel ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -42,7 +42,7 @@ qt_add_qml_module(QCatUiKit
     SOURCES ${qcat_public_headers}
         qcatthemepalette.cpp qcatchatmodel.cpp qcattablemodel.cpp
         qcatchartaxis.cpp qcatchartseries.cpp qcatchartitem.cpp qcatchartmath_p.h
-        qcatledsource.cpp qcatledsource_p.h qcatledpreview.cpp
+        qcatledsource.cpp qcatledsource_p.h qcatledpreview.cpp qcatledlayoutmodel.cpp qcatlightingframe.cpp qcatledeffectregistry.cpp qcatledstorage.cpp qcatleddeck.cpp qcatledmixer.cpp qcatledoutput.cpp qcatledproject.cpp
         qcattreemodel_p.h qcattreemodel.cpp
         qcatuikitversion.cpp qcatuikitinfo_p.h qcatuikitinfo.cpp
     QML_FILES
@@ -69,6 +69,8 @@ qt_add_qml_module(QCatUiKit
         qml/CatIpAddressField.qml
         qml/CatLabel.qml
         qml/LedPreview.qml
+        qml/LedPreviewSettings.qml qml/LedLayoutSettings.qml qml/LedStorageBrowser.qml
+        qml/LedDeck.qml qml/LedMixer.qml qml/LedOutputSettings.qml
         qml/CatMarquee.qml
         qml/CatPagination.qml
         qml/CatPane.qml

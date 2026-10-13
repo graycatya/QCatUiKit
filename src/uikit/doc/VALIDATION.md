@@ -40,6 +40,7 @@ ctest --test-dir build/release --output-on-failure
 | models | 主题 Token、TableModel／ChatModel 数据与通知协议 |
 | charts | 原始数据、容量、批次校验、坐标范围、采样、交互及对象生命周期 |
 | led_source | RGBA8 长度、布局/帧版本、坐标校验、最新快照和跨线程通知合并 |
+| led_pipeline | 布局点序/溢出、不可变多通道帧、独立 Deck 时钟和快照、Storage JSON、冻结/全黑、Patch/慢后端取消与无窗口输出 |
 | led_render（可选） | 真实 GPU 三路像素、深度遮挡、颜色/混合、相机输入、DPR 和资源重建；需 `QCATUIKIT_TEST_LED_GPU=ON` |
 | version | C++ 与 QML 的实际库版本、渠道和 ABI 信息 |
 | qml_contracts | 类型创建、输入、状态、主题、布局、图表与密度 |
@@ -114,3 +115,69 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 ## 结果记录原则
 
 只写实际执行的配置和结果。容量验证、CPU 数据处理、渲染性能、长时间稳定性分别记录；不同设备和构建模式的耗时不能直接混用。文档、翻译或低影响修改按相关性选择检查，无需把不相关平台写为已通过。
+
+
+## LED 工作流迭代：2026-10-13
+
+环境：Ubuntu 26.04 x86_64、GCC 15.2、Qt 6.12.0 Release，OpenGL 4.6 / Mesa 26.1.6，
+AMD Radeon 780M，使用本机 X11/xcb 图形会话。源码仍声明 Qt 6.8+；本轮未在 Qt 6.8、
+Windows、macOS、Vulkan、Metal 或 D3D 后端重测新增能力。
+
+- 库、Gallery、测试构建成功；`QCatUiKit_qmllint` 和 `qcat-gallery_qmllint` 无警告通过。
+- 11 组 CTest 全部通过；`led_pipeline` 当前 14 项（含初始化/清理）通过，覆盖旧 alpha 与 W 区分、
+  冷暖白 50% 混合、所有通道置黑、独立时钟/工作副本、布局更新中保留待加载预设、停止状态保持黑帧、
+  三种 Profile 地址与重排、慢输出取消和无窗口设备分支。
+- `tst_ledrender` 在 OpenGL 的 DPR 1 和 DPR 2 各 8 项通过；新增立体几何/旋转、场景尺寸、显示间距、
+  矩阵切片、独立预览限帧/停用和预览设置不修改设备通道，保留旧像素、透明背景、拖拽、MSAA、跨窗口与资源重建。
+- 新 QML 契约验证设置草稿/取消/默认/非法值、相机恢复、独立 Deck UI、只读数据源、键盘预选和跨数据源活动身份。
+- 安装到独立目录后，LED 消费者编译并运行成功，包含旧 LedSource/LedPreview 和新公共头/转发头、LedDeck QML。
+- 实际查看 1600px 宽深色 Gallery、430px 宽中文浅色 Gallery 和预览设置弹窗；全量 Gallery 契约覆盖中英文与 360px 页面。
+
+一次 Circle 短时基准：三路各 2048 点、32×64 矩阵、pointSize=6、ScreenPixels、透视相机，
+窗口 1600×840、DPR 1，A/B 视口 389×235、Output 390×235；Deck 请求间隔 16ms，
+预览目标上限 60 FPS，暖机 2 秒、测量 4.948 秒：颜色更新约 62.45 Hz，三路 LED pass 各约 55.17 FPS，
+窗口 frameSwapped 约 59.42 Hz。不是 GPU 时间戳或显示器扫描频率，不代表 Cube/Sphere 的性能。
+
+可复现入口：
+
+```sh
+qcat-gallery --page led-preview --width 1600 --dark --led-count 2048 --led-benchmark 5 --led-report /tmp/led-benchmark.json
+```
+
+本轮验证仅使用 MemoryOutputBackend；没有进行实际灯具、Art-Net、sACN 或其它硬件协议联调。
+日志、截图和原始基准 JSON 留在本地临时目录，不提交构建产物。
+
+### 同日性能优化复测
+
+使用上述相同平台、完整 Gallery、三个 Circle / ScreenPixels 预览，默认最大 60 FPS、
+pointSize=6、16 ms 生产周期。窗口 1600×840、DPR 1，视口 A/B 为 389×235、Output 为 390×235。
+将优化前的共享库保留在独立目录，以相同可执行文件和参数分别运行；各次暖机 2 秒，实际测量约 6.0–6.3 秒。
+
+| 每路点数 | 优化前 A / Output / B 绘制 FPS | 优化后 A / Output / B 绘制 FPS |
+| --- | --- | --- |
+| 2048（32×64） | 54.13 / 54.60 / 54.60 | 59.19 / 59.19 / 59.19 |
+| 100000（250×400） | 14.76 / 29.53 / 19.84 | 55.52 / 59.29 / 57.65 |
+
+10 万点时，A/B 颜色生产从约 14.76/19.84 Hz 提升到 56.01/62.07 Hz；
+窗口 frameSwapped 从约 40.64 Hz 提升到 59.61 Hz。以上是短时实测，不保证其它硬件或 Cube/Sphere 的帧率。
+
+变化包括：按绝对时间安排限帧并补偿定时器迟到；内置效果在每帧开始时读取参数，避免每个灯点重复查字典；
+白光直接转换成预览 RGBA，移除 RGB 中间缓冲；混合循环直接访问连续缓冲，跳过值为 1 的亮度计算。
+公开帧仍深拷贝外部输入并保持不可变，独立通道、透明度、量化公式及默认形状保持原语义。
+
+使用四种效果 × 三种 Schema × 四个正/负/零时间采样，对原始通道、三组参考色温预览、
+目标 Schema 转换和独立透明度进行优化前后比较，输出字节一致。
+
+优化后 11 组 CTest 全部通过（其中管线 15 项，含初始化/清理）；OpenGL 的 DPR 1/2 各 9 项通过。
+新增覆盖限帧调整时重排等待、停用/恢复和空闲时不重绘，并校验直接 RGBA 转换的通道与透明度。
+GPU 测试按实际经过时间验证限帧，截图等待三路帧及目标画面完成，避免用固定等待时间推断绘制完成。
+两个 QML lint 目标无警告；安装后无需重新编译的独立消费者继续运行通过。
+另以三个预览共享同一 2048 点 Source 验证独立限帧：A 设为 5 FPS、其余设为 60 FPS，
+实测约 4.95 / 59.04 / 59.04 FPS，低帧率预览未拖慢其它实例。
+
+复现当前版本的帧率：
+
+```sh
+qcat-gallery --page led-preview --width 1600 --dark --led-count 2048 --led-benchmark 6 --led-report /tmp/led-2048.json
+qcat-gallery --page led-preview --width 1600 --dark --led-count 100000 --led-benchmark 6 --led-report /tmp/led-100000.json
+```

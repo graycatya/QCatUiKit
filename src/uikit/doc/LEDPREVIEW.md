@@ -2,7 +2,12 @@
 
 [文档索引](README.md) · [Gallery](../../../examples/uikit/gallery/README.md)
 
-`LedPreview` 使用 QQuickRhiItem、QRhi 和 GPU instancing。每个灯点是一个朝向相机的四边形，片元着色器在圆外 discard，启用深度测试和深度写入。每个控件每次渲染只提交一次实例化 draw。Deck A、Output、Deck B 使用相同控件和独立数据源。需要硬件 Qt Quick 后端，不支持 `QT_QUICK_BACKEND=software`。
+`LedPreview` 使用 QQuickRhiItem、QRhi 和 GPU instancing。默认 Circle 保持旧圆片行为；
+新增 Square、真实 Cube/Sphere 网格、场景尺寸、显示间距、矩阵切片和独立限帧。
+需要硬件 Qt Quick 后端，不支持 `QT_QUICK_BACKEND=software`。
+
+完整的公共布局、Deck/Storage、多通道帧、Mixer、Profile/Patch 和 MemoryOutputBackend 接口见
+[LED 工作流](LEDWORKFLOW.md)。本页保留旧 Source API 和渲染生命周期说明。
 
 ## 构建 / Build
 
@@ -52,7 +57,7 @@ LedPreview {
 | `renderFps` / `colorUpdateHz` | 最近约 500ms 的控件 pass 频率和源接受帧频率。没有新帧或交互时无需持续重绘。 |
 | `renderingInfo` / `renderError` | 实际 QRhi 环境信息或资源/后端错误；未启动 RHI 时信息为空。 |
 
-一个 MouseArea 处理左键轨道旋转、中键平移、滚轮缩放和双击重置。预览内开始的拖动由预览保持鼠标抓取，嵌入 Flickable 或 CatScrollView 时不会被页面滚动抢走；预览外仍可拖动页面滚动。所有 LED 不创建独立 QML 对象或事件对象。布局替换自动重新适配相机；空、单点、重合坐标使用有效的默认半径。2D 保留实际 Z 深度，实现叠放遮挡。
+一个 MouseArea 处理二维左拖平移、三维左拖旋转、中键平移、滚轮缩放、双击重置和右键预览设置。预览内开始的拖动由预览保持鼠标抓取，嵌入 Flickable 或 CatScrollView 时不会被页面滚动抢走；预览外仍可拖动页面滚动。所有 LED 不创建独立 QML 对象或事件对象。布局替换自动重新适配相机；空、单点、重合坐标使用有效的默认半径。2D 保留实际 Z 深度，实现叠放遮挡。
 
 `LedPreview` 是公共 QML 控件，`QCatLedPreview` 是公共 C++ QQuickRhiItem 类（`<QCatUiKit/LedPreview>`）；其 QML 基类名 `LedPreviewRenderItem` 也提供枚举。直接创建 C++ 类时，相机方法和统计属性可用，鼠标区域和统计文字由 `LedPreview.qml` 提供。
 
@@ -77,11 +82,11 @@ if (!source.submitFrame(rgba, 1, layoutId))
 
 ## 线程与 GPU 生命周期 / Threading
 
-- **生产线程**：调用线程安全的 `setLayout` / `submitFrame`。Gallery 在独立 QThread 的事件循环中使用 `Qt::PreciseTimer` 调度彩虹、波纹，以及 `round(A * (1-mix) + B * mix)` 的 RGBA8 逐通道线性混合；这不是 sRGB 色彩空间线性化。默认每 16ms 请求生成一帧，实际频率由生成耗时和系统调度决定。暂停且配置未变化时只检查状态，不重新生成颜色；定时器超时不会累积生成作业。
-- **GUI 线程**：配置控件和相机。源只保留最新完整不可变快照，GUI 通知最多一个待处理事件。源析构前必须停止并 join 生产者；Gallery 析构设置停止状态、退出工作事件循环并 wait。不得和源析构并发调用任何成员。
+- **生产线程**：旧接口可在线程安全的 `setLayout` / `submitFrame` 上提交；新 Deck 在有界后台作业中运行独立效果实例，Output 使用独立发送调度。状态与预设接口在对象线程调用。详细线程契约见 [LED 工作流](LEDWORKFLOW.md)。
+- **GUI 线程**：配置控件和相机；Source 只保留最新不可变快照，通知最多一个待处理事件。外部生产者必须在 Source 析构前停止，不与析构并发调用其成员。
 - **渲染线程**：`synchronize()` 在 GUI 阻塞期间复制配置和 shared_ptr 快照，短暂取源锁。`render()` 只读不可变快照，无源锁；持有的旧帧不会被生产者修改。落后帧直接被覆盖，不积累队列。
 
-静态 XYZ buffer 仅在布局变化或 GPU 重建时上传；动态 RGBA8 buffer 仅在完整帧变化时更新。四顶点 buffer、96 字节 uniform（含布局局部原点）、SRB、pipeline 和实例 buffers 都复用，容量不足时只在布局变更时扩容。着色器先减去布局中心，再应用相机矩阵，避免大坐标重合布局损失相机距离精度。固定 backing texture 时分别转换 X/Y 直径，屏幕上仍为逻辑像素圆形。没有每帧 GPU 对象创建、每点变换矩阵或 GPU 图像读回；测试截图是验证手段，正常显示不读回。
+静态 XYZ buffer 仅在布局变化或 GPU 重建时上传；动态 RGBA8 buffer 仅在完整帧变化时更新。共享几何 buffer、176 字节 uniform、SRB、pipeline 和实例 buffers 都复用，容量不足时只在布局变更时扩容。CPU 在布局/显示设置变化时减去布局中心，着色器再应用相机矩阵，避免大坐标重合布局损失相机距离精度。按逻辑视口计算大小，固定 backing texture 最终显示仍为逻辑像素圆形。没有每帧 GPU 对象创建、每点变换矩阵或 GPU 图像读回；测试截图是验证手段，正常显示不读回。
 
 使用 `clipSpaceCorrMatrix()` 修正后端投影，使用 QQuickRhiItem 自动管理的颜色与深度目标。尺寸变化更新视口；render pass 格式或采样数变化重新创建兼容 pipeline。QRhi 指针变化释放所有本地 GPU 资源，重新上传布局和颜色。renderer 析构在渲染线程释放资源；场景图失效、跨窗口 reparent、关闭与重新创建都由节点生命周期驱动，不跨 QRhi 共享 GPU 对象。
 
@@ -97,7 +102,12 @@ qcat-gallery --page led-preview --dark --led-count 10000 --led-layout matrix --l
 qcat-gallery --page led-preview --dark --led-count 100000 --led-layout sphere --led-benchmark 10 --led-report sphere-100k.json
 ```
 
-三路同时生成、渲染，默认每路 4,096 点。页面含暂停、2D/3D 视图、矩阵/球形布局、数量选择、重置和销毁重建入口；窄屏纵向排列三路。基准先暖机 2 秒，再测量指定秒数，报告每路颜色更新 Hz、LED pass FPS、窗口 frameSwapped 频率、实际 GPU/后端/像素尺寸。frameSwapped 不是显示器实际刷新完成或 GPU 耗时。`--led-interval 4` 可提高生产频率观察丢旧帧行为。目标为目标机器争取 60 FPS，任何容量预设均不保证该速率。
+Gallery 默认共享 64×32（2048 点）布局，使用两个独立 Deck、中央 Mixer 和内存通道监视器。
+布局、预览和 Profile 面板采用草稿/应用；可操作预设保存、导入导出及项目恢复。窄屏纵向排列。
+
+基准先暖机 2 秒，再报告颜色更新 Hz、LED pass FPS、窗口 frameSwapped、形状和尺寸模式、GPU/后端及视口。
+frameSwapped 不是显示器扫描完成或 GPU 耗时。`--led-interval` 控制 Deck 调度，发送间隔与预览限帧独立。
+容量预设不保证 60 FPS，Circle 的历史数据不能用作 Cube/Sphere 的性能结论。
 
 `tst_ledsource` 验证长度、帧版本、布局版本、非法坐标、空布局，以及 GUI 停滞时 10,000 帧的合并通知。`tst_ledrender` 是真实窗口 GPU 测试，默认构建但不加入离屏 CTest；以 `-DQCATUIKIT_TEST_LED_GPU=ON` 注册，或直接运行。它验证三路图像、遮挡、颜色、亮度、相机、空/单点布局、尺寸/MSAA 变化、控件重建、跨窗口和场景图重建。软件后端测试不能证明 GPU 渲染成功。
 
@@ -111,7 +121,7 @@ cmake --build build/led-consumer
 
 运行消费者时设置安装包 `bin` / `lib` 的动态库路径与 `QML_IMPORT_PATH=/absolute/stage/led/lib/qml`。无需将 GuiPrivate 作为消费者依赖。
 
-## 实测记录 / Verification record
+## 历史圆片版本实测 / Historical Circle-only verification
 
 2026-10-12，Windows 11 x64，MSVC 19.39 Release，Qt 6.12.0，NVIDIA GeForce RTX 5060 Ti，D3D11。Gallery 窗口 1200×840，DPR 1，Deck A/B backing 为 281×320，Output 为 278×320 物理像素。三路同时运行，灯点直径 6 逻辑像素，透视视图，混合 50%，Output 亮度 100%，sampleCount 1。每组暖机 2 秒、测量约 10 秒：
 
@@ -127,3 +137,9 @@ cmake --build build/led-consumer
 实际完成：干净编译库/Gallery/测试、两组 QML lint、10 组 CTest（Windows 离屏测试指定系统字体目录）、安装并构建运行独立 LED 消费者。真实窗口测试分别在 D3D11、OpenGL 和 D3D11 DPR 2 上通过，覆盖三路颜色、圆形裁剪及像素大小、深度遮挡、帧内存隔离、混合 0/50/100%、Output 亮度、鼠标左/中键/滚轮/双击、2D 忽略旋转但保留平移缩放、空/单点/重合布局、1 万/10 万动态布局、resize/MSAA、控件销毁重建、跨窗口以及场景图释放重建。Gallery 的英/中文和窄屏页面创建由回归测试覆盖，宽屏/窄屏还检查实际截图。
 
 原始 JSON、日志、截图为本地构建产物，未加入版本控制。源码保持 Qt 6.8 最低要求，但本次没有实编/运行 Qt 6.8，也未验证 Linux/macOS、Vulkan、Metal、D3D12。上述结果只代表列出的实际工具链与环境。
+
+
+## 本轮迭代验证
+
+本轮 Linux/Qt 6.12 的实际构建、无窗口管线、GPU、界面、安装消费者结果见
+[验证说明](VALIDATION.md)。上面的 Windows 数字属于 2026-10-12 旧圆片/演示管线，未用于声明新立体形状性能。

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include <QCatUiKit/qcatledpreview.h>
+#include <QCatUiKit/qcatledproject.h>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QQuickWindow>
@@ -13,6 +14,205 @@ class LedRenderTests : public QObject
 {
     Q_OBJECT
   private slots:
+    void geometrySpacingSlicesAndIndependentThrottling()
+    {
+        QQuickWindow window;
+        window.resize(600, 300);
+        QCatLedLayoutModel layout;
+        auto c = layout.configuration();
+        c["countX"] = 2;
+        c["countY"] = 1;
+        c["spacingX"] = 2;
+        QVERIFY(layout.applyNow(c));
+        QCatPreviewColorAdapter adapter;
+        adapter.setLayout(layout.snapshot());
+        QCatLightingFrame::Description info;
+        info.projectId = layout.snapshot()->projectId;
+        info.layoutRevision = layout.revision();
+        info.pointCount = 2;
+        info.frameId = 1;
+        QVERIFY(
+            adapter.submit(QCatLightingFrame::create(info, QByteArray::fromHex("00ff00ff0000"))));
+        QCatLedPreview a(window.contentItem()), b(window.contentItem());
+        a.setSize({300, 300});
+        b.setPosition({300, 0});
+        b.setSize({300, 300});
+        for (auto *v : {&a, &b})
+        {
+            v->setSource(adapter.source());
+            v->setPointSize(35);
+            v->setShowStatistics(false);
+            v->setViewMode(QCatLedPreview::Plane2D);
+        }
+        window.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&window));
+        QTRY_COMPARE(a.renderedFrameId(), quint64(1));
+        auto original = window.grabWindow();
+        a.setPointShape(QCatLedPreview::Square);
+        QTest::qWait(80);
+        QVERIFY(window.grabWindow() != original);
+        a.setPointShape(QCatLedPreview::Cube);
+        a.setViewMode(QCatLedPreview::Spatial3D);
+        QTest::qWait(80);
+        auto cube = window.grabWindow();
+        a.orbit(90, 60);
+        QTest::qWait(80);
+        QVERIFY(window.grabWindow() != cube);
+        a.setPointShape(QCatLedPreview::Sphere);
+        QTest::qWait(80);
+        QVERIFY(window.grabWindow() != cube);
+        QVERIFY(a.renderError().isEmpty());
+        a.setPointShape(QCatLedPreview::Circle);
+        a.setViewMode(QCatLedPreview::Plane2D);
+        a.resetView();
+        QTest::qWait(80);
+        const auto metadata = adapter.source()->layoutMetadata();
+        const auto id = adapter.source()->layoutId();
+        a.setDisplaySpacing({.5f, 1, 1});
+        QTest::qWait(80);
+        QVERIFY(window.grabWindow() != original);
+        QCOMPARE(adapter.source()->layoutId(), id);
+        QCOMPARE(adapter.source()->layoutMetadata(), metadata);
+        a.setSizeMode(QCatLedPreview::SceneUnits);
+        a.setSceneSize(.4);
+        QTest::qWait(80);
+        const auto scene = window.grabWindow();
+        a.zoom(2);
+        QTest::qWait(80);
+        QVERIFY(window.grabWindow() != scene);
+        a.setPreviewEnabled(false);
+        QTest::qWait(50);
+        const auto held = a.renderedFrames();
+        for (quint64 i = 2; i <= 15; ++i)
+        {
+            info.frameId = i;
+            QVERIFY(adapter.submit(QCatLightingFrame::create(info, QByteArray(6, char(i * 10)))));
+            QTest::qWait(20);
+        }
+        QCOMPARE(a.renderedFrames(), held);
+        QTRY_VERIFY(b.renderedFrameId() >= 15);
+        a.setPreviewEnabled(true);
+        a.setMaximumFps(5);
+        b.setMaximumFps(60);
+        QTest::qWait(250);
+        const auto fa = a.renderedFrames(), fb = b.renderedFrames();
+        QElapsedTimer throttleClock;
+        throttleClock.start();
+        for (quint64 i = 16; i <= 40; ++i)
+        {
+            info.frameId = i;
+            QVERIFY(adapter.submit(QCatLightingFrame::create(info, QByteArray(6, char(i)))));
+            QTest::qWait(20);
+        }
+        // GUI/render waits can exceed their requested duration (e.g. an occluded window).
+        // Bound the actual rate rather than assuming 25 qWait(20) calls take exactly 500 ms.
+        const auto maximumFrames = quint64(std::ceil(throttleClock.nsecsElapsed() * 5.0 / 1e9)) + 1;
+        QVERIFY2(a.renderedFrames() - fa <= maximumFrames,
+                 qPrintable(QString("%1 frames in %2 ms at a 5 FPS limit")
+                                .arg(a.renderedFrames() - fa)
+                                .arg(throttleClock.elapsed())));
+        QVERIFY(b.renderedFrames() - fb > 8);
+        c["type"] = "Matrix3D";
+        c["countX"] = 1;
+        c["countY"] = 1;
+        c["countZ"] = 3;
+        QVERIFY(layout.applyNow(c));
+        adapter.setLayout(layout.snapshot());
+        info.layoutRevision = layout.revision();
+        info.pointCount = 3;
+        info.frameId = 41;
+        QVERIFY(adapter.submit(
+            QCatLightingFrame::create(info, QByteArray::fromHex("ff000000ff000000ff"))));
+        b.setSliceAxis(3);
+        QTest::qWait(100);
+        const auto unfolded = window.grabWindow();
+        b.setSliceAxis(0);
+        QTest::qWait(100);
+        QVERIFY(window.grabWindow() != unfolded);
+    }
+    void throttleReschedulesAndRemainsOnDemand()
+    {
+        QQuickWindow window;
+        window.resize(240, 240);
+        QCatLedSource source;
+        const auto layout = source.setLayout({{0, 0, 0}});
+        QCatLedPreview preview(window.contentItem());
+        preview.setSize({240, 240});
+        preview.setSource(&source);
+        preview.setShowStatistics(false);
+        preview.setMaximumFps(1);
+        QVERIFY(source.submitFrame(QByteArray::fromHex("ff0000ff"), 1, layout));
+        window.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&window));
+        QTRY_COMPARE(preview.renderedFrameId(), quint64(1));
+        QTest::qWait(40);
+        QVERIFY(source.submitFrame(QByteArray::fromHex("00ff00ff"), 2, layout));
+        QTest::qWait(30);
+        QCOMPARE(preview.renderedFrameId(), quint64(1));
+        preview.setMaximumFps(60);
+        QTRY_COMPARE_WITH_TIMEOUT(preview.renderedFrameId(), quint64(2), 250);
+        QTest::qWait(80);
+        const auto held = preview.renderedFrames();
+        QTest::qWait(150);
+        QCOMPARE(preview.renderedFrames(), held);
+
+        preview.setMaximumFps(1);
+        QTest::qWait(40);
+        QVERIFY(source.submitFrame(QByteArray::fromHex("0000ffff"), 3, layout));
+        QTest::qWait(30);
+        preview.setPreviewEnabled(false);
+        QTest::qWait(40);
+        const auto disabled = preview.renderedFrames();
+        QTest::qWait(100);
+        QCOMPARE(preview.renderedFrames(), disabled);
+        preview.setPreviewEnabled(true);
+        QTRY_COMPARE_WITH_TIMEOUT(preview.renderedFrameId(), quint64(3), 250);
+    }
+    void previewSettingsNeverChangeDeviceChannels()
+    {
+        QCatLedProject project;
+        auto c = project.layout()->configuration();
+        c["countX"] = 1;
+        c["countY"] = 1;
+        QVERIFY(project.layout()->applyNow(c));
+        QVariantMap preset{{"providerId", "qcat.channels"},
+                           {"effectId", "solid"},
+                           {"effectVersion", 1},
+                           {"schema", 5},
+                           {"parameters", QVariantMap{{"B", 0}, {"CW", .3}, {"WW", .8}}},
+                           {"brightness", 1},
+                           {"speed", 1}};
+        QVERIFY(project.deckA()->loadConfiguration(preset));
+        QVERIFY(project.deckB()->loadConfiguration(preset));
+        QCatFixtureProfile profile;
+        profile.id = "test";
+        profile.deviceId = "memory";
+        profile.portId = "1";
+        profile.schema = QCatLighting::RGB_CW_WW;
+        profile.channelOrder = {"R", "G", "B", "CW", "WW"};
+        profile.pointCount = 1;
+        QVERIFY(project.output()->applyProfiles({profile.configuration()}));
+        QTRY_VERIFY(!project.deckA()->loading() && !project.deckB()->loading());
+        QTRY_VERIFY(project.memoryBackend()->latestFrame() != nullptr);
+        const auto held = project.memoryBackend()->latestFrame()->ports[0].channels;
+        QQuickWindow window;
+        window.resize(240, 240);
+        QCatLedPreview preview(window.contentItem());
+        preview.setSize({240, 240});
+        preview.setSource(project.mixer()->source());
+        window.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&window));
+        QTest::qWait(80);
+        const auto count = project.memoryBackend()->receivedFrames();
+        preview.setPreviewBrightness(0);
+        preview.setPointShape(QCatLedPreview::Sphere);
+        preview.setDisplaySpacing({2, 3, 4});
+        preview.orbit(50, 30);
+        preview.setMaximumFps(1);
+        preview.setPreviewEnabled(false);
+        QTRY_VERIFY(project.memoryBackend()->receivedFrames() > count + 2);
+        QCOMPARE(project.memoryBackend()->latestFrame()->ports[0].channels, held);
+    }
     void dragInsideScrollingPage_data()
     {
         QTest::addColumn<QString>("scroller");
@@ -143,7 +343,8 @@ class LedRenderTests : public QObject
         QVERIFY(pixel(dim, 300, 120).green() < 100);
         QVERIFY(pixel(dim, 100, 120).green() > 200);
         QVERIFY(source.submitFrame(QByteArray::fromHex("0000ffffff0000ff"), 2));
-        QTRY_COMPARE(a->renderedFrameId(), quint64(2));
+        QTRY_VERIFY(a->renderedFrameId() == 2 && output->renderedFrameId() == 2 &&
+                    b->renderedFrameId() == 2);
         image = window->grabWindow();
         QVERIFY(pixel(image, 100, 120).blue() > 200);
         // Change camera and check the actual rendered image, then reset restores it.
@@ -153,16 +354,14 @@ class LedRenderTests : public QObject
         QTest::qWait(80);
         QVERIFY(window->grabWindow() != image);
         a->resetView();
-        QTest::qWait(80);
-        QCOMPARE(window->grabWindow(), image);
+        QTRY_COMPARE_WITH_TIMEOUT(window->grabWindow(), image, 2000);
         QTest::mousePress(window, Qt::LeftButton, Qt::NoModifier, {80, 80});
         QTest::mouseMove(window, {130, 105}, 20);
         QTest::mouseRelease(window, Qt::LeftButton, Qt::NoModifier, {130, 105});
         QTest::qWait(80);
         QVERIFY(window->grabWindow() != image);
         QTest::mouseDClick(window, Qt::LeftButton, Qt::NoModifier, {80, 80});
-        QTest::qWait(80);
-        QCOMPARE(window->grabWindow(), image);
+        QTRY_COMPARE_WITH_TIMEOUT(window->grabWindow(), image, 2000);
         QTest::mousePress(window, Qt::MiddleButton, Qt::NoModifier, {80, 80});
         QTest::mouseMove(window, {110, 90}, 20);
         QTest::mouseRelease(window, Qt::MiddleButton, Qt::NoModifier, {110, 90});

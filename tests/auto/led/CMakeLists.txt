@@ -17,3 +17,8 @@ if(QCATUIKIT_TEST_LED_GPU)
     add_test(NAME led_render COMMAND tst_ledrender)
     set_tests_properties(led_render PROPERTIES TIMEOUT 90)
 endif()
+
+qt_add_executable(tst_ledpipeline tst_ledpipeline.cpp)
+target_link_libraries(tst_ledpipeline PRIVATE QCatUiKit::QCatUiKit Qt6::Test)
+add_test(NAME led_pipeline COMMAND tst_ledpipeline)
+set_tests_properties(led_pipeline PROPERTIES TIMEOUT 60)
