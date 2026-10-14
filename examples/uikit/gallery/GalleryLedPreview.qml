@@ -103,7 +103,12 @@ ColumnLayout {
                     CatCheckBox {text:qsTr("Enable device branch");checked:project.output.enabled;onToggled:project.output.enabled=checked}
                     CatCheckBox {text:qsTr("Repeat held frames");checked:project.output.repeatFrames;onToggled:project.output.repeatFrames=checked}
                     CatLabel {text:qsTr("Send interval (ms)")}
-                    CatNumberBox {Layout.fillWidth:true;minimum:4;maximum:10000;decimals:0;value:project.output.interval;onValueEdited:value=>project.output.interval=value}
+                    CatNumberBox {
+                        objectName: "ledOutputInterval"
+                        Layout.fillWidth:true;minimum:4;maximum:10000;decimals:0
+                        Binding on value { value:project.output.interval }
+                        onValueEdited:value=>project.output.interval=value
+                    }
                     CatLabel {Layout.fillWidth:true;wrapMode:Text.Wrap;text:project.output.lastError;visible:text.length>0}
                     CatLabel {Layout.fillWidth:true;wrapMode:Text.Wrap;color:Theme.tokens.textSecondary;text:qsTr("Memory verification only. No hardware protocol is connected. Preview settings do not change these values.")}
                 }

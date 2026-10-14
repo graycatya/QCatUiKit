@@ -453,7 +453,7 @@ QtObject {
             description: qsTr(
                              "Edit bounded decimal values with steps, locale formatting and arithmetic."),
             icon: "input",
-            code: "import QtQuick.Layouts\n\nColumnLayout {\n    spacing: 16\n    CatNumberBox { id: number; value: 12.5; minimum: 0; maximum: 100; smallChange: 0.5; acceptsExpression: true; Layout.fillWidth: true; Accessible.name: qsTr(\"Quantity\") }\n    CatLabel { text: qsTr(\"Enter a number or an expression such as (2 + 3) * 4.\"); Layout.fillWidth: true; wrapMode: Text.Wrap }\n}"
+            code: "import QtQuick.Layouts\n\nColumnLayout {\n    spacing: 16\n    CatNumberBox { id: number; value: 12.5; minimum: 0; maximum: 100; smallChange: 0.5; acceptsExpression: true; Layout.fillWidth: true; Accessible.name: qsTr(\"Quantity\") }\n    CatLabel { text: qsTr(\"Enter a number or an expression such as (2 + 3) * 4. Press Enter or leave the field to apply. Value: %1\").arg(number.value); Layout.fillWidth: true; wrapMode: Text.Wrap }\n}"
         },
         {
             id: "particle-backdrop",

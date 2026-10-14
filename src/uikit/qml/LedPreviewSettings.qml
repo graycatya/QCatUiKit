@@ -61,7 +61,38 @@ CatDialog {
         preview.setCamera(camera);
         validationError=""; return true;
     }
-    onOpened: { draft=snapshot(); validationError=""; }
+    function commitFields(): bool {
+        for (let i=0;i<fields.count;++i) {
+            const editor=(fields.itemAt(i) as NumberField).editor;
+            if (editor.visible && !editor.commitText()) { editor.forceActiveFocus(); return false; }
+        }
+        return true;
+    }
+    function resetFields(): void {
+        for (let i=0;i<fields.count;++i) (fields.itemAt(i) as NumberField).editor.synchronize();
+    }
+    onOpened: { draft=snapshot(); validationError="";resetFields(); }
+    component NumberField: RowLayout {
+        id: field
+        required property var modelData
+        property alias editor: numberEditor
+        Layout.fillWidth: true
+        visible: modelData.key==="pointSize" ? control.draft.sizeMode===0
+            : modelData.key==="sceneSize" ? control.draft.sizeMode===1
+            : modelData.key==="spacingZ" ? control.draft.viewMode===1
+            : modelData.key.startsWith("gap") ? control.draft.viewMode===0
+                && control.preview && control.preview.source
+                && control.preview.source.layoutMetadata().type?.startsWith("Matrix") : true
+        CatLabel { Layout.fillWidth: true; text: field.modelData.label; wrapMode: Text.Wrap }
+        CatNumberBox {
+            id: numberEditor
+            objectName: "preview_" + field.modelData.key
+            Layout.preferredWidth: 120
+            minimum: field.modelData.min; maximum: field.modelData.max
+            Binding on value { value: control.draft[field.modelData.key] ?? 1 }
+            onValueEdited: value => control.update(field.modelData.key,value)
+        }
+    }
     contentItem: CatScrollView {
         contentWidth: availableWidth
         ColumnLayout {
@@ -93,6 +124,7 @@ CatDialog {
                 }
             }
             Repeater {
+                id: fields
                 model: [ {key:"pointSize",label:qsTr("Point diameter (px)"),min:1,max:128},
                     {key:"sceneSize",label:qsTr("Scene diameter / cube edge"),min:0.0001,max:1000000},
                     {key:"spacingX",label:qsTr("Display spacing X"),min:0.1,max:10},
@@ -102,24 +134,7 @@ CatDialog {
                     {key:"gapY",label:qsTr("Matrix Y gap ratio"),min:0,max:0.95},
                     {key:"previewBrightness",label:qsTr("Preview brightness"),min:0,max:1},
                     {key:"maximumFps",label:qsTr("Maximum preview FPS"),min:1,max:240} ]
-                delegate: RowLayout {
-                    id: field
-                    required property var modelData
-                    Layout.fillWidth: true
-                    visible: modelData.key==="pointSize" ? control.draft.sizeMode===0
-                        : modelData.key==="sceneSize" ? control.draft.sizeMode===1
-                        : modelData.key==="spacingZ" ? control.draft.viewMode===1
-                        : modelData.key.startsWith("gap") ? control.draft.viewMode===0
-                            && control.preview && control.preview.source
-                            && control.preview.source.layoutMetadata().type?.startsWith("Matrix") : true
-                    CatLabel { Layout.fillWidth: true; text: field.modelData.label; wrapMode: Text.Wrap }
-                    CatNumberBox {
-                        Layout.preferredWidth: 120
-                        minimum: field.modelData.min; maximum: field.modelData.max
-                        value: control.draft[field.modelData.key] ?? 1
-                        onValueEdited: value => control.update(field.modelData.key,value)
-                    }
-                }
+                delegate: NumberField {}
             }
             CatComboBox {
                 Layout.fillWidth: true
@@ -152,8 +167,8 @@ CatDialog {
     }
     footer: Flow {
         padding: Theme.tokens.padding; spacing: Theme.tokens.spacing
-        CatButton { text: qsTr("Defaults"); onClicked: control.draft=control.defaults() }
-        CatButton { text: qsTr("Cancel"); onClicked: control.close() }
-        CatButton { text: qsTr("Apply"); primary: true; onClicked: if(control.applySettings(control.draft)) control.close() }
+        CatButton { objectName: "previewDefaults"; text: qsTr("Defaults"); onClicked: { control.draft=control.defaults();control.resetFields(); } }
+        CatButton { objectName: "previewCancel"; text: qsTr("Cancel"); onClicked: control.close() }
+        CatButton { objectName: "previewApply"; text: qsTr("Apply"); primary: true; onClicked: if(control.commitFields() && control.applySettings(control.draft)) control.close() }
     }
 }

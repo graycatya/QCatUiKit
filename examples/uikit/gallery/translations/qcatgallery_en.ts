@@ -3250,8 +3250,8 @@ Last batch: %8 operations · slowest data batch: %9 ms</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="956"/>
-        <source>Enter a number or an expression such as (2 + 3) * 4.</source>
-        <translation>Enter a number or an expression such as (2 + 3) * 4.</translation>
+        <source>Enter a number or an expression such as (2 + 3) * 4. Press Enter or leave the field to apply. Value: %1</source>
+        <translation>Enter a number or an expression such as (2 + 3) * 4. Press Enter or leave the field to apply. Value: %1</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="972"/>

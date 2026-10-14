@@ -87,6 +87,7 @@ CatTextField {
         return valid;
     }
     function synchronize(): void {
+        invalid = false;
         text = Number(value).toLocaleString(locale, 'f', decimals);
     }
     onValueChanged: {
@@ -102,7 +103,10 @@ CatTextField {
     onDecimalsChanged: synchronize()
     onLocaleChanged: synchronize()
     Component.onCompleted: synchronize()
-    onAccepted: commitText()
+    onEditingFinished: {
+        if (invalid || text !== Number(value).toLocaleString(locale, 'f', decimals))
+            commitText();
+    }
     Keys.onUpPressed: event => {
         commitValue(value + smallChange);
         event.accepted = true;

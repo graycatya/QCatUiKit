@@ -132,7 +132,8 @@ ColumnLayout {
                 wrapMode: TextEdit.Wrap
                 color: Theme.tokens.text
                 selectionColor: Theme.tokens.primary
-                font.family: Qt.platform.os === "windows" ? "Consolas" : "monospace"
+                font.family: Qt.platform.os === "windows" ? "Consolas"
+                    : Qt.platform.os === "osx" ? "Menlo" : "monospace"
                 font.pixelSize: 13
                 padding: 16
                 background: Rectangle {

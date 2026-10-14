@@ -130,6 +130,7 @@ CatButton {
                 }
             }
             CatTextField {
+                objectName: "colorHexInput"
                 Layout.fillWidth: true
                 theme: control.theme
                 text: control.selectedColor.toString()
@@ -137,7 +138,7 @@ CatButton {
                     regularExpression: /#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?/
                 }
                 Accessible.name: qsTr("Hex color")
-                onAccepted: if (acceptableInput)
+                onEditingFinished: if (acceptableInput && text.toLowerCase() !== control.selectedColor.toString())
                                 control.chooseColor(text)
             }
         }

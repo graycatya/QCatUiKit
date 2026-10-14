@@ -9,7 +9,7 @@ TestCase {
     name: "GalleryCharts"
     when: windowShown
     property var gallery
-    Component { id: factory; Main { width: 1200; height: 840; font.family: "Segoe UI" } }
+    Component { id: factory; Main { width: 1200; height: 840 } }
     function initTestCase() {
         failOnWarning(/.*/);
         GalleryLanguage.language = "en";
@@ -91,9 +91,9 @@ TestCase {
         for (const edit of edits) {
             const field = find(edit.name);
             field.contentItem.forceActiveFocus();
-            keyClick(Qt.Key_A, Qt.ControlModifier);
+            field.contentItem.selectAll();
             for (const key of edit.keys) keyClick(key);
-            keyClick(Qt.Key_Return);
+            find("chartAddButton").forceActiveFocus();
             compare(demo[edit.property], edit.value);
         }
         find("chartAddButton").clicked();

@@ -14,7 +14,28 @@ CatDialog {
     width:Math.min(590,parent ? parent.width-24 : 590)
     height:Math.min(760,parent ? parent.height-24 : 760)
     function change(key:string,value:var):void {const list=JSON.parse(JSON.stringify(draft));if(list[selected]){list[selected][key]=value;draft=list;}}
-    onOpened:{draft=JSON.parse(JSON.stringify(output.profiles));selected=0}
+    function commitFields(): bool {
+        for (let i=0;i<fields.count;++i) {
+            const editor=(fields.itemAt(i) as NumberField).editor;
+            if (editor.visible && !editor.commitText()) { editor.forceActiveFocus(); return false; }
+        }
+        return true;
+    }
+    onOpened:{draft=JSON.parse(JSON.stringify(output.profiles));selected=0;for(let i=0;i<fields.count;++i)(fields.itemAt(i) as NumberField).editor.synchronize();}
+    component NumberField: RowLayout {
+        id:number
+        required property var modelData
+        property alias editor: numberEditor
+        Layout.fillWidth:true
+        CatLabel {Layout.fillWidth:true;wrapMode:Text.Wrap;text:number.modelData.label}
+        CatNumberBox {
+            id: numberEditor
+            objectName: "output_" + number.modelData.key
+            Layout.preferredWidth:130;decimals:0;minimum:number.modelData.min;maximum:number.modelData.max
+            Binding on value { value: control.profile[number.modelData.key] ?? number.modelData.min }
+            onValueEdited:value=>control.change(number.modelData.key,value)
+        }
+    }
     contentItem:CatScrollView {
         contentWidth:availableWidth
         ColumnLayout {
@@ -44,19 +65,14 @@ CatDialog {
             CatLabel {text:qsTr("Channel order (comma separated)")}
             CatTextField {Layout.fillWidth:true;text:(control.profile.channelOrder ?? []).join(",");onTextEdited:control.change("channelOrder",text.split(",").map(s=>s.trim()))}
             Repeater {
+                id: fields
                 model:[{key:"firstPoint",label:qsTr("First logical point (0-based)"),min:0,max:1000000},
                     {key:"pointCount",label:qsTr("Point count"),min:0,max:1000000},
                     {key:"startChannel",label:qsTr("Start address (1-based)"),min:1,max:65536},
                     {key:"whiteKelvin",label:qsTr("Single white reference (K)"),min:1000,max:20000},
                     {key:"coldKelvin",label:qsTr("Cold white reference (K)"),min:1000,max:20000},
                     {key:"warmKelvin",label:qsTr("Warm white reference (K)"),min:1000,max:20000}]
-                delegate:RowLayout {
-                    id:number
-                    required property var modelData
-                    Layout.fillWidth:true
-                    CatLabel {Layout.fillWidth:true;wrapMode:Text.Wrap;text:number.modelData.label}
-                    CatNumberBox {Layout.preferredWidth:130;decimals:0;minimum:number.modelData.min;maximum:number.modelData.max;value:control.profile[number.modelData.key] ?? number.modelData.min;onValueEdited:value=>control.change(number.modelData.key,value)}
-                }
+                delegate: NumberField {}
             }
             CatComboBox {Layout.fillWidth:true;model:[qsTr("Strict"),qsTr("Extra whites = 0"),qsTr("Approximate white mapping")];currentIndex:control.profile.conversion ?? 0;onActivated:index=>control.change("conversion",index)}
             CatLabel {Layout.fillWidth:true;wrapMode:Text.Wrap;color:Theme.tokens.textSecondary;text:qsTr("Approximation: CW/WW add with reference colors for RGB; CW + WW clamp to W. This is not calibrated fixture colorimetry. Memory output does not send to hardware.")}
@@ -65,7 +81,7 @@ CatDialog {
     }
     footer:Flow {
         spacing:8;padding:12
-        CatButton {text:qsTr("Cancel");onClicked:control.close()}
-        CatButton {text:qsTr("Apply");primary:true;onClicked:if(control.output.applyProfiles(control.draft))control.close()}
+        CatButton {objectName:"outputCancel";text:qsTr("Cancel");onClicked:control.close()}
+        CatButton {objectName:"outputApply";text:qsTr("Apply");primary:true;onClicked:if(control.commitFields() && control.output.applyProfiles(control.draft))control.close()}
     }
 }

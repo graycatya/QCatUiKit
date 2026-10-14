@@ -14,7 +14,34 @@ CatDialog {
     width: Math.min(540,parent ? parent.width-24 : 540)
     height: Math.min(720,parent ? parent.height-24 : 720)
     function change(key: string,value: var): void { const next=Object.assign({},draft);next[key]=value;draft=next; }
-    onOpened: { draft=Object.assign({},layoutModel.configuration);error=""; }
+    function commitFields(): bool {
+        for (let i=0;i<fields.count;++i) {
+            const editor=(fields.itemAt(i) as NumberField).editor;
+            if (editor.visible && !editor.commitText()) { editor.forceActiveFocus(); return false; }
+        }
+        return true;
+    }
+    function resetFields(): void {
+        for (let i=0;i<fields.count;++i) (fields.itemAt(i) as NumberField).editor.synchronize();
+    }
+    onOpened: { draft=Object.assign({},layoutModel.configuration);error="";resetFields(); }
+    component NumberField: RowLayout {
+        id: field
+        required property var modelData
+        property alias editor: numberEditor
+        Layout.fillWidth: true
+        visible: modelData.types.indexOf(control.draft.type)>=0
+        CatLabel { Layout.fillWidth: true; text: field.modelData.label; wrapMode: Text.Wrap }
+        CatNumberBox {
+            id: numberEditor
+            objectName: "layout_" + field.modelData.key
+            Layout.preferredWidth: 145
+            minimum: field.modelData.min;maximum: field.modelData.max
+            decimals: field.modelData.min===0.0001 ? 4 : 0
+            Binding on value { value: control.draft[field.modelData.key] ?? 0 }
+            onValueEdited: value => control.change(field.modelData.key,value)
+        }
+    }
     contentItem: CatScrollView {
         contentWidth: availableWidth
         ColumnLayout {
@@ -27,6 +54,7 @@ CatDialog {
                 onActivated: index => control.change("type",control.types[index])
             }
             Repeater {
+                id: fields
                 model: [
                     {key:"countX",label:qsTr("Count X"),min:0,max:1000000,types:["Matrix2D","Matrix3D"]},
                     {key:"countY",label:qsTr("Count Y"),min:0,max:1000000,types:["Matrix2D","Matrix3D"]},
@@ -39,20 +67,7 @@ CatDialog {
                     {key:"startAngle",label:qsTr("Start angle (degrees)"),min:-360000,max:360000,types:["Ring","Disk"]},
                     {key:"radialLayers",label:qsTr("Rings outside center"),min:0,max:1000000,types:["Disk"]},
                     {key:"angularPoints",label:qsTr("Points per ring"),min:1,max:1000000,types:["Disk"]}]
-                delegate: RowLayout {
-                    id: field
-                    required property var modelData
-                    Layout.fillWidth: true
-                    visible: modelData.types.indexOf(control.draft.type)>=0
-                    CatLabel { Layout.fillWidth: true; text: field.modelData.label; wrapMode: Text.Wrap }
-                    CatNumberBox {
-                        Layout.preferredWidth: 145
-                        minimum: field.modelData.min;maximum: field.modelData.max
-                        decimals: field.modelData.min===0.0001 ? 4 : 0
-                        value: control.draft[field.modelData.key] ?? 0
-                        onValueEdited: value => control.change(field.modelData.key,value)
-                    }
-                }
+                delegate: NumberField {}
             }
             CatCheckBox { text: qsTr("Clockwise"); visible: control.draft.type==="Ring" || control.draft.type==="Disk"; checked: control.draft.clockwise ?? false; onToggled: control.change("clockwise",checked) }
             CatLabel { Layout.fillWidth: true; wrapMode: Text.Wrap; visible: control.draft.type==="Custom"; text: qsTr("XYZ triples as JSON; custom layouts have no implicit grid dimensions.") }
@@ -73,11 +88,13 @@ CatDialog {
     }
     footer: Flow {
         padding: Theme.tokens.padding;spacing: Theme.tokens.spacing
-        CatButton { text: qsTr("Defaults"); onClicked: control.draft=control.layoutModel.defaultConfiguration() }
-        CatButton { text: qsTr("Cancel"); onClicked: control.close() }
+        CatButton { objectName: "layoutDefaults"; text: qsTr("Defaults"); onClicked: { control.draft=control.layoutModel.defaultConfiguration();control.resetFields(); } }
+        CatButton { objectName: "layoutCancel"; text: qsTr("Cancel"); onClicked: control.close() }
         CatButton {
+            objectName: "layoutApply"
             text: qsTr("Apply");primary: true
             onClicked: {
+                if (!control.commitFields()) return;
                 if(control.draft.type==="Custom") {
                     try { control.change("positions",JSON.parse(positions.text)); }
                     catch(e) { control.error=qsTr("Invalid XYZ JSON"); return; }

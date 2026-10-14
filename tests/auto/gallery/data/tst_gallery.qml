@@ -36,6 +36,18 @@ TestCase {
         verify(item !== null, "Missing gallery control: " + name);
         return item;
     }
+    function test_ledOutputIntervalFocusLoss() {
+        gallery.showComponent("led-preview");
+        preview();
+        const demo=findControl("ledPreviewDemo");
+        const interval=findControl("ledOutputInterval");
+        interval.forceActiveFocus();interval.selectAll();
+        keyClick("5");keyClick("0");
+        gallery.contentItem.forceActiveFocus();
+        compare(demo.dataController.output.interval,50);
+        demo.dataController.output.interval=25;
+        compare(interval.value,25);
+    }
     function preview() {
         verify(waitForRendering(gallery.contentItem));
         wait(10);

@@ -37,6 +37,10 @@ qt_add_qml_module(QCatUiKit
     SHARED
     URI QCatUiKit
     VERSION 1.0
+    # All QML files share qml/. Keep their implicit directory import local so
+    # internal helpers remain visible; QTP0004's extra qmldir redirects it to
+    # the module root, where those helpers cannot be resolved in Qt 6.10.
+    NO_GENERATE_EXTRA_QMLDIRS
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}

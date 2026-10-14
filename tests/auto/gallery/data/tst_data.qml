@@ -39,6 +39,22 @@ TestCase {
                 cases.push({tag:language + "_" + page, language:language, page:page});
         return cases;
     }
+    function test_parametersWithoutReturn_data() {
+        return ["table", "chat", "chatinput"].map(page=>({tag:page,page:page}));
+    }
+    function test_parametersWithoutReturn(data) {
+        const demo=choose(data.page);
+        const edits=[{name:"dataBatchSize",property:"batchSize",text:"7",value:7},
+            {name:"dataCapacity",property:"capacity",text:"5000",value:5000},
+            {name:"dataInterval",property:"interval",text:"50",value:50}];
+        for(const edit of edits) {
+            const input=find(edit.name).contentItem;
+            input.forceActiveFocus();input.selectAll();
+            for(const character of edit.text)keyClick(character);
+            find("dataStressButton").forceActiveFocus();
+            compare(demo[edit.property],edit.value);
+        }
+    }
     function test_operations(data) {
         GalleryLanguage.language = data.language;
         const demo = choose(data.page);

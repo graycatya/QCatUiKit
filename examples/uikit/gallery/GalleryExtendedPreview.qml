@@ -953,7 +953,7 @@ Item {
                 Accessible.name: qsTr("Quantity")
             }
             CatLabel {
-                text: qsTr("Enter a number or an expression such as (2 + 3) * 4.")
+                text: qsTr("Enter a number or an expression such as (2 + 3) * 4. Press Enter or leave the field to apply. Value: %1").arg(number.value)
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
             }

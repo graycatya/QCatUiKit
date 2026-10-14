@@ -194,7 +194,7 @@
 ## 组合与边界
 
 - `CatCarousel` 用于滑动翻页，`CatFlipView` 用于内容正反面翻转。
-- `CatNumberBox` 编辑小数；`acceptsExpression` 默认关闭，启用后只接受加减乘除、括号和一元正负号。无效输入保留最近有效值并标记 invalid。整数使用 `CatSpinBox`。
+- `CatNumberBox` 编辑小数；按 Enter 或失去焦点（Tab、点击其他控件）时提交修改并触发 `valueEdited`，编辑中的文本保留到提交。`acceptsExpression` 默认关闭，启用后只接受加减乘除、括号和一元正负号。无效输入保留文本和最近有效值并标记 invalid。整数使用 `CatSpinBox`，同样支持 Enter 或失焦提交。`CatColorPicker` 的合法十六进制颜色输入也支持 Enter 或失焦生效。
 - `CatCircularProgress.showValue` 控制中心文字，`CatProgressRing` 提供无中心数值的进度环。
 - `CatFileListView` 展示调用方模型，`CatFileDropZone` 提供拖放事件；文件访问和持久化由应用处理。
 - `CatSpatialItem` / `CatSpatialView` 提供 Qt Quick 内容的透视表现，`forceFlat` 可选择平面显示。

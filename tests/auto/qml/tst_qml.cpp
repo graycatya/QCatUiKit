@@ -2,6 +2,8 @@
 #include <QtQuickTest/quicktest.h>
 #include <QAnimationDriver>
 #include <QElapsedTimer>
+#include <QFont>
+#include <QGuiApplication>
 #include <QTimer>
 
 // Simulate an animation clock advancing faster than real time, as can happen
@@ -35,6 +37,12 @@ class QuickTestSetup : public QObject
 public slots:
     void applicationAvailable()
     {
+        // Resolve the platform's generic font once before warning-strict tests.
+        QFont font = QGuiApplication::font();
+        const QString family = font.defaultFamily();
+        if (!family.isEmpty())
+            font.setFamilies({family});
+        QGuiApplication::setFont(font);
         if (qEnvironmentVariableIntValue("QCATUIKIT_TEST_FAST_ANIMATION_DRIVER"))
         {
             m_driver = new FastAnimationDriver(this);

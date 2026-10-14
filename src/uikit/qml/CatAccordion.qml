@@ -2,9 +2,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQml.Models
-import QtQuick.Templates as T
-import QtQuick.Controls.Basic as B
-import QtQuick.Layouts
 import QCatUiKit
 
 Column {

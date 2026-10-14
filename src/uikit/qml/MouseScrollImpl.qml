@@ -12,6 +12,14 @@ DragHandler {
     enabled: view && view.interactive && (xAxis.enabled || yAxis.enabled)
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     acceptedButtons: Qt.LeftButton
+    // Since Qt 6.9 Flickable can explicitly leave mouse dragging to this
+    // handler. Otherwise its child-event filter can steal nested/button drags
+    // before passive handlers receive the move. Keep Qt 6.8 compatible.
+    property Binding nativeMouseButtons: Binding {
+        target: handler.view && "acceptedButtons" in handler.view ? handler.view : null
+        property: "acceptedButtons"
+        value: Qt.NoButton
+    }
     // Respect grabs held by text editors, charts, resize and nested drag handlers.
     grabPermissions: PointerHandler.CanTakeOverFromItems
     xAxis.enabled: view && view.contentWidth + view.leftMargin + view.rightMargin > view.width

@@ -22,7 +22,7 @@ T.SpinBox {
     inputMethodHints: Qt.ImhFormattedNumbersOnly
     contentItem: CatTextField {
         theme: control.theme
-        text: control.textFromValue(control.value, control.locale)
+        text: control.displayText
         font: control.font
         readOnly: !control.editable
         validator: control.validator

@@ -76,6 +76,54 @@ TestCase {
         verify(!number.commitText());
         verify(number.invalid);
     }
+    function enterText(editor, text) {
+        editor.forceActiveFocus();
+        editor.selectAll();
+        for (const character of text) keyClick(character);
+    }
+    function test_numberFinishesEditing_data() {
+        return [{tag: "tab", key: Qt.Key_Tab}, {tag: "return", key: Qt.Key_Return},
+                {tag: "click", key: 0}];
+    }
+    function test_numberFinishesEditing(data) {
+        const number = create('CatNumberBox { width: 260; value: 5; minimum: 0; maximum: 100 }');
+        const next = create('CatButton { y: 100; text: "Apply" }');
+        verify(waitForRendering(number));
+        watch(number, "valueEdited");
+        enterText(number, "12.5");
+        compare(number.value, 5, "Keep partial input while editing");
+        if (data.key) keyClick(data.key); else mouseClick(next);
+        compare(number.value, 12.5);
+        compare(spy.count, 1);
+        next.forceActiveFocus();
+        compare(spy.count, 1, "Return followed by focus loss must not submit twice");
+        number.value = 8;
+        compare(number.text, Number(8).toLocaleString(number.locale, 'f', number.decimals));
+    }
+    function test_numberInvalidFocusLoss() {
+        const number = create('CatNumberBox { width: 260; value: 5 }');
+        watch(number, "valueEdited");
+        enterText(number, "invalid");
+        test.forceActiveFocus();
+        compare(number.value, 5);
+        verify(number.invalid);
+        compare(number.text, "invalid");
+        compare(spy.count, 0);
+        enterText(number, "5.00");
+        test.forceActiveFocus();
+        compare(number.value, 5);
+        verify(!number.invalid);
+    }
+    function test_spinFocusLoss() {
+        const spin = create('CatSpinBox { width: 220; from: 0; to: 20; value: 5; editable: true }');
+        const apply = create('CatButton { y: 100; text: "Apply" }');
+        watch(spin, "valueModified");
+        verify(waitForRendering(spin));
+        enterText(spin.contentItem, "12");
+        mouseClick(apply);
+        compare(spin.value, 12);
+        compare(spy.count, 1);
+    }
     function test_spinEditingAndButtons() {
         const spin = create('CatSpinBox { width: 220; from: 0; to: 20; value: 5; editable: true }');
         verify(waitForRendering(spin));
@@ -133,6 +181,26 @@ TestCase {
         picker.chooseColor("#008577");
         compare(picker.selectedColor, "#008577");
         compare(spy.count, 1);
+    }
+    function test_colorHexFocusLoss() {
+        const picker = create('CatColorPicker { width: 220; selectedColor: "#008577" }');
+        mouseClick(picker);
+        let popup = null;
+        for (const resource of picker.resources)
+            if (resource instanceof CatPopup) popup = resource;
+        verify(popup !== null);
+        tryCompare(popup, "opened", true);
+        const editor = findChild(popup.contentItem, "colorHexInput");
+        verify(editor !== null);
+        watch(picker, "colorSelected");
+        enterText(editor, "#112233");
+        popup.contentItem.forceActiveFocus();
+        compare(picker.selectedColor, "#112233");
+        compare(spy.count, 1);
+        enterText(editor, "#12");
+        popup.contentItem.forceActiveFocus();
+        compare(picker.selectedColor, "#112233");
+        popup.close();
     }
     function test_ratingAndTriState() {
         const rating = create('CatRatingControl { value: -1; caption: "Rating" }');

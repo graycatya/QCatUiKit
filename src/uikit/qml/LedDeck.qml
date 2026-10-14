@@ -35,7 +35,12 @@ CatPane {
         RowLayout {
             Layout.fillWidth: true
             CatLabel { text: qsTr("Deck speed") }
-            CatNumberBox { Layout.fillWidth: true; minimum: 0; maximum: 8; value: control.runtime ? control.runtime.speed : 1; onValueEdited: value => control.runtime.speed=value }
+            CatNumberBox {
+                objectName: "deckSpeed"
+                Layout.fillWidth: true; minimum: 0; maximum: 8
+                Binding on value { value: control.runtime ? control.runtime.speed : 1 }
+                onValueEdited: value => control.runtime.speed=value
+            }
         }
         CatLabel { text: qsTr("Deck brightness: %1%").arg(Math.round((control.runtime ? control.runtime.brightness : 1)*100)) }
         CatSlider { Layout.fillWidth: true;from:0;to:1;value: control.runtime ? control.runtime.brightness : 1;onMoved:control.runtime.brightness=value }
@@ -74,7 +79,12 @@ CatPane {
         RowLayout {
             Layout.fillWidth:true
             CatLabel {text:qsTr("Place speed")}
-            CatNumberBox {Layout.fillWidth:true;minimum:0;maximum:8;value:control.runtime?.workingPlace.speed ?? 1;onValueEdited:value=>control.runtime.editPlace({speed:value})}
+            CatNumberBox {
+                objectName: "placeSpeed"
+                Layout.fillWidth:true;minimum:0;maximum:8
+                Binding on value { value:control.runtime?.workingPlace.speed ?? 1 }
+                onValueEdited:value=>control.runtime.editPlace({speed:value})
+            }
         }
         CatLabel {text:qsTr("Place brightness")}
         CatSlider {Layout.fillWidth:true;from:0;to:1;value:control.runtime?.workingPlace.brightness ?? 1;onMoved:control.runtime.editPlace({brightness:value})}
