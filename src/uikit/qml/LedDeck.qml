@@ -32,18 +32,31 @@ CatPane {
             CatButton { text: qsTr("Next"); onClicked: control.runtime.next() }
             CatButton { text: qsTr("Unload"); onClicked: control.runtime.unload() }
         }
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
             CatLabel { text: qsTr("Deck speed") }
-            CatNumberBox {
+            CatSliderField {
                 objectName: "deckSpeed"
-                Layout.fillWidth: true; minimum: 0; maximum: 8
-                Binding on value { value: control.runtime ? control.runtime.speed : 1 }
+                theme: control.theme
+                Layout.fillWidth: true; from: 0; to: 8; stepSize: 0.05; decimals: 2
+                suffix: "×"; defaultValue: 1; resetVisible: true; tickInterval: 2
+                inputWidth: 90; valueToolTipVisible: true
+                Accessible.name: qsTr("Deck speed")
+                value: control.runtime ? control.runtime.speed : 1
                 onValueEdited: value => control.runtime.speed=value
             }
         }
         CatLabel { text: qsTr("Deck brightness: %1%").arg(Math.round((control.runtime ? control.runtime.brightness : 1)*100)) }
-        CatSlider { Layout.fillWidth: true;from:0;to:1;value: control.runtime ? control.runtime.brightness : 1;onMoved:control.runtime.brightness=value }
+        CatSliderField {
+            objectName: "deckBrightness"
+            theme: control.theme
+            Layout.fillWidth: true; from: 0; to: 100; stepSize: 1
+            suffix: "%"; defaultValue: 100; resetVisible: true; tickInterval: 25
+            inputWidth: 90; valueToolTipVisible: true
+            Accessible.name: qsTr("Deck brightness")
+            value: (control.runtime ? control.runtime.brightness : 1) * 100
+            onValueEdited: value => control.runtime.brightness = value / 100
+        }
         CatComboBox {
             Layout.fillWidth: true
             visible: control.repositories.length>1
@@ -76,31 +89,49 @@ CatPane {
             currentIndex:(control.runtime?.workingPlace.schema ?? 5)-3
             onActivated:index=>control.runtime.editPlace({schema:index+3})
         }
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth:true
             CatLabel {text:qsTr("Place speed")}
-            CatNumberBox {
+            CatSliderField {
                 objectName: "placeSpeed"
-                Layout.fillWidth:true;minimum:0;maximum:8
-                Binding on value { value:control.runtime?.workingPlace.speed ?? 1 }
+                theme: control.theme
+                Layout.fillWidth: true; from: 0; to: 8; stepSize: 0.05; decimals: 2
+                suffix: "×"; defaultValue: 1; resetVisible: true; tickInterval: 2
+                inputWidth: 90; valueToolTipVisible: true
+                Accessible.name: qsTr("Place speed")
+                value: control.runtime?.workingPlace.speed ?? 1
                 onValueEdited:value=>control.runtime.editPlace({speed:value})
             }
         }
         CatLabel {text:qsTr("Place brightness")}
-        CatSlider {Layout.fillWidth:true;from:0;to:1;value:control.runtime?.workingPlace.brightness ?? 1;onMoved:control.runtime.editPlace({brightness:value})}
+        CatSliderField {
+            objectName: "placeBrightness"
+            theme: control.theme
+            Layout.fillWidth: true; from: 0; to: 100; stepSize: 1
+            suffix: "%"; defaultValue: 100; resetVisible: true; tickInterval: 25
+            inputWidth: 90; valueToolTipVisible: true
+            Accessible.name: qsTr("Place brightness")
+            value: (control.runtime?.workingPlace.brightness ?? 1) * 100
+            onValueEdited: value => control.runtime.editPlace({brightness: value / 100})
+        }
         Repeater {
             model:control.runtime ? control.runtime.parameterDefinitions : []
             delegate: ColumnLayout {
                 id: parameter
                 required property var modelData
                 Layout.fillWidth:true
-                CatLabel {text:parameter.modelData.name+": "+Number(control.runtime.workingPlace.parameters?.[parameter.modelData.id] ?? parameter.modelData.default).toFixed(2)}
-                CatSlider {
+                CatLabel {text:parameter.modelData.name; Layout.fillWidth: true; wrapMode: Text.Wrap}
+                CatSliderField {
+                    theme: control.theme
                     Layout.fillWidth:true
                     from:parameter.modelData.min;to:parameter.modelData.max
                     stepSize:parameter.modelData.id==="channel" ? 1 : 0
+                    decimals: parameter.modelData.id === "channel" ? 0 : 2
+                    defaultValue: parameter.modelData.default
+                    resetVisible: true; inputWidth: 90; valueToolTipVisible: true
+                    Accessible.name: parameter.modelData.name
                     value:control.runtime.workingPlace.parameters?.[parameter.modelData.id] ?? parameter.modelData.default
-                    onMoved:control.runtime.setParameter(parameter.modelData.id,value)
+                    onValueEdited: value => control.runtime.setParameter(parameter.modelData.id,value)
                 }
             }
         }

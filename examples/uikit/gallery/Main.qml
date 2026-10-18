@@ -13,13 +13,14 @@ B.ApplicationWindow {
     property string pageId: initialPage === "home" || initialPage === "settings" ? initialPage : "components"
     property string categoryId: "all"
     property string componentId: pageId === "components" && initialPage !== "all" ? initialPage : ""
+    property int requestedChartMode: -1
     property string searchQuery: ""
     readonly property bool compact: width < 860
     readonly property var currentComponent: GalleryCatalog.componentForId(componentId)
     readonly property string pageTitle: pageId === "home" ? qsTr("Overview") : pageId === "settings" ? qsTr("Settings") : currentComponent ? currentComponent.title : GalleryCatalog.categoryTitle(categoryId)
     readonly property var matchingComponents: GalleryCatalog.components.filter(entry => {
         const query = searchQuery.trim().toLowerCase();
-        return (categoryId === "all" || entry.category === categoryId) && (!query || (entry.name + " " + entry.title + " " + entry.description).toLowerCase().includes(query));
+        return (categoryId === "all" || entry.category === categoryId) && (!query || (entry.name + " " + entry.title + " " + entry.description + " " + (entry.searchTerms || "")).toLowerCase().includes(query));
     })
     readonly property bool invalidInitialPage: initialPage !== "home" && initialPage !== "all" && initialPage !== "settings" && !GalleryCatalog.componentForId(initialPage)
     width: 1200
@@ -35,6 +36,7 @@ B.ApplicationWindow {
         pageId = page;
         categoryId = category;
         componentId = "";
+        requestedChartMode = -1;
         searchQuery = "";
         mobileNavigation.close();
     }
@@ -44,9 +46,19 @@ B.ApplicationWindow {
             return;
         pageId = "components";
         categoryId = entry.category;
-        componentId = id;
+        requestedChartMode = -1;
+        componentId = entry.id;
         searchQuery = "";
     }
+    function showChartDemo(mode: int): bool {
+        const entry = GalleryChartCatalog.entryForMode(mode);
+        if (!entry) return false;
+        showComponent(entry.id);
+        requestedChartMode = mode;
+        return true;
+    }
+    onComponentIdChanged: if (contentScroll.contentItem)
+        contentScroll.contentItem.contentY = 0
     onCompactChanged: if (!compact)
         mobileNavigation.close()
     onSearchQueryChanged: {
@@ -238,12 +250,14 @@ B.ApplicationWindow {
         id: componentPage
         GalleryComponentPage {
             entry: window.currentComponent
+            requestedChartMode: window.requestedChartMode
             onBack: window.navigate("components", window.categoryId)
         }
     }
     Component {
         id: explorerPage
         ColumnLayout {
+            readonly property bool chartBrowser: window.categoryId === "charts" && !window.searchQuery
             spacing: 20
             CatLabel {
                 objectName: "galleryPageTitle"
@@ -259,15 +273,25 @@ B.ApplicationWindow {
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
+            Loader {
+                Layout.fillWidth: true
+                active: parent.chartBrowser
+                visible: active
+                sourceComponent: GalleryChartBrowser {
+                    onSelectComponent: id => window.showComponent(id)
+                }
+            }
             GridLayout {
-                visible: window.matchingComponents.length > 0
+                id: entryGrid
+                readonly property bool chartBrowser: parent.chartBrowser
+                visible: !chartBrowser && window.matchingComponents.length > 0
                 Layout.fillWidth: true
                 columns: window.width - (window.compact ? 40 : 296) >= 840 ? 3 : window.width - (window.compact ? 40 : 296) >= 500 ? 2 : 1
                 columnSpacing: 16
                 rowSpacing: 16
                 uniformCellWidths: true
                 Repeater {
-                    model: window.matchingComponents
+                    model: entryGrid.chartBrowser ? [] : window.matchingComponents
                     delegate: GalleryEntryCard {
                         required property var modelData
                         entry: modelData

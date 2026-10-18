@@ -2,7 +2,7 @@
 find_package(Qt6 6.8 REQUIRED COMPONENTS LinguistTools)
 qt_add_library(qcat-gallery-ui STATIC)
 add_dependencies(qcat-gallery-ui QCatUiKitplugin)
-set_source_files_properties(GalleryCatalog.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(GalleryCatalog.qml GalleryChartCatalog.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 qt_add_qml_module(qcat-gallery-ui
     URI QCatUiKit.Gallery
     VERSION 1.0
@@ -13,12 +13,16 @@ qt_add_qml_module(qcat-gallery-ui
         gallerydatademo.h gallerydatademo.cpp
         galleryleddemo.h galleryleddemo.cpp
     QML_FILES
-        Main.qml GalleryCatalog.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
+        Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
+        GalleryChartRangeControls.qml GalleryChartAxisRange.qml
+        GallerySliderPreview.qml
+        GalleryWaterfallPreview.qml GalleryChartM4Preview.qml GalleryChartFitPreview.qml
+        GalleryChartStackPreview.qml GalleryHistogramPreview.qml
         GallerySettingsPage.qml GalleryComponentPage.qml GalleryPreview.qml GalleryExtendedPreview.qml GalleryChartPreview.qml
-        GalleryDataPreview.qml GalleryDataStressPanel.qml
+        GalleryDataPreview.qml GalleryDataStressPanel.qml GalleryChartAdvancedPreview.qml GalleryChartAxesPreview.qml GalleryChart3DPreview.qml GalleryChartRadialPreview.qml GalleryChartAreaOptions.qml GalleryChartStrokeOptions.qml GalleryChartInteractionOptions.qml GalleryChartDelegateOptions.qml GalleryChartMotionOptions.qml
         GalleryLedPreview.qml
-    RESOURCES assets/preview-art.svg)
+    RESOURCES assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png)
 set(qcat_gallery_brand_dir "${QCatUiKit_SOURCE_DIR}/src/uikit/doc/images/brand/qcat-uikit")
 set(qcat_gallery_brand_files)
 foreach(qcat_gallery_icon_size IN ITEMS 16 24 32 48 64 128 256 512)

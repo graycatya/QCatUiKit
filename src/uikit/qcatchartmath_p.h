@@ -45,6 +45,14 @@ inline Range expanded(double a, double b, bool log)
     }
     return {a, b};
 }
+inline double tickStep(Range range, ChartAxis::Scale scale, int count)
+{
+    const double raw = (range.max - range.min) / std::max(1, count - 1);
+    const double power = std::pow(10., std::floor(std::log10(raw)));
+    const double factor = raw / power;
+    const double step = (factor <= 1 ? 1 : factor <= 2 ? 2 : factor <= 5 ? 5 : 10) * power;
+    return scale == ChartAxis::Category ? std::max(1., std::ceil(step)) : step;
+}
 inline QVector<double> ticks(Range range, ChartAxis::Scale scale, int count)
 {
     QVector<double> result;
@@ -62,12 +70,7 @@ inline QVector<double> ticks(Range range, ChartAxis::Scale scale, int count)
             result.append(valueAt(double(i) / (count - 1), range, scale));
         return result;
     }
-    const double raw = (range.max - range.min) / std::max(1, count - 1);
-    const double power = std::pow(10., std::floor(std::log10(raw)));
-    const double factor = raw / power;
-    double step = (factor <= 1 ? 1 : factor <= 2 ? 2 : factor <= 5 ? 5 : 10) * power;
-    if (scale == ChartAxis::Category)
-        step = std::max(1., std::ceil(step));
+    const double step = tickStep(range, scale, count);
     if (!std::isfinite(step) || step <= 0)
         return result;
     const double first = std::ceil(range.min / step) * step;
@@ -77,6 +80,42 @@ inline QVector<double> ticks(Range range, ChartAxis::Scale scale, int count)
         if (v > range.max + step * 1e-8)
             break;
         result.append(std::abs(v) < step * 1e-10 ? 0 : v);
+    }
+    return result;
+}
+// Equal subdivisions in axis space, including partially visible major intervals.
+// Category labels describe discrete records and do not have fractional ticks.
+inline QVector<double> minorTicks(Range range, ChartAxis::Scale scale, int majorCount, int count)
+{
+    QVector<double> result;
+    if (count <= 0 || scale == ChartAxis::Category)
+        return result;
+    count = std::min(count, 10);
+    const auto major = ticks(range, scale, majorCount);
+    const double low = transform(range.min, scale), high = transform(range.max, scale);
+    const double step = scale == ChartAxis::Logarithmic && major.size() >= 2
+                            ? transform(major[1], scale) - transform(major[0], scale)
+                            : tickStep(range, scale, majorCount);
+    if (!(step > 0) || !std::isfinite(step))
+        return result;
+    double origin = major.isEmpty() ? std::ceil(low / step) * step : transform(major[0], scale);
+    if (origin > low)
+        origin -= step;
+    for (int interval = 0; interval < 34; ++interval)
+    {
+        const double start = origin + interval * step;
+        if (start >= high)
+            break;
+        for (int i = 1; i <= count; ++i)
+        {
+            const double value = start + step * (double(i) / (count + 1));
+            if (value > low && value < high)
+            {
+                const double v = inverse(value, scale);
+                if (std::isfinite(v) && (result.isEmpty() || v > result.last()))
+                    result.append(v);
+            }
+        }
     }
     return result;
 }
@@ -119,11 +158,15 @@ inline QString label(double v, ChartAxis *axis, Range range)
 // Keep endpoints and extrema in source order; never modify the raw data.
 inline QVector<int> visibleIndices(const ChartSeries *s, Range x, int budget)
 {
+    if (s->hasBreaks())
+        budget = 0; // Preserve every break and both adjacent endpoints.
     int first = 0, last = s->count();
     if (s->sortedX())
     {
         first = std::max(0, s->lowerBound(x.min) - 1);
         last = std::min(last, s->lowerBound(x.max) + 1);
+        while (last < s->count() && s->sampleAt(last).x == x.max)
+            ++last;
     }
     QVector<int> out;
     if (budget <= 0 || last - first <= budget)

@@ -6,11 +6,13 @@
 
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
-- **101 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **115 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
-- **Native charts**: 10 chart types, mixed series, streaming data, zoom, pan, and tooltips, rendered with Qt Quick SceneGraph.
+- **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
 - **Data models**: table, message, and tree models, with Qt Quick views that create visible delegates on demand.
+- **[Statistical charts](src/uikit/doc/CHARTSTATISTICS.md)**: public linear fits, residual bands, waterfalls, ordinary/percentage stacked areas and histograms with automatic or unequal bins, counts, frequency, and probability density, preserving raw inputs.
+- **[Extended charts](src/uikit/doc/CHARTEXTENSIONS.md)**: independent bubble size/color mapping, dense or sparse heatmaps and scrolling grids, radar normalization, contours/bands, OHLC with volume, and box plots with outliers.
 - **Chinese and English Gallery**: runtime language switching, search, responsive layouts, interactive demos, and continuous stress tests.
 - **Shared library and CMake package**: exported targets, a QML plugin, public C++ headers, and runtime version queries.
 
@@ -103,7 +105,7 @@ Each component page has an interactive preview and a QML example. The toolbar sw
 
 | Page | Interactive features | Stress-test capacity |
 | --- | --- | --- |
-| Charts | 15 demo configurations, batch additions/deletions, zoom/pan, sampled or aggregated overviews | Million-record preset retains 1,000,000 raw records per chart in total |
+| Charts | 30 demo configurations, curved range areas, area baselines/gradients, bar labels and pie leaders, rectangle/pinch zoom, batch additions/deletions, zoom/pan, sampled or aggregated overviews | Million-record preset retains 1,000,000 raw records per chart in total |
 | Table | Batch CRUD, row selection, cell editing, positioning, column resizing | 100,000 rows |
 | Conversation | Incoming/outgoing messages, long text, delivery status, history browsing | 10,000 messages |
 | Message input | Submission, blank validation, long text, draft restoration | 10,000 submitted messages |
@@ -131,3 +133,5 @@ See the [Agent UI guide](src/uikit/doc/AGENT_UI.md) for usage and example prompt
 ## License
 
 QCatUiKit is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for attribution and [LICENSES](LICENSES) for additional licenses covering included code.
+
+3D charts use `CatChart.scene3D` for bars, scatter, trajectories and regular surfaces, with a camera, Blinn–Phong / Phong materials, depth picking and slices. See [3D charts](src/uikit/doc/CHARTS3D.md).

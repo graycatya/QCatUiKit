@@ -66,7 +66,17 @@ CMake 统一链接 `QCatUiKit::QCatUiKit`。QML 公开名称由组件文件、�
 
 所有 QObject API 在所属线程调用。工作线程准备批次，通过 queued connection 交给模型或图表对象；不要并发读写容器，也不要跨数据修改保留内部样本引用。
 
-图表将数据和样式更新合并到 polish 阶段，在 GUI 线程准备布局及图元，由渲染线程创建 SceneGraph 节点。software 后端通过图像绘制回退；具体数据与性能边界见 [图表](CHARTS.md)。
+图表将数据和样式更新合并到 polish 阶段，在 GUI 线程准备不可变布局与图元快照。私有 QQuickRhiItem 负责数据层的 GPU 缓冲和透明离屏绘制；背景／网格及独立文字／交互覆盖层通过 SceneGraph 合成。software 后端通过图像绘制回退；具体数据、诊断与性能边界见 [图表](CHARTS.md)。
+
+曲线缓存按系列的数据、插值模式／张力、实际类型及两轴 scale 失效。自然样条控制点保存在变换后的数据坐标中；有序阶梯／样条 Line／Area 的层次索引记录连续段、控制多边形 X 边界及真实 Y 极值。平移和缩放只遍历可见节点、生成当前细节层级的不可变快照，固定轴范围不重新扫描全量极值。概览命中会细查原始曲段；这些缓存及诊断计数全部保存在 Impl 和私有助手中。
+
+面积填充在 GUI 准备阶段按基线／上下界交点拆分并裁剪至绘图区。双色渐变的起终颜色和绘图区坐标保存在不可变批次中；RHI 快照只接收预乘顶点颜色，software 使用同一坐标的线性渐变画刷。边界与标记颜色独立，不给渲染线程增加 QObject 访问。
+
+RangeArea 的上下边界按共同参数递归细分，任一边界误差超标就一起分割；这样每个填充条带的上下端点仍共享 X。自然样条分别缓存两条边界的控制点，但使用相同有效区间。自动范围包含双边界极值；拾取记录保留原始曲段索引和细分参数，返回源记录而非插值点。
+
+框选手势与选框保存在 ChartItem 的 Impl 中，只有松开后的有效矩形才更新所选坐标轴。拖动与取消仅更新私有覆盖层，不标记数据几何为脏。选框记录开始时的绘图区和范围，映射发生变化则取消，避免对过期坐标缩放。场景初始化请求重绘，几何更新由布局／数据失效处理。
+
+触摸输入同样由 ChartItem 处理，私有 RHI 子项不参与事件捕获。Impl 按触点 ID 维护中心与间距，单次坐标变换同时计算平移和缩放后的两轴范围；增减触点时重设基准。手势固定绘图区左边距，结束后恢复刻度布局，避免 DateTime 标签宽度变化引起锚点漂移。轴变化会准备新的绘制快照；轻点／静止触点不上传新数据。
 
 ## Gallery 边界
 
@@ -83,3 +93,11 @@ LED 工作流由 `qcatledlayoutmodel`、`qcatlightingframe`、`qcatledeffectregi
 `qcatleddeck`、`qcatledmixer`、`qcatledoutput` 组成。实时数据走不可变连续缓冲，低频配置走 QObject / ListModel；
 预览 RGBA 转换和设备 Patch 从同一最终 LightingFrame 分支。`qcatledproject` 是可选装配，不是 Deck 的强制依赖。
 Gallery 只选择示例配置，旧 `GalleryLedDemo` 保留为旧 RGBA 回归演示 helper。详见 [LED 工作流](LEDWORKFLOW.md)。
+
+M2 ?????????????????????GPU ???????????????????GUI ?????????? BVH ???????????????? GPU?????????????????????
+
+?? QML ????? ChartDelegates ????????????????????????QQuickItem ????????????????????????????????????????????????? RHI ???????????????????????
+
+### 三维图表数据层
+
+ChartItem 的 Pimpl 持有 ChartScene3D 与私有 ChartRhiItem3D。ChartSeries3D 使用独立 double XYZ／网格契约；GUI 线程完成局部映射、共享网格、曲面索引、法线与拾取 BVH。渲染线程只消费不可变 ChartFrame3D／ChartGeometry3D，使用窗口 QRhi 的深度缓冲和实例绘制；相机和材质变化只更新统一缓冲，几何快照复用。三维 software 后端明确不可用，二维软件回退继续保留。公开入口见 [CHARTS3D.md](CHARTS3D.md)。

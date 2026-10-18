@@ -9,10 +9,15 @@ class ChartAxis::Impl
   public:
     Scale scale = Linear;
     bool automatic = true;
+    bool reversed = false;
     double minimum = 0, maximum = 1;
     QString title;
     QStringList categories;
     int ticks = 6;
+    int minorTicks = 0;
+    Qt::Orientation orientation = Qt::Vertical;
+    Side side = NearSide;
+    bool visible = true;
 };
 ChartAxis::ChartAxis(QObject *parent) : QObject(parent), d(new Impl) {}
 ChartAxis::~ChartAxis() = default;
@@ -31,6 +36,18 @@ void ChartAxis::setScale(Scale v)
         d->maximum = 10;
     }
     emit changed();
+}
+bool ChartAxis::reversed() const
+{
+    return d->reversed;
+}
+void ChartAxis::setReversed(bool v)
+{
+    if (d->reversed != v)
+    {
+        d->reversed = v;
+        emit changed();
+    }
 }
 bool ChartAxis::automatic() const
 {
@@ -99,6 +116,55 @@ void ChartAxis::setTickCount(int v)
     if (d->ticks != v)
     {
         d->ticks = v;
+        emit changed();
+    }
+}
+Qt::Orientation ChartAxis::orientation() const
+{
+    return d->orientation;
+}
+void ChartAxis::setOrientation(Qt::Orientation value)
+{
+    if ((value == Qt::Horizontal || value == Qt::Vertical) && value != d->orientation)
+    {
+        d->orientation = value;
+        emit changed();
+    }
+}
+ChartAxis::Side ChartAxis::side() const
+{
+    return d->side;
+}
+void ChartAxis::setSide(Side value)
+{
+    if ((value == NearSide || value == FarSide) && value != d->side)
+    {
+        d->side = value;
+        emit changed();
+    }
+}
+bool ChartAxis::isVisible() const
+{
+    return d->visible;
+}
+void ChartAxis::setVisible(bool value)
+{
+    if (value != d->visible)
+    {
+        d->visible = value;
+        emit changed();
+    }
+}
+int ChartAxis::minorTickCount() const
+{
+    return d->minorTicks;
+}
+void ChartAxis::setMinorTickCount(int v)
+{
+    v = std::clamp(v, 0, 10);
+    if (d->minorTicks != v)
+    {
+        d->minorTicks = v;
         emit changed();
     }
 }

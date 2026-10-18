@@ -8,6 +8,14 @@ import QCatUiKit
 Item {
     id: control
     required property string componentId
+    property int requestedChartMode: -1
+    readonly property int chartMode: (exampleLoader.item as GalleryChartPreview)?.mode ?? -1
+    readonly property string exampleCode: (exampleLoader.item as GalleryChartPreview)?.exampleCode
+        || (exampleLoader.item as GallerySliderPreview)?.exampleCode || ""
+    function selectChartMode(mode: int): void {
+        const preview = exampleLoader.item as GalleryChartPreview;
+        if (preview && preview.allowedModes.includes(mode)) preview.mode = mode;
+    }
     implicitHeight: Math.max(240, exampleLoader.implicitHeight + 48)
     clip: true
     Loader {
@@ -15,11 +23,10 @@ Item {
         anchors.centerIn: parent
         width: Math.max(0, control.width - 8)
         sourceComponent: {
+            if (GalleryChartCatalog.entryForId(control.componentId)) return chartScene;
             switch (control.componentId) {
             case "led-preview":
                 return ledScene;
-            case "chart": case "chart-axis": case "chart-series":
-                return chartScene;
             case "button":
                 return buttonScene;
             case "checkbox":
@@ -28,7 +35,7 @@ Item {
                 return radioScene;
             case "switch":
                 return switchScene;
-            case "slider":
+            case "slider": case "rangeslider": case "sliderfield":
                 return sliderScene;
             case "combobox":
                 return comboBoxScene;
@@ -91,7 +98,7 @@ Item {
     }
     Component {
         id: chartScene
-        GalleryChartPreview { componentId: control.componentId }
+        GalleryChartPreview { componentId: control.componentId; requestedMode: control.requestedChartMode }
     }
     Component {
         id: extendedScene
@@ -168,12 +175,7 @@ Item {
     }
     Component {
         id: sliderScene
-        ColumnLayout {
-            spacing: 12
-            CatLabel { text: qsTr("Volume: %1%").arg(Math.round(volume.value)) }
-            CatSlider { id: volume; objectName: "demoSlider"; from: 0; to: 100; value: 60; stepSize: 5; snapMode: CatSlider.SnapAlways; Layout.fillWidth: true; Accessible.name: qsTr("Volume") }
-            CatSlider { from: 0; to: 100; value: 35; enabled: false; Layout.fillWidth: true; Accessible.name: qsTr("Disabled") }
-        }
+        GallerySliderPreview { componentId: control.componentId }
     }
     Component {
         id: comboBoxScene
@@ -350,12 +352,17 @@ Item {
             }
             CatSlider {
                 id: progress
+                objectName: "progressSlider"
                 from: 0
                 to: 100
                 value: 64
+                stepSize: 1; suffix: "%"
+                tickInterval: 25; tickLabelsVisible: true; valueToolTipVisible: true
+                defaultValue: 64; defaultIndicatorVisible: true
                 Layout.fillWidth: true
                 Accessible.name: qsTr("Progress")
             }
+            CatButton { objectName: "progressReset"; text: qsTr("Reset"); onClicked: progress.reset() }
             CatLabel {
                 text: qsTr("%1% complete").arg(Math.round(progress.value))
                 color: Theme.tokens.textSecondary
@@ -372,12 +379,17 @@ Item {
             }
             CatSlider {
                 id: progress
+                objectName: "progressSlider"
                 from: 0
                 to: 100
                 value: 64
+                stepSize: 1; suffix: "%"
+                tickInterval: 25; tickLabelsVisible: true; valueToolTipVisible: true
+                defaultValue: 64; defaultIndicatorVisible: true
                 Layout.fillWidth: true
                 Accessible.name: qsTr("Progress")
             }
+            CatButton { objectName: "progressReset"; text: qsTr("Reset"); onClicked: progress.reset() }
         }
     }
     Component {

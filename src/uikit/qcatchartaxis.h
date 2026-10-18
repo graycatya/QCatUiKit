@@ -19,7 +19,18 @@ class QCATUIKIT_EXPORT ChartAxis : public QObject
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY changed)
     Q_PROPERTY(QStringList categories READ categories WRITE setCategories NOTIFY changed)
     Q_PROPERTY(int tickCount READ tickCount WRITE setTickCount NOTIFY changed)
+    Q_PROPERTY(bool reversed READ reversed WRITE setReversed NOTIFY changed)
+    Q_PROPERTY(int minorTickCount READ minorTickCount WRITE setMinorTickCount NOTIFY changed)
+    Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY changed)
+    Q_PROPERTY(Side side READ side WRITE setSide NOTIFY changed)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY changed)
   public:
+    enum Side
+    {
+        NearSide,
+        FarSide
+    };
+    Q_ENUM(Side)
     enum Scale
     {
         Linear,
@@ -32,6 +43,8 @@ class QCATUIKIT_EXPORT ChartAxis : public QObject
     ~ChartAxis() override;
     Scale scale() const;
     void setScale(Scale value);
+    bool reversed() const;
+    void setReversed(bool value);
     bool automatic() const;
     void setAutomatic(bool value);
     double minimum() const;
@@ -43,6 +56,14 @@ class QCATUIKIT_EXPORT ChartAxis : public QObject
     void setCategories(const QStringList &value);
     int tickCount() const;
     void setTickCount(int value);
+    Qt::Orientation orientation() const;
+    void setOrientation(Qt::Orientation value);
+    Side side() const;
+    void setSide(Side value);
+    bool isVisible() const;
+    void setVisible(bool value);
+    int minorTickCount() const;
+    void setMinorTickCount(int value);
   signals:
     void changed();
 

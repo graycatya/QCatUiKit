@@ -10,9 +10,27 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatChart](../qcatchartitem.h) | 图表容器；`chartType`、`series`、`xAxis/yAxis`、`theme`、`interactive`；缩放、平移、图例、提示及默认反走样。 |
-| [CatChartAxis](../qcatchartaxis.h) | `scale`、`minimum/maximum`、`automatic`、`categories`、`setRange()`；线性、对数、UTC 时间与分类轴。 |
-| [CatChartSeries](../qcatchartseries.h) | `type`、`name`、`color`、`visible`、`capacity`、`count`；`append()`、`appendData()`、`setData()`、`at()`、`clear()`。 |
+| [CatChart](../qcatchartitem.h) | 图表容器；`chartType`、`series`、`xAxis/yAxis`、`theme`、`interactive`；缩放、平移、单选／多选、预算委托、可选过渡、图例、提示及默认反走样；`renderingStatistics()` 查询渲染与上传诊断。 |
+| [CatChartAxis](../qcatchartaxis.h) | `scale`、`minimum/maximum`、`automatic`、`categories`、`orientation`、`side`、`visible`、`reversed`、`minorTickCount`、`setRange()`；线性、对数、UTC 时间与分类轴。 |
+| [CatChartColorScale](CHARTEXTENSIONS.md) | 自动／固定范围、预乘颜色插值和色条。 |
+| [CatChartBubble](CHARTEXTENSIONS.md) | 独立半径／面积编码、大小倍数与颜色映射。 |
+| [CatChartGrid](CHARTEXTENSIONS.md) | 格网、缺失单元、单点更新、滚动行、密集纹理／稀疏实例。 |
+| [CatChartContour](CHARTEXTENSIONS.md) | 格网等值线、填色区域、级别和标签。 |
+| [CatChartOhlc](CHARTEXTENSIONS.md) | K 线／OHLC、交易间隔压缩与独立成交量。 |
+| [CatChartBoxPlot](CHARTEXTENSIONS.md) | 原始观测／摘要、分位数、箱须和离群点。 |
+| [CatChartFit](CHARTSTATISTICS.md) | `source`、`series`、`band`、`residualMultiplier`、`valid`；普通最小二乘、斜率／截距／R²／RMSE 和预测值。 |
+| [CatWaterfall](CHARTSTATISTICS.md) | `steps`、`initialValue`、`resetOnSubtotal`、`connectorsVisible`、`series`；增减、小计、总计和累计值拾取。 |
+| [CatChartStack](CHARTSTATISTICS.md) | `sources`、只读 `series`、`percentage`、`error`；严格 X 对齐、正负分组、过零切段及共享断点的堆叠面积适配器。 |
+| [CatHistogram](CHARTSTATISTICS.md) | `values`、`binCount`、`binEdges`、`normalization`、`series`；保留原始观测值，生成频数／频率／密度及箱边界拾取信息。 |
+| [CatChartSeries](../qcatchartseries.h) | `type`、`name`、`color`、`visible`、`capacity`、`count`；`curveMode`、`splineTension`、`markerShape`、`markerSize`、`markersVisible`；阶梯／样条、预设／纹理标记、六种柱图布局、多轴关联、多停止点／纹理填充、点／柱体／标签委托；`append()`、`appendData()`、`setData()`、`at()`、`clear()`。 |
+
+曲线外观还支持 `strokeStyle`、`dashPattern`、`dashOffset`；面积支持 `areaBaselineMode/areaBaseline`；Area／RangeArea 共用 `fillColor/borderColor`、`fillStyle/fillEndColor` 和 `fillOpacity`。断点使用批次字段 `breakBefore` 或 `setBreakBefore()`；区间面积使用 `RangeArea` 与 `setRangeData()`／`appendRangeData()`，C++ 对应独立 `RangeSample` 契约。RangeArea 的上下界共用七种 `curveMode` 与 `splineTension`，并支持断点、交叉填充和双边界极值范围。完整语义见 [图表指南](CHARTS.md)。
+
+饼／环支持 `pieStartAngle/pieEndAngle`、`pieRadius`、`holeSize`、`multiRing`、`ringGap`、`sliceLabelsVisible` 与 `sliceLabelPosition`（内置百分比／外置引线标签）；`setSliceStyle()` 设置单扇区颜色、边框、分离距离及标签开关，`setSliceVisible()` 独立控制各环扇区。
+
+柱状外观使用图表 `barGroupWidth/barSpacing` 与系列 `barBorderWidth/barBorderColor`。数据标签使用 `barLabelsVisible`、`barLabelPosition`、`barLabelFormat`、`barLabelPrecision`、`barLabelMargin`，六种布局共用。
+
+图表交互新增 `dragMode`（PanDrag／RectangleZoomDrag）、`rectangleZoomAxes`（ZoomBothAxes／ZoomXAxis／ZoomYAxis），并提供 `zoomToRect()`、`cancelZoomSelection()` 以及只读 `zoomSelecting/zoomSelection`。框选取消与坐标约定见 [图表指南](CHARTS.md#框选缩放)。`touchNavigationEnabled` 默认开启单指平移／双指缩放，关闭后保留轻点拾取并允许外层页面接管触摸拖动，详见 [触摸交互](CHARTS.md#触摸平移与双指缩放)。
 
 ## 输入与容器
 
@@ -37,7 +55,9 @@
 | [CatCheckBox](../qml/CatCheckBox.qml) | 标准 CheckBox；支持 `checked`、`tristate` 与 `checkState` |
 | [CatRadioButton](../qml/CatRadioButton.qml) | 标准 RadioButton；支持 Qt ButtonGroup 与排他选择 |
 | [CatSwitch](../qml/CatSwitch.qml) | 标准 Switch；鼠标、触摸拖动和键盘切换 |
-| [CatSlider](../qml/CatSlider.qml) | 标准 Slider；范围、步长、水平／垂直方向及镜像布局 |
+| [CatSlider](../qml/CatSlider.qml) | 单值滑块；刻度、提示、居中填充、默认值恢复；[滑块 API](SLIDERS.md) |
+| [CatRangeSlider](../qml/CatRangeSlider.qml) | 双端区间、跨度限制、固定跨度、整段拖动；[滑块 API](SLIDERS.md) |
+| [CatSliderField](../qml/CatSliderField.qml) | 滑块与精确数值框、单位、默认值恢复、自适应布局；[滑块 API](SLIDERS.md) |
 | [CatComboBox](../qml/CatComboBox.qml) | 标准 ComboBox；可编辑、textRole/valueRole、键盘导航与主题弹出列表 |
 | [CatButton](../qml/CatButton.qml) | 标准 Button；`primary`, `danger`, `loading`, `iconSource`；loading 临时禁用并恢复 enabled；primary 决定填充，danger 决定危险边框/普通文字 |
 | [CatTextField](../qml/CatTextField.qml) | 标准 TextField；`invalid` 控制错误边框；可配置 validator / inputMethodHints |
@@ -212,3 +232,7 @@
 | LibraryInfo | 与 QCatUiKit 提供相同版本属性的兼容入口 |
 
 图表的数据格式、坐标和渲染边界见 [图表指南](CHARTS.md)。批量编辑、对话收发、输入提交及百万数据配置见 [Gallery 使用指南](../../../examples/uikit/gallery/README.md)。
+
+### 三维图表
+
+`CatChart.scene3D` 及 `CatChartSeries3D` 提供三维柱阵、散点、轨迹和规则曲面，支持极坐标、相机、Blinn–Phong／Phong 光照、深度拾取及行列切片。`CatChartScene3D` 由图表持有，不直接在 QML 中创建。接口、GPU 要求与限制见 [三维图表](CHARTS3D.md)。

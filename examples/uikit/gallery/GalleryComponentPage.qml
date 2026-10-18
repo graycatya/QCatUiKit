@@ -8,6 +8,7 @@ import QCatUiKit
 ColumnLayout {
     id: control
     required property var entry
+    property int requestedChartMode: -1
     signal back
     spacing: 20
     CatButton {
@@ -60,11 +61,14 @@ ColumnLayout {
                     Layout.fillWidth: true
                 }
                 CatButton {
+                    objectName: "componentResetButton"
                     text: qsTr("Reset example")
                     font.pixelSize: 12
                     onClicked: {
+                        const mode = (previewLoader.item as GalleryPreview)?.chartMode ?? -1;
                         previewLoader.active = false;
                         previewLoader.active = true;
+                        if (mode >= 0) (previewLoader.item as GalleryPreview).selectChartMode(mode);
                     }
                 }
             }
@@ -75,6 +79,7 @@ ColumnLayout {
                 sourceComponent: Component {
                     GalleryPreview {
                         componentId: control.entry.id
+                        requestedChartMode: control.requestedChartMode
                     }
                 }
             }
@@ -106,6 +111,7 @@ ColumnLayout {
                 }
                 CatButton {
                     id: copyButton
+                    objectName: "copyExampleButton"
                     property bool copied: false
                     text: copied ? qsTr("Copied") : qsTr("Copy")
                     onClicked: {
@@ -122,11 +128,20 @@ ColumnLayout {
                     }
                 }
             }
+            CatLabel {
+                Layout.fillWidth: true
+                visible: control.entry.category === "charts"
+                text: qsTr("A standalone example of the selected chart and main styles, using small sample data.")
+                color: Theme.tokens.textSecondary
+                wrapMode: Text.Wrap
+            }
             B.TextArea {
                 id: codeText
                 objectName: "codeSample"
                 Layout.fillWidth: true
-                text: "import QtQuick\nimport QCatUiKit\n\n" + control.entry.code
+                text: "import QtQuick\nimport QCatUiKit\n\n"
+                    + ((previewLoader.item as GalleryPreview)?.exampleCode || control.entry.code)
+                onTextChanged: { copyTimer.stop(); copyButton.copied = false; }
                 readOnly: true
                 selectByMouse: true
                 wrapMode: TextEdit.Wrap

@@ -437,10 +437,12 @@ GalleryChartData::GalleryChartData(QObject *parent) : QObject(parent)
 }
 void GalleryChartData::load(int mode, ChartItem *chart, ChartSeries *first, ChartSeries *second)
 {
+    m_fit.setSource(nullptr);
     if (!chart || !first || !second || mode < 0 || mode >= GalleryDemos::Count)
         return;
     stopStress();
     m_mode = mode;
+    m_barVariant = mode == GalleryDemos::StackedBar || mode == GalleryDemos::SignedStack ? 1 : 0;
     m_chart = chart;
     m_first = m_previewFirst = first;
     m_second = m_previewSecond = second;
@@ -488,8 +490,25 @@ void GalleryChartData::retranslate()
     { return QCoreApplication::translate("GalleryChartData", source.toUtf8().constData()); };
     emit metadataChanged();
     m_chart->setTitle(translated(m_title));
-    m_chart->xAxis()->setTitle(translated(m_xTitle));
-    m_chart->yAxis()->setTitle(translated(m_yTitle));
+    if (m_mode == GalleryDemos::Bar || m_mode == GalleryDemos::StackedBar ||
+        m_mode == GalleryDemos::SignedStack)
+    {
+        static const ChartSeries::Type types[] = {ChartSeries::Bar,
+                                                  ChartSeries::StackedBar,
+                                                  ChartSeries::PercentBar,
+                                                  ChartSeries::HorizontalBar,
+                                                  ChartSeries::HorizontalStackedBar,
+                                                  ChartSeries::HorizontalPercentBar};
+        m_chart->setChartType(types[m_barVariant]);
+        m_chart->xAxis()->setScale(horizontalBars() ? ChartAxis::Linear : ChartAxis::Category);
+        m_chart->yAxis()->setScale(horizontalBars() ? ChartAxis::Category : ChartAxis::Linear);
+        m_chart->xAxis()->setTickCount(horizontalBars() ? 6 : 8);
+        m_chart->yAxis()->setTickCount(horizontalBars() ? 8 : 6);
+    }
+    const QString valueTitle =
+        (m_barVariant == 2 || m_barVariant == 5) ? tr("Share (%)") : translated(m_yTitle);
+    m_chart->xAxis()->setTitle(horizontalBars() ? valueTitle : translated(m_xTitle));
+    m_chart->yAxis()->setTitle(horizontalBars() ? translated(m_xTitle) : valueTitle);
     m_first->setName(translated(m_firstName));
     m_second->setName(translated(m_secondName));
     synchronizeMetadata();
@@ -497,6 +516,23 @@ void GalleryChartData::retranslate()
     emit statisticsChanged();
 }
 
+bool GalleryChartData::horizontalBars() const
+{
+    return m_barVariant >= 3 &&
+           (m_mode == GalleryDemos::Bar || m_mode == GalleryDemos::StackedBar ||
+            m_mode == GalleryDemos::SignedStack);
+}
+void GalleryChartData::setBarVariant(int value)
+{
+    if (value < 0 || value > 5 || value == m_barVariant || !m_chart ||
+        (m_mode != GalleryDemos::Bar && m_mode != GalleryDemos::StackedBar &&
+         m_mode != GalleryDemos::SignedStack))
+        return;
+    m_barVariant = value;
+    m_chart->resetView();
+    retranslate();
+    emit settingsChanged();
+}
 QString GalleryChartData::hint() const
 {
     return QCoreApplication::translate("GalleryChartData", GalleryDemos::description(m_mode).hint);
@@ -641,8 +677,7 @@ void GalleryChartData::updatePreview()
     const bool reduce = aggregated();
     QVector<ChartSeries::Sample> a, b;
     QStringList categories;
-    const auto rangeLabel = [&](int from, int to)
-    {
+    const auto rangeLabel = [&](int from, int to) {
         return (m_mode == Heatmap ? tr("Columns %1–%2") : tr("Records %1–%2"))
             .arg(from + 1)
             .arg(to);
@@ -781,7 +816,7 @@ void GalleryChartData::updatePreview()
     if (m_mode == Heatmap)
         m_chart->xAxis()->setScale(reduce ? ChartAxis::Category : ChartAxis::Linear);
     if (categorical() || m_mode == Heatmap)
-        m_chart->xAxis()->setCategories(categories);
+        (horizontalBars() ? m_chart->yAxis() : m_chart->xAxis())->setCategories(categories);
     // Source capacities belong to the retained data; preview buffers only need
     // enough room for the bounded overview and the optional fitted endpoints.
     m_previewFirst->setCapacity(std::max(1, int(a.size())));
@@ -850,7 +885,7 @@ void GalleryChartData::synchronizeMetadata()
         QStringList categories;
         for (const auto &category : m_categories)
             categories.append(translatedLabel(category));
-        m_chart->xAxis()->setCategories(categories);
+        (horizontalBars() ? m_chart->yAxis() : m_chart->xAxis())->setCategories(categories);
         for (auto *series : {m_first.data(), m_second.data()})
         {
             auto samples = retainedSamples(series, series->count());
@@ -874,30 +909,9 @@ void GalleryChartData::updateTrend()
 {
     if (m_mode != GalleryDemos::Trend || !m_first || !m_second)
         return;
-    const int count = m_first->count();
-    if (count < 2)
-    {
-        m_second->clear();
-        return;
-    }
-    // Center the regression to avoid cancellation as a long-running stream advances.
-    double meanX = 0, meanY = 0;
-    for (int i = 0; i < count; ++i)
-    {
-        meanX += m_first->sampleAt(i).x / count;
-        meanY += m_first->sampleAt(i).y / count;
-    }
-    double xx = 0, xy = 0;
-    for (int i = 0; i < count; ++i)
-    {
-        const auto &p = m_first->sampleAt(i);
-        xx += (p.x - meanX) * (p.x - meanX);
-        xy += (p.x - meanX) * (p.y - meanY);
-    }
-    const double slope = xx > 0 ? xy / xx : 0;
-    const double left = m_first->sampleAt(0).x, right = m_first->sampleAt(count - 1).x;
-    m_second->replacePoints(
-        {{left, meanY + slope * (left - meanX)}, {right, meanY + slope * (right - meanX)}});
+    m_fit.setSource(m_first);
+    if (!m_fit.refresh()) { m_second->clear(); return; }
+    m_second->replaceSamples({m_fit.series()->sampleAt(0), m_fit.series()->sampleAt(1)});
 }
 void GalleryChartData::addData()
 {
@@ -1110,4 +1124,24 @@ void GalleryChartData::stressTick()
         removeData();
     else
         addData();
+}
+
+bool GalleryChartData::populateRangeSeries(ChartSeries *series, int count, bool broken,
+                                           bool crossed)
+{
+    if (!series || count < 0 || count > 100000)
+        return false;
+    QVector<ChartSeries::RangeSample> samples;
+    samples.reserve(count);
+    for (int i = 0; i < count; ++i)
+    {
+        const double x = i < 50000 ? i : i + 5000;
+        samples.append(
+            {x,
+             i == 4321 ? -3. : 2 + std::sin(i * .007),
+             i == 1234 ? 12. : (crossed ? 2 + 4 * std::cos(i * .008) : 7 + std::cos(i * .008)),
+             {},
+             broken && i > 0 && i % 10000 == 0});
+    }
+    return series->replaceRangeSamples(samples);
 }

@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     parser.addHelpOption();
     parser.addOption({"smoke-test", "Load the gallery and exit after rendering."});
     parser.addOption({"screenshot", "Save a rendered gallery image and exit.", "path"});
-    parser.addOption({"chart-demo", "Choose a chart demonstration (0-14); use with a chart page.", "index"});
+    parser.addOption({"chart-demo", "Open a chart demonstration (0-29) in its matching chart page.", "index"});
     parser.addOption({"led-count", "LED count (0-100000); use --page led-preview.", "count", "4096"});
     parser.addOption({"led-layout", "LED layout: matrix or sphere.", "layout", "matrix"});
     parser.addOption({"led-interval", "Producer interval in milliseconds (4-1000).", "ms", "16"});
@@ -90,10 +90,11 @@ int main(int argc, char **argv)
     {
         bool valid = false;
         const int index = parser.value("chart-demo").toInt(&valid);
-        QObject *picker = engine.rootObjects().first()->findChild<QObject *>(QStringLiteral("chartDemoPicker"));
-        if (!valid || index < 0 || index > 14 || !picker)
+        bool opened = false;
+        if (!valid || index < 0 || index > 29
+            || !QMetaObject::invokeMethod(engine.rootObjects().first(), "showChartDemo",
+                                         Q_RETURN_ARG(bool, opened), Q_ARG(int, index)) || !opened)
             parser.showHelp(2);
-        QMetaObject::invokeMethod(picker, "activated", Q_ARG(int, index));
     }
     const bool ledOptions = parser.isSet("led-count") || parser.isSet("led-layout")
                             || parser.isSet("led-interval") || parser.isSet("led-benchmark") || parser.isSet("led-report");

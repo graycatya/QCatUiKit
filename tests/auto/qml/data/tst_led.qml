@@ -16,6 +16,7 @@ TestCase {
     Component { id: repositoryFactory; LedStorageRepository {} }
     Component { id: projectFactory; LedProject {} }
     Component { id: deckFactory; LedDeck { width: 360 } }
+    Component { id: mixerFactory; LedMixer { width: 360 } }
     Component { id: browserFactory; LedStorageBrowser { width: 360 } }
     function init() { failOnWarning(/.*/); }
     function test_previewDraftCancelDefaultsAndValidation() {
@@ -99,8 +100,8 @@ TestCase {
         const deck=createTemporaryObject(deckFactory,test,{runtime:project.deckA});
         const speed=findChild(deck,"deckSpeed"),place=findChild(deck,"placeSpeed");
         verify(speed!==null && place!==null);
-        typeNumber(speed,"2.5");
-        typeNumber(place,"3");
+        typeNumber(speed.numberBox,"2.5");
+        typeNumber(place.numberBox,"3");
         compare(project.deckA.speed,2.5);
         test.forceActiveFocus();
         tryVerify(()=>project.deckA.workingPlace.speed===3);
@@ -108,6 +109,32 @@ TestCase {
         project.deckA.editPlace({speed:1});
         tryVerify(()=>project.deckA.workingPlace.speed===1);
         compare(speed.value,1);compare(place.value,1);
+        speed.numberBox.commitValue(2.5); speed.reset(); compare(project.deckA.speed,1);
+        place.numberBox.commitValue(3); place.reset();
+        tryVerify(()=>project.deckA.workingPlace.speed===1);
+        project.deckA.speed=1.75; compare(speed.value,1.75);
+    }
+    function test_brightnessAndMixerSliders() {
+        const project=createTemporaryObject(projectFactory,test);
+        project.repository.populateExamples();
+        const storage=project.repository.storages[0].id;
+        verify(project.deckA.loadPlace(storage,project.repository.places(storage)[0].id));
+        tryCompare(project.deckA,"loading",false);
+        const deck=createTemporaryObject(deckFactory,test,{runtime:project.deckA});
+        const mixer=createTemporaryObject(mixerFactory,test,{runtime:project.mixer});
+        const brightness=findChild(deck,"deckBrightness"), place=findChild(deck,"placeBrightness");
+        const master=findChild(mixer,"ledMasterSlider"), cross=findChild(mixer,"ledMixSlider");
+        brightness.numberBox.commitValue(35); fuzzyCompare(project.deckA.brightness,.35,1e-6);
+        brightness.reset(); compare(project.deckA.brightness,1);
+        project.deckA.brightness=.7; fuzzyCompare(brightness.value,70,1e-6);
+        place.numberBox.commitValue(40); tryVerify(()=>Math.abs(project.deckA.workingPlace.brightness-.4)<1e-6);
+        place.reset(); tryVerify(()=>project.deckA.workingPlace.brightness===1);
+        master.numberBox.commitValue(25); fuzzyCompare(project.mixer.master,.25,1e-6);
+        master.reset(); compare(project.mixer.master,1);
+        project.mixer.master=.8; fuzzyCompare(master.value,80,1e-6);
+        cross.editValue(.2); fuzzyCompare(project.mixer.crossfader,.2,1e-6);
+        findChild(mixer,"ledMixReset").click(); compare(project.mixer.crossfader,.5);
+        project.mixer.crossfader=.75; fuzzyCompare(cross.value,.75,1e-6);
     }
     function test_settingsInput_data() {
         return [{tag:"layout",key:"countX",text:"17",value:17},

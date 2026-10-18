@@ -8,6 +8,22 @@ class GalleryChartDataTests : public QObject
 {
     Q_OBJECT
   private slots:
+    void rangePreset()
+    {
+        GalleryChartData demo;
+        ChartSeries series;
+        series.setCapacity(100000);
+        QVERIFY(demo.populateRangeSeries(&series, 100000, true, false));
+        QCOMPARE(series.count(), 100000);
+        QCOMPARE(series.lowerValue(4321), -3.);
+        QCOMPARE(series.sampleAt(1234).y, 12.);
+        QVERIFY(series.breakBefore(50000));
+        QCOMPARE(series.sampleAt(50000).x, 55000.);
+        QVERIFY(!demo.populateRangeSeries(&series, 100001, true, false));
+        QCOMPARE(series.count(), 100000);
+        QVERIFY(demo.populateRangeSeries(&series, 0, false, true));
+        QCOMPARE(series.count(), 0);
+    }
     void millionRecords_data()
     {
         QTest::addColumn<int>("mode");

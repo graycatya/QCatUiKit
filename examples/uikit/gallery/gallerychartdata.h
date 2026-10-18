@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 #include <QCatUiKit/qcatchartitem.h>
+#include <QCatUiKit/qcatchartfit.h>
 #include <QElapsedTimer>
 #include <QPointer>
 #include <QTimer>
@@ -18,6 +19,7 @@ class GalleryChartData : public QObject
     Q_PROPERTY(int maximumCapacity READ maximumCapacity NOTIFY settingsChanged)
     Q_PROPERTY(int maximumBatchSize READ maximumBatchSize NOTIFY settingsChanged)
     Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY settingsChanged)
+    Q_PROPERTY(int barVariant READ barVariant WRITE setBarVariant NOTIFY settingsChanged)
     Q_PROPERTY(bool running READ running NOTIFY statisticsChanged)
     Q_PROPERTY(int unitCount READ unitCount NOTIFY statisticsChanged)
     Q_PROPERTY(int sampleCount READ sampleCount NOTIFY statisticsChanged)
@@ -34,6 +36,8 @@ class GalleryChartData : public QObject
     explicit GalleryChartData(QObject *parent = nullptr);
     Q_INVOKABLE void load(int mode, QCatUiKit::ChartItem *chart, QCatUiKit::ChartSeries *first,
                           QCatUiKit::ChartSeries *second);
+    Q_INVOKABLE bool populateRangeSeries(QCatUiKit::ChartSeries *series, int count, bool broken,
+                                         bool crossed);
     Q_INVOKABLE void retranslate();
     Q_INVOKABLE void addData();
     Q_INVOKABLE void removeData();
@@ -62,6 +66,11 @@ class GalleryChartData : public QObject
         return m_timer.interval();
     }
     void setInterval(int value);
+    int barVariant() const
+    {
+        return m_barVariant;
+    }
+    void setBarVariant(int value);
     bool running() const
     {
         return m_timer.isActive();
@@ -101,7 +110,10 @@ class GalleryChartData : public QObject
     void statisticsChanged();
 
   private:
+    QCatUiKit::ChartFit m_fit;
     int m_mode = 0;
+    int m_barVariant = 0;
+    bool horizontalBars() const;
     QPointer<QCatUiKit::ChartItem> m_chart;
     QPointer<QCatUiKit::ChartSeries> m_first, m_second;
     QPointer<QCatUiKit::ChartSeries> m_previewFirst, m_previewSecond;

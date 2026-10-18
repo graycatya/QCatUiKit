@@ -86,7 +86,7 @@ QtObject {
             icon: "tools"
         }
     ]
-    readonly property var components: [
+    readonly property var components: GalleryChartCatalog.entries.concat([
         {
             id: "led-preview",
             name: "LedPreview",
@@ -95,35 +95,6 @@ QtObject {
             description: qsTr("Shared LED layouts, independent Decks, Storage presets, multichannel mixing and memory output."),
             icon: "media",
             code: "LedPreview {\n    width: 640; height: 360\n    source: LedSource { id: leds }\n    pointSize: 6\n    previewBrightness: 1\n    showStatistics: true\n}\n// Submit XYZ layouts and packed RGBA8 frames from C++ (see LEDPREVIEW.md)."
-        },
-        {
-            id: "chart",
-            name: "CatChart",
-            category: "charts",
-            title: qsTr("Chart"),
-            description: qsTr(
-                             "Explore ten chart types, mixed series and live data with zoom, pan and tooltips."),
-            icon: "data",
-            code: "CatChart {\n    width: 640; height: 360\n    title: qsTr(\"Weekly orders\")\n    chartType: CatChartSeries.Bar\n    xAxis.scale: CatChartAxis.Category\n    xAxis.categories: [qsTr(\"Mon\"), qsTr(\"Tue\"), qsTr(\"Wed\")]\n    CatChartSeries {\n        id: orders\n        name: qsTr(\"Orders\")\n        Component.onCompleted: setData([{x: 0, y: 12}, {x: 1, y: 18}, {x: 2, y: 9}])\n    }\n}"
-        },
-        {
-            id: "chart-axis",
-            name: "CatChartAxis",
-            category: "charts",
-            title: qsTr("Chart axis"),
-            description: qsTr("Configure linear, logarithmic, UTC time and category axes."),
-            icon: "data",
-            code: "CatChart {\n    width: 640; height: 360\n    yAxis.scale: CatChartAxis.Logarithmic\n    yAxis.title: qsTr(\"Population\")\n    CatChartSeries {\n        name: qsTr(\"Growth\")\n        Component.onCompleted: setData([{x: 0, y: 1}, {x: 1, y: 10}, {x: 2, y: 100}])\n    }\n}"
-        },
-        {
-            id: "chart-series",
-            name: "CatChartSeries",
-            category: "charts",
-            title: qsTr("Chart series"),
-            description: qsTr(
-                             "Retain raw samples in a bounded buffer and append or replace validated batches."),
-            icon: "data",
-            code: "CatChart {\n    width: 640; height: 360\n    CatChartSeries {\n        id: signal\n        name: qsTr(\"Signal\")\n        capacity: 1000\n        Component.onCompleted: setData([{x: 0, y: 2}, {x: 1, y: 5}, {x: 2, y: 3}])\n    }\n    // For streaming data: signal.appendData([{x: 3, y: 4}])\n}"
         },
         {
             id: "accordion",
@@ -760,9 +731,27 @@ QtObject {
             name: "CatSlider",
             category: "input",
             title: qsTr("Slider"),
-            description: qsTr("Adjust a value with a themed track and handle."),
+            description: qsTr("Continuous, stepped, centered and vertical sliders with ticks and value tooltips."),
             icon: "input",
             code: "CatSlider { from: 0; to: 100; value: 60; stepSize: 5 }"
+        },
+        {
+            id: "rangeslider",
+            name: "CatRangeSlider",
+            category: "input",
+            title: qsTr("Range slider"),
+            description: qsTr("Select an interval, constrain its span, or drag the whole selection."),
+            icon: "input",
+            code: "CatRangeSlider { from: 0; to: 100; first.value: 20; second.value: 70; rangeDragEnabled: true }"
+        },
+        {
+            id: "sliderfield",
+            name: "CatSliderField",
+            category: "input",
+            title: qsTr("Slider field"),
+            description: qsTr("Combine a slider with exact numeric input, units and default restoration."),
+            icon: "input",
+            code: "CatSliderField { width: 360; from: -60; to: 12; value: -12; decimals: 1; suffix: \" dB\"; resetVisible: true; defaultValue: -12 }"
         },
         {
             id: "combobox",
@@ -843,7 +832,7 @@ QtObject {
             title: qsTr("Progress bar"),
             description: qsTr("Make the progress of a task visible."),
             icon: "feedback",
-            code: "CatProgressBar { value: 0.64 }"
+            code: "import QtQuick.Layouts\n\nColumnLayout {\n    width: 360\n    CatProgressBar { value: progress.value / 100; Layout.fillWidth: true }\n    CatSlider {\n        id: progress\n        Layout.fillWidth: true\n        from: 0; to: 100; value: 64; stepSize: 1\n        suffix: \"%\"; tickInterval: 25; tickLabelsVisible: true\n        valueToolTipVisible: true; defaultValue: 64; defaultIndicatorVisible: true\n        Accessible.name: qsTr(\"Progress\")\n    }\n    CatButton { text: qsTr(\"Reset\"); onClicked: progress.reset() }\n}"
         },
         {
             id: "circular",
@@ -852,7 +841,7 @@ QtObject {
             title: qsTr("Circular progress"),
             description: qsTr("A compact circular view of task completion."),
             icon: "feedback",
-            code: "CatCircularProgress { value: 64 }"
+            code: "import QtQuick.Layouts\n\nColumnLayout {\n    width: 360\n    CatCircularProgress { value: progress.value; Layout.alignment: Qt.AlignHCenter }\n    CatSlider {\n        id: progress\n        Layout.fillWidth: true\n        from: 0; to: 100; value: 64; stepSize: 1\n        suffix: \"%\"; tickInterval: 25; tickLabelsVisible: true\n        valueToolTipVisible: true; defaultValue: 64; defaultIndicatorVisible: true\n        Accessible.name: qsTr(\"Progress\")\n    }\n    CatButton { text: qsTr(\"Reset\"); onClicked: progress.reset() }\n}"
         },
         {
             id: "tooltip",
@@ -1016,9 +1005,10 @@ QtObject {
             icon: "tools",
             code: "CatFpsCounter {}"
         }
-    ]
+    ])
     function componentForId(id: string): var {
-        return components.find(entry => entry.id === id) || null;
+        const canonical = GalleryChartCatalog.canonicalId(id);
+        return components.find(entry => entry.id === canonical) || null;
     }
     function categoryTitle(id: string): string {
         const category = categories.find(entry => entry.id === id);

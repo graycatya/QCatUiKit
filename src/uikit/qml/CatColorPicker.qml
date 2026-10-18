@@ -67,6 +67,9 @@ CatButton {
                 CatSlider {
                     theme: control.theme
                     Layout.fillWidth: true
+                    stepSize: 1 / 255
+                    valueToolTipVisible: true
+                    valueFormatter: n => String(Math.round(n * 255))
                     value: control.selectedColor.r
                     Accessible.name: qsTr("Red")
                     onMoved: control.chooseColor(Qt.rgba(value, control.selectedColor.g,
@@ -85,6 +88,9 @@ CatButton {
                 CatSlider {
                     theme: control.theme
                     Layout.fillWidth: true
+                    stepSize: 1 / 255
+                    valueToolTipVisible: true
+                    valueFormatter: n => String(Math.round(n * 255))
                     value: control.selectedColor.g
                     Accessible.name: qsTr("Green")
                     onMoved: control.chooseColor(Qt.rgba(control.selectedColor.r, value,
@@ -103,6 +109,9 @@ CatButton {
                 CatSlider {
                     theme: control.theme
                     Layout.fillWidth: true
+                    stepSize: 1 / 255
+                    valueToolTipVisible: true
+                    valueFormatter: n => String(Math.round(n * 255))
                     value: control.selectedColor.b
                     Accessible.name: qsTr("Blue")
                     onMoved: control.chooseColor(Qt.rgba(control.selectedColor.r,
@@ -122,6 +131,9 @@ CatButton {
                 CatSlider {
                     theme: control.theme
                     Layout.fillWidth: true
+                    stepSize: 1 / 255
+                    valueToolTipVisible: true
+                    valueFormatter: n => Math.round(n * 100) + "%"
                     value: control.selectedColor.a
                     Accessible.name: qsTr("Opacity")
                     onMoved: control.chooseColor(Qt.rgba(control.selectedColor.r,

@@ -2,6 +2,7 @@
 set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/SurfaceImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/MouseScrollImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
+set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 # Public headers live beside their implementations, as in Qt module sources.
 # Generate the build-tree include facade; install the real headers and portable
 # forwarding headers rather than the absolute build-tree forwarding headers.
@@ -11,9 +12,12 @@ set(qcat_public_headers
     qcatthemepalette.h
     qcatchatmodel.h
     qcattablemodel.h
-    qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h qcatledlayoutmodel.h qcatlightingframe.h qcatledeffectregistry.h qcatledstorage.h qcatleddeck.h qcatledmixer.h qcatledoutput.h qcatledproject.h)
-set(qcat_compat_headers Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
-set(qcat_class_headers Export Version ThemePalette ChatModel TableModel ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
+    qcatchartcolorscale.h qcatchartbubble.h qcatchartgrid.h qcatchartcontour.h
+    qcatchartohlc.h qcatchartboxplot.h
+    qcatwaterfall.h qcatchartfit.h qcatcharthistogram.h qcatchartstack.h
+    qcatchartseries3d.h qcatchartscene3d.h qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h qcatledlayoutmodel.h qcatlightingframe.h qcatledeffectregistry.h qcatledstorage.h qcatleddeck.h qcatledmixer.h qcatledoutput.h qcatledproject.h)
+set(qcat_compat_headers Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
+set(qcat_class_headers Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -45,7 +49,12 @@ qt_add_qml_module(QCatUiKit
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
         qcatthemepalette.cpp qcatchatmodel.cpp qcattablemodel.cpp
-        qcatchartaxis.cpp qcatchartseries.cpp qcatchartitem.cpp qcatchartmath_p.h
+        qcatchartmapping.cpp qcatchartcontour.cpp
+        qcatchartfinancial.cpp
+        qcatwaterfall.cpp qcatchartfit.cpp qcatcharthistogram.cpp qcatchartstack.cpp qcatchartstatistics_p.h
+        qcatchartaxis.cpp qcatchartseries.cpp qcatchartitem.cpp qcatchartmath_p.h qcatchartcurves_p.h qcatchartlabels_p.h qcatchartlod_p.h qcatchartdelegates_p.h qcatchartpicking_p.h
+        qcatchartrhiitem.cpp qcatchartrhiitem_p.h
+        qcatchartseries3d.cpp qcatchartscene3d.cpp qcatchart3d_p.h qcatchartrhiitem3d.cpp
         qcatledsource.cpp qcatledsource_p.h qcatledpreview.cpp qcatledlayoutmodel.cpp qcatlightingframe.cpp qcatledeffectregistry.cpp qcatledstorage.cpp qcatleddeck.cpp qcatledmixer.cpp qcatledoutput.cpp qcatledproject.cpp
         qcattreemodel_p.h qcattreemodel.cpp
         qcatuikitversion.cpp qcatuikitinfo_p.h qcatuikitinfo.cpp
@@ -57,6 +66,11 @@ qt_add_qml_module(QCatUiKit
         qml/CatRadioButton.qml
         qml/CatSwitch.qml
         qml/CatSlider.qml
+        qml/CatRangeSlider.qml
+        qml/CatSliderField.qml
+        qml/SliderMath.js
+        qml/SliderTrackImpl.qml
+        qml/SliderHandleImpl.qml
         qml/CatComboBox.qml
         qml/CatCalendar.qml
         qml/CatChatInput.qml
@@ -166,6 +180,9 @@ target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PR
 qt_add_shaders(QCatUiKit ledpreview_shaders
     PREFIX /QCatUiKit
     FILES shaders/ledpreview.vert shaders/ledpreview.frag)
+qt_add_shaders(QCatUiKit chart_shaders
+    PREFIX /QCatUiKit
+    FILES shaders/chart3d.vert shaders/chart3d.frag shaders/chart.vert shaders/chart.frag shaders/chartinstance.vert shaders/chartinstance.frag)
 set_target_properties(QCatUiKit PROPERTIES
     VERSION ${PROJECT_VERSION} SOVERSION ${QCATUIKIT_ABI_VERSION}
     CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES)

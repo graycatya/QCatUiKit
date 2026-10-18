@@ -69,7 +69,7 @@ ColumnLayout {
                     }
                 }
                 CatLabel {
-                    text: qsTr("%1 components · Qt 6.8+ · C++ & QML").arg(GalleryCatalog.components.length)
+                    text: qsTr("%1 examples · Qt 6.8+ · C++ & QML").arg(GalleryCatalog.components.length)
                     color: Theme.tokens.textSecondary
                     font.pixelSize: 11
                     Layout.fillWidth: true
