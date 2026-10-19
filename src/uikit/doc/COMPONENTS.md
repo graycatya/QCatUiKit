@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-当前包含 101 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
+当前包含 117 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
 
 所有带主题的组件默认 `theme: Theme`，`tokens` 为解析后的只读视图。继承 Qt 控件的类型支持相应基类的标准属性、信号、方法及可访问性语义；表格列出本库的主要入口。内部 id、子对象树与 SurfaceImpl 不属于公开接口。
 
@@ -194,6 +194,14 @@
 | [CatScrollView](../qml/CatScrollView.qml) | 支持鼠标按住拖动、滚轮、触摸滑动及主题水平／垂直滚动条；输入框内拖动仍用于选取文字。 |
 
 ## 空间
+
+| 组件 | 主要 API / 行为 |
+| --- | --- |
+| [CatAttitudeIndicator](ATTITUDE.md) | 飞机姿态球；`pitchDegrees`、`rollDegrees`、`attitudeValid`；固定飞机标记、俯仰刻度、横滚刻度及无效状态。 |
+| [CatTiltControlPanel](ATTITUDE.md) | 体感操作面板；状态和参数由应用绑定，校准、使能及参数编辑通过请求信号交接；按住控制、两轴预览、失活取消。 |
+| [TiltController](ATTITUDE.md) | 设备无关 C++/QML 控制器；`submitOrientation()`、`calibrate()`、`engage()`、`disengage()`；四元数校准、滤波、死区、曲线、时效及有效杆量。 |
+
+上述类型均不依赖 Qt Sensors 或 MAVLink；飞机遥测、手机采集和通信由应用接入，两套数据源独立。
 
 [LedPreview](../qml/LedPreview.qml) / [LedSource](../qcatledsource.h) 提供 `source`、`viewMode`、`pointSize`、`previewBrightness`、`backgroundColor`、`showStatistics`、`resetView()`；使用 RHI 实例化灯点和独立 RGBA8 实时帧。详见 [LED 预览](LEDPREVIEW.md)。
 

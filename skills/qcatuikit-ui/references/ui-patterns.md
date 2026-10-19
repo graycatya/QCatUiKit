@@ -187,3 +187,11 @@ M4 adapters: use CatChartBubble for independent radius/area and color encoding; 
 ### Export the current chart image
 
 Use `chart.exportImage(fileDialog.selectedFile)` for a PNG of the complete current chart, including axes, title, legend and child overlays. Bind the action's enabled state to `!chart.exportingImage`; display success or the error from `imageExportFinished(destination, success, error)`. The return value only reports request acceptance. An optional `Qt.size(width, height)` specifies exact pixel dimensions; omit it for display pixels. Larger dimensions scale the current view without increasing its LOD or RHI texture detail. The chart must remain in a visible window; 3D requires a graphics backend. Keep the save dialog and configuration/data persistence in the application. See CHARTS.md for limits and lifecycle behavior.
+
+## Aircraft attitude and tilt input
+
+Use CatAttitudeIndicator for AIRCRAFT telemetry only; pitchDegrees/rollDegrees are degrees and attitudeValid is owned by the application.
+TiltController accepts application-supplied device-to-reference quaternions and monotonic microsecond timestamps; no Qt Sensors or MAVLink dependency is provided.
+CatTiltControlPanel binds state/parameters and emits requests; wire explicit calibration, hold-to-engage and disengagement, including application inactivity.
+Ready-state rollInput/pitchInput are previews: only outputValid allows control use. The application owns acquisition, coordinate conversion, authority, freshness at the sender and protocol release.
+See src/uikit/doc/ATTITUDE.md for the complete input convention, states and integration. Gallery simulation helpers are not library APIs.

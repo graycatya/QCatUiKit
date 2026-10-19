@@ -12,6 +12,7 @@
 | 查找组件、属性和交互行为 | [组件目录](COMPONENTS.md) |
 | 使用单值／区间滑块、刻度、精确输入与图表范围联动 | [滑块与精确输入](SLIDERS.md) |
 | 使用表格、消息、树模型 | [数据模型](MODELS.md) |
+| 显示飞机姿态、处理应用提供的手机体感输入 | [姿态球与体感输入](ATTITUDE.md) |
 | 调整颜色、密度、局部主题和动效 | [主题与密度](THEMING.md) |
 | 添加图表、设置反向轴／次刻度、框选与触摸交互、处理实时数据及导出 PNG | [原生图表](CHARTS.md) |
 | 添加拟合／残差带、瀑布图、堆叠面积及分箱统计 | [统计图表适配器](CHARTSTATISTICS.md) |
@@ -32,7 +33,7 @@
 
 GPU 渲染和兼容 RGBA8 接口见 [LED 预览](LEDPREVIEW.md)；共享布局、Deck/Storage、多通道混合及设备内存输出见 [LED 工作流](LEDWORKFLOW.md)。
 
-- **QML**：115 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel 和版本信息单例。
+- **QML**：117 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController 和版本信息单例。
 - **C++**：主题、表格、消息、图表、坐标轴、序列和版本查询接口；公开头安装到 `include/QCatUiKit`。
 - **Gallery**：独立示例应用，数据生成器、压力测试控制器、导航和翻译管理属于示例实现，不是安装库 API。
 

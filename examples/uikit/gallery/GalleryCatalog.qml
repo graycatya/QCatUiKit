@@ -88,6 +88,24 @@ QtObject {
     ]
     readonly property var components: GalleryChartCatalog.entries.concat([
         {
+            id: "attitude-indicator",
+            name: "CatAttitudeIndicator",
+            category: "spatial",
+            title: qsTr("Aircraft attitude"),
+            description: qsTr("Display aircraft pitch and roll with a fixed aircraft marker, pitch ladder and validity state."),
+            icon: "media",
+            code: "CatAttitudeIndicator {\n    width: 280; height: 280\n    pitchDegrees: 12; rollDegrees: 25\n    attitudeValid: true\n    // Bind these properties to AIRCRAFT telemetry in your application.\n}"
+        },
+        {
+            id: "tilt-control",
+            name: "CatTiltControlPanel",
+            category: "spatial",
+            title: qsTr("Tilt control"),
+            description: qsTr("Device-independent calibration, filtering and control-input preview. Sensors and flight protocols belong to the application."),
+            icon: "media",
+            code: "import QtQuick.Layouts\n\nColumnLayout {\n    id: demo\n    TiltController { id: tilt }\n    // Your application submits device-to-reference quaternions and timestamps.\n    CatTiltControlPanel {\n        Layout.fillWidth: true\n        controlEnabled: tilt.enabled; controlAllowed: tilt.controlAllowed\n        controllerState: tilt.state; sampleFresh: tilt.sampleFresh\n        rollInput: tilt.rollInput; pitchInput: tilt.pitchInput\n        fullScaleAngleDegrees: tilt.fullScaleAngleDegrees\n        deadzoneDegrees: tilt.deadzoneDegrees\n        filterTimeConstantMs: tilt.filterTimeConstantMs; expo: tilt.expo\n        errorText: tilt.error\n        onEnabledRequested: value => tilt.enabled = value\n        onCalibrateRequested: tilt.calibrate()\n        onResetCalibrationRequested: tilt.resetCalibration()\n        onEngageRequested: tilt.engage()\n        onDisengageRequested: tilt.disengage()\n        onFullScaleAngleEdited: degrees => tilt.fullScaleAngleDegrees = degrees\n        onDeadzoneEdited: degrees => tilt.deadzoneDegrees = degrees\n        onFilterTimeConstantEdited: milliseconds => tilt.filterTimeConstantMs = milliseconds\n        onExpoEdited: value => tilt.expo = value\n    }\n    // The app grants controlAllowed and manages transport, freshness and release.\n}"
+        },
+        {
             id: "led-preview",
             name: "LedPreview",
             category: "spatial",

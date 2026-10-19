@@ -6,7 +6,7 @@
 
 QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触摸／移动交互密度、C++ 数据模型和原生图表。配套 Gallery 可交互体验组件、复制 QML 示例，并运行可配置的数据压力测试。
 
-- **115 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
+- **117 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
 - **[LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)**：QRhi 实例化二维/三维灯点、四种点形状；公共 Deck/Storage/Mixer 支持 RGB、RGBW、冷暖双白和设备内存输出，保留旧 RGBA8 API。
 - **主题系统**：亮暗模式、品牌色、语义 Token、局部主题和减少动效。
 - **原生图表**：10 种基础图表、阶梯／样条、断点、虚线、区间面积、预设／纹理标记、六种柱状布局、多轴、渐变／纹理填充、预算委托、单选／多选及实时交互，使用私有 QQuickRhiItem 数据层与 Qt Quick 合成，保留软件回退。
@@ -132,6 +132,8 @@ Gallery 的每个组件页面包含交互预览和 QML 示例。顶部切换语�
 使用方法与示例提示见 [Agent UI 指南](src/uikit/doc/AGENT_UI.md)。
 
 ## 许可证
+
+姿态球与设备无关体感输入：见 [接口与接入](src/uikit/doc/ATTITUDE.md)。飞机遥测和手机输入独立，Qt Sensors 与飞控协议由应用接入。
 
 项目采用 [Apache License 2.0](LICENSE)。相关版权归属见 [NOTICE](NOTICE)，所包含代码的其他许可证保存在 [LICENSES](LICENSES)。
 

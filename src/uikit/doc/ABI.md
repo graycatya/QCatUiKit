@@ -102,3 +102,11 @@ ChartItem 末尾追加 scene3D 元属性及非虚访问方法，既有基类、�
 ### M5 图像导出
 
 ChartItem 末尾追加 exportingImage 元属性、exportingImageChanged／imageExportFinished 信号，以及 exportImage／exportingImage 非虚方法。抓取句柄、目标 URL、尺寸和定时器保存于 Impl；既有属性／信号、类大小、虚函数、枚举和 Sample／RangeSample 均不变，ABI 版本保持 1。图像抓取沿用 Qt Quick，不增加公共类型或运行时模块依赖。
+
+### 姿态与体感输入
+
+新增独立 Pimpl 类型 TiltController，注册同名 QML 类型；安装真实头、TiltController.h 和 TiltController 转发头。
+CatAttitudeIndicator/CatTiltControlPanel 是新增 QML 类型，既有公开类、元属性、枚举、布局与 SOVERSION 保持不变。
+未增加 Qt Sensors 或协议库依赖；新接口的四元数使用既有 QtGui 依赖。
+
+本机 Linux / Qt 6.12 Release 的姿态安装消费者与历史图表二进制替换检查通过；此前 745 个 QCatUiKit 函数符号全部保留。该验证不代替其他平台的 ABI 检查。

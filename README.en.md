@@ -6,7 +6,7 @@
 
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
-- **115 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **117 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
@@ -132,6 +132,8 @@ The repository includes [qcatuikit-ui](skills/qcatuikit-ui/SKILL.md), which guid
 See the [Agent UI guide](src/uikit/doc/AGENT_UI.md) for usage and example prompts.
 
 ## License
+
+Aircraft attitude and device-independent tilt input: see [API and integration](src/uikit/doc/ATTITUDE.md). Aircraft telemetry and phone input remain independent; sensor acquisition and flight protocols belong to the application.
 
 QCatUiKit is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for attribution and [LICENSES](LICENSES) for additional licenses covering included code.
 

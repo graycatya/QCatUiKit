@@ -4,6 +4,55 @@
 
 本文记录当前源码的验证范围和复现入口。更新测试结果时同时记录平台、Qt 版本、构建配置和图形后端，避免将不同环境的结果混合为同一结论。
 
+## 姿态球与设备无关体感输入（2026-10-19）
+
+环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；software/offscreen，以及 XCB 上的实际 Vulkan/OpenGL。
+Vulkan 日志确认 AMD Radeon 780M Graphics / RADV PHOENIX，Mesa 26.1.6；未开启 Khronos validation layer。
+新增公开 CatAttitudeIndicator、CatTiltControlPanel 和 TiltController，接口与输入坐标约定见 [姿态与体感](ATTITUDE.md)。
+
+| 检查 | 结果 |
+| --- | --- |
+| 全库 CTest | 16/16 通过，包含新增 tilt_controller |
+| TiltController 专项 | 23/23；校准、任意零点、四元数符号、前倾方向、死区/限幅/曲线、采样间隔、非法输入、事件循环延迟、超时及授权撤销 |
+| 全套 QML 契约 software | 349/349；含最终参数边界回归 |
+| 新增姿态/体感 UI Vulkan DPR 1 / DPR 2 / OpenGL DPR 1 | 各 20/20；实际像素方向、圆形边界、固定标记、数据无效、鼠标/触摸/键盘、销毁释放及窄屏 |
+| Gallery 新增流程 software / Vulkan DPR 2 / OpenGL DPR 1 | 各 4/4；独立飞机/手机数据源、模拟校准与控制、超时、翻译及参数绑定 |
+| Gallery 全量 software / Vulkan DPR 1 | 各 811/811，0 失败、0 跳过；14 个 QML 文件、120 个目录页面的英文/中文/窄屏覆盖及既有交互 |
+| 构建、静态检查与翻译 | Release、库和 Gallery 的 qmllint、git diff --check 通过；两种语言各 1542 条翻译，无 unfinished |
+| 安装与兼容性 | 新独立安装消费者成功创建三种新类型、调用 C++ 控制器；历史图表消费者不重新编译加载新库成功；此前 745 个 QCatUiKit 函数符号全部保留 |
+| 依赖边界 | 安装包配置与链接依赖没有 Qt Sensors 或 MAVLink；新增代码保持 Apache-2.0 |
+
+全库回归后，面板参数范围和到达时钟启动的局部修正分别以全套 QML、相关后端、控制器和 Gallery 新增流程补跑。
+最终全量 Vulkan 为 811/811；期间有一次全量复跑在既有 `GalleryScrolling::test_nestedDataView(table)`
+列宽拖拽断言失败（810/811）。该文件和表格产品代码本轮未修改；保留失败日志，单独复查滚动 10/10，随后全量 811/811。
+这记录一次未稳定复现的测试波动，不据此宣称已消除该问题。
+
+实际截图检查覆盖飞机/手机两个页面、英文亮色桌面和中文暗色 Mobile，共四个 software 场景及四个 Vulkan 窗口场景。
+XCB 窗口高度受桌面工作区限制，Vulkan 截图代表实际可见视口；software 长窗口检查完整操作区。
+检查了角度读数底板、圆形天地、触摸目标和窄屏折行。截图不代表 Android 真机或实际传感器验证。
+
+本地日志位于忽略目录 `build-release/attitude-validation/`；安装与历史消费者使用临时安装前缀。
+未测试 Android 实机、Qt 6.8、Windows/macOS、Wayland、其他 GPU、真实传感器或飞控。
+传感器采集、屏幕坐标转换、MAVLink 发送和最终控制权/失效策略均由应用实现，不属于本次库交付。
+
+复现入口（替换构建目录和 Qt 运行环境）：
+
+```sh
+cmake --build build-release --parallel
+cmake --build build-release --target QCatUiKit_qmllint qcat-gallery_qmllint
+ctest --test-dir build-release --output-on-failure
+
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
+  build-release/tests/auto/qml/tst_qml -import build-release/qml \
+  -input tests/auto/qml/data/tst_attitude.qml
+
+env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 QT_SCALE_FACTOR=1 \
+  build-release/tests/auto/gallery/tst_gallery -import build-release/qml
+```
+
+独立安装消费者见 `tests/auto/cmake/attitude-consumer`，通过安装包的 `QCatUiKit::QCatUiKit` 链接，
+不引用源码树或 Gallery 模块。
+
 ## Gallery 全量 Vulkan 回归（2026-10-19）
 
 环境与下一节相同：Ubuntu 26.04 x86_64、Qt 6.12.0 Release、XCB、AMD Radeon 780M／RADV、Mesa 26.1.6。此前 Gallery 的 Vulkan 检查仅有三个图表视觉场景；本次直接运行 `tst_gallery` 的全部 13 个 QML 测试文件（含新增 LED 切页回归），日志确认实际窗口使用 Vulkan 和 AMD 硬件。

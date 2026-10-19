@@ -7,6 +7,7 @@ set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml PRO
 # Generate the build-tree include facade; install the real headers and portable
 # forwarding headers rather than the absolute build-tree forwarding headers.
 set(qcat_public_headers
+    qcattiltcontroller.h
     qcatuikitglobal.h
     qcatuikitversion.h
     qcatthemepalette.h
@@ -16,8 +17,8 @@ set(qcat_public_headers
     qcatchartohlc.h qcatchartboxplot.h
     qcatwaterfall.h qcatchartfit.h qcatcharthistogram.h qcatchartstack.h
     qcatchartseries3d.h qcatchartscene3d.h qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h qcatledlayoutmodel.h qcatlightingframe.h qcatledeffectregistry.h qcatledstorage.h qcatleddeck.h qcatledmixer.h qcatledoutput.h qcatledproject.h)
-set(qcat_compat_headers Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
-set(qcat_class_headers Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
+set(qcat_compat_headers TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
+set(qcat_class_headers TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -48,6 +49,7 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
+        qcattiltcontroller.cpp
         qcatthemepalette.cpp qcatchatmodel.cpp qcattablemodel.cpp
         qcatchartmapping.cpp qcatchartcontour.cpp
         qcatchartfinancial.cpp
@@ -59,6 +61,7 @@ qt_add_qml_module(QCatUiKit
         qcattreemodel_p.h qcattreemodel.cpp
         qcatuikitversion.cpp qcatuikitinfo_p.h qcatuikitinfo.cpp
     QML_FILES
+        qml/CatAttitudeIndicator.qml qml/CatTiltControlPanel.qml
         qml/CatAlert.qml
         qml/CatBusyIndicator.qml
         qml/CatButton.qml

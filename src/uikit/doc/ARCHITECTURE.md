@@ -101,3 +101,10 @@ M2 ?????????????????????GPU ???????????????????GUI ?????????? BVH ??????????????
 ### 三维图表数据层
 
 ChartItem 的 Pimpl 持有 ChartScene3D 与私有 ChartRhiItem3D。ChartSeries3D 使用独立 double XYZ／网格契约；GUI 线程完成局部映射、共享网格、曲面索引、法线与拾取 BVH。渲染线程只消费不可变 ChartFrame3D／ChartGeometry3D，使用窗口 QRhi 的深度缓冲和实例绘制；相机和材质变化只更新统一缓冲，几何快照复用。三维 software 后端明确不可用，二维软件回退继续保留。公开入口见 [CHARTS3D.md](CHARTS3D.md)。
+
+### 姿态与体感输入
+
+CatAttitudeIndicator 是纯 QML 飞机姿态仪表，直接绘制圆及圆弓形天地，运动只影响飞机遥测对应的视觉层。
+TiltController 是独立 Pimpl QObject，接受应用提供的四元数与单调时间戳，处理校准、滤波、映射、授权和输入超时。
+CatTiltControlPanel 只显示状态并发出用户请求。设备传感器、屏幕方向转换、飞控通信和发送端失效策略均由应用负责，
+模块及安装包不引入 Qt Sensors/MAVLink。Gallery 的飞机与手机模拟源独立。详见 [姿态与体感](ATTITUDE.md)。
