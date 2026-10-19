@@ -32,6 +32,12 @@
 
 图表交互新增 `dragMode`（PanDrag／RectangleZoomDrag）、`rectangleZoomAxes`（ZoomBothAxes／ZoomXAxis／ZoomYAxis），并提供 `zoomToRect()`、`cancelZoomSelection()` 以及只读 `zoomSelecting/zoomSelection`。框选取消与坐标约定见 [图表指南](CHARTS.md#框选缩放)。`touchNavigationEnabled` 默认开启单指平移／双指缩放，关闭后保留轻点拾取并允许外层页面接管触摸拖动，详见 [触摸交互](CHARTS.md#触摸平移与双指缩放)。
 
+`CatChart.exportImage(fileUrl, pixelSize)` 导出当前完整视图为 PNG，`exportingImage` 和 `imageExportFinished` 提供状态；支持二维及受支持的三维后端。
+
+### 三维场景
+
+`CatChart.scene3D` 及 `CatChartSeries3D` 提供三维柱阵、散点、轨迹和规则曲面，支持极坐标、相机、Blinn–Phong／Phong 光照、深度拾取及行列切片。`CatChartScene3D` 由图表持有，不直接在 QML 中创建。接口、GPU 要求与限制见 [三维图表](CHARTS3D.md)。
+
 ## 输入与容器
 
 | 组件 | 主要 API / 行为 |
@@ -239,10 +245,4 @@
 | QCatUiKit | 只读运行时版本单例，见 [版本管理](VERSIONING.md) |
 | LibraryInfo | 与 QCatUiKit 提供相同版本属性的兼容入口 |
 
-`CatChart.exportImage(fileUrl, pixelSize)` 导出当前完整视图为 PNG，`exportingImage` 和 `imageExportFinished` 提供状态；支持二维及受支持的三维后端。
-
 图表的数据格式、坐标和渲染边界见 [图表指南](CHARTS.md)。批量编辑、对话收发、输入提交及百万数据配置见 [Gallery 使用指南](../../../examples/uikit/gallery/README.md)。
-
-### 三维图表
-
-`CatChart.scene3D` 及 `CatChartSeries3D` 提供三维柱阵、散点、轨迹和规则曲面，支持极坐标、相机、Blinn–Phong／Phong 光照、深度拾取及行列切片。`CatChartScene3D` 由图表持有，不直接在 QML 中创建。接口、GPU 要求与限制见 [三维图表](CHARTS3D.md)。

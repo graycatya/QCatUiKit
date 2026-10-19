@@ -1,6 +1,6 @@
 # 三维图表
 
-[文档索引](README.md) · [二维图表](CHARTS.md) · [RHI 清单](CHARTS_RHI_PLAN.md)
+[文档索引](README.md) · [二维图表](CHARTS.md) · [渲染架构](CHART_RENDERING.md)
 
 `CatChart.scene3D` 是图表拥有的 `CatChartScene3D`。设置 `enabled: true` 显示三维场景，关闭后恢复原二维系列；两套数据和选择独立保存。内部使用私有 `QQuickRhiItem`、窗口的 QRhi、深度缓冲、共享网格与实例缓冲，不依赖 Qt Graphs。
 

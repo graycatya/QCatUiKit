@@ -1,6 +1,6 @@
 ---
 name: qcatuikit-ui
-description: Build or refine Qt Quick/QML interfaces with QCatUiKit, including component selection, responsive layouts, themes, model bindings, charts, and application integration. Use when the requested UI uses QCatUiKit; do not select it for unrelated web, Qt Widgets, or general C++ work.
+description: Build or refine Qt Quick/QML interfaces with QCatUiKit, including components, themes, models, 2D/3D charts, LED workflows, attitude/tilt input, and application integration. Use for QCatUiKit UI work, not unrelated web, Qt Widgets, or general C++ maintenance.
 ---
 
 # QCatUiKit UI
@@ -16,10 +16,13 @@ Read only what the task needs:
 - `src/uikit/doc/COMPONENTS.md`: components grouped by UI purpose.
 - `src/uikit/doc/THEMING.md`: ThemePalette properties, tokens, and density.
 - `src/uikit/doc/MODELS.md`: TableModel, ChatModel, TreeModel and their view contracts.
-- `src/uikit/doc/CHARTS.md`: series data, axes, limits and interaction.
+- `src/uikit/doc/CHARTS.md`, `CHARTS3D.md`, `CHARTSTATISTICS.md`, `CHARTEXTENSIONS.md`: the requested chart family, data ownership, limits, interaction and export.
+- `src/uikit/doc/SLIDERS.md`: scalar/range editing and chart viewport synchronization.
+- `src/uikit/doc/LEDWORKFLOW.md`, `LEDPREVIEW.md`: layout, Deck/Storage/Mixer, multi-channel output and GPU preview.
+- `src/uikit/doc/ATTITUDE.md`: aircraft display and independent application-supplied tilt input.
 - `src/uikit/doc/BUILDING.md`: CMake integration, QML import paths and runtime deployment.
 
-Confirm unfamiliar properties in `src/uikit/qml/Cat*.qml`, public `src/uikit/qcat*.h`, or the installed `QCatUiKit.qmltypes`. Gallery snippets are examples; `GalleryChartData`, `GalleryDataDemo`, `GalleryIcon` and `QCatUiKit.Gallery` are not public application dependencies.
+Confirm unfamiliar properties in `src/uikit/qml/Cat*.qml`, public `src/uikit/qcat*.h`, or the installed `QCatUiKit.qmltypes`. Gallery snippets are examples; `GalleryChartData`, `GalleryDataDemo`, `GalleryIcon`, `GalleryLedDemo` and `QCatUiKit.Gallery` are not public application dependencies.
 
 ## Compose the interface
 
@@ -32,7 +35,7 @@ Use `import QCatUiKit`, `QtQuick`, and `QtQuick.Layouts` as needed. Prefer the m
 - Wire actions to observable state or application signals. Show the relevant empty, invalid, pending, failed, or disabled state; do not display controls that merely look functional.
 - Preserve Qt keyboard and focus behavior. Use `qsTr()` for user-facing text and accessible names for icon-only or unlabeled inputs. Use app-owned icons/assets; Gallery resources are not deployed with the library.
 
-For task-specific composition, consult [UI patterns](references/ui-patterns.md). This reference also distinguishes common lookalike components and records data ownership constraints.
+For task-specific composition, consult [UI patterns](references/ui-patterns.md). This reference distinguishes lookalike controls and covers forms, tables, conversation and slider edits. Read [chart composition](references/charts.md) only for chart work, or the relevant section of [LED and motion integration](references/led-and-motion.md) for those workflows. Keep library API details in the linked topic documents; dated validation records describe past runs, not current API limits.
 
 ## Start or extend an application
 

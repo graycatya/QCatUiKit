@@ -4,12 +4,14 @@
 
 ## 环境与选项
 
-需要 CMake 3.24+、C++17 编译器和 Qt 6.8+。Qt 组件为 Core、Gui、Qml、Quick、QuickControls2、ShaderTools，以及匹配版本的 GuiPrivate 开发头（LED RHI 渲染）。开启 Gallery 时需要 LinguistTools；开启测试时需要 Test、QuickTest。Ninja 可作为单配置或多配置生成器。
+需要 CMake 3.24+、C++17 编译器和 Qt 6.8+。Qt 组件为 Core、Gui、Qml、Quick、QuickControls2、ShaderTools，以及匹配版本的 GuiPrivate 开发头（图表及 LED RHI 渲染）。开启 Gallery 时需要 LinguistTools；开启测试时需要 Test、QuickTest。Ninja 可作为单配置或多配置生成器。
 
 | CMake 选项 | 默认值 | 用途 |
 | --- | --- | --- |
 | `QCATUIKIT_BUILD_EXAMPLES` | `ON` | 构建 Gallery 及其内部 QML 模块 |
 | `BUILD_TESTING` | `ON` | 构建自动测试并注册 CTest 测试组 |
+| `QCATUIKIT_TEST_CHART_GPU` | `OFF` | 注册二维／三维及导出的真实图形窗口测试，需开启测试 |
+| `QCATUIKIT_TEST_LED_GPU` | `OFF` | 注册 LED 真实 GPU 测试，需开启测试 |
 | `QCATUIKIT_RELEASE_CHANNEL` | `experimental` | `experimental` 或 `stable`，独立于编译模式 |
 | `CMAKE_BUILD_TYPE` | 由生成器／调用方决定 | 单配置生成器的 Debug／Release 等模式 |
 | `CMAKE_INSTALL_PREFIX` | 由平台决定 | 安装目标目录，可用安装命令的 `--prefix` 覆盖 |
@@ -85,12 +87,15 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2)
 find_package(QCatUiKit 1 REQUIRED)
 qt_standard_project_setup(REQUIRES 6.8)
+list(APPEND QML_IMPORT_PATH "${QCatUiKit_QML_IMPORT_PATH}")
 
 qt_add_executable(myapp main.cpp)
 qt_add_qml_module(myapp
     URI Example
     VERSION 1.0
     RESOURCE_PREFIX /qt/qml
+    NO_IMPORT_SCAN
+    IMPORT_PATH "${QCatUiKit_QML_IMPORT_PATH}"
     QML_FILES Main.qml)
 target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit Qt6::Quick Qt6::QuickControls2)
 ```
@@ -124,6 +129,8 @@ QML_IMPORT_PATH=/absolute/stage/lib/qml \
 ```
 
 按实际安装布局替换 `lib`。CMake 包变量 `QCatUiKit_QML_IMPORT_PATH` 给出安装包的 QML 根目录；它不会自动修改任意宿主的运行时导入路径。应用也可以把模块部署到上例的 `<app>/qml/QCatUiKit`。
+
+以上安装包示例通过 NO_IMPORT_SCAN 使用运行时共享插件，并为 qmllint 设置模块搜索路径；完整可复制应用见 [技能模板](../../../skills/qcatuikit-ui/assets/starter)。
 
 源码接入时，在应用的 CMake 中用以下内容替换 `find_package(QCatUiKit ...)`：
 

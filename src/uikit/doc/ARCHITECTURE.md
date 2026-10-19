@@ -10,10 +10,13 @@
   │    ├─ Cat 组件：Qt Quick Controls / Templates 与声明式组合
   │    ├─ Theme / ThemePalette：主题配置 → 语义 Token → 控件
   │    ├─ TableModel / ChatModel / TreeModel：数据模型
-  │    └─ CatChart / CatChartAxis / CatChartSeries：图表
+  │    ├─ CatChart / 坐标轴 / 系列 / 适配器：二维与三维图表
+  │    ├─ LedPreview / Deck / Storage / Mixer：LED 工作流
+  │    └─ CatAttitudeIndicator / TiltController：姿态与体感
   └─ QCatUiKit 共享库
        ├─ 主题、表格、消息的公开 C++ 类
-       ├─ ChartItem / ChartAxis / ChartSeries 与渲染实现
+       ├─ 图表、统计适配器、LED 管线和体感控制器
+       ├─ 私有二维／三维 RHI 渲染实现
        ├─ 运行时版本查询
        └─ 私有实现、容器、采样和布局算法
 
@@ -37,6 +40,10 @@ Gallery 应用
 | `src/uikit/doc/` | 当前功能、接入、维护和验证文档 |
 | `examples/uikit/gallery/` | Gallery 页面、控制器、翻译及演示资源 |
 | `tests/auto/models/` | 主题、消息与表格模型协议 |
+| `tests/auto/led/` | LED 帧、管线、输出和真实 GPU 预览 |
+| `tests/auto/motion/` | TiltController 输入、校准、授权与超时 |
+| `skills/qcatuikit-ui/` | UI 技能、按需参考与安装包应用模板 |
+| `tools/` | 文档校验与 Gallery 截图工具 |
 | `tests/auto/charts/` | 图表、坐标和序列数据 |
 | `tests/auto/version/` | C++／QML 版本身份 |
 | `tests/auto/qml/` | 控件行为、视觉状态、动画时序 |
@@ -84,27 +91,28 @@ GalleryChartData 保存演示源数据并生成采样／聚合预览；GalleryDa
 
 页面销毁、离开或隐藏时停止持续测试。运行统计反映数据操作；绘制发生在后续 Qt Quick 渲染阶段。示例容量不能直接推导库在其他应用或设备上的性能上限。
 
-## 维护入口
-
-新增组件同步维护模块 CMake、组件目录、GalleryCatalog、交互预览、翻译及相关检查。布局使用逻辑像素和主题 Token，输入优先采用 Qt Controls 的焦点、键盘、禁用与可访问性协议。详见 [贡献指南](../../../CONTRIBUTING.md) 和 [验证说明](VALIDATION.md)。
-
+## LED 工作流
 
 LED 工作流由 `qcatledlayoutmodel`、`qcatlightingframe`、`qcatledeffectregistry`、`qcatledstorage`、
 `qcatleddeck`、`qcatledmixer`、`qcatledoutput` 组成。实时数据走不可变连续缓冲，低频配置走 QObject / ListModel；
 预览 RGBA 转换和设备 Patch 从同一最终 LightingFrame 分支。`qcatledproject` 是可选装配，不是 Deck 的强制依赖。
 Gallery 只选择示例配置，旧 `GalleryLedDemo` 保留为旧 RGBA 回归演示 helper。详见 [LED 工作流](LEDWORKFLOW.md)。
 
-M2 ?????????????????????GPU ???????????????????GUI ?????????? BVH ???????????????? GPU?????????????????????
-
-?? QML ????? ChartDelegates ????????????????????????QQuickItem ????????????????????????????????????????????????? RHI ???????????????????????
-
-### 三维图表数据层
+## 三维图表数据层
 
 ChartItem 的 Pimpl 持有 ChartScene3D 与私有 ChartRhiItem3D。ChartSeries3D 使用独立 double XYZ／网格契约；GUI 线程完成局部映射、共享网格、曲面索引、法线与拾取 BVH。渲染线程只消费不可变 ChartFrame3D／ChartGeometry3D，使用窗口 QRhi 的深度缓冲和实例绘制；相机和材质变化只更新统一缓冲，几何快照复用。三维 software 后端明确不可用，二维软件回退继续保留。公开入口见 [CHARTS3D.md](CHARTS3D.md)。
 
-### 姿态与体感输入
+## 姿态与体感输入
 
 CatAttitudeIndicator 是纯 QML 飞机姿态仪表，直接绘制圆及圆弓形天地，运动只影响飞机遥测对应的视觉层。
 TiltController 是独立 Pimpl QObject，接受应用提供的四元数与单调时间戳，处理校准、滤波、映射、授权和输入超时。
 CatTiltControlPanel 只显示状态并发出用户请求。设备传感器、屏幕方向转换、飞控通信和发送端失效策略均由应用负责，
 模块及安装包不引入 Qt Sensors/MAVLink。Gallery 的飞机与手机模拟源独立。详见 [姿态与体感](ATTITUDE.md)。
+
+## 图表覆盖、委托与拾取
+
+二维数据层与文字／交互覆盖层独立更新；选择与悬停通过覆盖层和委托载荷反馈，避免无关数据缓冲上传。屏幕 BVH 索引用于二维拾取，三维使用独立深度与几何索引。任意 QML 委托通过私有 ChartDelegates 管理 QQuickItem 生命周期，并受共享预算限制；渲染线程不访问这些对象。详见 [图表渲染架构](CHART_RENDERING.md)。
+
+## 维护入口
+
+新增组件同步维护模块 CMake、组件目录、GalleryCatalog、交互预览、翻译及相关检查。布局使用逻辑像素和主题 Token，输入优先采用 Qt Controls 的焦点、键盘、禁用与可访问性协议。详见 [贡献指南](../../../CONTRIBUTING.md) 和 [验证说明](VALIDATION.md)。

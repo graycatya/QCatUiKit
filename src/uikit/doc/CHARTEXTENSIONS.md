@@ -1,8 +1,8 @@
-# M4 扩展图表
+# 扩展图表
 
-[文档索引](README.md) · [图表交互](CHARTS.md) · [堆叠、直方图、拟合和瀑布图](CHARTSTATISTICS.md) · [实施清单](CHARTS_RHI_PLAN.md)
+[文档索引](README.md) · [图表交互](CHARTS.md) · [堆叠、直方图、拟合和瀑布图](CHARTSTATISTICS.md) · [渲染架构](CHART_RENDERING.md)
 
-本页描述 E01／E02／E03／E07／E08／E09。适配器保存原始输入并拥有派生 CatChartSeries，应用可配置输出的名称、颜色、轴、选择和委托，不应直接改写输出数据、类型或容量。计算在 QObject 所属线程执行，绘图使用 CatChart 已有的私有 RHI 数据层；二维 software 回退保留。没有 Qt Graphs 运行时依赖。
+本页描述气泡、格网、雷达、等值线、OHLC 和箱线扩展。适配器保存原始输入并拥有派生 CatChartSeries，应用可配置输出的名称、颜色、轴、选择和委托，不应直接改写输出数据、类型或容量。计算在 QObject 所属线程执行，绘图使用 CatChart 已有的私有 RHI 数据层；二维 software 回退保留。没有 Qt Graphs 运行时依赖。
 
 | QML 类型 | C++ 类／公开头 | 输出 |
 | --- | --- | --- |
@@ -169,4 +169,4 @@ CatChart.chartType 为 Radar，继续最多使用 32 维，维度标签来自 xA
 
 新增独立 `chart-ohlc`（24）、`chart-box`（25）、`chart-contour`（27）页面。格网热力图（26）加入 `chart-heatmap`，气泡映射（28）加入 `chart-scatter`，雷达样式（29）加入 `chart-radar`，保留旧编号 0–23。
 
-各页提供实际控件、主题／密度适配及跟随参数变化的独立 QML 示例；GalleryChartM4Preview 仍是 Gallery 内部帮助组件。例子使用少量固定数据，不是完整工程保存或参数导出。M4 已覆盖实施清单的 E01–E10 明确范围；M5 的保存／恢复、同步和导出另行实施。
+各页提供实际控件、主题／密度适配及跟随参数变化的独立 QML 示例；GalleryChartM4Preview 仍是 Gallery 内部帮助组件。例子使用少量固定数据，不是完整工程保存或参数导出。统计与扩展适配器的既定范围已完成；当前视图 PNG 导出见 [图像导出](CHARTS.md#图像导出)，配置保存／恢复、同步和原始数据导出由应用实现。

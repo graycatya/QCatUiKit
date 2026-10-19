@@ -10,6 +10,8 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 - **[LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)**：QRhi 实例化二维/三维灯点、四种点形状；公共 Deck/Storage/Mixer 支持 RGB、RGBW、冷暖双白和设备内存输出，保留旧 RGBA8 API。
 - **主题系统**：亮暗模式、品牌色、语义 Token、局部主题和减少动效。
 - **原生图表**：10 种基础图表、阶梯／样条、断点、虚线、区间面积、预设／纹理标记、六种柱状布局、多轴、渐变／纹理填充、预算委托、单选／多选及实时交互，使用私有 QQuickRhiItem 数据层与 Qt Quick 合成，保留软件回退。
+- **三维图表**：柱阵、散点、轨迹、规则曲面、相机、光照、深度拾取与切片，见 [三维图表](src/uikit/doc/CHARTS3D.md)。
+- **姿态与体感**：飞机遥测显示与设备无关四元数输入，见 [接口与接入](src/uikit/doc/ATTITUDE.md)；传感器采集与飞控协议由应用接入。
 - **数据模型**：表格、消息和树模型，配合 Qt Quick 视图按需创建可见项。
 - **图像导出**：将当前二维／三维图表及标题、轴、图例和覆盖层保存为 PNG，支持指定像素尺寸与透明背景。
 - **[统计图表](src/uikit/doc/CHARTSTATISTICS.md)**：公共线性拟合、残差带与瀑布图；普通／百分比堆叠面积；自动／不等宽分箱直方图，支持频数、频率和概率密度，保留原始输入。
@@ -23,7 +25,7 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 
 [暗色触摸预览](src/uikit/doc/images/gallery-touch.png) · [窄屏预览](src/uikit/doc/images/gallery-mobile.png) · [图表预览](src/uikit/doc/images/gallery-charts-desktop.png)
 
-截图来自当前 Gallery；[截图场景与生成方法](src/uikit/doc/SCREENSHOTS.md)。
+截图采集于 2026-10-12；[截图场景与生成方法](src/uikit/doc/SCREENSHOTS.md)。
 
 ## 环境要求
 
@@ -133,8 +135,4 @@ Gallery 的每个组件页面包含交互预览和 QML 示例。顶部切换语�
 
 ## 许可证
 
-姿态球与设备无关体感输入：见 [接口与接入](src/uikit/doc/ATTITUDE.md)。飞机遥测和手机输入独立，Qt Sensors 与飞控协议由应用接入。
-
 项目采用 [Apache License 2.0](LICENSE)。相关版权归属见 [NOTICE](NOTICE)，所包含代码的其他许可证保存在 [LICENSES](LICENSES)。
-
-三维图表通过 `CatChart.scene3D` 提供柱阵、散点、轨迹和规则曲面，包含相机、Blinn–Phong／Phong 材质、深度拾取及切片，见 [三维图表](src/uikit/doc/CHARTS3D.md)。

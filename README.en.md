@@ -10,6 +10,8 @@ QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
+- **3D charts**: bars, scatter, trajectories and regular surfaces, with camera, lighting, depth picking and slices; see the [3D guide](src/uikit/doc/CHARTS3D.md).
+- **Attitude and tilt**: aircraft telemetry display and device-independent quaternion input; see [integration](src/uikit/doc/ATTITUDE.md). The application owns sensor acquisition and flight protocols.
 - **Data models**: table, message, and tree models, with Qt Quick views that create visible delegates on demand.
 - **Image export**: save the current 2D/3D chart with its title, axes, legend and overlays as PNG, with explicit pixel dimensions and transparency.
 - **[Statistical charts](src/uikit/doc/CHARTSTATISTICS.md)**: public linear fits, residual bands, waterfalls, ordinary/percentage stacked areas and histograms with automatic or unequal bins, counts, frequency, and probability density, preserving raw inputs.
@@ -23,7 +25,7 @@ The current default version is **1.0.0-experimental**, with **ABI major version 
 
 [Dark touch preview](src/uikit/doc/images/gallery-touch.png) · [Narrow layout](src/uikit/doc/images/gallery-mobile.png) · [Charts preview](src/uikit/doc/images/gallery-charts-desktop.png)
 
-These images show the current Gallery; see [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md).
+These images were captured on 2026-10-12; see [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md).
 
 ## Requirements
 
@@ -133,8 +135,4 @@ See the [Agent UI guide](src/uikit/doc/AGENT_UI.md) for usage and example prompt
 
 ## License
 
-Aircraft attitude and device-independent tilt input: see [API and integration](src/uikit/doc/ATTITUDE.md). Aircraft telemetry and phone input remain independent; sensor acquisition and flight protocols belong to the application.
-
 QCatUiKit is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for attribution and [LICENSES](LICENSES) for additional licenses covering included code.
-
-3D charts use `CatChart.scene3D` for bars, scatter, trajectories and regular surfaces, with a camera, Blinn–Phong / Phong materials, depth picking and slices. See [3D charts](src/uikit/doc/CHARTS3D.md).

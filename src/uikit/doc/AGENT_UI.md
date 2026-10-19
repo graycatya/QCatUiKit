@@ -2,7 +2,7 @@
 
 [文档索引](README.md)
 
-仓库提供 [qcatuikit-ui 技能](../../../skills/qcatuikit-ui/SKILL.md)，用于创建或改进 QCatUiKit 的 Qt Quick 界面。技能会指导 agent 选择公开组件、绑定真实状态、处理响应式布局、主题、数据模型和图表，并验证构建及界面效果。
+仓库提供 [qcatuikit-ui 技能](../../../skills/qcatuikit-ui/SKILL.md)，用于创建或改进 QCatUiKit 的 Qt Quick 界面。技能会指导 agent 选择公开组件、绑定真实状态、处理响应式布局、主题、数据模型、二维／三维及统计图表、LED 工作流和姿态／体感输入，并验证构建及界面效果。
 
 ## 在本仓库使用
 
@@ -21,6 +21,15 @@
 将整个 `skills/qcatuikit-ui` 目录作为技能交给所用 agent 工具，或让 agent 直接读取其 SKILL.md。目录包含技能说明、按需阅读的参考和应用模板，不依赖本机绝对路径。接入时提供 QCatUiKit 源码或安装位置，以及应用所用 Qt 套件。
 
 具体技能发现与安装位置由 agent 工具管理；本仓库不自动修改用户的全局 agent 配置。若技能复制到其他位置，其说明会引导 agent 从应用依赖中定位库文档和公开类型信息。
+
+## 按任务读取技能参考
+
+| 任务 | 参考 |
+| --- | --- |
+| 组件选择、表单、表格、对话、滑块编辑 | [UI 组合](../../../skills/qcatuikit-ui/references/ui-patterns.md) |
+| 二维／三维、统计／扩展图表、区间联动与 PNG 导出 | [图表组合](../../../skills/qcatuikit-ui/references/charts.md) |
+| LED 布局与多通道工作流、飞机显示与独立体感输入 | [LED 与体感](../../../skills/qcatuikit-ui/references/led-and-motion.md) |
+| 安装包模板、构建、运行与验证 | [构建检查](../../../skills/qcatuikit-ui/references/build-and-verify.md) |
 
 ## 可运行模板
 
