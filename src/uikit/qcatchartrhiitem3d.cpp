@@ -183,8 +183,9 @@ class Renderer3D final : public QQuickRhiItemRenderer
         if (draw && vertices && instances)
         {
             const auto size = renderTarget()->pixelSize();
-            cb->setViewport({0, 0, float(size.width()), float(size.height())});
             cb->setGraphicsPipeline(pipeline.get());
+            // Bind first so Vulkan also initializes the viewport's default scissor.
+            cb->setViewport({0, 0, float(size.width()), float(size.height())});
             for (const auto &d : frame->geometry->draws)
             {
                 if (!d.instances || !d.count || (d.firstIndex >= 0 && !d.indexCount))

@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     readonly property string exampleCode: Examples.code(rangeArea ? 15 : 16,
         {curve: curve, tension: tension, dashed: dashed, fillAlpha: areaOptions.fillAlpha})
     objectName: "chartAdvancedPreview"

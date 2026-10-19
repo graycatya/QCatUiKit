@@ -1,4 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
+qt_add_executable(tst_chartexport tst_chartexport.cpp)
+target_link_libraries(tst_chartexport PRIVATE QCatUiKit::QCatUiKit Qt6::Test Qt6::Quick)
+add_test(NAME chart_export COMMAND tst_chartexport)
+set_tests_properties(chart_export PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software" TIMEOUT 90)
 qt_add_executable(tst_chartextended tst_chartextended.cpp)
 target_link_libraries(tst_chartextended PRIVATE QCatUiKit::QCatUiKit Qt6::Test)
 add_test(NAME charts_extended COMMAND tst_chartextended)
@@ -31,6 +36,8 @@ add_dependencies(tst_chartrender QCatUiKitplugin)
 # Software/offscreen tests cannot validate the private QRhi data layer.
 option(QCATUIKIT_TEST_CHART_GPU "Register chart tests requiring a graphics window" OFF)
 if(QCATUIKIT_TEST_CHART_GPU)
+    add_test(NAME chart_export_render COMMAND tst_chartexport)
+    set_tests_properties(chart_export_render PROPERTIES TIMEOUT 90)
     add_test(NAME chart_3d_render COMMAND tst_chart3drender)
     set_tests_properties(chart_3d_render PROPERTIES TIMEOUT 120)
     add_test(NAME chart_render COMMAND tst_chartrender)

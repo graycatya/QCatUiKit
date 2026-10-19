@@ -15,7 +15,7 @@ qt_add_qml_module(qcat-gallery-ui
     QML_FILES
         Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
-        GalleryChartRangeControls.qml GalleryChartAxisRange.qml
+        GalleryChartExport.qml GalleryChartRangeControls.qml GalleryChartAxisRange.qml
         GallerySliderPreview.qml
         GalleryWaterfallPreview.qml GalleryChartM4Preview.qml GalleryChartFitPreview.qml
         GalleryChartStackPreview.qml GalleryHistogramPreview.qml

@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     readonly property string exampleCode: Examples.code(19, {
         type: type, polar: polar && !(type === 3 && surfaceInput === 2), shape: shape, meshDetail: meshDetail,
         lightingModel: lightingModel, surface: surface, orthographic: orthographic,

@@ -98,3 +98,7 @@ M2 最终安装复核：新消费者与 18 个历史二进制共 19 个全部通
 ChartItem 末尾追加 scene3D 元属性及非虚访问方法，既有基类、对象布局、枚举和信号保持不变。ChartSeries3D／ChartScene3D 是新导出 Pimpl 类型，XYZ Point 与旧 ChartSeries.Sample 完全分离。真实头、带扩展名和无扩展名转发头均安装，QML 类型随模块注册。qcatchart3d_p.h 和 RHI 类型不安装、不作为应用 API；私有测试入口的导出符号不承诺 ABI。M2 完成版消费者纳入后续动态库替换验证。
 
 三维光照优化在 ChartScene3D 末尾追加 lightingModel、ambientGroundRatio、exposure 元属性及 LightingModel 枚举，在 ChartSeries3D 末尾追加 meshDetail 元属性及 MeshDetail 枚举；RoundedCube 追加到 Shape 末尾，原有值不变。访问方法均非虚，复用既有信号，状态保存于 Impl，公开对象与 Point 布局保持不变。默认光照改为 BlinnPhong 是外观行为变化；显式选择 Phong 可保留旧版光照计算。几何精度变化独立于光照模式，不承诺逐像素恢复旧网格。
+
+### M5 图像导出
+
+ChartItem 末尾追加 exportingImage 元属性、exportingImageChanged／imageExportFinished 信号，以及 exportImage／exportingImage 非虚方法。抓取句柄、目标 URL、尺寸和定时器保存于 Impl；既有属性／信号、类大小、虚函数、枚举和 Sample／RangeSample 均不变，ABI 版本保持 1。图像抓取沿用 Qt Quick，不增加公共类型或运行时模块依赖。

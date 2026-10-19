@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     objectName: "waterfallPreview"
     readonly property alias dataAdapter: waterfall
     property real initial: 0
@@ -71,6 +72,7 @@ ColumnLayout {
     CatLabel { text: qsTr("Final accumulated value: %1").arg(waterfall.finalValue) }
     CatLabel { Layout.fillWidth: true; wrapMode: Text.Wrap; text: waterfall.error; visible: text.length > 0; color: Theme.tokens.danger }
     CatChart {
+        id: chart
         objectName: "waterfallChart"
         Layout.fillWidth: true; Layout.preferredHeight: 420
         title: qsTr("Waterfall")

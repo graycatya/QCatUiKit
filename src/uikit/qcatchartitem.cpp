@@ -10,9 +10,11 @@
 #include "qcatchartstatistics_p.h"
 #include <QCatUiKit/qcatchartitem.h>
 #include <QElapsedTimer>
+#include <QFileInfo>
 #include <QFontMetricsF>
 #include <QGuiApplication>
 #include <QHoverEvent>
+#include <QImageWriter>
 #include <QKeyEvent>
 #include <QMap>
 #include <QMatrix4x4>
@@ -22,6 +24,7 @@
 #include <QPainterPathStroker>
 #include <QPointer>
 #include <QQmlEngine>
+#include <QQuickItemGrabResult>
 #include <QQuickWindow>
 #include <QRegularExpression>
 #include <QSGClipNode>
@@ -31,9 +34,11 @@
 #include <QSGSimpleTextureNode>
 #include <QSGTransformNode>
 #include <QSGVertexColorMaterial>
+#include <QSaveFile>
 #include <QScopedValueRollback>
 #include <QSet>
 #include <QStyleHints>
+#include <QTimer>
 #include <QTouchEvent>
 #include <QVarLengthArray>
 #include <QVariantAnimation>
@@ -847,6 +852,10 @@ class ChartOverlay final : public QQuickItem
 class ChartItem::Impl
 {
   public:
+    QSharedPointer<QQuickItemGrabResult> imageGrab;
+    QUrl imageDestination;
+    QSize imagePixelSize;
+    QTimer *imageExportTimer = nullptr;
     ChartScene3D *scene3D = nullptr;
     ChartRhiItem3D *layer3D = nullptr;
     bool showing3D = false;
@@ -3540,6 +3549,10 @@ ChartItem::ChartItem(QQuickItem *parent) : QQuickItem(parent), d(new Impl)
 }
 ChartItem::~ChartItem()
 {
+    if (d->imageGrab)
+        disconnect(d->imageGrab.data(), nullptr, this, nullptr);
+    if (d->imageExportTimer)
+        d->imageExportTimer->stop();
     disconnect(d->appearanceAnimation, nullptr, this, nullptr);
     disconnect(d->selectionAnimation, nullptr, this, nullptr);
     d->appearanceAnimation->stop();
@@ -5022,6 +5035,109 @@ QVariantMap ChartItem::renderingStatistics() const
     result.insert("outsideLabelCandidates", d->leaderCandidates);
     result.insert("outsideLabelsShown", d->leaderCount);
     return result;
+}
+bool ChartItem::exportingImage() const
+{
+    return !d->imageGrab.isNull();
+}
+bool ChartItem::exportImage(const QUrl &destination, QSize pixelSize)
+{
+    const auto reject = [this, &destination](const QString &error)
+    {
+        emit imageExportFinished(destination, false, error);
+        return false;
+    };
+    if (exportingImage())
+        return reject(tr("An image export is already in progress."));
+    const QString path = destination.toLocalFile();
+    if (!destination.isValid() || !destination.isLocalFile() || destination.hasQuery() ||
+        destination.hasFragment() || !QFileInfo(path).isAbsolute() ||
+        QFileInfo(path).suffix().compare(QLatin1String("png"), Qt::CaseInsensitive) != 0)
+        return reject(tr("Choose an absolute local file URL ending in .png."));
+    if (!window() || !window()->isVisible() || !isVisible() || width() < 1 || height() < 1 ||
+        !std::isfinite(width()) || !std::isfinite(height()))
+        return reject(tr("The chart must be visible in a window with a nonzero size."));
+    if (d->scene3D->enabled() &&
+        window()->rendererInterface()->graphicsApi() == QSGRendererInterface::Software)
+        return reject(tr("3D image export requires a supported graphics backend."));
+
+    const qreal dpr = window()->effectiveDevicePixelRatio();
+    if (pixelSize == QSize())
+    {
+        const qreal w = std::ceil(width() * dpr), h = std::ceil(height() * dpr);
+        if (w > 8192 || h > 8192)
+            return reject(tr("Image dimensions must be 1–8192 pixels and at most 32 million pixels."));
+        pixelSize = QSize(int(w), int(h));
+    }
+    if (pixelSize.width() < 1 || pixelSize.height() < 1 || pixelSize.width() > 8192 ||
+        pixelSize.height() > 8192 || qint64(pixelSize.width()) * pixelSize.height() > 32000000)
+        return reject(tr("Image dimensions must be 1–8192 pixels and at most 32 million pixels."));
+
+    // Qt's grab size is in logical pixels and is multiplied by the window DPR.
+    // Round up, then normalize the readback to the exact requested pixel dimensions.
+    const QSize grabSize(qCeil(pixelSize.width() / dpr), qCeil(pixelSize.height() / dpr));
+    ensurePolished();
+    d->imageGrab = grabToImage(grabSize);
+    if (!d->imageGrab)
+        return reject(tr("The chart image capture could not be started."));
+    d->imageDestination = destination;
+    d->imagePixelSize = pixelSize;
+    if (!d->imageExportTimer)
+    {
+        d->imageExportTimer = new QTimer(this);
+        d->imageExportTimer->setSingleShot(true);
+        connect(d->imageExportTimer, &QTimer::timeout, this,
+                [this] { finishImageExport(tr("The chart image capture timed out.")); });
+    }
+    connect(d->imageGrab.data(), &QQuickItemGrabResult::ready, this, [this]
+    {
+        QImage image = d->imageGrab->image();
+        if (image.isNull())
+        {
+            finishImageExport(tr("The graphics backend could not capture the chart."));
+            return;
+        }
+        if (image.size() != d->imagePixelSize)
+            image = image.scaled(d->imagePixelSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        image.setDevicePixelRatio(1);
+        QSaveFile file(d->imageDestination.toLocalFile());
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            finishImageExport(tr("Cannot write image: %1").arg(file.errorString()));
+            return;
+        }
+        QImageWriter writer(&file, "png");
+        if (!writer.write(image))
+        {
+            const QString error = writer.errorString();
+            file.cancelWriting();
+            finishImageExport(tr("Cannot encode image: %1").arg(error));
+            return;
+        }
+        if (!file.commit())
+        {
+            finishImageExport(tr("Cannot save image: %1").arg(file.errorString()));
+            return;
+        }
+        finishImageExport({});
+    });
+    d->imageExportTimer->start(15000);
+    emit exportingImageChanged();
+    return true;
+}
+void ChartItem::finishImageExport(const QString &error)
+{
+    if (!d->imageGrab)
+        return;
+    const QUrl destination = d->imageDestination;
+    disconnect(d->imageGrab.data(), nullptr, this, nullptr);
+    d->imageGrab.reset();
+    d->imageExportTimer->stop();
+    // A handler may destroy the chart or start a subsequent request.
+    const QPointer<ChartItem> guard(this);
+    emit exportingImageChanged();
+    if (guard)
+        emit imageExportFinished(destination, error.isEmpty(), error);
 }
 void ChartItem::hoverMoveEvent(QHoverEvent *e)
 {

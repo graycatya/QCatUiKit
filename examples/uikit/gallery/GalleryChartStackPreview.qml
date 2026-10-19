@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     objectName: "chartStackPreview"
     readonly property alias dataAdapter: stack
     property bool percentage: false

@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     objectName: "chartFitPreview"
     readonly property alias dataAdapter: fit
     property real noise: 3
@@ -71,6 +72,7 @@ ColumnLayout {
     }
     CatLabel { Layout.fillWidth: true; wrapMode: Text.Wrap; text: fit.error; visible: text.length > 0; color: Theme.tokens.danger }
     CatChart {
+        id: chart
         objectName: "fitChart"
         Layout.fillWidth: true; Layout.preferredHeight: 420
         title: qsTr("Observations, fit and residual band")

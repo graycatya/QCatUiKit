@@ -12,7 +12,12 @@ TestCase {
     property var example
     Component { id: factory; Main { width: 1200; height: 840 } }
     function initTestCase() { failOnWarning(/.*/); GalleryLanguage.language = "en"; gallery = factory.createObject(test); }
-    function init() { failOnWarning(/.*/); }
+    function init() {
+        failOnWarning(/.*/);
+        gallery.requestActivate();
+        tryCompare(gallery, "active", true);
+        tryVerify(() => gallery.activeFocusItem !== null);
+    }
     function cleanup() {
         if (example) example.destroy(); example = null;
         gallery.width = 1200; Theme.density = ThemePalette.Desktop;

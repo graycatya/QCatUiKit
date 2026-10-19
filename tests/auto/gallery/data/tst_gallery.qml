@@ -24,6 +24,9 @@ TestCase {
         gallery = createTemporaryObject(windowFactory, test);
         verify(gallery !== null);
         verify(waitForRendering(gallery.contentItem));
+        gallery.requestActivate();
+        tryCompare(gallery, "active", true);
+        tryVerify(() => gallery.activeFocusItem !== null);
     }
     function cleanup() {
         gallery.close();

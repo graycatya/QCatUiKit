@@ -19,7 +19,12 @@ TestCase {
         GalleryLanguage.language = "en";
         gallery = factory.createObject(test);
     }
-    function init() { failOnWarning(/.*/); }
+    function init() {
+        failOnWarning(/.*/);
+        gallery.requestActivate();
+        tryCompare(gallery, "active", true);
+        tryVerify(() => gallery.activeFocusItem !== null);
+    }
     function cleanupTestCase() { gallery.close(); gallery.destroy(); }
     function find(name, parent) {
         const item = findChild(parent || gallery.contentItem, name);
@@ -95,6 +100,7 @@ TestCase {
         compare(chart.yAxis.automatic, true);
         const old = chart.xAxis.minimum;
         xSlider.first.handle.forceActiveFocus();
+        tryCompare(xSlider.first.handle, "activeFocus", true);
         keyClick(Qt.Key_Right);
         verify(chart.xAxis.minimum > old);
         wait(10); verifySync();

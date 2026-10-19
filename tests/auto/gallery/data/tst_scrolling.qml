@@ -47,6 +47,7 @@ TestCase {
     function test_pageDragAndWheel(data) {
         Theme.density = data.density;
         gallery.width = data.width;
+        gallery.update();
         verify(waitForRendering(gallery.contentItem));
         const scroll = find("galleryContentScroll");
         const view = scroll.contentItem;
@@ -90,6 +91,8 @@ TestCase {
     }
     function test_nestedDataView(data) {
         gallery.showComponent(data.page);
+        // The initial table page may already be static, with no pending frame.
+        gallery.update();
         verify(waitForRendering(gallery.contentItem));
         const demo = find("dataPreview").dataController;
         demo.batchSize = 100;
@@ -121,6 +124,9 @@ TestCase {
             reset(view);
             const beforeWidth = view.columnWidth(0);
             mouseMove(view, beforeWidth, Theme.tokens.controlHeight / 2);
+            // TableView resolves the resize edge during frame-synchronous hover delivery.
+            gallery.update();
+            verify(waitForRendering(gallery.contentItem));
             mouseDrag(view, beforeWidth, Theme.tokens.controlHeight / 2, 60, 0,
                       Qt.LeftButton, Qt.NoModifier, 20);
             verify(view.columnWidth(0) > beforeWidth + 20, "Column resizing must retain its grab");

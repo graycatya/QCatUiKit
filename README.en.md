@@ -11,6 +11,7 @@ QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
 - **Data models**: table, message, and tree models, with Qt Quick views that create visible delegates on demand.
+- **Image export**: save the current 2D/3D chart with its title, axes, legend and overlays as PNG, with explicit pixel dimensions and transparency.
 - **[Statistical charts](src/uikit/doc/CHARTSTATISTICS.md)**: public linear fits, residual bands, waterfalls, ordinary/percentage stacked areas and histograms with automatic or unequal bins, counts, frequency, and probability density, preserving raw inputs.
 - **[Extended charts](src/uikit/doc/CHARTEXTENSIONS.md)**: independent bubble size/color mapping, dense or sparse heatmaps and scrolling grids, radar normalization, contours/bands, OHLC with volume, and box plots with outliers.
 - **Chinese and English Gallery**: runtime language switching, search, responsive layouts, interactive demos, and continuous stress tests.

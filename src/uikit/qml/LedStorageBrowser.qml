@@ -16,6 +16,8 @@ ColumnLayout {
     readonly property string storageId: runtime ? runtime.browsingStorage : ""
     onStorageIdChanged: { selectedPlace=""; if(grid)grid.currentIndex=-1; }
     onRepositoryChanged: { selectedPlace=""; if(grid)grid.currentIndex=-1; }
+    // Cancel buffered delegates before their creation context is destroyed.
+    Component.onDestruction: grid.model = null
     spacing: Theme.tokens.spacing
     LedPlaceModel { id: places; repository: control.repository; registry: control.runtime ? control.runtime.registry : null; storageId: control.storageId }
     RowLayout {

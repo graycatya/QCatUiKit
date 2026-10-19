@@ -10,6 +10,16 @@ ColumnLayout {
     objectName: "chartPreview"
     required property string componentId
     readonly property GalleryChartData dataController: demo
+    readonly property CatChart exportChart: mode < 15 ? chart
+        : (specializedLoader.item as GalleryChartM4Preview)?.chart
+        || (specializedLoader.item as GalleryChart3DPreview)?.exportChart
+        || (specializedLoader.item as GalleryWaterfallPreview)?.exportChart
+        || (specializedLoader.item as GalleryChartFitPreview)?.exportChart
+        || (specializedLoader.item as GalleryHistogramPreview)?.exportChart
+        || (specializedLoader.item as GalleryChartStackPreview)?.exportChart
+        || (specializedLoader.item as GalleryChartAxesPreview)?.exportChart
+        || (specializedLoader.item as GalleryChartRadialPreview)?.exportChart
+        || (specializedLoader.item as GalleryChartAdvancedPreview)?.exportChart || null
     property int requestedMode: -1
     readonly property var allowedModes: GalleryChartCatalog.entryForId(componentId)?.modes || [0]
     property int mode: 0
@@ -126,6 +136,11 @@ ColumnLayout {
         model: control.allowedModes.map(mode => ({text: GalleryChartCatalog.modeNames[mode], value: mode}))
         currentValue: control.mode
         onActivated: index => control.mode = model[index].value
+    }
+    GalleryChartExport {
+        objectName: "chartExportControls"
+        Layout.fillWidth: true
+        chart: control.exportChart
     }
     Loader {
         id: specializedLoader

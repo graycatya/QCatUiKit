@@ -4,6 +4,91 @@
 
 本文记录当前源码的验证范围和复现入口。更新测试结果时同时记录平台、Qt 版本、构建配置和图形后端，避免将不同环境的结果混合为同一结论。
 
+## Gallery 全量 Vulkan 回归（2026-10-19）
+
+环境与下一节相同：Ubuntu 26.04 x86_64、Qt 6.12.0 Release、XCB、AMD Radeon 780M／RADV、Mesa 26.1.6。此前 Gallery 的 Vulkan 检查仅有三个图表视觉场景；本次直接运行 `tst_gallery` 的全部 13 个 QML 测试文件（含新增 LED 切页回归），日志确认实际窗口使用 Vulkan 和 AMD 硬件。
+
+| 检查 | 结果 |
+| --- | --- |
+| Gallery 全量 Vulkan DPR 1 | 799 通过，0 失败，0 跳过 |
+| Gallery 全量 Vulkan DPR 2 | 799 通过，0 失败，0 跳过 |
+| Gallery 全量 software／offscreen | 799 通过，0 失败，0 跳过 |
+| OpenGL 定向回归 | 数值输入 4、滚动 10 项全部通过 |
+| LED 生命周期专项 | Vulkan DPR 2 连续切页 45 次，三个场景及初始化／清理共 5 项通过，无委托卸载警告；修复前同脚本为 4 通过、1 失败。原 LED UI 契约 software 22 项通过 |
+| 构建与检查 | Release 构建、库及 Gallery 的 qmllint、git diff --check 通过 |
+
+完整目录包含 118 个页面，每页检查英文桌面、中文桌面及中文 360px 窄屏，共 354 个页面用例；另检查全部 118 个可复制示例。其余覆盖图表交互、M4 扩展、PNG 导出、图表导航与区间、数据示例、密度、语言与弹出层、滚动及滑块。新增 `tst_lednavigation.qml` 在三个场景下反复于首帧后卸载 LED 页面，纳入以上全量运行。总数包含每个测试文件的初始化／清理。
+
+首轮 DPR 1 为 791 通过、3 失败。两项数值输入断言在单独及图表整组复跑中均通过，测试现显式激活 Gallery 并确认编辑器焦点。DPR 2 诊断进一步确认：窗口 `active` 已为 true 时，`activeFocusItem` 仍可能为空；相关键盘测试增加焦点就绪前置检查。首轮 DPR 2 含输入／Escape 断言失败，并在 300 秒超时后中止，该次不计为完整验证。
+
+表格列宽拖动在等待窗口悬停帧完成后通过；测试补齐这一同步，并在重新选择已显示的静态页面或设置原有尺寸时显式请求更新帧。保留实际键入、失焦提交、列宽增量与嵌套拖动断言。
+
+完整 DPR 2 运行还复现了 LED 页面卸载警告 `DelegateModel::cancel: index out range`，与此前历史记录中的现象一致；独立连续切页用例再次复现。`LedStorageBrowser` 现于销毁时先解除 GridView 模型，取消仍在异步创建的缓冲委托，避免创建上下文先被销毁。此修复不改变公共 API 或正常浏览／选择行为；最终全量及专项运行均未再出现该警告。本轮没有重跑整库 CTest，同日 M5 的整库记录仍按其原有范围解释。
+
+真实图形会话下复现（按本机 Qt 安装设置库搜索路径和 GPU ICD）：
+
+```sh
+env -u QT_QUICK_BACKEND \
+  QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 QT_SCALE_FACTOR=1 \
+  VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json \
+  build-release/tests/auto/gallery/tst_gallery -import build-release/qml -maxwarnings 100000
+```
+
+增加 `QT_SCALE_FACTOR=2` 运行高 DPI 全量组合。CTest 中的 `gallery_contracts` 默认强制 offscreen／software，不能用其结果代替上述 Vulkan 验证。日志、首轮失败记录及矩阵脚本保存在忽略目录 `build-release/chart-vulkan/`，最终全量日志为 `gallery-full-dpr1-final.txt`、`gallery-full-dpr2.txt`、`gallery-full-software-final.txt`；汇总见 `gallery-validation-summary.json`。
+
+“全量通过”指现有 Gallery 自动测试及目录页面均通过，不表示穷举每页的所有状态或逐像素人工验收；人工视觉检查仍为下一节记录的三个图表场景。本次未扩大到其他操作系统、GPU／驱动、Wayland 或 Qt 版本。
+
+## Vulkan 图表复测与裁剪修复（2026-10-19）
+
+环境：Ubuntu 26.04 x86_64、Qt 6.12.0、Release、XCB，AMD Radeon 780M Graphics（RADV PHOENIX）、Mesa 26.1.6。固定 Radeon ICD，日志确认实际创建 Vulkan QRhi 并选中该硬件；设备支持 Vulkan 1.4.354，Qt 请求 Vulkan 1.4。
+
+首次实测发现二维／三维数据层为空，PNG 也缺少数据。原因是两个私有渲染器在绑定图形管线之前设置 viewport，Qt Vulkan 后端因缺少当前管线而未初始化默认 scissor。现改为先绑定管线再设置 viewport；二维逐绘制命令覆盖普通和实例化管线。此修复不修改公共 API、ABI 或着色器。
+
+| 检查 | 结果 |
+| --- | --- |
+| 修复前复现 | Vulkan DPR 1：二维 29 通过／163 失败，三维 3 通过／19 失败，PNG 导出 5 通过／2 失败 |
+| Vulkan DPR 1 | 二维 192、三维 22、PNG 导出 7 项全部通过 |
+| Vulkan DPR 2 | 二维 192、三维 22、PNG 导出 7 项全部通过 |
+| OpenGL 回归 | 同机 DPR 1 二维 192、三维 22 项全部通过 |
+| Gallery 视觉与导出 | 实际 Vulkan 的 1200px 浅色英文、420px 深色中文和三维场景导出成功，临时视觉脚本 5 项通过；检查三个导出 PNG 及三个界面截图，数据、颜色、三维光照、保存入口和状态换行正常 |
+| 构建与差异 | Release 增量构建、git diff --check 通过 |
+
+计数包含初始化／清理，最终各套件均无失败或跳过。二维全量覆盖 M4 扩展图表，三维全量覆盖已有光照／网格等能力；PNG 专项覆盖完整子树像素、尺寸、透明度、失败路径与三维输出。此次只修改两个私有渲染器，没有重复整库 CTest；同日 M5 完整 CTest 记录见下一节。
+
+真实图形会话下复现（按本机 Qt 安装设置库搜索路径；其他 GPU 应使用对应 ICD）：
+
+```sh
+env -u QT_QUICK_BACKEND \
+  QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 QT_SCALE_FACTOR=1 \
+  VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json \
+  LD_LIBRARY_PATH=/home/catgray/app/Qt/6.12.0/gcc_64/lib \
+  build-release/tests/auto/charts/tst_chartrender -maxwarnings 100000
+```
+
+分别换为 `tst_chart3drender`、`tst_chartexport`，再设置 `QT_SCALE_FACTOR=2` 运行高 DPI 组合。应核对日志中的 `backend Vulkan` 和物理设备，不能以 software 回退代替。日志、修复前失败记录、矩阵脚本及 PNG 位于忽略目录 `build-release/chart-vulkan/`。
+
+本次结论限定于上述 Linux／XCB／AMD RADV／Qt 6.12 组合；未启用 Khronos validation layer，也未新增其他 GPU、Wayland、Windows／macOS、Qt 6.8、Metal／D3D 或设备丢失验证。三维阴影、三维 LOD 等后续增强仍按 [实施清单](CHARTS_RHI_PLAN.md) 单独推进；本次不是性能基准验收。
+
+## M5 图像导出及基线复测（2026-10-19）
+
+按本次范围调整，M5 仅包含当前图表 PNG 导出；配置保存／恢复、迁移、同步、数据导出及额外可访问数据表由应用负责。环境为 Ubuntu 26.04 x86_64、Qt 6.12.0、Release，真实图形检查使用 XCB / OpenGL、AMD Radeon 780M、Mesa 26.1.6。
+
+| 检查 | 结果 |
+| --- | --- |
+| 改动前基线 | 完整 CTest 14/14 组通过；真实 OpenGL 二维 192、三维 22 项通过。此前 Windows 记录中的 LED 管线失败在此环境未重现 |
+| 最终构建和静态检查 | Release 构建、QCatUiKit_qmllint、qcat-gallery_qmllint、git diff --check 通过；中英文 TS 无 unfinished。编译仍有既有 QDateTime 废弃接口警告，未增加新警告 |
+| 最终完整 CTest | 15/15 组通过，包含新增 chart_export、整个 qml_contracts 和 gallery_contracts |
+| PNG 导出专项 | software、真实 OpenGL DPR 1、OpenGL DPR 2 各 7 项通过（含初始化／清理）；检查完整视图与窗口像素一致、标题／坐标／图例／子项覆盖层、透明度、精确尺寸、中文路径、忙碌拒绝、文件替换、写入失败、销毁取消及三维图像；software 明确拒绝三维导出 |
+| Gallery 导出 | 12 项通过；十组二维／三维／统计示例的目标图表关联、错误反馈、二维两倍尺寸文件、按钮状态、运行时中英文和 Mobile 布局 |
+| 视觉检查 | 实际 OpenGL Gallery 的 1200px 浅色英文、420px 深色中文和三维场景导出成功；检查三个图表 PNG 及桌面／窄屏保存入口、换行与状态反馈，临时视觉脚本 5 项通过 |
+| 安装与兼容 | 独立安装的新消费者成功调用公共导出接口并读取 320×240 PNG；使用改动前头文件编译的图表消费者不重编译，加载新库及 QML 模块成功。675 个既有 Chart 类导出函数符号无删除，新增 5 个 |
+
+产物位于忽略目录 `build-release/chart-m5/`，包括基线／最终测试日志、软件与 OpenGL 导出专项、安装消费者、符号对比及 `export-*.png`、`gallery-*.png`。
+
+复现普通测试：`ctest --test-dir build-release --output-on-failure`。真实图形会话下运行 `QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=opengl build-release/tests/auto/charts/tst_chartexport`，增加 `QT_SCALE_FACTOR=2` 检查高 DPI；按本机 Qt 安装配置库搜索路径。`QCATUIKIT_TEST_CHART_GPU=ON` 另注册 `chart_export_render`，不能使用 software 回退代替真实 RHI 验证。
+
+Vulkan 后续复测见上一节；Windows／macOS、Qt 6.8、Metal／D3D、真机触屏或设备丢失仍未新增验证，既有其他平台历史记录不代表新导出接口在这些平台已验证。导出是当前视图快照，增大像素尺寸不增加当前 LOD／网格或 RHI 纹理的细节；PNG 编码／写入在对象线程执行，不提供连续逐帧导出性能承诺。
+
 ## M4 完成验收（2026-10-18）
 
 环境：Windows 11 x64、MSVC 2022、Qt 6.12.0 Release。E01–E10 的既定范围全部完成。本批补齐独立气泡映射、格网／滚动热力图、雷达样式与维度范围、等值线／填色、OHLC／成交量、箱线／离群点；接口、算法、容量与输出约定见 [扩展图表](CHARTEXTENSIONS.md)，前两批见 [统计图表](CHARTSTATISTICS.md)。

@@ -231,6 +231,8 @@
 | QCatUiKit | 只读运行时版本单例，见 [版本管理](VERSIONING.md) |
 | LibraryInfo | 与 QCatUiKit 提供相同版本属性的兼容入口 |
 
+`CatChart.exportImage(fileUrl, pixelSize)` 导出当前完整视图为 PNG，`exportingImage` 和 `imageExportFinished` 提供状态；支持二维及受支持的三维后端。
+
 图表的数据格式、坐标和渲染边界见 [图表指南](CHARTS.md)。批量编辑、对话收发、输入提交及百万数据配置见 [Gallery 使用指南](../../../examples/uikit/gallery/README.md)。
 
 ### 三维图表

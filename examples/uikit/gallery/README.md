@@ -175,6 +175,8 @@ GalleryLanguage 安装翻译、更新默认 QLocale 并刷新翻译绑定。项�
 
 自动测试位于 `tests/auto/gallery`，检查页面、示例创建、语言切换、输入保持、密度、弹出层和数据操作。当前覆盖范围见 [验证说明](../../../src/uikit/doc/VALIDATION.md)。
 
+`gallery_contracts` 的 CTest 配置默认使用 offscreen／software。验证实际 Vulkan 时，应在图形会话中直接运行 `env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 build-release/tests/auto/gallery/tst_gallery -import build-release/qml`，并按本机安装配置 Qt 库路径和 GPU ICD；用 `QT_SCALE_FACTOR=2` 检查高 DPI。须核对日志中的 Vulkan 后端和物理设备，完整目录与交互覆盖见 [Gallery Vulkan 回归](../../../src/uikit/doc/VALIDATION.md#gallery-全量-vulkan-回归2026-10-19)。
+
 文档图片由实际页面生成，更新整套图片的方法见 [截图指南](../../../src/uikit/doc/SCREENSHOTS.md)。
 
 面积演示（1）支持零值／自定义／绘图区底部基线；面积与区间面积（15）均提供纯色／双色渐变、配色、独立边界颜色、透明末端和填充不透明度。恢复示例重置外观，增删数据及切换语言保留当前外观。渐变以整个绘图区为基准。
@@ -190,3 +192,7 @@ GalleryLanguage 安装翻译、更新默认 QLocale 并刷新翻译绑定。项�
 图表 M2 示例还提供四边多轴、线端／连接、多停止点／纹理面积、独立区间边界对齐、纹理标记、旋转柱标签、预算 QML 委托、单选／多选及可选淡入。减少动态效果使用全局主题设置；图表恢复按钮重置局部图表设置。
 
 三维示例：图表目录进入「三维图表」（`--page chart-3d` 或 `--chart-demo 19`），可操作四类图表、形状、极坐标、曲面模式、投影、Blinn–Phong／Phong 光照、补光／曝光／光泽、倒角立方体／网格精度、行列选择和切片。三维需要 RHI 后端；software 显示明确的不可用提示。
+
+### 图表图像导出
+
+全部图表演示的顶部提供「导出 PNG…」，选择本地文件后保存当前图表；「2× 图表尺寸」输出两倍逻辑宽高，否则使用当前屏幕像素尺寸。标题、坐标轴、图例和覆盖层一同导出，导出状态和错误显示在按钮下方。三维需要受支持的图形后端。放大导出不增加原图的 LOD 或几何精度；公共接口和应用示例见 [图像导出](../../../src/uikit/doc/CHARTS.md#图像导出)。

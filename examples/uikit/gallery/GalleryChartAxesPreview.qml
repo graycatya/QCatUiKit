@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     readonly property string exampleCode: Examples.code(18, {independent: independent, extraVisible: extraVisible, logarithmic: logarithmic, reversed: reversed, farSide: farSide})
     objectName: "chartAxesPreview"
     property bool independent: true

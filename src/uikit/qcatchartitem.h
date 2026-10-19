@@ -7,6 +7,7 @@
 #include <QFont>
 #include <QQmlListProperty>
 #include <QQuickItem>
+#include <QUrl>
 #include <memory>
 
 namespace QCatUiKit
@@ -77,6 +78,7 @@ class QCATUIKIT_EXPORT ChartItem : public QQuickItem
     Q_PROPERTY(bool transitionRunning READ transitionRunning NOTIFY transitionChanged)
     Q_PROPERTY(QCatUiKit::ChartScene3D *scene3D READ scene3D CONSTANT)
     Q_PROPERTY(QVariantList radarRanges READ radarRanges WRITE setRadarRanges NOTIFY appearanceChanged)
+    Q_PROPERTY(bool exportingImage READ exportingImage NOTIFY exportingImageChanged)
   public:
     enum SelectionMode
     {
@@ -216,6 +218,9 @@ class QCATUIKIT_EXPORT ChartItem : public QQuickItem
     qint64 preparationNanoseconds() const;
     int renderedPointCount() const;
     Q_INVOKABLE QVariantMap renderingStatistics() const;
+    // Captures the current view as PNG. An empty default size uses display pixels.
+    Q_INVOKABLE bool exportImage(const QUrl &destination, QSize pixelSize = QSize());
+    bool exportingImage() const;
   signals:
     void themeChanged();
     void appearanceChanged();
@@ -227,6 +232,8 @@ class QCATUIKIT_EXPORT ChartItem : public QQuickItem
     void delegatesChanged();
     void selectionChanged();
     void transitionChanged();
+    void exportingImageChanged();
+    void imageExportFinished(QUrl destination, bool success, QString error);
 
   protected:
     void componentComplete() override;
@@ -255,6 +262,7 @@ class QCATUIKIT_EXPORT ChartItem : public QQuickItem
     void refreshDelegateStates(const QVariantMap &hover = {});
     void cancelDrag();
     void cancelTouch();
+    void finishImageExport(const QString &error);
     Q_DISABLE_COPY_MOVE(ChartItem)
     class Impl;
     const std::unique_ptr<Impl> d;

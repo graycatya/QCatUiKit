@@ -1476,351 +1476,351 @@
 <context>
     <name>GalleryChart3DPreview</name>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="39"/>
+        <location filename="../GalleryChart3DPreview.qml" line="40"/>
         <source>Node %1</source>
         <translation>Node %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="52"/>
+        <location filename="../GalleryChart3DPreview.qml" line="53"/>
         <source>Row %1, column %2</source>
         <translation>Row %1, column %2</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="71"/>
-        <location filename="../GalleryChart3DPreview.qml" line="79"/>
+        <location filename="../GalleryChart3DPreview.qml" line="72"/>
+        <location filename="../GalleryChart3DPreview.qml" line="80"/>
         <source>3D chart type</source>
         <translation>3D chart type</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="76"/>
+        <location filename="../GalleryChart3DPreview.qml" line="77"/>
         <source>3D scatter</source>
         <translation>3D scatter</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="76"/>
+        <location filename="../GalleryChart3DPreview.qml" line="77"/>
         <source>3D bars</source>
         <translation>3D bars</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="76"/>
+        <location filename="../GalleryChart3DPreview.qml" line="77"/>
         <source>3D curve</source>
         <translation>3D curve</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="76"/>
+        <location filename="../GalleryChart3DPreview.qml" line="77"/>
         <source>3D surface</source>
         <translation>3D surface</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="84"/>
-        <location filename="../GalleryChart3DPreview.qml" line="95"/>
+        <location filename="../GalleryChart3DPreview.qml" line="85"/>
+        <location filename="../GalleryChart3DPreview.qml" line="96"/>
         <source>3D point shape</source>
         <translation>3D point shape</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="92"/>
+        <location filename="../GalleryChart3DPreview.qml" line="93"/>
         <source>Sphere</source>
         <translation>Sphere</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="91"/>
         <location filename="../GalleryChart3DPreview.qml" line="92"/>
+        <location filename="../GalleryChart3DPreview.qml" line="93"/>
         <source>Cube</source>
         <translation>Cube</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="91"/>
         <location filename="../GalleryChart3DPreview.qml" line="92"/>
+        <location filename="../GalleryChart3DPreview.qml" line="93"/>
         <source>Cylinder</source>
         <translation>Cylinder</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="91"/>
         <location filename="../GalleryChart3DPreview.qml" line="92"/>
+        <location filename="../GalleryChart3DPreview.qml" line="93"/>
         <source>Custom tetrahedron</source>
         <translation>Custom tetrahedron</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="91"/>
         <location filename="../GalleryChart3DPreview.qml" line="92"/>
+        <location filename="../GalleryChart3DPreview.qml" line="93"/>
         <source>Rounded cube</source>
         <translation>Rounded cube</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="100"/>
-        <location filename="../GalleryChart3DPreview.qml" line="109"/>
+        <location filename="../GalleryChart3DPreview.qml" line="101"/>
+        <location filename="../GalleryChart3DPreview.qml" line="110"/>
         <source>Surface drawing</source>
         <translation>Surface drawing</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="106"/>
+        <location filename="../GalleryChart3DPreview.qml" line="107"/>
         <source>Filled</source>
         <translation>Filled</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="106"/>
+        <location filename="../GalleryChart3DPreview.qml" line="107"/>
         <source>Wireframe</source>
         <translation>Wireframe</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="106"/>
+        <location filename="../GalleryChart3DPreview.qml" line="107"/>
         <source>Filled and wireframe</source>
         <translation>Filled and wireframe</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="120"/>
-        <location filename="../GalleryChart3DPreview.qml" line="128"/>
+        <location filename="../GalleryChart3DPreview.qml" line="121"/>
+        <location filename="../GalleryChart3DPreview.qml" line="129"/>
         <source>Lighting model</source>
         <translation>Lighting model</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="124"/>
+        <location filename="../GalleryChart3DPreview.qml" line="125"/>
         <source>Blinn–Phong</source>
         <translation>Blinn–Phong</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="125"/>
+        <location filename="../GalleryChart3DPreview.qml" line="126"/>
         <source>Phong (legacy)</source>
         <translation>Phong (legacy)</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="133"/>
-        <location filename="../GalleryChart3DPreview.qml" line="143"/>
+        <location filename="../GalleryChart3DPreview.qml" line="134"/>
+        <location filename="../GalleryChart3DPreview.qml" line="144"/>
         <source>Mesh detail</source>
         <translation>Mesh detail</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="138"/>
+        <location filename="../GalleryChart3DPreview.qml" line="139"/>
         <source>Low</source>
         <translation>Low</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="139"/>
+        <location filename="../GalleryChart3DPreview.qml" line="140"/>
         <source>Medium</source>
         <translation>Medium</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="140"/>
+        <location filename="../GalleryChart3DPreview.qml" line="141"/>
         <source>High</source>
         <translation>High</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="148"/>
+        <location filename="../GalleryChart3DPreview.qml" line="149"/>
         <source>Shininess: %1</source>
         <translation>Shininess: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="150"/>
+        <location filename="../GalleryChart3DPreview.qml" line="151"/>
         <source>Shininess</source>
         <translation>Shininess</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="162"/>
+        <location filename="../GalleryChart3DPreview.qml" line="163"/>
         <source>Second bar series</source>
         <translation>Second bar series</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="167"/>
+        <location filename="../GalleryChart3DPreview.qml" line="168"/>
         <source>Polar coordinates (degrees)</source>
         <translation>Polar coordinates (degrees)</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="174"/>
+        <location filename="../GalleryChart3DPreview.qml" line="175"/>
         <source>Orthographic projection</source>
         <translation>Orthographic projection</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="178"/>
+        <location filename="../GalleryChart3DPreview.qml" line="179"/>
         <source>Isometric</source>
         <translation>Isometric</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="179"/>
+        <location filename="../GalleryChart3DPreview.qml" line="180"/>
         <source>Front</source>
         <translation>Front</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="180"/>
+        <location filename="../GalleryChart3DPreview.qml" line="181"/>
         <source>Top</source>
         <translation>Top</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="181"/>
+        <location filename="../GalleryChart3DPreview.qml" line="182"/>
         <source>Reset camera</source>
         <translation>Reset camera</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="189"/>
+        <location filename="../GalleryChart3DPreview.qml" line="190"/>
         <source>Ambient: %1</source>
         <translation>Ambient: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="191"/>
+        <location filename="../GalleryChart3DPreview.qml" line="192"/>
         <source>Ambient</source>
         <translation>Ambient</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="199"/>
+        <location filename="../GalleryChart3DPreview.qml" line="200"/>
         <source>Diffuse: %1</source>
         <translation>Diffuse: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="201"/>
+        <location filename="../GalleryChart3DPreview.qml" line="202"/>
         <source>Diffuse</source>
         <translation>Diffuse</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="209"/>
+        <location filename="../GalleryChart3DPreview.qml" line="210"/>
         <source>Specular: %1</source>
         <translation>Specular: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="211"/>
+        <location filename="../GalleryChart3DPreview.qml" line="212"/>
         <source>Specular</source>
         <translation>Specular</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="225"/>
+        <location filename="../GalleryChart3DPreview.qml" line="226"/>
         <source>Ground fill: %1</source>
         <translation>Ground fill: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="227"/>
+        <location filename="../GalleryChart3DPreview.qml" line="228"/>
         <source>Ground fill</source>
         <translation>Ground fill</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="236"/>
+        <location filename="../GalleryChart3DPreview.qml" line="237"/>
         <source>Exposure: %1</source>
         <translation>Exposure: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="238"/>
+        <location filename="../GalleryChart3DPreview.qml" line="239"/>
         <source>Exposure</source>
         <translation>Exposure</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="246"/>
+        <location filename="../GalleryChart3DPreview.qml" line="247"/>
         <source>Reset lighting</source>
         <translation>Reset lighting</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="260"/>
-        <location filename="../GalleryChart3DPreview.qml" line="268"/>
+        <location filename="../GalleryChart3DPreview.qml" line="261"/>
+        <location filename="../GalleryChart3DPreview.qml" line="269"/>
         <source>Grid selection</source>
         <translation>Grid selection</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="265"/>
+        <location filename="../GalleryChart3DPreview.qml" line="266"/>
         <source>Point</source>
         <translation>Point</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="265"/>
+        <location filename="../GalleryChart3DPreview.qml" line="266"/>
         <source>Row</source>
         <translation>Row</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="265"/>
+        <location filename="../GalleryChart3DPreview.qml" line="266"/>
         <source>Column</source>
         <translation>Column</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="273"/>
-        <location filename="../GalleryChart3DPreview.qml" line="282"/>
+        <location filename="../GalleryChart3DPreview.qml" line="274"/>
+        <location filename="../GalleryChart3DPreview.qml" line="283"/>
         <source>Grid slice</source>
         <translation>Grid slice</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="279"/>
+        <location filename="../GalleryChart3DPreview.qml" line="280"/>
         <source>Full scene</source>
         <translation>Full scene</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="279"/>
+        <location filename="../GalleryChart3DPreview.qml" line="280"/>
         <source>Row slice</source>
         <translation>Row slice</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="279"/>
+        <location filename="../GalleryChart3DPreview.qml" line="280"/>
         <source>Column slice</source>
         <translation>Column slice</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="287"/>
-        <location filename="../GalleryChart3DPreview.qml" line="295"/>
+        <location filename="../GalleryChart3DPreview.qml" line="288"/>
+        <location filename="../GalleryChart3DPreview.qml" line="296"/>
         <source>Slice index (zero-based)</source>
         <translation>Slice index (zero-based)</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="306"/>
-        <location filename="../GalleryChart3DPreview.qml" line="313"/>
+        <location filename="../GalleryChart3DPreview.qml" line="307"/>
+        <location filename="../GalleryChart3DPreview.qml" line="314"/>
         <source>Surface input</source>
         <translation>Surface input</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="310"/>
+        <location filename="../GalleryChart3DPreview.qml" line="311"/>
         <source>Generated grid</source>
         <translation>Generated grid</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="310"/>
+        <location filename="../GalleryChart3DPreview.qml" line="311"/>
         <source>Texture surface</source>
         <translation>Texture surface</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="310"/>
+        <location filename="../GalleryChart3DPreview.qml" line="311"/>
         <source>Image height map</source>
         <translation>Image height map</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="318"/>
+        <location filename="../GalleryChart3DPreview.qml" line="319"/>
         <source>Closed trajectory</source>
         <translation>Closed trajectory</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="323"/>
+        <location filename="../GalleryChart3DPreview.qml" line="324"/>
         <source>Trajectory tension: %1</source>
         <translation>Trajectory tension: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="325"/>
+        <location filename="../GalleryChart3DPreview.qml" line="326"/>
         <source>Trajectory tension</source>
         <translation>Trajectory tension</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="333"/>
         <location filename="../GalleryChart3DPreview.qml" line="334"/>
+        <location filename="../GalleryChart3DPreview.qml" line="335"/>
         <source>Subdivisions per segment</source>
         <translation>Subdivisions per segment</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="341"/>
+        <location filename="../GalleryChart3DPreview.qml" line="342"/>
         <source>Drag to rotate; Shift-drag to pan; wheel to zoom. Touch: one finger rotates, two fingers pan and zoom. Click a visible point to select it.</source>
         <translation>Drag to rotate; Shift-drag to pan; wheel to zoom. Touch: one finger rotates, two fingers pan and zoom. Click a visible point to select it.</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="349"/>
+        <location filename="../GalleryChart3DPreview.qml" line="350"/>
         <source>3D data and lighting</source>
         <translation>3D data and lighting</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="365"/>
+        <location filename="../GalleryChart3DPreview.qml" line="366"/>
         <source>3D data</source>
         <translation>3D data</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="385"/>
+        <location filename="../GalleryChart3DPreview.qml" line="386"/>
         <source>Comparison</source>
         <translation>Comparison</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="399"/>
+        <location filename="../GalleryChart3DPreview.qml" line="400"/>
         <source>Selected point %1: (%2, %3, %4)</source>
         <translation>Selected point %1: (%2, %3, %4)</translation>
     </message>
     <message>
-        <location filename="../GalleryChart3DPreview.qml" line="400"/>
+        <location filename="../GalleryChart3DPreview.qml" line="401"/>
         <source>No point selected</source>
         <translation>No point selected</translation>
     </message>
@@ -1828,184 +1828,184 @@
 <context>
     <name>GalleryChartAdvancedPreview</name>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="81"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="82"/>
         <source>Break every six records</source>
         <translation>Break every six records</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="88"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="89"/>
         <source>Cross boundaries</source>
         <translation>Cross boundaries</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="94"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="95"/>
         <source>Dashed stroke</source>
         <translation>Dashed stroke</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="101"/>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="105"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="102"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="106"/>
         <source>Curve style</source>
         <translation>Curve style</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="107"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="108"/>
         <source>Straight</source>
         <translation>Straight</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="107"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="108"/>
         <source>Step left</source>
         <translation>Step left</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="108"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="109"/>
         <source>Step right</source>
         <translation>Step right</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="108"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="109"/>
         <source>Step center</source>
         <translation>Step center</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="109"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="110"/>
         <source>Monotone spline</source>
         <translation>Monotone spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="109"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="110"/>
         <source>Catmull-Rom spline</source>
         <translation>Catmull-Rom spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="110"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="111"/>
         <source>Natural cubic spline</source>
         <translation>Natural cubic spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="146"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="147"/>
         <source>Add data</source>
         <translation>Add data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="152"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="153"/>
         <source>Remove latest</source>
         <translation>Remove latest</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="158"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="159"/>
         <source>Clear data</source>
         <translation>Clear data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="167"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="168"/>
         <source>Restore demo</source>
         <translation>Restore demo</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="168"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="169"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="173"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="174"/>
         <source>Paired boundaries share the curve style and X. Crossing preserves boundary names; gaps interrupt both curves and the fill. Hover to inspect original values.</source>
         <translation>Paired boundaries share the curve style and X. Crossing preserves boundary names; gaps interrupt both curves and the fill. Hover to inspect original values.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="174"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="175"/>
         <source>Explicit breaks interrupt every curve mode. Dashes are a visual style; they do not remove records.</source>
         <translation>Explicit breaks interrupt every curve mode. Dashes are a visual style; they do not remove records.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="189"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="190"/>
         <source>Range area</source>
         <translation>Range area</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="189"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="190"/>
         <source>Segmented curves</source>
         <translation>Segmented curves</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="190"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="191"/>
         <source>Sample index</source>
         <translation>Sample index</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="191"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="192"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="195"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="196"/>
         <source>Value interval</source>
         <translation>Value interval</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="195"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="196"/>
         <source>Signal</source>
         <translation>Signal</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="214"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="215"/>
         <source>No data. Add data or restore the demo to begin.</source>
         <translation>No data. Add data or restore the demo to begin.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="118"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="119"/>
         <source>Spline tension: %1</source>
         <translation>Spline tension: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="122"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="123"/>
         <source>Spline tension</source>
         <translation>Spline tension</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="55"/>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="60"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="56"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="61"/>
         <source>Boundary input</source>
         <translation>Boundary input</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="62"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="63"/>
         <source>Paired records</source>
         <translation>Paired records</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="62"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="63"/>
         <source>Independent, matching X</source>
         <translation>Independent, matching X</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="63"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="64"/>
         <source>Mismatched X, strict rejection</source>
         <translation>Mismatched X, strict rejection</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="63"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="64"/>
         <source>Mismatched X, linear alignment</source>
         <translation>Mismatched X, linear alignment</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="71"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="72"/>
         <source>X values do not match. The previous valid data is retained; choose linear alignment to interpolate the shared domain.</source>
         <translation>X values do not match. The previous valid data is retained; choose linear alignment to interpolate the shared domain.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="81"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="82"/>
         <source>Break every 10,000 records</source>
         <translation>Break every 10,000 records</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="164"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="165"/>
         <source>100,000 intervals</source>
         <translation>100,000 intervals</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAdvancedPreview.qml" line="224"/>
+        <location filename="../GalleryChartAdvancedPreview.qml" line="225"/>
         <source>%1 / %2 records</source>
         <translation>%1 / %2 records</translation>
     </message>
@@ -2164,79 +2164,79 @@
 <context>
     <name>GalleryChartAxesPreview</name>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="38"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="39"/>
         <source>Independent axes for pressure</source>
         <translation>Independent axes for pressure</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="44"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="45"/>
         <source>Show extra axes</source>
         <translation>Show extra axes</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="50"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="51"/>
         <source>Extra axes at top / right</source>
         <translation>Extra axes at top / right</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="56"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="57"/>
         <source>Reverse extra axes</source>
         <translation>Reverse extra axes</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="62"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="63"/>
         <source>Logarithmic pressure axis</source>
         <translation>Logarithmic pressure axis</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="72"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="73"/>
         <source>Add data</source>
         <translation>Add data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="78"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="79"/>
         <source>Clear data</source>
         <translation>Clear data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="81"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="82"/>
         <source>Restore demo</source>
         <translation>Restore demo</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="82"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="83"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="88"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="89"/>
         <source>Each series can use its own X and Y scales. Pan, pinch and rectangle zoom update every associated axis; hiding an axis preserves its data mapping.</source>
         <translation>Each series can use its own X and Y scales. Pan, pinch and rectangle zoom update every associated axis; hiding an axis preserves its data mapping.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="96"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="97"/>
         <source>Temperature and pressure</source>
         <translation>Temperature and pressure</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="97"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="98"/>
         <source>Sample</source>
         <translation>Sample</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="98"/>
-        <location filename="../GalleryChartAxesPreview.qml" line="102"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="99"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="103"/>
         <source>Temperature</source>
         <translation>Temperature</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="108"/>
-        <location filename="../GalleryChartAxesPreview.qml" line="126"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="109"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="127"/>
         <source>Pressure</source>
         <translation>Pressure</translation>
     </message>
     <message>
-        <location filename="../GalleryChartAxesPreview.qml" line="118"/>
+        <location filename="../GalleryChartAxesPreview.qml" line="119"/>
         <source>Normalized time</source>
         <translation>Normalized time</translation>
     </message>
@@ -3225,66 +3225,110 @@
     </message>
 </context>
 <context>
+    <name>GalleryChartExport</name>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="20"/>
+        <location filename="../GalleryChartExport.qml" line="32"/>
+        <source>Exporting image…</source>
+        <translation>Exporting image…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="32"/>
+        <source>Export PNG…</source>
+        <translation>Export PNG…</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="38"/>
+        <source>2× chart size</source>
+        <translation>2× chart size</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="47"/>
+        <source>Save the current chart, including its title, axes, legend and overlays. Larger images scale the current view.</source>
+        <translation>Save the current chart, including its title, axes, legend and overlays. Larger images scale the current view.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="61"/>
+        <source>Saved to %1</source>
+        <translation>Saved to %1</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="62"/>
+        <source>Export failed: %1</source>
+        <translation>Export failed: %1</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="67"/>
+        <source>Export chart image</source>
+        <translation>Export chart image</translation>
+    </message>
+    <message>
+        <location filename="../GalleryChartExport.qml" line="69"/>
+        <source>PNG image (*.png)</source>
+        <translation>PNG image (*.png)</translation>
+    </message>
+</context>
+<context>
     <name>GalleryChartFitPreview</name>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="30"/>
-        <location filename="../GalleryChartFitPreview.qml" line="35"/>
+        <location filename="../GalleryChartFitPreview.qml" line="31"/>
+        <location filename="../GalleryChartFitPreview.qml" line="36"/>
         <source>Observation noise</source>
         <translation>Observation noise</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="38"/>
-        <location filename="../GalleryChartFitPreview.qml" line="43"/>
+        <location filename="../GalleryChartFitPreview.qml" line="39"/>
+        <location filename="../GalleryChartFitPreview.qml" line="44"/>
         <source>Residual band multiplier</source>
         <translation>Residual band multiplier</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="48"/>
+        <location filename="../GalleryChartFitPreview.qml" line="49"/>
         <source>Show residual band</source>
         <translation>Show residual band</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="49"/>
+        <location filename="../GalleryChartFitPreview.qml" line="50"/>
         <source>Identical X values</source>
         <translation>Identical X values</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="50"/>
+        <location filename="../GalleryChartFitPreview.qml" line="51"/>
         <source>Empty data</source>
         <translation>Empty data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="54"/>
+        <location filename="../GalleryChartFitPreview.qml" line="55"/>
         <source>Observations</source>
         <translation>Observations</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="56"/>
+        <location filename="../GalleryChartFitPreview.qml" line="57"/>
         <source>Linear fit</source>
         <translation>Linear fit</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="58"/>
+        <location filename="../GalleryChartFitPreview.qml" line="59"/>
         <source>Residual band</source>
         <translation>Residual band</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="64"/>
+        <location filename="../GalleryChartFitPreview.qml" line="65"/>
         <source>%1 observations · slope %2 · R² %3 · RMSE %4</source>
         <translation>%1 observations · slope %2 · R² %3 · RMSE %4</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="66"/>
+        <location filename="../GalleryChartFitPreview.qml" line="67"/>
         <source>No valid fit</source>
         <translation>No valid fit</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="70"/>
+        <location filename="../GalleryChartFitPreview.qml" line="71"/>
         <source>Ordinary least squares uses every source point in data coordinates. The band is fitted Y ± multiplier × RMSE; it is not a confidence or prediction interval.</source>
         <translation>Ordinary least squares uses every source point in data coordinates. The band is fitted Y ± multiplier × RMSE; it is not a confidence or prediction interval.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartFitPreview.qml" line="76"/>
+        <location filename="../GalleryChartFitPreview.qml" line="78"/>
         <source>Observations, fit and residual band</source>
         <translation>Observations, fit and residual band</translation>
     </message>
@@ -3705,149 +3749,149 @@
 <context>
     <name>GalleryChartPreview</name>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="419"/>
+        <location filename="../GalleryChartPreview.qml" line="434"/>
         <source>Add data</source>
         <translation>Add data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="425"/>
+        <location filename="../GalleryChartPreview.qml" line="440"/>
         <source>Remove latest</source>
         <translation>Remove latest</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="431"/>
+        <location filename="../GalleryChartPreview.qml" line="446"/>
         <source>Clear data</source>
         <translation>Clear data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="437"/>
+        <location filename="../GalleryChartPreview.qml" line="452"/>
         <source>Restore demo</source>
         <translation>Restore demo</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="442"/>
+        <location filename="../GalleryChartPreview.qml" line="457"/>
         <source>Million-sample preset</source>
         <translation>Million-sample preset</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="448"/>
-        <location filename="../GalleryChartPreview.qml" line="689"/>
+        <location filename="../GalleryChartPreview.qml" line="463"/>
+        <location filename="../GalleryChartPreview.qml" line="704"/>
         <source>Stop stress test</source>
         <translation>Stop stress test</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="448"/>
-        <location filename="../GalleryChartPreview.qml" line="689"/>
+        <location filename="../GalleryChartPreview.qml" line="463"/>
+        <location filename="../GalleryChartPreview.qml" line="704"/>
         <source>Start stress test</source>
         <translation>Start stress test</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="456"/>
+        <location filename="../GalleryChartPreview.qml" line="471"/>
         <source>%1 / %2 %3 · %4 samples in total</source>
         <translation>%1 / %2 %3 · %4 samples in total</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="546"/>
+        <location filename="../GalleryChartPreview.qml" line="561"/>
         <source>Radar needs at least 3 dimensions. Add more data.</source>
         <translation>Radar needs at least 3 dimensions. Add more data.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="547"/>
+        <location filename="../GalleryChartPreview.qml" line="562"/>
         <source>No data. Add data or restore the demo to begin.</source>
         <translation>No data. Add data or restore the demo to begin.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="559"/>
+        <location filename="../GalleryChartPreview.qml" line="574"/>
         <source>%1 raw samples · %2 preview samples
 %3</source>
         <translation>%1 raw samples · %2 preview samples
 %3</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="569"/>
+        <location filename="../GalleryChartPreview.qml" line="584"/>
         <source>Zoom in</source>
         <translation>Zoom in</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="575"/>
+        <location filename="../GalleryChartPreview.qml" line="590"/>
         <source>Zoom out</source>
         <translation>Zoom out</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="580"/>
+        <location filename="../GalleryChartPreview.qml" line="595"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="598"/>
+        <location filename="../GalleryChartPreview.qml" line="613"/>
         <source>Tooltips</source>
         <translation>Tooltips</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="610"/>
-        <location filename="../GalleryChartPreview.qml" line="614"/>
+        <location filename="../GalleryChartPreview.qml" line="625"/>
+        <location filename="../GalleryChartPreview.qml" line="629"/>
         <source>Batch size</source>
         <translation>Batch size</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="624"/>
-        <location filename="../GalleryChartPreview.qml" line="628"/>
+        <location filename="../GalleryChartPreview.qml" line="639"/>
+        <location filename="../GalleryChartPreview.qml" line="643"/>
         <source>Data limit</source>
         <translation>Data limit</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="639"/>
-        <location filename="../GalleryChartPreview.qml" line="643"/>
+        <location filename="../GalleryChartPreview.qml" line="654"/>
+        <location filename="../GalleryChartPreview.qml" line="658"/>
         <source>Update interval (ms)</source>
         <translation>Update interval (ms)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="654"/>
+        <location filename="../GalleryChartPreview.qml" line="669"/>
         <source>Batch size and data limit use %1. At the limit, new data replaces the oldest data.</source>
         <translation>Batch size and data limit use %1. At the limit, new data replaces the oldest data.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="661"/>
+        <location filename="../GalleryChartPreview.qml" line="676"/>
         <source>The million-sample preset sets the total raw-data limit, batch size and interval. Start the stress test to fill it gradually. Large datasets use a sampled or grouped overview; all raw records are retained up to the limit.</source>
         <translation>The million-sample preset sets the total raw-data limit, batch size and interval. Start the stress test to fill it gradually. Large datasets use a sampled or grouped overview; all raw records are retained up to the limit.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="682"/>
+        <location filename="../GalleryChartPreview.qml" line="697"/>
         <source>Stress test running — stop at any time</source>
         <translation>Stress test running — stop at any time</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="683"/>
+        <location filename="../GalleryChartPreview.qml" line="698"/>
         <source>Stress test stopped — results retained</source>
         <translation>Stress test stopped — results retained</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="684"/>
+        <location filename="../GalleryChartPreview.qml" line="699"/>
         <source>Continuous stress test</source>
         <translation>Continuous stress test</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="705"/>
+        <location filename="../GalleryChartPreview.qml" line="720"/>
         <source>Continuously adds 4 batches, then removes 1. Switching charts or leaving this page stops the test. Statistics measure data updates, not rendering FPS.</source>
         <translation>Continuously adds 4 batches, then removes 1. Switching charts or leaving this page stops the test. Statistics measure data updates, not rendering FPS.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="582"/>
+        <location filename="../GalleryChartPreview.qml" line="597"/>
         <source>Legend</source>
         <translation>Legend</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="587"/>
+        <location filename="../GalleryChartPreview.qml" line="602"/>
         <source>Grid</source>
         <translation>Grid</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="592"/>
+        <location filename="../GalleryChartPreview.qml" line="607"/>
         <source>Crosshair</source>
         <translation>Crosshair</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="696"/>
+        <location filename="../GalleryChartPreview.qml" line="711"/>
         <source>%1 s · %2 updates · %3 updates/s
 Total added: %4 samples · total removed/replaced: %5 samples
 Slowest data batch: %6 ms</source>
@@ -3856,293 +3900,293 @@ Total added: %4 samples · total removed/replaced: %5 samples
 Slowest data batch: %6 ms</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="714"/>
+        <location filename="../GalleryChartPreview.qml" line="729"/>
         <source>Scroll to zoom, drag to pan, click a legend to toggle visibility. Use +/−, arrow keys and Home when focused.</source>
         <translation>Scroll to zoom, drag to pan, click a legend to toggle visibility. Use +/−, arrow keys and Home when focused.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="158"/>
-        <location filename="../GalleryChartPreview.qml" line="162"/>
+        <location filename="../GalleryChartPreview.qml" line="173"/>
+        <location filename="../GalleryChartPreview.qml" line="177"/>
         <source>Curve style</source>
         <translation>Curve style</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="125"/>
+        <location filename="../GalleryChartPreview.qml" line="135"/>
         <source>Chart variant</source>
         <translation>Chart variant</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="164"/>
+        <location filename="../GalleryChartPreview.qml" line="179"/>
         <source>Straight</source>
         <translation>Straight</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="164"/>
+        <location filename="../GalleryChartPreview.qml" line="179"/>
         <source>Step left</source>
         <translation>Step left</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="165"/>
+        <location filename="../GalleryChartPreview.qml" line="180"/>
         <source>Step right</source>
         <translation>Step right</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="165"/>
+        <location filename="../GalleryChartPreview.qml" line="180"/>
         <source>Step center</source>
         <translation>Step center</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="166"/>
+        <location filename="../GalleryChartPreview.qml" line="181"/>
         <source>Monotone spline</source>
         <translation>Monotone spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="166"/>
+        <location filename="../GalleryChartPreview.qml" line="181"/>
         <source>Catmull-Rom spline</source>
         <translation>Catmull-Rom spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="175"/>
-        <location filename="../GalleryChartPreview.qml" line="179"/>
+        <location filename="../GalleryChartPreview.qml" line="190"/>
+        <location filename="../GalleryChartPreview.qml" line="194"/>
         <source>Bar layout</source>
         <translation>Bar layout</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="181"/>
+        <location filename="../GalleryChartPreview.qml" line="196"/>
         <source>Vertical grouped</source>
         <translation>Vertical grouped</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="181"/>
+        <location filename="../GalleryChartPreview.qml" line="196"/>
         <source>Vertical stacked</source>
         <translation>Vertical stacked</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="182"/>
+        <location filename="../GalleryChartPreview.qml" line="197"/>
         <source>Vertical percent</source>
         <translation>Vertical percent</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="182"/>
+        <location filename="../GalleryChartPreview.qml" line="197"/>
         <source>Horizontal grouped</source>
         <translation>Horizontal grouped</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="183"/>
+        <location filename="../GalleryChartPreview.qml" line="198"/>
         <source>Horizontal stacked</source>
         <translation>Horizontal stacked</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="183"/>
+        <location filename="../GalleryChartPreview.qml" line="198"/>
         <source>Horizontal percent</source>
         <translation>Horizontal percent</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="191"/>
-        <location filename="../GalleryChartPreview.qml" line="195"/>
+        <location filename="../GalleryChartPreview.qml" line="206"/>
+        <location filename="../GalleryChartPreview.qml" line="210"/>
         <source>Marker shape</source>
         <translation>Marker shape</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="197"/>
+        <location filename="../GalleryChartPreview.qml" line="212"/>
         <source>Circle</source>
         <translation>Circle</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="197"/>
+        <location filename="../GalleryChartPreview.qml" line="212"/>
         <source>Square</source>
         <translation>Square</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="198"/>
+        <location filename="../GalleryChartPreview.qml" line="213"/>
         <source>Triangle</source>
         <translation>Triangle</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="198"/>
+        <location filename="../GalleryChartPreview.qml" line="213"/>
         <source>Diamond</source>
         <translation>Diamond</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="206"/>
-        <location filename="../GalleryChartPreview.qml" line="210"/>
+        <location filename="../GalleryChartPreview.qml" line="221"/>
+        <location filename="../GalleryChartPreview.qml" line="225"/>
         <source>Marker diameter (px)</source>
         <translation>Marker diameter (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="221"/>
+        <location filename="../GalleryChartPreview.qml" line="236"/>
         <source>Show data markers</source>
         <translation>Show data markers</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="257"/>
+        <location filename="../GalleryChartPreview.qml" line="272"/>
         <source>Spline tension: %1</source>
         <translation>Spline tension: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="261"/>
+        <location filename="../GalleryChartPreview.qml" line="276"/>
         <source>Spline tension</source>
         <translation>Spline tension</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="167"/>
+        <location filename="../GalleryChartPreview.qml" line="182"/>
         <source>Natural cubic spline</source>
         <translation>Natural cubic spline</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="228"/>
+        <location filename="../GalleryChartPreview.qml" line="243"/>
         <source>Dashed stroke</source>
         <translation>Dashed stroke</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="233"/>
+        <location filename="../GalleryChartPreview.qml" line="248"/>
         <source>Dash length (px)</source>
         <translation>Dash length (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="233"/>
+        <location filename="../GalleryChartPreview.qml" line="248"/>
         <source>Dash gap (px)</source>
         <translation>Dash gap (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="233"/>
+        <location filename="../GalleryChartPreview.qml" line="248"/>
         <source>Dash offset (px)</source>
         <translation>Dash offset (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="288"/>
+        <location filename="../GalleryChartPreview.qml" line="303"/>
         <source>Group width: %1%</source>
         <translation>Group width: %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="292"/>
+        <location filename="../GalleryChartPreview.qml" line="307"/>
         <source>Group width</source>
         <translation>Group width</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="302"/>
+        <location filename="../GalleryChartPreview.qml" line="317"/>
         <source>Bar spacing: %1%</source>
         <translation>Bar spacing: %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="306"/>
+        <location filename="../GalleryChartPreview.qml" line="321"/>
         <source>Bar spacing</source>
         <translation>Bar spacing</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="316"/>
-        <location filename="../GalleryChartPreview.qml" line="319"/>
+        <location filename="../GalleryChartPreview.qml" line="331"/>
+        <location filename="../GalleryChartPreview.qml" line="334"/>
         <source>Border width (px)</source>
         <translation>Border width (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="327"/>
-        <location filename="../GalleryChartPreview.qml" line="330"/>
+        <location filename="../GalleryChartPreview.qml" line="342"/>
+        <location filename="../GalleryChartPreview.qml" line="345"/>
         <source>Border color</source>
         <translation>Border color</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="332"/>
+        <location filename="../GalleryChartPreview.qml" line="347"/>
         <source>Theme text</source>
         <translation>Theme text</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="332"/>
+        <location filename="../GalleryChartPreview.qml" line="347"/>
         <source>Primary</source>
         <translation>Primary</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="332"/>
+        <location filename="../GalleryChartPreview.qml" line="347"/>
         <source>White</source>
         <translation>White</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="332"/>
+        <location filename="../GalleryChartPreview.qml" line="347"/>
         <source>Black</source>
         <translation>Black</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="339"/>
+        <location filename="../GalleryChartPreview.qml" line="354"/>
         <source>Show bar labels</source>
         <translation>Show bar labels</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="345"/>
-        <location filename="../GalleryChartPreview.qml" line="348"/>
+        <location filename="../GalleryChartPreview.qml" line="360"/>
+        <location filename="../GalleryChartPreview.qml" line="363"/>
         <source>Label position</source>
         <translation>Label position</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="350"/>
+        <location filename="../GalleryChartPreview.qml" line="365"/>
         <source>Center</source>
         <translation>Center</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="350"/>
+        <location filename="../GalleryChartPreview.qml" line="365"/>
         <source>Inside end</source>
         <translation>Inside end</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="350"/>
+        <location filename="../GalleryChartPreview.qml" line="365"/>
         <source>Inside base</source>
         <translation>Inside base</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="350"/>
+        <location filename="../GalleryChartPreview.qml" line="365"/>
         <source>Outside end</source>
         <translation>Outside end</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="358"/>
-        <location filename="../GalleryChartPreview.qml" line="361"/>
+        <location filename="../GalleryChartPreview.qml" line="373"/>
+        <location filename="../GalleryChartPreview.qml" line="376"/>
         <source>Label content</source>
         <translation>Label content</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="364"/>
+        <location filename="../GalleryChartPreview.qml" line="379"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="364"/>
+        <location filename="../GalleryChartPreview.qml" line="379"/>
         <source>Category and value</source>
         <translation>Category and value</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="365"/>
+        <location filename="../GalleryChartPreview.qml" line="380"/>
         <source>Series and value</source>
         <translation>Series and value</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="366"/>
+        <location filename="../GalleryChartPreview.qml" line="381"/>
         <source>Value and percentage</source>
         <translation>Value and percentage</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="376"/>
-        <location filename="../GalleryChartPreview.qml" line="379"/>
+        <location filename="../GalleryChartPreview.qml" line="391"/>
+        <location filename="../GalleryChartPreview.qml" line="394"/>
         <source>Significant digits</source>
         <translation>Significant digits</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="399"/>
-        <location filename="../GalleryChartPreview.qml" line="402"/>
+        <location filename="../GalleryChartPreview.qml" line="414"/>
+        <location filename="../GalleryChartPreview.qml" line="417"/>
         <source>Label margin (px)</source>
         <translation>Label margin (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="411"/>
+        <location filename="../GalleryChartPreview.qml" line="426"/>
         <source>Labels use source values; percent layouts can also show the signed share. Labels that do not fit are omitted.</source>
         <translation>Labels use source values; percent layouts can also show the signed share. Labels that do not fit are omitted.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="198"/>
+        <location filename="../GalleryChartPreview.qml" line="213"/>
         <source>Texture</source>
         <translation>Texture</translation>
     </message>
     <message>
-        <location filename="../GalleryChartPreview.qml" line="387"/>
-        <location filename="../GalleryChartPreview.qml" line="391"/>
+        <location filename="../GalleryChartPreview.qml" line="402"/>
+        <location filename="../GalleryChartPreview.qml" line="406"/>
         <source>Label rotation (degrees)</source>
         <translation>Label rotation (degrees)</translation>
     </message>
@@ -4150,175 +4194,175 @@ Slowest data batch: %6 ms</translation>
 <context>
     <name>GalleryChartRadialPreview</name>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="34"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="35"/>
         <source>Slice %1</source>
         <translation>Slice %1</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="80"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="84"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="81"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="85"/>
         <source>Radial layout</source>
         <translation>Radial layout</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="85"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="249"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="86"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="250"/>
         <source>Pie</source>
         <translation>Pie</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="85"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="249"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="86"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="250"/>
         <source>Doughnut</source>
         <translation>Doughnut</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="249"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="250"/>
         <source>Concentric rings</source>
         <translation>Concentric rings</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="92"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="96"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="93"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="97"/>
         <source>Start angle</source>
         <translation>Start angle</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="105"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="109"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="106"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="110"/>
         <source>Sweep angle</source>
         <translation>Sweep angle</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="118"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="122"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="119"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="123"/>
         <source>Separation (px)</source>
         <translation>Separation (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="129"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="130"/>
         <source>Radius: %1%</source>
         <translation>Radius: %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="133"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="134"/>
         <source>Radius</source>
         <translation>Radius</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="144"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="145"/>
         <source>Hole: %1%</source>
         <translation>Hole: %1%</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="148"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="149"/>
         <source>Hole size</source>
         <translation>Hole size</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="159"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="163"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="160"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="164"/>
         <source>Ring gap (px)</source>
         <translation>Ring gap (px)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="191"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="192"/>
         <source>Slice borders</source>
         <translation>Slice borders</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="201"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="202"/>
         <source>Add slice</source>
         <translation>Add slice</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="206"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="207"/>
         <source>Remove latest</source>
         <translation>Remove latest</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="211"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="212"/>
         <source>Clear data</source>
         <translation>Clear data</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="214"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="215"/>
         <source>Restore demo</source>
         <translation>Restore demo</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="227"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="228"/>
         <source>No selection</source>
         <translation>No selection</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="228"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="229"/>
         <source>Single selection</source>
         <translation>Single selection</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="229"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="230"/>
         <source>Multiple selection</source>
         <translation>Multiple selection</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="232"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="233"/>
         <source>Clear selection (%1)</source>
         <translation>Clear selection (%1)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="250"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="251"/>
         <source>Outer</source>
         <translation>Outer</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="251"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="252"/>
         <source>Middle</source>
         <translation>Middle</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="252"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="253"/>
         <source>Inner</source>
         <translation>Inner</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="256"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="257"/>
         <source>No data. Add a slice or restore the demo.</source>
         <translation>No data. Add a slice or restore the demo.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="85"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="86"/>
         <source>Two rings</source>
         <translation>Two rings</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="85"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="86"/>
         <source>Three rings</source>
         <translation>Three rings</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="171"/>
-        <location filename="../GalleryChartRadialPreview.qml" line="175"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="172"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="176"/>
         <source>Label position</source>
         <translation>Label position</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="178"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="179"/>
         <source>Inside slices</source>
         <translation>Inside slices</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="179"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="180"/>
         <source>Outside with leaders</source>
         <translation>Outside with leaders</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="196"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="197"/>
         <source>Slice labels</source>
         <translation>Slice labels</translation>
     </message>
     <message>
-        <location filename="../GalleryChartRadialPreview.qml" line="218"/>
+        <location filename="../GalleryChartRadialPreview.qml" line="219"/>
         <source>Each ring has its own proportions. Outside labels keep percentages and shorten long names; crowded labels favor larger slices. Click legend entries to hide slices.</source>
         <translation>Each ring has its own proportions. Outside labels keep percentages and shorten long names; crowded labels favor larger slices. Click legend entries to hide slices.</translation>
     </message>
@@ -4359,68 +4403,68 @@ Slowest data batch: %6 ms</translation>
 <context>
     <name>GalleryChartStackPreview</name>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="28"/>
+        <location filename="../GalleryChartStackPreview.qml" line="29"/>
         <source>Percentage stack</source>
         <translation>Percentage stack</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="29"/>
+        <location filename="../GalleryChartStackPreview.qml" line="30"/>
         <source>Positive and negative values</source>
         <translation>Positive and negative values</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="30"/>
+        <location filename="../GalleryChartStackPreview.qml" line="31"/>
         <source>Shared gap</source>
         <translation>Shared gap</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="31"/>
+        <location filename="../GalleryChartStackPreview.qml" line="32"/>
         <source>Second series</source>
         <translation>Second series</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="33"/>
-        <location filename="../GalleryChartStackPreview.qml" line="38"/>
+        <location filename="../GalleryChartStackPreview.qml" line="34"/>
+        <location filename="../GalleryChartStackPreview.qml" line="39"/>
         <source>Fill opacity</source>
         <translation>Fill opacity</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="43"/>
+        <location filename="../GalleryChartStackPreview.qml" line="44"/>
         <source>Sources share strictly increasing X values. Positive and negative values stack separately; zero crossings split the bands. Hidden series leave the totals. Hover to inspect the original value and share.</source>
         <translation>Sources share strictly increasing X values. Positive and negative values stack separately; zero crossings split the bands. Hidden series leave the totals. Hover to inspect the original value and share.</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="50"/>
+        <location filename="../GalleryChartStackPreview.qml" line="51"/>
         <source>Series A</source>
         <translation>Series A</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="51"/>
+        <location filename="../GalleryChartStackPreview.qml" line="52"/>
         <source>Series B</source>
         <translation>Series B</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="57"/>
+        <location filename="../GalleryChartStackPreview.qml" line="58"/>
         <source>Percentage stacked area</source>
         <translation>Percentage stacked area</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="57"/>
+        <location filename="../GalleryChartStackPreview.qml" line="58"/>
         <source>Stacked area</source>
         <translation>Stacked area</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="59"/>
+        <location filename="../GalleryChartStackPreview.qml" line="60"/>
         <source>Share (%)</source>
         <translation>Share (%)</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="59"/>
+        <location filename="../GalleryChartStackPreview.qml" line="60"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../GalleryChartStackPreview.qml" line="61"/>
+        <location filename="../GalleryChartStackPreview.qml" line="62"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
@@ -5685,78 +5729,78 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GalleryHistogramPreview</name>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="29"/>
-        <location filename="../GalleryHistogramPreview.qml" line="35"/>
+        <location filename="../GalleryHistogramPreview.qml" line="30"/>
+        <location filename="../GalleryHistogramPreview.qml" line="36"/>
         <source>Bin count</source>
         <translation>Bin count</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="38"/>
-        <location filename="../GalleryHistogramPreview.qml" line="43"/>
+        <location filename="../GalleryHistogramPreview.qml" line="39"/>
+        <location filename="../GalleryHistogramPreview.qml" line="44"/>
         <source>Normalization</source>
         <translation>Normalization</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="41"/>
-        <location filename="../GalleryHistogramPreview.qml" line="84"/>
+        <location filename="../GalleryHistogramPreview.qml" line="42"/>
+        <location filename="../GalleryHistogramPreview.qml" line="85"/>
         <source>Count</source>
         <translation>Count</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="41"/>
-        <location filename="../GalleryHistogramPreview.qml" line="85"/>
+        <location filename="../GalleryHistogramPreview.qml" line="42"/>
+        <location filename="../GalleryHistogramPreview.qml" line="86"/>
         <source>Frequency</source>
         <translation>Frequency</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="41"/>
-        <location filename="../GalleryHistogramPreview.qml" line="85"/>
+        <location filename="../GalleryHistogramPreview.qml" line="42"/>
+        <location filename="../GalleryHistogramPreview.qml" line="86"/>
         <source>Probability density</source>
         <translation>Probability density</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="48"/>
+        <location filename="../GalleryHistogramPreview.qml" line="49"/>
         <source>Unequal bins: 0, 3, 4, 6, 10</source>
         <translation>Unequal bins: 0, 3, 4, 6, 10</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="49"/>
+        <location filename="../GalleryHistogramPreview.qml" line="50"/>
         <source>Add outliers</source>
         <translation>Add outliers</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="51"/>
-        <location filename="../GalleryHistogramPreview.qml" line="56"/>
+        <location filename="../GalleryHistogramPreview.qml" line="52"/>
+        <location filename="../GalleryHistogramPreview.qml" line="57"/>
         <source>Bar gap</source>
         <translation>Bar gap</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="64"/>
+        <location filename="../GalleryHistogramPreview.qml" line="65"/>
         <source>Observations</source>
         <translation>Observations</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="69"/>
+        <location filename="../GalleryHistogramPreview.qml" line="70"/>
         <source>%1 observations · %2 included · %3 below / %4 above the bin range</source>
         <translation>%1 observations · %2 included · %3 below / %4 above the bin range</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="74"/>
+        <location filename="../GalleryHistogramPreview.qml" line="75"/>
         <source>Bins include the left edge; only the last bin includes the right edge. Frequency sums to 1 and density integrates to 1 over included observations. Hover to inspect bin boundaries and counts.</source>
         <translation>Bins include the left edge; only the last bin includes the right edge. Frequency sums to 1 and density integrates to 1 over included observations. Hover to inspect bin boundaries and counts.</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="80"/>
+        <location filename="../GalleryHistogramPreview.qml" line="81"/>
         <source>Histogram</source>
         <translation>Histogram</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="83"/>
+        <location filename="../GalleryHistogramPreview.qml" line="84"/>
         <source>Observation</source>
         <translation>Observation</translation>
     </message>
     <message>
-        <location filename="../GalleryHistogramPreview.qml" line="87"/>
+        <location filename="../GalleryHistogramPreview.qml" line="88"/>
         <source>Reset view</source>
         <translation>Reset view</translation>
     </message>
@@ -6600,85 +6644,85 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GalleryWaterfallPreview</name>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="21"/>
-        <location filename="../GalleryWaterfallPreview.qml" line="26"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="22"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="27"/>
         <source>Initial value</source>
         <translation>Initial value</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="29"/>
-        <location filename="../GalleryWaterfallPreview.qml" line="34"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="30"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="35"/>
         <source>Cost change</source>
         <translation>Cost change</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="37"/>
-        <location filename="../GalleryWaterfallPreview.qml" line="42"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="38"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="43"/>
         <source>Bar width</source>
         <translation>Bar width</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="47"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="48"/>
         <source>Reset after subtotal</source>
         <translation>Reset after subtotal</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="48"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="49"/>
         <source>Connectors</source>
         <translation>Connectors</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="49"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="50"/>
         <source>Value labels</source>
         <translation>Value labels</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="58"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="59"/>
         <source>Net change</source>
         <translation>Net change</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="63"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="64"/>
         <source>Sales</source>
         <translation>Sales</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="63"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="64"/>
         <source>Costs</source>
         <translation>Costs</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="64"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="65"/>
         <source>Subtotal</source>
         <translation>Subtotal</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="64"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="65"/>
         <source>Adjustment</source>
         <translation>Adjustment</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="65"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="66"/>
         <source>Other</source>
         <translation>Other</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="65"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="66"/>
         <source>Total</source>
         <translation>Total</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="69"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="70"/>
         <source>Changes run from the previous total to the next. Subtotals and totals start at zero. Resetting a subtotal restores the initial value and breaks its outgoing connector.</source>
         <translation>Changes run from the previous total to the next. Subtotals and totals start at zero. Resetting a subtotal restores the initial value and breaks its outgoing connector.</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="71"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="72"/>
         <source>Final accumulated value: %1</source>
         <translation>Final accumulated value: %1</translation>
     </message>
     <message>
-        <location filename="../GalleryWaterfallPreview.qml" line="76"/>
+        <location filename="../GalleryWaterfallPreview.qml" line="78"/>
         <source>Waterfall</source>
         <translation>Waterfall</translation>
     </message>
@@ -7661,7 +7705,7 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>QCatUiKit::ChartBubble</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartmapping.cpp" line="234"/>
+        <location filename="../../../../src/uikit/qcatchartmapping.cpp" line="239"/>
         <source>Bubble points require finite x, y, nonnegative size and finite colorValue (at most 1,000,000 points).</source>
         <translation>Bubble points require finite x, y, nonnegative size and finite colorValue (at most 1,000,000 points).</translation>
     </message>
@@ -7669,13 +7713,13 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>QCatUiKit::ChartContour</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="114"/>
+        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="124"/>
         <source>Contour levels must contain 1–16 finite increasing values.</source>
         <translation>Contour levels must contain 1–16 finite increasing values.</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="175"/>
-        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="265"/>
+        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="185"/>
+        <location filename="../../../../src/uikit/qcatchartcontour.cpp" line="274"/>
         <source>Contours support at most 65,536 grid nodes and 250,000 generated primitives.</source>
         <translation>Contours support at most 65,536 grid nodes and 250,000 generated primitives.</translation>
     </message>
@@ -7707,7 +7751,7 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>QCatUiKit::ChartGrid</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartmapping.cpp" line="392"/>
+        <location filename="../../../../src/uikit/qcatchartmapping.cpp" line="397"/>
         <source>Grid dimensions must match finite values or null gaps; spacing must be positive and coordinates finite (up to 2048 per dimension and 1,000,000 cells).</source>
         <translation>Grid dimensions must match finite values or null gaps; spacing must be positive and coordinates finite (up to 2048 per dimension and 1,000,000 cells).</translation>
     </message>
@@ -7748,19 +7792,75 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>QCatUiKit::ChartItem</name>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="2930"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="3057"/>
         <source>Intensity</source>
         <translation>Intensity</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="3875"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="4031"/>
         <source>  Count: %1  Height: %2</source>
         <translation>  Count: %1  Height: %2</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="3880"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="4036"/>
         <source>  Value: %1  Total: %2</source>
         <translation>  Value: %1  Total: %2</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5051"/>
+        <source>An image export is already in progress.</source>
+        <translation>An image export is already in progress.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5056"/>
+        <source>Choose an absolute local file URL ending in .png.</source>
+        <translation>Choose an absolute local file URL ending in .png.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5059"/>
+        <source>The chart must be visible in a window with a nonzero size.</source>
+        <translation>The chart must be visible in a window with a nonzero size.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5062"/>
+        <source>3D image export requires a supported graphics backend.</source>
+        <translation>3D image export requires a supported graphics backend.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5069"/>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5074"/>
+        <source>Image dimensions must be 1–8192 pixels and at most 32 million pixels.</source>
+        <translation>Image dimensions must be 1–8192 pixels and at most 32 million pixels.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5082"/>
+        <source>The chart image capture could not be started.</source>
+        <translation>The chart image capture could not be started.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5090"/>
+        <source>The chart image capture timed out.</source>
+        <translation>The chart image capture timed out.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5097"/>
+        <source>The graphics backend could not capture the chart.</source>
+        <translation>The graphics backend could not capture the chart.</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5106"/>
+        <source>Cannot write image: %1</source>
+        <translation>Cannot write image: %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5114"/>
+        <source>Cannot encode image: %1</source>
+        <translation>Cannot encode image: %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qcatchartitem.cpp" line="5119"/>
+        <source>Cannot save image: %1</source>
+        <translation>Cannot save image: %1</translation>
     </message>
 </context>
 <context>

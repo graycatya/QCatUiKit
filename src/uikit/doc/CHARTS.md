@@ -452,7 +452,7 @@ CatChart {
 - Esc、失焦、窗口失活／迁移、触摸取消／捕获丢失、隐藏／禁用、关闭交互、切换触摸开关／图表类型、尺寸变化、外部修改轴或重置会终止手势。取消保留此前已经应用的平移／缩放；后续移动不会重新激活，须重新按下。
 - 自动范围或绘图区布局变化会取消手势；手动范围和布局不变时，实时追加数据可继续导航。缩放期间固定绘图区左边距，避免刻度文字宽度变化让触点锚点漂移；松手后重新排版。没有惯性、触摸旋转或触摸框选。
 
-库没有图形过渡动画；reducedMotion 不会停止应用主动追加数据。不提供多 Y 轴、堆叠面积或插件系统；径向图不支持笛卡尔缩放／平移。
+库提供可选淡入，不提供几何形变动画；reducedMotion 不会停止应用主动追加数据。多轴与堆叠面积见相应接口；径向图不支持笛卡尔缩放／平移。
 
 ## Gallery 数据操作与压力测试
 
@@ -480,7 +480,7 @@ CatChart {
 
 数据与样式变化先 polish 合并，GUI 线程准备不可变图元快照；渲染线程不读取系列或坐标轴对象。ChartItem 保留 QQuickItem 基类，内部只有一个私有 QQuickRhiItem 数据层，覆盖绘图区。GPU 顶点先在 CPU 上用 double 映射到绘图区局部坐标，再转换为 float，保留现有大坐标精度。绘制使用预乘 alpha，透明纹理由 Qt Quick 合成；文字、十字线和提示框位于独立覆盖层，始终在数据上方。
 
-顶点缓冲按容量增长并复用。新快照与已上传几何比较，只更新发生变化的连续区间；未改变几何的重绘和悬停不上传系列顶点。尺寸变化复用足够大的缓冲，窗口变化由 Qt 管理渲染器重建。背景与网格节点在快照未变时保留；文字纹理按内容、字体、颜色和 DPR 缓存。曲线／区域在 CPU 上生成三角形，标记和柱体使用实例缓冲，任意 QML 委托使用独立预算。规则热力图纹理化属于后续扩展，不能据此承诺百万图元帧率。
+顶点缓冲按容量增长并复用。新快照与已上传几何比较，只更新发生变化的连续区间；未改变几何的重绘和悬停不上传系列顶点。尺寸变化复用足够大的缓冲，窗口变化由 Qt 管理渲染器重建。背景与网格节点在快照未变时保留；文字纹理按内容、字体、颜色和 DPR 缓存。曲线／区域在 CPU 上生成三角形，标记和柱体使用实例缓冲，任意 QML 委托使用独立预算。规则热力图已使用数值纹理与变化区域上传，不能据此承诺百万图元帧率。
 
 曲线与圆形使用覆盖率边缘，默认 `antialiasing: true`，不要求窗口开启 MSAA；Gallery 的百万数据概览和持续压力测试也保留该默认设置。software 后端不创建 RHI 子项，用 QPainter 将快照图元绘制为图像，并保留覆盖层与交互。该回退会创建图表大小的图像，其性能不能代表 GPU 路径。QRhi 为私有实现依赖，Qt 小版本升级需重新构建和验证。
 
@@ -560,3 +560,51 @@ CatChartSeries {
 淡入只更新图层透明度，动画帧不重新准备几何或上传系列缓冲。鼠标导航、容量滚动和应用主动数据更新保持即时，过渡期间到达的数据正常呈现。`reducedMotion` 或 duration=0 会立即结束正在进行的动画并显示最终状态；隐藏图表或禁用过渡也会结束动画。software、RHI 和委托图层使用相同的合成淡入。应用在自定义委托中编写的独立动画仍由应用管理，应自行绑定减少动态效果设置。
 
 饼／环外置标签先按两侧列避让，再检查同侧、跨环及跨侧引线。重叠或交叉时优先保留占比较大的路线；`outsideLabelCandidates`／`outsideLabelsShown` 诊断计数表示路线筛选前后数量。省略标签始终不会删除数据，也不会改变扇区拾取。
+
+## 图像导出
+
+`exportImage(destination, pixelSize)` 异步抓取当前 CatChart 子树并保存为 PNG，适用于二维 RHI、二维 software 和支持的三维 RHI 后端。包含当前标题、轴、图例、数据、选择／提示／十字线及图表内部的 QML 委托；不包含图表外部的按钮、父项背景或独立 Popup。透明背景保留 alpha。
+
+- `destination` 是绝对本地 `file:` URL，扩展名为 `.png`，不接受网络、qrc、查询或片段。C++ 用 `QUrl::fromLocalFile(path)`；QML 可以直接传入 `FileDialog.selectedFile`。目录必须已经存在。成功保存会原子替换已有文件；抓取、编码或提交失败保留原文件。
+- `pixelSize` 是实际像素尺寸。省略或传入 `Qt.size(-1,-1)` 时使用当前逻辑尺寸乘窗口 DPR，向上取整。显式尺寸不再乘 DPR；每边 1–8192 像素，总量不超过 32,000,000 像素。非等比例尺寸会拉伸视图。增大尺寸缩放当前视图，不改变布局、LOD 或三维网格精度，也不承诺重新生成高分辨率 RHI 数据纹理。
+- 返回 `true` 表示抓取请求已接受，不表示文件已保存。`exportingImage` 从接受到完成为 true。每次调用通过 `imageExportFinished(destination, success, error)` 返回结果；参数无效／忙碌等拒绝立即返回 false 并发出失败信号，进行中的请求继续执行。
+- 图表须挂载到可见窗口、保持可见且尺寸非零。捕获后续渲染帧，不冻结实时数据；需要确定时刻的快照时由应用暂停更新。抓取异步，PNG 编码与原子写入在对象线程完成，不适合连续逐帧导出。
+- 抓取超过 15 秒报告失败；等待期间销毁图表会取消请求、不写文件且不再发信号。三维 software 后端拒绝导出，避免把不支持的占位画面当作三维结果。
+
+```qml
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Dialogs as Dialogs
+import QCatUiKit
+
+ColumnLayout {
+    CatChart {
+        id: chart
+        Layout.fillWidth: true
+        Layout.preferredHeight: 360
+        title: qsTr("Observations")
+        CatChartSeries {
+            name: qsTr("Samples")
+            Component.onCompleted: setData([{x: 0, y: 1}, {x: 1, y: 3}, {x: 2, y: 2}])
+        }
+        onImageExportFinished: (destination, success, error) => {
+            status.text = success ? qsTr("Image saved") : error;
+        }
+    }
+    CatButton {
+        text: qsTr("Export PNG")
+        enabled: !chart.exportingImage
+        onClicked: saveDialog.open()
+    }
+    CatLabel { id: status; Layout.fillWidth: true; wrapMode: Text.Wrap }
+    Dialogs.FileDialog {
+        id: saveDialog
+        fileMode: Dialogs.FileDialog.SaveFile
+        nameFilters: [qsTr("PNG image (*.png)")]
+        defaultSuffix: "png"
+        onAccepted: chart.exportImage(selectedFile)
+    }
+}
+```
+
+M5 仅提供图像导出。配置保存／恢复、版本迁移、图表同步、原始数据导出和额外可访问数据表由应用根据自身模型实现。

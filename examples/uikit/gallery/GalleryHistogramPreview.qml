@@ -7,6 +7,7 @@ import "GalleryChartExamples.js" as Examples
 
 ColumnLayout {
     id: control
+    readonly property alias exportChart: chart
     objectName: "histogramPreview"
     readonly property alias dataAdapter: histogram
     property int bins: 12

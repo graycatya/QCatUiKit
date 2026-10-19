@@ -15,7 +15,12 @@ TestCase {
         gallery = factory.createObject(test);
         verify(waitForRendering(gallery.contentItem));
     }
-    function init() { failOnWarning(/.*/); }
+    function init() {
+        failOnWarning(/.*/);
+        gallery.requestActivate();
+        tryCompare(gallery, "active", true);
+        tryVerify(() => gallery.activeFocusItem !== null);
+    }
     function cleanup() {
         const preview = findChild(gallery.contentItem, "dataPreview");
         if (preview) preview.dataController.stopStress();
@@ -28,6 +33,8 @@ TestCase {
     }
     function choose(page) {
         gallery.showComponent(page);
+        // Re-selecting the initial page still needs a frame for the render wait.
+        gallery.update();
         verify(waitForRendering(gallery.contentItem));
         find("dataRestoreButton").clicked();
         return find("dataPreview").dataController;

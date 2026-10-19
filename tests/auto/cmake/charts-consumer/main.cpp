@@ -16,6 +16,11 @@
 #include <QCatUiKit/qcatchartseries.h>
 #include <QDebug>
 #include <QGuiApplication>
+#include <QEventLoop>
+#include <QImage>
+#include <QQuickWindow>
+#include <QTemporaryDir>
+#include <QTimer>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <memory>
@@ -411,6 +416,33 @@ CatChart {
         qWarning() << extended.errors();
         return 60;
     }
-    qInfo() << "Installed chart C++ and QML consumer OK";
+    QTemporaryDir exportDirectory;
+    QQuickWindow exportWindow;
+    exportWindow.resize(640, 480);
+    QCatUiKit::ChartItem exportedChart(exportWindow.contentItem());
+    exportedChart.setSize({640, 480});
+    exportedChart.setTitle(QStringLiteral("Installed export"));
+    exportedChart.addSeries(&source);
+    exportWindow.show();
+    QEventLoop exportLoop;
+    bool exportSucceeded = false;
+    const QUrl exportUrl = QUrl::fromLocalFile(exportDirectory.filePath("chart.png"));
+    QObject::connect(&exportedChart, &QCatUiKit::ChartItem::imageExportFinished, &exportLoop,
+                     [&](QUrl destination, bool success, const QString &error)
+                     {
+                         exportSucceeded = destination == exportUrl && success && error.isEmpty();
+                         exportLoop.quit();
+                     });
+    QTimer::singleShot(0, &exportLoop, [&]
+    {
+        if (!exportedChart.exportImage(exportUrl, QSize(320, 240)))
+            exportLoop.quit();
+    });
+    QTimer::singleShot(20000, &exportLoop, &QEventLoop::quit);
+    exportLoop.exec();
+    if (!exportSucceeded || exportedChart.exportingImage() ||
+        QImage(exportUrl.toLocalFile()).size() != QSize(320, 240))
+        return 61;
+    qInfo() << "Installed chart C++ and QML consumer OK, including PNG export";
     return 0;
 }

@@ -32,6 +32,13 @@ TestCase {
         verify(gallery.showChartDemo(mode));
         verify(waitForRendering(gallery.contentItem));
     }
+    function focusEditor(editor) {
+        // QtTest sends keys to the application's active window, not just the focused item.
+        gallery.requestActivate();
+        tryCompare(gallery, "active", true);
+        editor.forceActiveFocus();
+        tryCompare(editor, "activeFocus", true);
+    }
     function test_threeDimensionalControls() {
         choose(19);
         const chart = find("chart3DItem"), series = chart.scene3D.series[0];
@@ -543,7 +550,7 @@ TestCase {
         ];
         for (const edit of edits) {
             const field = find(edit.name);
-            field.contentItem.forceActiveFocus();
+            focusEditor(field.contentItem);
             field.contentItem.selectAll();
             for (const key of edit.keys) keyClick(key);
             find("chartAddButton").forceActiveFocus();
@@ -678,7 +685,7 @@ TestCase {
         choose(6);
         const demo = find("chartPreview").dataController;
         const capacity = find("chartCapacity");
-        capacity.contentItem.forceActiveFocus();
+        focusEditor(capacity.contentItem);
         keyClick(Qt.Key_A, Qt.ControlModifier);
         keyClick(Qt.Key_1);
         for (let i = 0; i < 6; i++) keyClick(Qt.Key_0);

@@ -259,11 +259,12 @@ class ChartRenderer final : public QQuickRhiItemRenderer
         if (draw)
         {
             const auto pixels = renderTarget()->pixelSize();
-            cb->setViewport({0, 0, float(pixels.width()), float(pixels.height())});
             for (const auto &command : m_data->draws)
             {
                 cb->setGraphicsPipeline(command.instanced ? m_instancePipeline.get()
                                                           : m_pipeline.get());
+                // Vulkan derives the default scissor from the active pipeline and viewport.
+                cb->setViewport({0, 0, float(pixels.width()), float(pixels.height())});
                 cb->setShaderResources(command.texture < 0 ? m_bindings.get()
                                                            : materialBindings[command.texture]);
                 if (command.instanced)
