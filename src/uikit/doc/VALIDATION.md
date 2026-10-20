@@ -4,7 +4,54 @@
 
 本文维护可复现的检查入口。最近已记录的完整回归为 **2026-10-19，Ubuntu 26.04 x86_64、Qt 6.12.0 Release**；以下为既有记录摘要，不代表每次文档修改都重新执行了产品测试。
 
-| 检查范围 | 最近记录与边界 |
+## Dock 浮动窗口与回停（2026-10-20，P3 前两步）
+
+环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release。离屏测试使用 software/offscreen；原生测试使用 XCB/OpenGL，
+日志确认 AMD Radeon 780M Graphics、Mesa 26.1.6。
+
+| 检查 | 结果 |
+| --- | --- |
+| 构建、lint、全量回归 | 构建与库／Gallery qmllint 通过；CTest 17/17 通过 |
+| 浮动专项最终版 | software/offscreen 8/8、XCB/OpenGL 8/8（含初始化／清理） |
+| 覆盖行为 | 输入实例与焦点保持、弹层重新打开、关闭请求拒绝／接受、标签组恢复、隐藏／销毁清理、窗口尺寸保存、屏幕外布局修正 |
+| 图表迁移 | 浮动、回停、再次恢复后检查红色系列像素，验证实际渲染而非仅对象存在 |
+| C++ 控制器 | 原标签索引／分割比例恢复、整组浮动、原目标消失回退、跨主树与浮动组的重复 ID 拒绝、v1 兼容读取 |
+| Gallery 专项 | 4/4（含初始化／清理）：真实按钮浮动整组、不可关闭编辑器阻止系统关闭、回停、窄屏 |
+| 安装与替换 | 新安装消费者通过；上一阶段已编译消费者加载新 libQCatUiKit.so.1 通过，动态库解析路径确认指向候选安装目录 |
+| 视觉与翻译 | 明暗浮动窗口／图表预览；新增中英文文案完整；git diff --check 通过 |
+
+浮动专项仅允许 offscreen 插件的已知 `propagateSizeHints()` 能力提示，其余警告导致失败；XCB 原生检查没有该提示。
+未验证 Windows、macOS、Wayland、Vulkan、Qt 6.8、实际多显示器热插拔或混合 DPI。
+本批仅实现浮动与按钮／API 回停，跨窗口拖拽尚未实现。接口见 [Dock 工作区](DOCKING.md)。
+
+下面保留 P0–P2 阶段的验证记录。
+
+## 单窗口 Dock（2026-10-20）
+
+环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；QML 与 Gallery 使用 offscreen/software。
+
+| 检查 | 结果 |
+| --- | --- |
+| 全量构建与 CTest | 构建通过，17/17 个测试组通过 |
+| 最终界面修改后的回归 | qml_contracts、gallery_contracts 2/2 通过；包含新增窄屏 Gallery 测试 |
+| Dock QML 专项 | 6/6（含初始化／清理）：内容保留、恢复、取消、真实鼠标拖拽、分隔条及最小尺寸 |
+| Gallery Dock 专项 | 3/3（含初始化／清理）：窄屏、关闭／打开、恢复初始布局；警告视为失败 |
+| lint | QCatUiKit_qmllint 与 qcat-gallery_qmllint 通过 |
+| 安装消费者 | tests/auto/cmake/dock-consumer 通过；三种公开头、导出类、安装后的 QML 类型可用 |
+| 视觉检查 | 中文明色桌面、720px 暗色、360px mobile；窄屏示例使用横向滚动 |
+| 其他 | 两种语言新增文案完整，git diff --check 通过 |
+
+独立消费者运行时必须使用与构建一致的 Qt 库与 QML 导入目录，避免系统 Qt 和安装套件混用。
+本批不包含浮动窗口／跨窗口拖拽，不声称验证 Windows、macOS、Wayland、Qt 6.8 或真实 GPU 后端。
+接口与实施边界见 [Dock 工作区](DOCKING.md)。
+
+## 姿态球与设备无关体感输入（2026-10-19）
+
+环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；software/offscreen，以及 XCB 上的实际 Vulkan/OpenGL。
+Vulkan 日志确认 AMD Radeon 780M Graphics / RADV PHOENIX，Mesa 26.1.6；未开启 Khronos validation layer。
+新增公开 CatAttitudeIndicator、CatTiltControlPanel 和 TiltController，接口与输入坐标约定见 [姿态与体感](ATTITUDE.md)。
+
+| 检查 | 结果 |
 | --- | --- |
 | 完整 CTest | 16/16 组通过，含 tilt_controller；默认图形契约使用 software/offscreen |
 | 控件 QML / Gallery | software 349/349；Gallery software 与 Vulkan DPR 1 各 811/811；表格列宽拖动曾有一次未稳定复现的波动 |

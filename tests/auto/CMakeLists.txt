@@ -12,3 +12,5 @@ if(QCATUIKIT_BUILD_EXAMPLES)
     set_tests_properties(gallery_smoke PROPERTIES
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
 endif()
+
+add_subdirectory(dock)

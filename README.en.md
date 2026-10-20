@@ -6,7 +6,7 @@
 
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
-- **117 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **119 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
@@ -16,6 +16,7 @@ QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/
 - **Image export**: save the current 2D/3D chart with its title, axes, legend and overlays as PNG, with explicit pixel dimensions and transparency.
 - **[Statistical charts](src/uikit/doc/CHARTSTATISTICS.md)**: public linear fits, residual bands, waterfalls, ordinary/percentage stacked areas and histograms with automatic or unequal bins, counts, frequency, and probability density, preserving raw inputs.
 - **[Extended charts](src/uikit/doc/CHARTEXTENSIONS.md)**: independent bubble size/color mapping, dense or sparse heatmaps and scrolling grids, radar normalization, contours/bands, OHLC with volume, and box plots with outliers.
+- **Dock workspaces**: split and tab panels, drag within a workspace, float panels or tab groups and dock them back, retain content instances, and save/restore versioned layouts. See [Dock documentation](src/uikit/doc/DOCKING.md).
 - **Chinese and English Gallery**: runtime language switching, search, responsive layouts, interactive demos, and continuous stress tests.
 - **Shared library and CMake package**: exported targets, a QML plugin, public C++ headers, and runtime version queries.
 

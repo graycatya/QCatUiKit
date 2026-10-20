@@ -116,3 +116,11 @@ CatTiltControlPanel 只显示状态并发出用户请求。设备传感器、屏
 ## 维护入口
 
 新增组件同步维护模块 CMake、组件目录、GalleryCatalog、交互预览、翻译及相关检查。布局使用逻辑像素和主题 Token，输入优先采用 Qt Controls 的焦点、键盘、禁用与可访问性协议。详见 [贡献指南](../../../CONTRIBUTING.md) 和 [验证说明](VALIDATION.md)。
+
+
+### Dock 工作区
+
+DockController 使用 Pimpl 保存独立布局树和面板 ID 注册表，负责分割、标签操作及事务式 JSON 恢复。
+CatDockWorkspace 根据树计算几何并布置已有 CatDockPanel；内容实例不随布局重建，业务状态由应用内容持有。
+最低尺寸计算与当前工作区尺寸分离，宿主可据此设置最小窗口或外部滚动区域，避免尺寸绑定循环。
+浮动宿主共享控制器和面板注册表，只切换视觉父项；回停提示和窗口几何纳入版本 2 布局。跨窗口拖拽仍待实现，公开契约与下一阶段边界见 [Dock 工作区](DOCKING.md)。

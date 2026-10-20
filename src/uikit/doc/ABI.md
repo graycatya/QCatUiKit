@@ -55,3 +55,60 @@ ChartScene3D／ChartSeries3D、统计与扩展适配器、LED 工作流及 TiltC
 光照默认值曾从 Phong 改为 BlinnPhong，属于可观察外观变化；显式 Phong 保留相应光照计算，不保证新网格逐像素复现旧图像。ABI 兼容也不能替代 QML 行为、默认值及实际交互审查。
 
 各阶段的符号、安装和历史消费者执行结果见 [兼容性演进记录](VALIDATION_HISTORY.md#abi-兼容性演进记录)。这些结果仅覆盖记录中的工具链与调用范围，不替代候选发布包的检查。
+
+
+M2 第三批新增径向布局属性、扇区可见性与样式方法，均为非虚接口，复用 appearanceChanged／styleChanged；状态仅进入 Impl 和私有 SeriesRecord，既有 Sample、RangeSample 及导出对象布局不变。新安装消费者与 M2 第二批、首批、M1、迁移前四份历史消费者的库替换检查均通过。
+
+M2 第四批的柱组宽度／间距、边框与标签属性全部使用非虚访问方法和既有 appearanceChanged／styleChanged 信号；BarLabelPosition 为独立新枚举，既有枚举数值不变。新增状态只在 Impl 中，Sample、RangeSample 以及对象布局不变。新安装消费者及 M2 第三批至迁移前共五份历史消费者的库替换运行检查通过。
+
+M2 第五批新增 AreaBaselineMode／FillStyle 独立枚举和六个系列属性，非虚访问方法复用 styleChanged，状态全部在 Impl 内。既有 Type 数值、Sample／RangeSample 和对象布局不变。新安装消费者及 M2 第四批至迁移前共六份历史消费者的库替换检查通过。
+
+M2 第六批在 ChartItem 新增 DragMode／ZoomAxes 枚举、拖动与框选状态属性、zoomToRect／cancelZoomSelection 非虚函数，以及追加的 zoomSelectionChanged 信号。状态仅在 Impl 中，原有信号、虚函数槽、Sample／RangeSample 与对象布局不变。新安装消费者及 M2 第五批至迁移前共七份历史消费者均完成新库替换检查。
+
+M2 第七批在 ChartItem 新增 touchNavigationEnabled 属性及非虚访问方法，复用 appearanceChanged。touchEvent／touchUngrabEvent 覆盖 QQuickItem 已有虚函数槽，不追加新的虚函数；手势状态保存在 Impl，公开对象及 Sample／RangeSample 布局不变。新安装消费者及 M2 第六批至迁移前共八份历史消费者完成新库替换检查。
+
+M2 第八批让 RangeArea 使用既有 curveMode／splineTension，未新增公开接口、枚举或信号。双边界自然样条缓存、共同细分点及拾取参数均为私有实现；公开对象、Sample 与 RangeSample 布局不变。新安装消费者与 M2 第七批至迁移前共九份历史二进制完成库替换检查。
+
+M2 第九批在 ChartItem 新增独立 SliceLabelPosition 枚举及 sliceLabelPosition 非虚访问方法，复用 appearanceChanged。状态仅进入 Impl；原有枚举、虚函数槽、对象与 Sample／RangeSample 布局均不变，默认仍为内部标签。私有标签布局助手不安装。新安装消费者及 M2 第八批至迁移前共十份历史二进制完成新库替换运行检查。
+
+密集曲线拖动优化仅增加 Impl 缓存、私有层次索引及 renderingStatistics() 的诊断字段；公开类、函数签名、枚举、Sample／RangeSample 与对象布局不变。新安装消费者及十一份历史二进制通过新库替换检查。
+
+M2 坐标轴批次在 ChartAxis 末尾追加 reversed、minorTickCount 属性，新增访问方法均非虚函数，复用既有 changed 信号；既有属性顺序、枚举、导出对象和 Sample／RangeSample 布局不变。新增字段仅在 Impl 中，图表的映射、刻度和曲线适配仍为私有实现。新安装消费者及十二份历史二进制完成新库替换检查。
+
+M2 多轴在 ChartAxis 尾部追加 orientation／side／visible，在 ChartSeries 尾部追加 xAxis／yAxis；全部访问方法非虚，复用 changed／styleChanged。映射采用新增重载，保留原函数符号；轴引用、连接及布局存于 Impl。新安装消费者和十三份历史消费者通过库替换检查。
+
+本次 M2 线条外观在 ChartSeries 的私有实现中保存 lineCap、lineJoin、miterLimit，追加枚举、非虚方法与元属性；不改变导出对象布局、Sample 或既有虚函数。描边三角化使用已有 GuiPrivate 依赖，随 Qt 小版本重新构建。
+
+M2 填充新增元属性与非虚方法，TextureFill 追加于 FillStyle 枚举末尾；状态保存在 ChartSeries::Impl。ChartVertex、绘制命令及纹理快照均属私有类型，新增 UV 不影响公开对象 ABI。
+
+M2 区间对齐仅添加 RangeAlignment 枚举和非虚 setRangeBoundaries 方法；既有 Sample／RangeSample、对象布局及元属性顺序保持不变。
+
+M2 实例化／委托／选择新增枚举、非虚访问方法及末尾元属性／信号，状态留在 Impl；既有对象、Sample、RangeSample、虚函数槽不变。ChartInstance、委托管理与拾取索引均为不安装的私有类型。
+
+M2 最终安装复核：新消费者与 18 个历史二进制共 19 个全部通过。animationsEnabled／transitionRunning 以及选择／委托信号均追加到元对象末尾，动画和屏幕拾取索引继续保存在私有实现。具体记录见 VALIDATION.md 的 M2 最终验收。
+
+### M3 三维接口
+
+ChartItem 末尾追加 scene3D 元属性及非虚访问方法，既有基类、对象布局、枚举和信号保持不变。ChartSeries3D／ChartScene3D 是新导出 Pimpl 类型，XYZ Point 与旧 ChartSeries.Sample 完全分离。真实头、带扩展名和无扩展名转发头均安装，QML 类型随模块注册。qcatchart3d_p.h 和 RHI 类型不安装、不作为应用 API；私有测试入口的导出符号不承诺 ABI。M2 完成版消费者纳入后续动态库替换验证。
+
+三维光照优化在 ChartScene3D 末尾追加 lightingModel、ambientGroundRatio、exposure 元属性及 LightingModel 枚举，在 ChartSeries3D 末尾追加 meshDetail 元属性及 MeshDetail 枚举；RoundedCube 追加到 Shape 末尾，原有值不变。访问方法均非虚，复用既有信号，状态保存于 Impl，公开对象与 Point 布局保持不变。默认光照改为 BlinnPhong 是外观行为变化；显式选择 Phong 可保留旧版光照计算。几何精度变化独立于光照模式，不承诺逐像素恢复旧网格。
+
+### M5 图像导出
+
+ChartItem 末尾追加 exportingImage 元属性、exportingImageChanged／imageExportFinished 信号，以及 exportImage／exportingImage 非虚方法。抓取句柄、目标 URL、尺寸和定时器保存于 Impl；既有属性／信号、类大小、虚函数、枚举和 Sample／RangeSample 均不变，ABI 版本保持 1。图像抓取沿用 Qt Quick，不增加公共类型或运行时模块依赖。
+
+### 姿态与体感输入
+
+新增独立 Pimpl 类型 TiltController，注册同名 QML 类型；安装真实头、TiltController.h 和 TiltController 转发头。
+CatAttitudeIndicator/CatTiltControlPanel 是新增 QML 类型，既有公开类、元属性、枚举、布局与 SOVERSION 保持不变。
+未增加 Qt Sensors 或协议库依赖；新接口的四元数使用既有 QtGui 依赖。
+
+本机 Linux / Qt 6.12 Release 的姿态安装消费者与历史图表二进制替换检查通过；此前 745 个 QCatUiKit 函数符号全部保留。该验证不代替其他平台的 ABI 检查。
+
+### Dock 工作区
+
+新增独立 Pimpl 类型 DockController，安装真实头、DockController.h 和 DockController 转发头，新增两个 QML 组件。既有导出类、元对象和 SOVERSION 不变。DockGeometry.js 为内部实现；布局快照使用显式版本号。
+
+Dock P3 在 DockController 末尾追加浮动窗口属性与非虚方法；旧方法、信号、枚举和 Pimpl 对象布局不变。DockFloatingWindow 为内部 QML 类型，不新增公开类型。布局格式写入 v2，同时读取 v1；未来版本不自动接受。
+
+本机 Qt 6.12 Release 的 Dock P3 新安装消费者与 P0–P2 已编译消费者替换检查通过；已确认旧消费者加载候选 libQCatUiKit.so.1。该结果不代表其他平台的 ABI 验证。

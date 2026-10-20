@@ -553,6 +553,16 @@
 <context>
     <name>GalleryCatalog</name>
     <message>
+        <location filename="../GalleryCatalog.qml" line="94"/>
+        <source>Dock workspace</source>
+        <translation>Dock workspace</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="95"/>
+        <source>Split, merge and rearrange persistent panels, with versioned layout save and restore.</source>
+        <translation>Split, merge and rearrange persistent panels, with versioned layout save and restore.</translation>
+    </message>
+    <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
         <source>Collections</source>
         <translation>Collections</translation>
@@ -8235,6 +8245,153 @@ Keep notes, drafts and everyday details together.</translation>
         <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="113"/>
         <source>Channel chase</source>
         <translation>Channel chase</translation>
+    </message>
+</context>
+<context>
+    <name>CatDockWorkspace</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="324"/>
+        <source>Float panel</source>
+        <translation>Float panel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="330"/>
+        <source>Float tab group</source>
+        <translation>Float tab group</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="380"/>
+        <source>Close %1</source>
+        <translation>Close %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="403"/>
+        <source>Resize dock panels</source>
+        <translation>Resize dock panels</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDockPreview</name>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="18"/>
+        <source>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</source>
+        <translation>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="24"/>
+        <source>Save layout</source>
+        <translation>Save layout</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="28"/>
+        <source>Restore layout</source>
+        <translation>Restore layout</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="33"/>
+        <source>Reset layout</source>
+        <translation>Reset layout</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="37"/>
+        <source>Show log</source>
+        <translation>Show log</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="42"/>
+        <source>Float editor</source>
+        <translation>Float editor</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="48"/>
+        <source>Float editor group</source>
+        <translation>Float editor group</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="54"/>
+        <source>Dock all windows back</source>
+        <translation>Dock all windows back</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="63"/>
+        <source>Lock layout</source>
+        <translation>Lock layout</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="81"/>
+        <source>Project</source>
+        <translation>Project</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="86"/>
+        <source>Workspace
+  Components
+  Themes
+  Tests</source>
+        <translation>Workspace
+  Components
+  Themes
+  Tests</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="92"/>
+        <source>Editor</source>
+        <translation>Editor</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="96"/>
+        <source>Edit this text, then move this panel. Your changes stay here.</source>
+        <translation>Edit this text, then move this panel. Your changes stay here.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="102"/>
+        <source>Properties</source>
+        <translation>Properties</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="107"/>
+        <source>Preview opacity</source>
+        <translation>Preview opacity</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="123"/>
+        <source>Log</source>
+        <translation>Log</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="128"/>
+        <source>Workspace ready.
+Layout changes preserve panel instances.</source>
+        <translation>Workspace ready.
+Layout changes preserve panel instances.</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="134"/>
+        <source>Chart preview</source>
+        <translation>Chart preview</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="141"/>
+        <source>Signal</source>
+        <translation>Signal</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="179"/>
+        <source>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</source>
+        <translation>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</translation>
+    </message>
+</context>
+<context>
+    <name>DockFloatingWindow</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="64"/>
+        <source>Dock back</source>
+        <translation>Dock back</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="105"/>
+        <source>Close %1</source>
+        <translation>Close %1</translation>
     </message>
 </context>
 </TS>

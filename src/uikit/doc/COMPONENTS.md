@@ -246,3 +246,16 @@
 | LibraryInfo | 与 QCatUiKit 提供相同版本属性的兼容入口 |
 
 图表的数据格式、坐标和渲染边界见 [图表指南](CHARTS.md)。批量编辑、对话收发、输入提交及百万数据配置见 [Gallery 使用指南](../../../examples/uikit/gallery/README.md)。
+
+
+### 三维图表
+
+`CatChart.scene3D` 及 `CatChartSeries3D` 提供三维柱阵、散点、轨迹和规则曲面，支持极坐标、相机、Blinn–Phong／Phong 光照、深度拾取及行列切片。`CatChartScene3D` 由图表持有，不直接在 QML 中创建。接口、GPU 要求与限制见 [三维图表](CHARTS3D.md)。
+
+## Dock 工作区
+
+| 类型 | 接口与行为 |
+| --- | --- |
+| CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、最低尺寸和 `sizeConstrained`；分割、标签拖拽与键盘排序、浮动／回停 |
+| CatDockPanel | `dockId`、`title`、`content`、最小尺寸、`closable`、`movable`、`floatable`、`closeRequested()`；内容实例保持 |
+| DockController | 面板注册、停靠、关闭／打开、激活、排序和版本化 JSON 布局；见 [Dock 工作区](DOCKING.md) |

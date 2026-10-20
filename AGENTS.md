@@ -15,3 +15,8 @@ application architecture and user changes; Gallery-only helpers are not library 
 For documentation changes, run `python tools/check_docs.py`. Keep repeatable
 validation instructions in `src/uikit/doc/VALIDATION.md` and dated execution
 evidence in `src/uikit/doc/VALIDATION_HISTORY.md`.
+
+
+For maintenance and new components, use [the maintenance map](src/uikit/doc/MAINTENANCE.md)
+to select relevant files and checks. Limit searches to source file types and scoped
+directories; exclude assets and build output from broad text reads.

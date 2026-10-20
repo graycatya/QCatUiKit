@@ -25,6 +25,7 @@ Item {
         sourceComponent: {
             if (GalleryChartCatalog.entryForId(control.componentId)) return chartScene;
             switch (control.componentId) {
+            case "dock-workspace": return dockScene;
             case "attitude-indicator": return attitudeScene;
             case "tilt-control": return tiltScene;
             case "led-preview":
@@ -94,6 +95,7 @@ Item {
             }
         }
     }
+    Component { id: dockScene; GalleryDockPreview {} }
     Component { id: attitudeScene; GalleryAttitudePreview {} }
     Component { id: tiltScene; GalleryTiltPreview {} }
     Component {

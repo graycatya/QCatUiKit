@@ -88,6 +88,15 @@ QtObject {
     ]
     readonly property var components: GalleryChartCatalog.entries.concat([
         {
+            id: "dock-workspace",
+            name: "CatDockWorkspace",
+            category: "layout",
+            title: qsTr("Dock workspace"),
+            description: qsTr("Split, merge and rearrange persistent panels, with versioned layout save and restore."),
+            icon: "tools",
+            code: "CatDockWorkspace {\n    id: workspace\n    width: 720; height: 480\n    CatDockPanel {\n        dockId: \"editor\"; title: qsTr(\"Editor\")\n        closable: false\n        CatTextArea { anchors.fill: parent; text: \"Edit me\" }\n    }\n    CatDockPanel {\n        dockId: \"log\"; title: qsTr(\"Log\")\n        onCloseRequested: workspace.controller.closePanel(dockId)\n        CatLabel { text: \"Ready\" }\n    }\n}"
+        },
+        {
             id: "attitude-indicator",
             name: "CatAttitudeIndicator",
             category: "spatial",

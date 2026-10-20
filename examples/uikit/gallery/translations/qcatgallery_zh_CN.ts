@@ -553,6 +553,16 @@
 <context>
     <name>GalleryCatalog</name>
     <message>
+        <location filename="../GalleryCatalog.qml" line="94"/>
+        <source>Dock workspace</source>
+        <translation>停靠工作区</translation>
+    </message>
+    <message>
+        <location filename="../GalleryCatalog.qml" line="95"/>
+        <source>Split, merge and rearrange persistent panels, with versioned layout save and restore.</source>
+        <translation>分割、合并和重排保留状态的面板，支持版本化布局保存与恢复。</translation>
+    </message>
+    <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
         <source>Collections</source>
         <translation>集合视图</translation>
@@ -8235,6 +8245,153 @@ Keep notes, drafts and everyday details together.</source>
         <location filename="../../../../src/uikit/qcatledeffectregistry.cpp" line="113"/>
         <source>Channel chase</source>
         <translation>通道追逐</translation>
+    </message>
+</context>
+<context>
+    <name>CatDockWorkspace</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="324"/>
+        <source>Float panel</source>
+        <translation>浮动面板</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="330"/>
+        <source>Float tab group</source>
+        <translation>浮动标签组</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="380"/>
+        <source>Close %1</source>
+        <translation>关闭 %1</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="403"/>
+        <source>Resize dock panels</source>
+        <translation>调整停靠面板大小</translation>
+    </message>
+</context>
+<context>
+    <name>GalleryDockPreview</name>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="18"/>
+        <source>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</source>
+        <translation>拖动标签可停靠；右键标签可浮动面板或整个标签组。回停会保留内容并恢复原位置。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="24"/>
+        <source>Save layout</source>
+        <translation>保存布局</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="28"/>
+        <source>Restore layout</source>
+        <translation>恢复布局</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="33"/>
+        <source>Reset layout</source>
+        <translation>重置布局</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="37"/>
+        <source>Show log</source>
+        <translation>显示日志</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="42"/>
+        <source>Float editor</source>
+        <translation>浮动编辑器</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="48"/>
+        <source>Float editor group</source>
+        <translation>浮动编辑器组</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="54"/>
+        <source>Dock all windows back</source>
+        <translation>全部窗口回停</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="63"/>
+        <source>Lock layout</source>
+        <translation>锁定布局</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="81"/>
+        <source>Project</source>
+        <translation>项目</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="86"/>
+        <source>Workspace
+  Components
+  Themes
+  Tests</source>
+        <translation>工作区
+  组件
+  主题
+  测试</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="92"/>
+        <source>Editor</source>
+        <translation>编辑器</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="96"/>
+        <source>Edit this text, then move this panel. Your changes stay here.</source>
+        <translation>编辑这段文字，再移动面板。修改后的内容会保留。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="102"/>
+        <source>Properties</source>
+        <translation>属性</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="107"/>
+        <source>Preview opacity</source>
+        <translation>预览透明度</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="123"/>
+        <source>Log</source>
+        <translation>日志</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="128"/>
+        <source>Workspace ready.
+Layout changes preserve panel instances.</source>
+        <translation>工作区已就绪。
+布局变化会保留面板实例。</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="134"/>
+        <source>Chart preview</source>
+        <translation>图表预览</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="141"/>
+        <source>Signal</source>
+        <translation>信号</translation>
+    </message>
+    <message>
+        <location filename="../GalleryDockPreview.qml" line="179"/>
+        <source>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</source>
+        <translation>横向滚动可访问所有面板，也可合并面板以适应工作区。</translation>
+    </message>
+</context>
+<context>
+    <name>DockFloatingWindow</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="64"/>
+        <source>Dock back</source>
+        <translation>停靠回去</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="105"/>
+        <source>Close %1</source>
+        <translation>关闭 %1</translation>
     </message>
 </context>
 </TS>
