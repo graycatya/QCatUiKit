@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 set_source_files_properties(qml/DockFloatingWindow.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
+set_source_files_properties(qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/SurfaceImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/MouseScrollImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
@@ -65,6 +66,7 @@ qt_add_qml_module(QCatUiKit
         qcatuikitversion.cpp qcatuikitinfo_p.h qcatuikitinfo.cpp
     QML_FILES
         qml/CatDockWorkspace.qml qml/CatDockPanel.qml qml/DockGeometry.js qml/DockFloatingWindow.qml
+        qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml
         qml/CatAttitudeIndicator.qml qml/CatTiltControlPanel.qml
         qml/CatAlert.qml
         qml/CatBusyIndicator.qml

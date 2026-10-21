@@ -10,6 +10,158 @@ class TestDock : public QObject
 {
     Q_OBJECT
   private slots:
+    void workspaceEdgeDock_data()
+    {
+        QTest::addColumn<int>("position");
+        QTest::newRow("left") << int(DockController::Left);
+        QTest::newRow("right") << int(DockController::Right);
+        QTest::newRow("top") << int(DockController::Top);
+        QTest::newRow("bottom") << int(DockController::Bottom);
+    }
+    void workspaceEdgeDock()
+    {
+        QFETCH(int, position);
+        DockController c;
+        for (const auto &id : {"project", "editor", "properties", "log"})
+            QVERIFY(c.registerPanel(id));
+        QVERIFY(c.dock("project", "editor", DockController::Left));
+        QVERIFY(c.dock("properties", "editor", DockController::Right));
+        QVERIFY(c.dock("log", "editor", DockController::Bottom));
+        QVERIFY(c.floatPanel("properties"));
+        const auto remaining = c.layout();
+        QSignalSpy changed(&c, &DockController::layoutChanged);
+        QVERIFY(c.dockToWorkspace("properties", DockController::Position(position)));
+        QCOMPARE(changed.size(), 1);
+        QVERIFY(c.floatingWindows().isEmpty());
+        const auto root = c.layout();
+        const bool before = position == DockController::Left || position == DockController::Top;
+        QCOMPARE(root.value("orientation").toString(),
+                 position == DockController::Left || position == DockController::Right
+                     ? "horizontal"
+                     : "vertical");
+        QCOMPARE(root.value(before ? "first" : "second").toMap().value("tabs").toStringList(),
+                 QStringList{"properties"});
+        QCOMPARE(root.value(before ? "second" : "first").toMap(), remaining);
+        const auto saved = c.saveLayout();
+        QVERIFY(c.restoreLayout(saved));
+        QCOMPARE(c.saveLayout(), saved);
+        QVERIFY(!c.dockToWorkspace("unknown", DockController::Right));
+        QVERIFY(!c.dockToWorkspace("properties", DockController::Center));
+        QCOMPARE(c.saveLayout(), saved);
+        // Moving an existing main-workspace panel must collapse its old branch.
+        QVERIFY(c.dockToWorkspace("editor", DockController::Top));
+        QVERIFY(c.restoreLayout(c.saveLayout()));
+        QCOMPARE(c.panelIds().size(), 4);
+    }
+    void returnBesideSplitSubtree()
+    {
+        DockController c;
+        for (const auto &id : {"editor", "properties", "log"})
+            QVERIFY(c.registerPanel(id));
+        QVERIFY(c.dock("properties", "editor", DockController::Right));
+        QVERIFY(c.dock("log", "editor", DockController::Bottom));
+        QVERIFY(c.setSplitRatio(c.layout().value("id").toString(), 0.7));
+        const auto neighbor = c.layout().value("first").toMap();
+        QVERIFY(c.floatPanel("properties"));
+        QCOMPARE(c.floatingWindows().first().toMap().value("returnNode").toString(),
+                 neighbor.value("id").toString());
+        const auto floating = c.saveLayout();
+        QVERIFY(c.restoreLayout(floating));
+        QVERIFY(c.dockBack(c.floatingWindowForPanel("properties")));
+        QCOMPARE(c.layout().value("first").toMap(), neighbor);
+        QCOMPARE(c.layout().value("ratio").toDouble(), 0.7);
+        QVERIFY(c.floatPanel("properties"));
+        // If the anchored subtree disappears, retain the surviving panel fallback.
+        QVERIFY(c.closePanel("log"));
+        QVERIFY(c.dockBack(c.floatingWindowForPanel("properties")));
+        QCOMPARE(c.layout().value("first").toMap().value("tabs").toStringList(),
+                 QStringList{"editor"});
+        QVERIFY(c.floatPanel("properties"));
+        auto doc = QJsonDocument::fromJson(c.saveLayout().toUtf8()).object();
+        auto windows = doc.value("floating").toArray();
+        auto entry = windows.first().toObject();
+        entry.insert("returnNode", 123);
+        windows[0] = entry;
+        doc.insert("floating", windows);
+        const auto before = c.saveLayout();
+        QVERIFY(!c.restoreLayout(QString::fromUtf8(QJsonDocument(doc).toJson())));
+        QCOMPARE(c.saveLayout(), before);
+        entry.remove("returnNode");
+        windows[0] = entry;
+        doc.insert("floating", windows);
+        QVERIFY(c.restoreLayout(QString::fromUtf8(QJsonDocument(doc).toJson())));
+        QVERIFY(c.dockBack(c.floatingWindowForPanel("properties")));
+    }
+    void workspaceEdgeEmptyAndInvalidRatio()
+    {
+        DockController c;
+        c.registerPanel("a");
+        c.registerPanel("b");
+        QVERIFY(c.floatPanel("a", true));
+        QVERIFY(c.dockToWorkspace("a", DockController::Right));
+        const auto solo = c.saveLayout();
+        QVERIFY(c.dockToWorkspace("a", DockController::Top));
+        QCOMPARE(c.saveLayout(), solo);
+        QVERIFY(!c.dockToWorkspace("b", DockController::Right, 0));
+        QVERIFY(!c.dockToWorkspace("b", DockController::Right, 1));
+        QCOMPARE(c.saveLayout(), solo);
+        QVERIFY(c.dockToWorkspace("b", DockController::Right, 0.7));
+        QCOMPARE(c.layout().value("ratio").toDouble(), 0.7);
+        QVERIFY(c.floatingWindows().isEmpty());
+        QVERIFY(c.closePanel("a"));
+        QVERIFY(c.closePanel("b"));
+        QVERIFY(c.dockToWorkspace("b", DockController::Left));
+        QCOMPARE(c.layout().value("tabs").toStringList(), QStringList{"b"});
+    }
+    void mergeAcrossFloatingWindows()
+    {
+        DockController c;
+        for (const auto &id : {"a", "b", "c", "d"})
+            QVERIFY(c.registerPanel(id));
+        QVERIFY(c.floatPanel("b"));
+        const auto destination = c.floatingWindowForPanel("b");
+        QVERIFY(c.setFloatingGeometry(destination, 100, 100, 600, 400));
+        const auto before = c.saveLayout();
+        QVERIFY(!c.dock("a", "b", DockController::Left));
+        QCOMPARE(c.saveLayout(), before);
+        QVERIFY(c.dock("a", "b"));
+        QCOMPARE(c.floatingWindowForPanel("a"), destination);
+        QVERIFY(c.floatPanel("c"));
+        const auto source = c.floatingWindowForPanel("c");
+        QVERIFY(c.dock("c", "b"));
+        QCOMPARE(c.floatingWindows().size(), 1);
+        QVERIFY(source != destination);
+        const auto record = c.floatingWindows().first().toMap();
+        QCOMPARE(record.value("tabs").toStringList(), (QStringList{"b", "a", "c"}));
+        QCOMPARE(record.value("active").toString(), "c");
+        QCOMPARE(record.value("geometry").toMap().value("width").toDouble(), 600.0);
+        QVERIFY(c.dock("a", "b")); // Same-host application operation preserves uniqueness.
+        QCOMPARE(c.floatingWindows().first().toMap().value("tabs").toStringList(),
+                 (QStringList{"b", "c", "a"}));
+        const auto saved = c.saveLayout();
+        QVERIFY(c.restoreLayout(saved));
+        QCOMPARE(c.saveLayout(), saved);
+        QVERIFY(c.dockBack(destination));
+        QVERIFY(c.floatingWindows().isEmpty());
+        QCOMPARE(c.layout().value("tabs").toStringList().size(), 4);
+    }
+    void returnSinglePanelToEmptyWorkspace()
+    {
+        DockController c;
+        c.registerPanel("a");
+        c.registerPanel("b");
+        QVERIFY(c.floatPanel("a", true));
+        QVERIFY(c.layout().isEmpty());
+        const auto saved = c.saveLayout();
+        QVERIFY(!c.dock("unknown", ""));
+        QVERIFY(!c.dock("a", "", DockController::Left));
+        QCOMPARE(c.saveLayout(), saved);
+        QVERIFY(c.dock("a", ""));
+        QCOMPARE(c.layout().value("tabs").toStringList(), QStringList{"a"});
+        QVERIFY(!c.floatingWindowForPanel("b").isEmpty());
+        QVERIFY(c.dock("b", "a"));
+        QVERIFY(c.floatingWindows().isEmpty());
+    }
     void floatingRoundTrip()
     {
         DockController c;

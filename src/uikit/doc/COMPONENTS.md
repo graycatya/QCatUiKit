@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-当前包含 117 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
+当前包含 119 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
 
 所有带主题的组件默认 `theme: Theme`，`tokens` 为解析后的只读视图。继承 Qt 控件的类型支持相应基类的标准属性、信号、方法及可访问性语义；表格列出本库的主要入口。内部 id、子对象树与 SurfaceImpl 不属于公开接口。
 
@@ -256,6 +256,6 @@
 
 | 类型 | 接口与行为 |
 | --- | --- |
-| CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、最低尺寸和 `sizeConstrained`；分割、标签拖拽与键盘排序、浮动／回停 |
+| CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、最低尺寸和 `sizeConstrained`；标题栏／扁平标签、随动缩略窗、方向指示与预览、跨窗口拖拽、浮动／回停 |
 | CatDockPanel | `dockId`、`title`、`content`、最小尺寸、`closable`、`movable`、`floatable`、`closeRequested()`；内容实例保持 |
 | DockController | 面板注册、停靠、关闭／打开、激活、排序和版本化 JSON 布局；见 [Dock 工作区](DOCKING.md) |

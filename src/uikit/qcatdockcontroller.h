@@ -49,6 +49,8 @@ class QCATUIKIT_EXPORT DockController : public QObject
     Q_INVOKABLE bool setFloatingGeometry(const QString &windowId, double x, double y, double width,
                                          double height);
     Q_INVOKABLE void constrainFloatingWindows();
+    // Split against the whole main workspace, rather than a single tab group.
+    Q_INVOKABLE bool dockToWorkspace(const QString &id, Position position, double ratio = 0.5);
 
   signals:
     void layoutChanged();

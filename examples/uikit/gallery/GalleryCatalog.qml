@@ -92,7 +92,7 @@ QtObject {
             name: "CatDockWorkspace",
             category: "layout",
             title: qsTr("Dock workspace"),
-            description: qsTr("Split, merge and rearrange persistent panels, with versioned layout save and restore."),
+            description: qsTr("Docking title bars, tab groups and direction guides, with cross-window dragging and saved layouts."),
             icon: "tools",
             code: "CatDockWorkspace {\n    id: workspace\n    width: 720; height: 480\n    CatDockPanel {\n        dockId: \"editor\"; title: qsTr(\"Editor\")\n        closable: false\n        CatTextArea { anchors.fill: parent; text: \"Edit me\" }\n    }\n    CatDockPanel {\n        dockId: \"log\"; title: qsTr(\"Log\")\n        onCloseRequested: workspace.controller.closePanel(dockId)\n        CatLabel { text: \"Ready\" }\n    }\n}"
         },

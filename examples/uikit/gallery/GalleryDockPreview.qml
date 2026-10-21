@@ -15,7 +15,7 @@ ColumnLayout {
     CatLabel {
         Layout.fillWidth: true
         wrapMode: Text.Wrap
-        text: qsTr("Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.")
+        text: qsTr("Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.")
     }
     Flow {
         Layout.fillWidth: true

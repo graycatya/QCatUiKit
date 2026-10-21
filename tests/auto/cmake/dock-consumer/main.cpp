@@ -6,6 +6,7 @@
 #include <QGuiApplication>
 #include <QQmlComponent>
 #include <QQmlEngine>
+#include <QQmlExpression>
 #include <memory>
 
 int main(int argc, char **argv)
@@ -19,6 +20,11 @@ int main(int argc, char **argv)
     if (!controller.floatPanel("b") || controller.floatingWindows().size() != 1 ||
         !controller.dockBack(controller.floatingWindowForPanel("b")))
         return 4;
+    if (!controller.dockToWorkspace("b", QCatUiKit::DockController::Right, 0.65) ||
+        controller.layout().value("orientation").toString() != "horizontal" ||
+        controller.layout().value("ratio").toDouble() != 0.65 ||
+        !controller.restoreLayout(controller.saveLayout()))
+        return 5;
     QQmlEngine engine;
     engine.addImportPath(QStringLiteral(QCAT_INSTALLED_QML_PATH));
     QQmlComponent component(&engine);
@@ -41,6 +47,10 @@ CatDockWorkspace {
     auto *state = root->findChild<QCatUiKit::DockController *>();
     if (!state || state->panelIds().size() != 2)
         return 3;
+    QQmlExpression edge(qmlContext(root.get()), root.get(),
+                        QStringLiteral("controller.dockToWorkspace('log', 2, 0.65)"));
+    if (!edge.evaluate().toBool() || edge.hasError())
+        return 6;
     qInfo() << "Installed Dock consumer passed";
     return 0;
 }

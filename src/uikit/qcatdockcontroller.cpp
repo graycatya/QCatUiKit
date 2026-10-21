@@ -107,6 +107,7 @@ struct Floating
     std::unique_ptr<Node> group;
     QRectF geometry{100, 100, 480, 320};
     QString target;
+    QString targetNode;
     DockController::Position position = DockController::Center;
     int index = 0;
     double ratio = 0.5;
@@ -124,6 +125,7 @@ bool captureReturn(Node *n, const QString &key, Floating &f)
     if (n->first->key == key || n->second->key == key)
     {
         const bool first = n->first->key == key;
+        f.targetNode = (first ? n->second.get() : n->first.get())->key;
         f.target = firstGroup(first ? n->second.get() : n->first.get())->active;
         f.position = n->horizontal ? (first ? DockController::Left : DockController::Right)
                                    : (first ? DockController::Top : DockController::Bottom);
@@ -254,12 +256,32 @@ bool DockController::unregisterPanel(const QString &id)
 }
 bool DockController::dock(const QString &id, const QString &target, Position position)
 {
+    if (target.isEmpty() && !d->root && position == Center && d->find(id))
+    {
+        d->remove(id);
+        d->root = std::make_unique<Node>();
+        d->root->tabs.append(id);
+        d->root->active = id;
+        emit layoutChanged();
+        return true;
+    }
     if (!d->registered.contains(id) || !d->registered.contains(target) || id == target ||
         position < Center || position > Bottom)
         return reject(QStringLiteral("Invalid dock operation"));
-    auto *dest = findPanel(d->root.get(), target);
+    auto *dest = d->find(target);
     if (!dest)
-        return reject(QStringLiteral("Target panel must be docked"));
+        return reject(QStringLiteral("Target panel must be open"));
+    if (!floatingWindowForPanel(target).isEmpty())
+    {
+        if (position != Center)
+            return reject(QStringLiteral("Floating targets support tab merging only"));
+        d->remove(id);
+        dest = d->find(target);
+        dest->tabs.append(id);
+        dest->active = id;
+        emit layoutChanged();
+        return true;
+    }
     const QString key = dest->key;
     // Target is a different panel, so its group survives removal.
     d->remove(id);
@@ -280,6 +302,32 @@ bool DockController::dock(const QString &id, const QString &target, Position pos
         split->first = before ? std::move(panel) : std::move(*slot);
         split->second = before ? std::move(*slot) : std::move(panel);
         *slot = std::move(split);
+    }
+    emit layoutChanged();
+    return true;
+}
+bool DockController::dockToWorkspace(const QString &id, Position position, double ratio)
+{
+    if (!d->registered.contains(id) || position < Left || position > Bottom ||
+        !std::isfinite(ratio) || ratio <= 0 || ratio >= 1)
+        return reject(QStringLiteral("Invalid workspace edge dock operation"));
+    if (d->root && !d->root->split() && d->root->tabs == QStringList{id})
+        return true;
+    d->remove(id);
+    auto panel = std::make_unique<Node>();
+    panel->tabs.append(id);
+    panel->active = id;
+    if (!d->root)
+        d->root = std::move(panel);
+    else
+    {
+        auto split = std::make_unique<Node>();
+        split->horizontal = position == Left || position == Right;
+        split->ratio = ratio;
+        const bool before = position == Left || position == Top;
+        split->first = before ? std::move(panel) : std::move(d->root);
+        split->second = before ? std::move(d->root) : std::move(panel);
+        d->root = std::move(split);
     }
     emit layoutChanged();
     return true;
@@ -356,6 +404,8 @@ QVariantList DockController::floatingWindows() const
                                          {"width", f.geometry.width()},
                                          {"height", f.geometry.height()}});
         v.insert("returnTarget", f.target);
+        if (!f.targetNode.isEmpty())
+            v.insert("returnNode", f.targetNode);
         v.insert("returnPosition", int(f.position));
         v.insert("returnIndex", f.index);
         v.insert("returnRatio", f.ratio);
@@ -401,7 +451,8 @@ bool DockController::dockBack(const QString &windowId)
         return reject(QStringLiteral("Unknown floating window"));
     Floating f = std::move(*it);
     d->floating.erase(it);
-    Node *target = findPanel(d->root.get(), f.target);
+    auto *anchor = f.position != Center ? findSlot(d->root, f.targetNode) : nullptr;
+    Node *target = anchor ? anchor->get() : findPanel(d->root.get(), f.target);
     if (!target)
     {
         target = firstGroup(d->root.get());
@@ -592,6 +643,9 @@ bool DockController::restoreLayout(const QString &json)
             if (!validGeometry(f.geometry) || !v.value("returnTarget").isString())
                 valid = false;
             f.target = v.value("returnTarget").toString();
+            if (v.contains("returnNode") && !v.value("returnNode").isString())
+                valid = false;
+            f.targetNode = v.value("returnNode").toString();
             const double position = v.value("returnPosition").toDouble(-1);
             const double index = v.value("returnIndex").toDouble(-1);
             f.ratio = v.value("returnRatio").toDouble(-1);

@@ -67,6 +67,33 @@ TestCase {
         w.beginDrag("a");
         verify(!w.dragging);
     }
+    function test_directionGuides_data() {
+        return [{ tag: "center", x: 400, y: 300, position: DockController.Center },
+                { tag: "left", x: 364, y: 300, position: DockController.Left },
+                { tag: "right", x: 436, y: 300, position: DockController.Right },
+                { tag: "top", x: 400, y: 264, position: DockController.Top },
+                { tag: "bottom", x: 400, y: 336, position: DockController.Bottom }];
+    }
+    function test_directionGuides(data) {
+        const w = createTemporaryObject(sample, test);
+        w.beginDrag("a");
+        w.updateDrag(data.x, data.y);
+        compare(w.dropTarget.position, data.position);
+        const guide = findChild(w, "dockDropOverlay");
+        verify(guide.visible);
+        compare(guide.position, data.position);
+        w.finishDrag();
+        compare(w.geometry.groups.length, data.position === DockController.Center ? 1 : 2);
+        if (data.position === DockController.Left)
+            verify(w.registry.a.x < w.registry.b.x);
+        if (data.position === DockController.Right)
+            verify(w.registry.a.x > w.registry.b.x);
+        if (data.position === DockController.Top)
+            verify(w.registry.a.y < w.registry.b.y);
+        if (data.position === DockController.Bottom)
+            verify(w.registry.a.y > w.registry.b.y);
+        verify(!guide.visible);
+    }
     function test_pointerDragAndEscape() {
         const w = createTemporaryObject(sample, test);
         verify(waitForRendering(w));
@@ -97,5 +124,30 @@ TestCase {
         verify(w.registry.b.width >= w.registry.b.minimumDockWidth);
         w.registry.a.minimumDockWidth = 240;
         verify(w.minimumDockWidth >= 368);
+    }
+    function test_splitterMouseExitAndKeyboardFocus() {
+        const w = createTemporaryObject(sample, test);
+        verify(w.controller.dock("a", "b", DockController.Left));
+        verify(waitForRendering(w));
+        const handle = findChild(w, "dockSplitter_0");
+        verify(handle !== null);
+        mouseMove(handle, handle.width / 2, 100);
+        compare(handle.background.color, Theme.tokens.primary);
+        mouseClick(handle, handle.width / 2, 100);
+        verify(handle.activeFocus);
+        mouseMove(w, 20, 100);
+        verify(!handle.keyboardCue);
+        tryCompare(handle.background, "color", Theme.tokens.background);
+        w.forceActiveFocus();
+        handle.forceActiveFocus(Qt.TabFocusReason);
+        verify(handle.keyboardCue);
+        compare(handle.background.color, Theme.tokens.primary);
+        const before = w.registry.a.width;
+        keyClick(Qt.Key_Right);
+        verify(w.registry.a.width > before);
+        mouseClick(handle, handle.width / 2, 100);
+        mouseMove(w, 30, 140);
+        verify(handle.pointerFocus);
+        tryCompare(handle.background, "color", Theme.tokens.background);
     }
 }

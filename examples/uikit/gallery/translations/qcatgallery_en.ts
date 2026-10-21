@@ -559,8 +559,8 @@
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="95"/>
-        <source>Split, merge and rearrange persistent panels, with versioned layout save and restore.</source>
-        <translation>Split, merge and rearrange persistent panels, with versioned layout save and restore.</translation>
+        <source>Docking title bars, tab groups and direction guides, with cross-window dragging and saved layouts.</source>
+        <translation>Docking title bars, tab groups and direction guides, with cross-window dragging and saved layouts.</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
@@ -8274,8 +8274,8 @@ Keep notes, drafts and everyday details together.</translation>
     <name>GalleryDockPreview</name>
     <message>
         <location filename="../GalleryDockPreview.qml" line="18"/>
-        <source>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</source>
-        <translation>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</translation>
+        <source>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</source>
+        <translation>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</translation>
     </message>
     <message>
         <location filename="../GalleryDockPreview.qml" line="24"/>

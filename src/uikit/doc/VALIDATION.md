@@ -119,6 +119,20 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 ## 视觉检查
 
+Dock 浮动拖回专项可直接运行构建目录的 `tst_qml`，传入
+`-input tests/auto/qml/data/tst_dockfloating.qml -import build/release/qml`，并设置上述离屏软件环境。
+覆盖中央合并、四方向分割、预览取消、宿主遮挡、鼠标拖出浮动和鼠标／Esc 操作。原生窗口还应手工验证：
+跨窗口专项还覆盖主工作区→已有浮动组、浮动组→其他浮动组、目标预览／Esc、源空宿主销毁、空主工作区拖回、权限及保存恢复。
+随动缩略窗回归覆盖窗口间空白区域连续移动、标题与实际内容图像加载、输入穿透与不接收焦点标志、目标标签栏高亮，以及 Esc／释放／销毁期间的清理；入口仍为 `tst_dockfloating.qml`。原生平台测试之外，多屏 DPI 与 Wayland 的预览坐标／输入抓取需实机验收。
+浮动目标当前仅合并标签；API 对该目标的四方向分割请求必须原子拒绝。将目标窗口置于源窗口旁，用同一组鼠标事件在原生平台重跑，检查取消后内容和窗口几何不变。
+将主工作区标签拖出边界并释放，检查窗口出现在释放点附近，Esc 和 `floatable: false` 阻止浮动；
+Gallery 的 `tests/auto/gallery/data/tst_dock.qml` 还必须覆盖完整 `Main` 页面，检查外层滚动容器不抢占标签拖动，拖出时页面滚动位置不变。
+标题／标签外观改动后，验证标题栏浮动按钮、标题文字拖出、五方向指示格的命中与实际分割位置一致；同时检查双行标题计入最低高度，以及浮动目标仅提示中央合并。
+工作区外边缘回归使用完整 Gallery Main：浮动属性面板，再从应用内标签拖到左右边缘，检查属性列贯穿全高、日志不再横跨其下；上下边缘检查贯穿全宽。同时检查 Esc、保存恢复与回停按钮保留编辑器／日志子树。入口为 Gallery `tst_dock.qml` 的 `test_floatPropertiesBackToWorkspaceEdge` 和 `test_dockBackPreservesPropertiesFullHeight`。
+分隔条回归覆盖鼠标点击后移出恢复颜色、键盘聚焦提示、方向键调整，以及键盘操作后再次鼠标点击／移出的状态切换，入口为 `tst_dock.qml` 的 `test_splitterMouseExitAndKeyboardFocus`。
+将浮动窗口移至主窗口旁，拖动浮动标签到主工作区中央和四边，检查预览、释放提交、Esc 取消，
+并在不同 DPI 的显示器之间重复；Wayland 的全局坐标和窗口定位能力需单独验收。
+
 检查与改动相关的亮暗模式、三种密度、宽窄布局、焦点、禁用、长文本及空数据。可用 Gallery 保存当前窗口：
 
 ```sh
@@ -149,6 +163,17 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 按实际安装布局替换 lib。Windows 将项目与 Qt 的 bin 目录加入 PATH。版本消费者的构建和运行参数见 [版本管理](VERSIONING.md)，已编译程序的库替换检查见 [ABI](ABI.md)。
 
 安装消费者不属于常规 CTest 组；更改导出头、依赖、安装路径或 ABI 时单独运行，并记录结果。
+
+Dock 公开 API 的独立消费者使用同一安装流程：
+
+```sh
+cmake --install build/release --prefix stage
+cmake -S tests/auto/cmake/dock-consumer -B build/dock-consumer -GNinja \
+  -DCMAKE_PREFIX_PATH="/absolute/stage;/path/to/Qt/6.x" -DCMAKE_BUILD_TYPE=Release
+cmake --build build/dock-consumer
+```
+
+按上面的平台说明配置运行时 DLL／共享库路径，运行 `build/dock-consumer/dock-consumer`（Windows 为 `.exe`）。消费者验证三种公开头、`dockToWorkspace` 的 C++／QML 调用及安装后的 QML 模块；不依赖源码导入路径。
 
 ## 文档与示例检查
 

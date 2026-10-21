@@ -559,8 +559,8 @@
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="95"/>
-        <source>Split, merge and rearrange persistent panels, with versioned layout save and restore.</source>
-        <translation>分割、合并和重排保留状态的面板，支持版本化布局保存与恢复。</translation>
+        <source>Docking title bars, tab groups and direction guides, with cross-window dragging and saved layouts.</source>
+        <translation>停靠标题栏、标签组和方向指示器，支持跨窗口拖动与布局保存。</translation>
     </message>
     <message>
         <location filename="../GalleryCatalog.qml" line="50"/>
@@ -8274,8 +8274,8 @@ Keep notes, drafts and everyday details together.</source>
     <name>GalleryDockPreview</name>
     <message>
         <location filename="../GalleryDockPreview.qml" line="18"/>
-        <source>Drag tabs to dock, or right-click a tab to float it or its group. Dock back preserves content and restores its previous location.</source>
-        <translation>拖动标签可停靠；右键标签可浮动面板或整个标签组。回停会保留内容并恢复原位置。</translation>
+        <source>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</source>
+        <translation>跨窗口拖动标签时显示随动预览；外边缘指示器可停靠为整列或整行，中央十字只拆分当前组。按 Esc 取消。</translation>
     </message>
     <message>
         <location filename="../GalleryDockPreview.qml" line="24"/>

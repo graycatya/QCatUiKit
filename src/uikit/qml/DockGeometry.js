@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 .pragma library
 
+// DockController positions: Center, Left, Right, Top, Bottom.
+function guidePosition(x, y, width, height, controlHeight) {
+    const unit = Math.min(controlHeight, Math.max(18, Math.min(width, height) / 4))
+    const cx = width / 2, cy = height / 2, step = unit + 4
+    const offsets = [[0, 0], [-step, 0], [step, 0], [0, -step], [0, step]]
+    for (let i = 0; i < offsets.length; i++)
+        if (Math.abs(x - cx - offsets[i][0]) <= unit / 2 && Math.abs(y - cy - offsets[i][1]) <= unit / 2)
+            return i
+    return -1
+}
+
 function measure(node, panels, header, gap) {
     if (!node || !node.kind) return { width: 0, height: 0 }
     if (node.kind === "tabs") {

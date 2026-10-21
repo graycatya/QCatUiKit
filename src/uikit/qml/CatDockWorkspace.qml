@@ -19,14 +19,24 @@ Item {
     readonly property bool sizeConstrained: width < minimumDockWidth || height < minimumDockHeight
     readonly property bool dragging: dragId.length > 0
     property bool layoutLocked: false
-    readonly property real headerHeight: tokens.controlHeight
+    readonly property real headerHeight: tokens.controlHeight * 2
     readonly property var geometry: Geometry.calculate(dockState.layout, registry, width, height, headerHeight, 8)
     property var registry: Object.create(null)
     property var floatingHosts: Object.create(null)
+    property var floatingOrder: []
     property var focusItems: Object.create(null)
     property bool updatingWindows: false
     property string dragId: ""
     property var dropTarget: null
+    property var floatDropPoint: null
+    property point dragPoint
+    property point dragGlobalPoint
+    property bool hasDragPoint: false
+    property var dragPreviewHost: null
+    property var dragImageResult: null
+    property int dragGeneration: 0
+    property Item headerFocusItem: null
+    property string headerFocusId: ""
     property bool ready: false
     implicitWidth: 720
     implicitHeight: 480
@@ -139,6 +149,7 @@ Item {
                     workspace: control
                 });
                 floatingHosts[record.id] = host;
+                floatingOrder = floatingOrder.concat([record.id]);
             }
             host.applyRecord(record);
             placeFloatingPanels(record, host.panelHost);
@@ -154,6 +165,7 @@ Item {
             }
             host.destroy();
             delete floatingHosts[id];
+            floatingOrder = floatingOrder.filter(key => key !== id);
         }
         updatingWindows = false;
     }
@@ -189,17 +201,87 @@ Item {
             if (registry[key])
                 registry[key].closeRequested();
     }
-    function beginDrag(id) {
+    function raiseFloatingHost(id) {
+        if (floatingOrder.indexOf(id) >= 0)
+            floatingOrder = floatingOrder.filter(key => key !== id).concat([id]);
+    }
+    function beginDrag(id, focusWorkspace = true) {
         if (layoutLocked || !registry[id] || !registry[id].movable)
             return;
         dragId = id;
+        hasDragPoint = false;
+        dragImageResult = null;
+        const generation = ++dragGeneration;
+        if (!dragPreviewHost)
+            dragPreviewHost = dragPreviewFactory.createObject(control, { workspace: control });
+        const panel = registry[id];
+        if (panel.visible && panel.width > 0 && panel.height > 0) {
+            const scale = Math.min(1, 480 / panel.width, 320 / panel.height);
+            panel.grabToImage(result => {
+                if (ready && dragId === id && dragGeneration === generation)
+                    dragImageResult = result;
+            }, Qt.size(Math.max(1, Math.round(panel.width * scale)), Math.max(1, Math.round(panel.height * scale))));
+        }
         dropTarget = null;
-        forceActiveFocus();
+        floatDropPoint = null;
+        if (focusWorkspace)
+            forceActiveFocus();
+    }
+    function updateGlobalDrag(x, y) {
+        if (!dragId)
+            return;
+        dragGlobalPoint = Qt.point(x, y);
+        hasDragPoint = true;
+        dragPoint = mapFromGlobal(x, y);
+        dropTarget = null;
+        floatDropPoint = null;
+        if (!visible || !enabled || !Window.window || !Window.window.visible || Window.window.visibility === Window.Minimized)
+            return;
+        // Check native hosts before the main workspace, in activation order.
+        for (const key of floatingOrder.slice().reverse()) {
+            const host = floatingHosts[key];
+            if (host.visible && host.visibility !== Window.Minimized && x >= host.x && y >= host.y && x < host.x + host.width && y < host.y + host.height) {
+                const target = host.record.tabs.find(id => id !== dragId);
+                const panel = registry[dragId];
+                if (dragId && target && panel && panel.floatable && dockState.floatingWindowForPanel(dragId) !== key)
+                    dropTarget = { target: target, position: DockController.Center, windowId: key };
+                return;
+            }
+        }
+        const point = mapFromGlobal(x, y);
+        updateDrag(point.x, point.y);
     }
     function updateDrag(x, y) {
         dropTarget = null;
-        if (!dragId || x < 0 || y < 0 || x >= width || y >= height)
+        floatDropPoint = null;
+        if (!dragId)
             return;
+        if (x < 0 || y < 0 || x >= width || y >= height) {
+            const panel = registry[dragId];
+            if (panel && panel.floatable && !dockState.floatingWindowForPanel(dragId))
+                floatDropPoint = mapToGlobal(x, y);
+            return;
+        }
+        if (geometry.groups.length === 0) {
+            dropTarget = { target: "", position: DockController.Center, x: 0, y: 0, width: width, height: height };
+            return;
+        }
+        const band = Math.min(tokens.controlHeight + 16, Math.min(width, height) / 4);
+        const edges = [ { position: DockController.Left, distance: x },
+                        { position: DockController.Right, distance: width - x },
+                        { position: DockController.Top, distance: y },
+                        { position: DockController.Bottom, distance: height - y } ];
+        const edge = edges.reduce((nearest, candidate) => candidate.distance < nearest.distance ? candidate : nearest);
+        if (edge.distance < band && geometry.groups.some(group => group.tabs.some(id => id !== dragId))) {
+            const panel = registry[dragId];
+            const horizontal = edge.position === DockController.Left || edge.position === DockController.Right;
+            const extent = panel ? horizontal ? panel.width : panel.height + headerHeight : 0;
+            const fraction = extent > 0 ? Math.max(0.15, Math.min(0.5, extent / (horizontal ? width : height))) : 0.25;
+            const before = edge.position === DockController.Left || edge.position === DockController.Top;
+            dropTarget = { target: "", position: edge.position, workspaceEdge: true,
+                           ratio: before ? fraction : 1 - fraction, x: 0, y: 0, width: width, height: height };
+            return;
+        }
         for (const g of geometry.groups) {
             if (x < g.x || y < g.y || x >= g.x + g.width || y >= g.y + g.height)
                 continue;
@@ -213,6 +295,9 @@ Item {
                 edge = DockController.Top;
             else if (ny > 0.77)
                 edge = DockController.Bottom;
+            const guide = Geometry.guidePosition(x - g.x, y - g.y, g.width, g.height, tokens.controlHeight);
+            if (guide >= 0)
+                edge = guide;
             const target = g.tabs.find(id => id !== dragId);
             if (!target)
                 return;
@@ -228,18 +313,54 @@ Item {
         }
     }
     function finishDrag() {
-        const id = dragId, target = dropTarget;
+        const id = dragId, target = dropTarget, floatPoint = floatDropPoint;
+        const open = dockState.floatingWindowForPanel(id) !== "" || geometry.groups.some(group => group.tabs.indexOf(id) >= 0);
         cancelDrag();
-        if (id && target && !layoutLocked)
-            dockState.dock(id, target.target, target.position);
+        if (!open)
+            return;
+        if (id && target && !layoutLocked && registry[id] && registry[id].movable
+                && (!target.windowId || (registry[id].floatable && dockState.floatingWindowForPanel(target.target) === target.windowId))) {
+            if (target.workspaceEdge)
+                dockState.dockToWorkspace(id, target.position, target.ratio);
+            else
+                dockState.dock(id, target.target, target.position);
+        }
+        else if (id && floatPoint && floatPanel(id)) {
+            const windowId = dockState.floatingWindowForPanel(id);
+            const record = dockState.floatingWindows.find(window => window.id === windowId);
+            dockState.setFloatingGeometry(windowId, floatPoint.x - 40, floatPoint.y - headerHeight / 2,
+                                          record.geometry.width, record.geometry.height);
+            dockState.constrainFloatingWindows();
+        }
     }
     function cancelDrag() {
+        ++dragGeneration;
         dragId = "";
+        hasDragPoint = false;
+        dragImageResult = null;
         dropTarget = null;
+        floatDropPoint = null;
+    }
+    function panelHasFocus(panel) {
+        if (panel && headerFocusItem && headerFocusItem.activeFocus && headerFocusId === panel.dockId)
+            return true;
+        let item = Window.window ? Window.window.activeFocusItem : null;
+        while (item) {
+            if (item === panel)
+                return true;
+            item = item.parent;
+        }
+        return false;
     }
     onGeometryChanged: placePanels()
     onLayoutLockedChanged: if (layoutLocked)
         cancelDrag()
+    Shortcut {
+        sequence: "Escape"
+        context: Qt.ApplicationShortcut
+        enabled: control.dragging
+        onActivated: control.cancelDrag()
+    }
     Keys.onEscapePressed: event => {
         if (dragging) {
             cancelDrag();
@@ -252,6 +373,8 @@ Item {
     }
     Component.onDestruction: {
         ready = false;
+        if (dragPreviewHost)
+            dragPreviewHost.destroy();
         for (const id of Object.keys(registry)) {
             if (registry[id]) {
                 registry[id]._dockWorkspace = null;
@@ -265,6 +388,10 @@ Item {
         id: floatingFactory
         DockFloatingWindow {}
     }
+    Component {
+        id: dragPreviewFactory
+        DockDragPreview {}
+    }
     DockController {
         id: dockState
         onLayoutChanged: Qt.callLater(control.updateWindows)
@@ -277,24 +404,90 @@ Item {
     Repeater {
         model: control.geometry.groups.length
         delegate: Rectangle {
-            id: groupView
             required property int index
             readonly property var group: control.geometry.groups[index]
             x: group ? group.x : 0
             y: group ? group.y : 0
             width: group ? group.width : 0
+            height: group ? group.height : 0
+            color: "transparent"
+            border.color: group && control.panelHasFocus(control.registry[group.active]) ? control.tokens.primary : control.tokens.border
+        }
+    }
+    Repeater {
+        model: control.geometry.groups.length
+        delegate: Rectangle {
+            id: groupView
+            required property int index
+            readonly property var group: control.geometry.groups[index]
+            readonly property var activePanel: group ? control.registry[group.active] : null
+            x: group ? group.x : 0
+            y: group ? group.y : 0
+            width: group ? group.width : 0
             height: control.headerHeight
-            color: control.tokens.surfaceHover
+            color: control.tokens.background
             clip: true
+            Rectangle {
+                id: titleBar
+                width: parent.width
+                height: control.tokens.controlHeight
+                color: groupView.activePanel && control.panelHasFocus(groupView.activePanel) ? control.tokens.surfaceHover : control.tokens.surface
+                Rectangle { width: parent.width; height: 1; color: control.tokens.border }
+                Text {
+                    id: groupTitle
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.right: titleTools.left
+                    height: parent.height
+                    text: groupView.activePanel ? groupView.activePanel.title : ""
+                    font.pixelSize: control.tokens.fontSize
+                    font.weight: Font.DemiBold
+                    color: control.tokens.text
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    DockDragArea {
+                        workspace: control
+                        panelId: groupView.group ? groupView.group.active : ""
+                        focusItem: groupTitle
+                    }
+                }
+                Row {
+                    id: titleTools
+                    anchors.right: parent.right
+                    height: parent.height
+                    DockTabButton {
+                        objectName: "dockFloat_" + (groupView.group ? groupView.group.active : "")
+                        theme: control.theme
+                        height: parent.height
+                        tool: true
+                        symbol: 1
+                        text: qsTr("Float panel")
+                        enabled: !control.layoutLocked && !!groupView.activePanel && groupView.activePanel.movable && groupView.activePanel.floatable
+                        onClicked: control.floatPanel(groupView.group.active)
+                    }
+                    DockTabButton {
+                        theme: control.theme
+                        height: parent.height
+                        tool: true
+                        symbol: 2
+                        text: qsTr("Close %1").arg(groupView.activePanel ? groupView.activePanel.title : "")
+                        visible: groupView.activePanel ? groupView.activePanel.closable : false
+                        onClicked: if (groupView.activePanel)
+                            groupView.activePanel.closeRequested()
+                    }
+                }
+            }
             B.ScrollView {
-                anchors.fill: parent
+                anchors.top: titleBar.bottom
+                width: parent.width
+                height: control.tokens.controlHeight
                 contentWidth: tabRow.width
                 contentHeight: height
                 B.ScrollBar.vertical.policy: B.ScrollBar.AlwaysOff
                 B.ScrollBar.horizontal.policy: B.ScrollBar.AsNeeded
                 Row {
                     id: tabRow
-                    height: groupView.height
+                    height: control.tokens.controlHeight
                     Repeater {
                         model: groupView.group ? groupView.group.tabs.length : 0
                         delegate: Row {
@@ -302,8 +495,9 @@ Item {
                             required property int index
                             readonly property string panelId: groupView.group.tabs[index] || ""
                             readonly property CatDockPanel panel: control.registry[panelId] || null
-                            height: groupView.height
-                            CatButton {
+                            opacity: control.dragging && control.dragId === panelId ? 0.45 : 1
+                            height: control.tokens.controlHeight
+                            DockTabButton {
                                 id: tabButton
                                 theme: control.theme
                                 height: parent.height
@@ -333,48 +527,20 @@ Item {
                                     }
                                 }
                                 Keys.onMenuPressed: tabMenu.popup()
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                    property point pressPoint
-                                    property bool moved: false
-                                    onPressed: mouse => {
-                                        if (mouse.button === Qt.RightButton) {
-                                            tabMenu.popup();
-                                            return;
-                                        }
-                                        pressPoint = Qt.point(mouse.x, mouse.y);
-                                        moved = false;
-                                        tabButton.forceActiveFocus();
-                                    }
-                                    onPositionChanged: mouse => {
-                                        if (!pressed || !(pressedButtons & Qt.LeftButton))
-                                            return;
-                                        if (!moved && Math.hypot(mouse.x - pressPoint.x, mouse.y - pressPoint.y) >= control.dragStyleHints.startDragDistance) {
-                                            moved = true;
-                                            control.beginDrag(tabCell.panelId);
-                                        }
-                                        if (control.dragging) {
-                                            const p = mapToItem(control, mouse.x, mouse.y);
-                                            control.updateDrag(p.x, p.y);
-                                        }
-                                    }
-                                    onReleased: mouse => {
-                                        if (mouse.button !== Qt.LeftButton)
-                                            return;
-                                        if (moved)
-                                            control.finishDrag();
-                                        else
-                                            dockState.activatePanel(tabCell.panelId);
-                                    }
-                                    onCanceled: control.cancelDrag()
+                                DockDragArea {
+                                    workspace: control
+                                    panelId: tabCell.panelId
+                                    focusItem: tabButton
+                                    contextMenu: tabMenu
                                 }
                             }
-                            CatButton {
+                            DockTabButton {
                                 theme: control.theme
                                 height: parent.height
                                 implicitWidth: control.tokens.controlHeight
                                 padding: 0
+                                tool: true
+                                symbol: 2
                                 visible: tabCell.panel ? tabCell.panel.closable : false
                                 text: "×"
                                 Accessible.name: qsTr("Close %1").arg(tabCell.panel ? tabCell.panel.title : "")
@@ -389,19 +555,36 @@ Item {
     }
     Repeater {
         model: control.geometry.handles.length
-        delegate: Rectangle {
+        delegate: B.Control {
             id: handle
+            objectName: "dockSplitter_" + index
             required property int index
+            property bool pointerFocus: false
+            readonly property bool keyboardCue: activeFocus && !pointerFocus
+            onActiveFocusChanged: if (!activeFocus)
+                pointerFocus = false
             readonly property var splitData: control.geometry.handles[index]
             x: splitData ? splitData.x : 0
             y: splitData ? splitData.y : 0
             width: splitData ? splitData.width : 0
             height: splitData ? splitData.height : 0
-            color: resizeArea.pressed ? control.tokens.primary : control.tokens.border
+            padding: 0
+            hoverEnabled: true
+            background: Rectangle {
+                color: resizeArea.pressed || handle.hovered || handle.keyboardCue ? control.tokens.primary : control.tokens.background
+            }
             activeFocusOnTab: !control.layoutLocked
             Accessible.role: Accessible.Slider
             Accessible.name: qsTr("Resize dock panels")
+            Rectangle {
+                anchors.centerIn: parent
+                width: handle.splitData && handle.splitData.horizontal ? 2 : Math.min(24, parent.width)
+                height: handle.splitData && handle.splitData.horizontal ? Math.min(24, parent.height) : 2
+                radius: 1
+                color: handle.keyboardCue || resizeArea.pressed || handle.hovered ? control.tokens.onPrimary : control.tokens.border
+            }
             function adjust(delta) {
+                pointerFocus = false;
                 if (!control.layoutLocked)
                     dockState.setSplitRatio(splitData.id, Math.max(splitData.minRatio, Math.min(splitData.maxRatio, splitData.ratio + delta)));
             }
@@ -414,7 +597,11 @@ Item {
                 anchors.fill: parent
                 enabled: !control.layoutLocked
                 cursorShape: handle.splitData && handle.splitData.horizontal ? Qt.SplitHCursor : Qt.SplitVCursor
-                onPressed: handle.forceActiveFocus()
+                onPressed: {
+                    handle.forceActiveFocus(Qt.MouseFocusReason);
+                    // Refocusing an already focused control need not change Qt's focus reason.
+                    handle.pointerFocus = true;
+                }
                 onPositionChanged: mouse => {
                     if (!pressed || !handle.splitData || handle.splitData.available <= 0)
                         return;
@@ -427,16 +614,30 @@ Item {
             }
         }
     }
-    Rectangle {
-        readonly property var target: control.dropTarget
-        visible: control.dragging && target !== null
-        x: target ? target.x + (target.position === DockController.Right ? target.width / 2 : 0) : 0
-        y: target ? target.y + (target.position === DockController.Bottom ? target.height / 2 : 0) : 0
-        width: target ? target.width / (target.position === DockController.Left || target.position === DockController.Right ? 2 : 1) : 0
-        height: target ? target.height / (target.position === DockController.Top || target.position === DockController.Bottom ? 2 : 1) : 0
-        color: control.tokens.primary
-        opacity: 0.3
-        border.width: 2
-        border.color: control.tokens.text
+    DockDropOverlay {
+        objectName: "dockDropOverlay"
+        readonly property var target: control.dropTarget && !control.dropTarget.windowId ? control.dropTarget : null
+        visible: control.dragging && target !== null && !target.windowId
+        x: target ? target.x : 0
+        y: target ? target.y : 0
+        width: target ? target.width : 0
+        height: target ? target.height : 0
+        position: target ? target.position : DockController.Center
+        outer: target ? !!target.workspaceEdge : false
+        ratio: target && target.workspaceEdge ? target.ratio : 0.5
+        guidesVisible: !outer
+        tokens: control.tokens
+    }
+    DockDropOverlay {
+        objectName: "dockWorkspaceEdgeGuides"
+        anchors.fill: parent
+        visible: control.dragging && control.hasDragPoint && control.dragPoint.x >= 0 && control.dragPoint.y >= 0
+                 && control.dragPoint.x < control.width && control.dragPoint.y < control.height
+                 && control.geometry.groups.some(group => group.tabs.some(id => id !== control.dragId))
+        tokens: control.tokens
+        outer: true
+        guidesOnly: true
+        allOuterGuides: true
+        position: control.dropTarget && control.dropTarget.workspaceEdge ? control.dropTarget.position : DockController.Center
     }
 }

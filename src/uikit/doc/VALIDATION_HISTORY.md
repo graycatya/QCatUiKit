@@ -4,6 +4,103 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## Dock 外边缘整列停靠与子树回停（2026-10-21）
+
+用户复现：属性面板浮动后拖回编辑器右方向，属性只占编辑器高度，日志仍横跨其下。原因是命中和控制器均只处理标签组目标。
+新增 `dockToWorkspace(id, position, ratio = 0.5)`，四周外边缘指示器相对于整棵主布局分割；组内十字继续只拆分标签组。
+交互参考源面板尺寸设置比例，右侧形成完整高列，日志保留在左侧子布局内。
+
+另修复回停定位：浮动时保存可选 `returnNode` 子树锚点，回停优先恢复到整个相邻子树旁，锚点消失时回退到原面板。v2 旧布局无此字段仍可读，字段类型错误则原子拒绝；未增加布局版本。
+
+- Windows 11、Qt 6.12.0、MSVC 2022 Release，`build/dock-validation` 构建及库／Gallery qmllint 通过。
+- 控制器专项 16/16：四外边缘、根节点为空、唯一面板原地操作、主布局源的移除与折叠、比例／无效请求、保存恢复、子树锚点缺失与旧 v2 兼容。
+- 完整 Gallery Dock Windows 原生窗口 15/15：属性拖到四周外边缘、Esc 取消、左右整列／上下整行的几何、保存恢复，以及回停保留原宽高／位置。
+- 工作区 12/12、浮动 25/25 通过。截图复核右侧预览覆盖全高，释放后属性为整列，日志右边界止于该列左侧；本机临时加载 Segoe UI 进行截图。
+- 全库 CTest 15/17；失败仍为此前 LED 和下拉框宽度两组。全套 QML offscreen 383 通过、3 失败，仍为三个 `SelectionControls::test_compactComboDisplayFits` 密度用例；文档与差异空白检查通过。
+- 安装后独立 Dock 消费者编译／运行通过，覆盖新 API 的 C++ 和 QML 调用及三种公开头。原 Release 的 1384 个导出符号全部保留，候选增加 1 个；从无 DLL 的目录运行原 Release 旧测试 EXE，候选 bin 置于 PATH 首位，10/10 通过。公开对象布局和已有函数签名保持不变。
+- 日志：`build/dock-outer-controller.txt`、`build/dock-outer-gallery.txt`、`build/dock-outer-floating.txt`、`build/dock-outer-workspace.txt`、`build/dock-outer-consumer.txt`、`build/dock-outer-old-abi.txt`；截图 `build/dock-outer-preview-right.png`、`build/dock-outer-result-right.png`。
+
+用户的常用 Release Gallery 仍在运行并占用 DLL，未终止程序；修复已在独立构建目录完成，常用目录需关闭 Gallery 后重新构建。原生测试使用 QtTest 合成鼠标及 software 渲染，不替代多屏 DPI／Wayland 验收。
+
+## Dock 跨窗口随动缩略预览（2026-10-21）
+
+原拖动名称浮层受主工作区裁剪，鼠标离开主窗口后没有持续可见反馈。本轮增加内部 `DockDragPreview.qml` 原生 ToolTip 窗口，使用输入穿透／不接收焦点标志，按全局坐标跟随鼠标；源标签淡化，浮动目标标签栏高亮。
+预览最多捕获一张 480×320 的等比内容图，保留捕获结果对象直到取消／释放；通过拖动代次忽略异步迟到结果，销毁工作区同时销毁预览窗。原布局仍只在释放时提交。
+
+- Windows 11、Qt 6.12.0、MSVC 2022 Release；常用 Release 及独立验证目录均构建成功，库／Gallery qmllint 通过。
+- 浮动专项 Windows 原生窗口 25/25，包含全局位置连续跟随、真实缩略图加载、源焦点项保持、窗口标志、目标标签栏反馈、Esc／释放／销毁和两种来源跨窗口合并；亮暗与三种密度均覆盖。
+- 浮动专项 offscreen 检查通过，新增测试等待原生窗口初始几何同步后再比较取消布局，避免将离屏平台的两像素边框定位归因于拖动。
+- Gallery Dock Windows 原生窗口 10/10；截图复核亮色／暗色和 Mobile 预览的标题、内容比例、边框以及目标标签栏高亮。本机临时加载 Segoe UI 字体用于截图，未打包字体。
+- 工作区 Windows 原生窗口 12/12；全库 CTest 15/17，仍为此前 LED 与下拉框宽度两组失败。全套 QML offscreen 383 通过、3 失败，失败仍为三个 `SelectionControls::test_compactComboDisplayFits` 密度用例。
+- 日志：`build/dock-drag-preview-native.txt`、`build/dock-drag-preview-offscreen.txt`、`build/dock-drag-preview-gallery-native.txt`、`build/dock-drag-preview-lint.txt`；示例截图 `build/drag-ghost-floating-density-0.png`、`build/drag-target-floating-density-0.png`。
+
+本轮采用随动缩略预览与释放后提交，不在拖动中重新挂载业务内容。系统原生标题栏移动、浮动窗内部拆分、多屏不同 DPI 和 Wayland 的行为不由本轮截图或合成鼠标测试证明。
+
+## Dock 分隔条鼠标高亮复位（2026-10-20）
+
+截图中的分隔条使用 `activeFocus` 保持整条蓝色，导致鼠标点击后移出仍像选中；同时 MouseArea 在尺寸位置更新后可能保留悬停状态。
+改用 Control 的悬停状态，区分鼠标焦点和键盘焦点提示；鼠标点击不留下持续高亮，方向键调整仍显示键盘提示。
+
+- Windows 11、Qt 6.12.0、MSVC 2022 Release，`build/dock-validation` 构建通过。
+- 工作区专项 Windows 原生窗口与 offscreen 各 12/12，新增点击／移出、键盘聚焦／调整及再次鼠标操作回归；Gallery Dock Windows 原生窗口 10/10。
+- 日志：`build/dock-splitter-native.txt`、`build/dock-splitter-test.txt`、`build/dock-splitter-gallery.txt`。
+- 常用 Release DLL 被运行中的 Gallery 占用，链接失败（LNK1104）；未终止用户程序，需退出后重新构建才能更新该目录。
+
+## Dock 标题、标签与停靠指示器（2026-10-20）
+
+环境：Windows 11、Qt 6.12.0、MSVC 2022 Release；software，Windows 原生平台及 offscreen。
+将通用按钮式标签改为双行标题／扁平标签，增加标题栏浮动／关闭工具、标签选中下划线、内容焦点边框、分隔条悬停反馈、拖动名称浮层和五方向停靠指示器。浮动目标仅展示中央合并。
+方向格命中优先于组边缘区域，预览与实际提交位置一致；控制器和版本 2 布局结构保持不变。
+
+- 工作区专项 Windows 原生窗口 11/11，含五方向格的选择、预览与提交后面板几何关系。
+- 浮动专项 Windows 原生窗口 23/23，覆盖亮暗／三种密度下跨窗口迁移、内容、焦点、弹层与关闭生命周期。
+- Gallery Dock Windows 原生窗口 10/10，包含完整 Main 嵌套滚动、标题拖出、标题栏浮动工具及跨窗口合并。
+- 常用 `Desktop_Qt_6_12_0_MSVC2022_64bit_Release` 目录已重建；库／Gallery qmllint、文档检查及 `git diff --check` 通过。全库 CTest 15/17，仍为此前 LED／下拉框宽度失败，Gallery 全套及 Dock 控制器组通过。
+- 检查亮色／暗色 Desktop、暗色 420 像素 Mobile 实际 GalleryDockPreview 截图，包含标题／工具、长标题省略、标签滚动、分隔条、五向指示与半区预览。截图程序从本机加载 Segoe UI 字体文件以绕过测试环境系统字体方框；未将字体文件加入仓库。
+- 全套 QML offscreen 380 通过、3 失败，失败仍为已有 `SelectionControls::test_compactComboDisplayFits` 的三个密度用例。
+- 本地截图：`build/dock-chrome-light.png`、`build/dock-guides-dark.png`、`build/dock-chrome-narrow.png`；执行日志 `build/dock-ui-workspace.txt`、`build/dock-ui-floating.txt`、`build/dock-ui-gallery.txt`、`build/dock-ui-all-qml.txt`、`build/dock-ui-ctest.txt`。
+
+本轮改善标题／标签与拖动反馈，不代表与其他 Dock 框架功能对等。浮动窗内部拆分、边缘自动隐藏、跨独立工作区停靠和多屏不同 DPI／Wayland 验收仍未完成。
+
+## Dock P3 跨窗口标签合并（2026-10-20）
+
+环境：Windows 11、Qt 6.12.0、MSVC 2022 Release；`build/dock-validation`。
+原生窗口使用 Windows 平台插件及 software 渲染，鼠标事件由 QtTest 合成；另跑 offscreen/software。
+
+- 主工作区→已有浮动宿主、浮动宿主→其他浮动宿主均支持标签合并；保留目标几何和回停提示，清理源空宿主。
+- 补齐整窗目标预览、跨窗口 Esc、空主工作区拖回单个面板、目标失效／权限检查；修复布局更新覆盖尚未保存的原生移动／缩放。
+- 控制器专项 10/10，涵盖原子拒绝浮动目标四方向分割、保存恢复、宿主清理和回停。未增加导出符号或改变公开对象布局，布局格式仍为版本 2。
+- 浮动专项 Windows 原生窗口 23/23，覆盖两种来源、亮暗主题、Desktop／Touch／Mobile 密度、预览／Esc、内容保留和生命周期。
+- Gallery Dock 专项 Windows 原生窗口 8/8，包含完整 Main 页面的两种跨窗口来源和外层滚动位置保持。
+- Release 构建、库／Gallery qmllint、文档检查及 `git diff --check` 通过；全库 CTest 15/17，两个失败组为下述已知区域。
+- 全套 QML offscreen 日志 375 通过、3 失败；失败仍为 `SelectionControls::test_compactComboDisplayFits` 的三个密度用例。LED 专项仍有 `layoutMappingAndValidation` 的 `m.applyNow(c)` 失败；均为本轮之前已记录且未修改的区域。
+- 预览截图检查亮色 Desktop 和暗色 Mobile 的 320×240 浮动目标，整窗覆盖正确；离屏字体方框问题仍存在，不作为文字视觉验收证据。
+- 日志：`build/dock-controller-result.txt`、`build/dock-floating-native-p3.txt`、`build/dock-gallery-native-p3.txt`、`build/dock-all-qml-p3.txt`、`build/dock-led-p3.txt`。
+
+浮动宿主仍为单个标签组，不支持内部四方向分割；跨独立工作区拖动、边缘自动隐藏、人工原生鼠标、多屏不同 DPI／热插拔和 Wayland 尚未验证或实现。接口和复现方法见 [Dock 工作区](DOCKING.md) 与 [验证说明](VALIDATION.md)。
+
+## Dock 浮动标签拖回主工作区（2026-10-20）
+
+同日追加修复：主工作区标签拖出边界并释放可创建浮动宿主；原先该路径仅取消拖动。
+浮动专项更新为 16/16，工作区专项 6/6，覆盖真实鼠标事件路径、释放前不改变布局、Esc、禁止浮动、内容保留及回停。
+验证环境仍为下述 offscreen/software，原生系统鼠标抓取尚未实机验收。
+
+再次追加 Gallery 集成修复：完整 `Main` 页面的外层滚动容器会抢占标签鼠标抓取，独立预览测试未覆盖该嵌套。
+为主工作区及浮动标签 MouseArea 设置 `preventStealing`；新增完整 Main 页面和独立预览拖出测试，断言页面不滚动且创建浮动宿主。
+完整页面测试修复前失败、修复后通过；Gallery Dock 在 Windows 原生窗口平台和 offscreen 下均 6/6，浮动专项 offscreen 16/16，构建与两项 qmllint 通过。
+原生测试使用 QtTest 合成鼠标事件及 software 渲染，不等同于人工鼠标、多屏 DPI 或 Wayland 验收。日志 `build/dock-gallery-native.txt`、`build/dock-gallery-drag.txt`。
+
+环境：Windows、Qt 6.12.0、MSVC 2022 Release，offscreen/software；独立构建目录 `build/dock-validation`。
+原 Release DLL 被运行中程序占用，未终止该程序，另行配置并完成全量构建。
+
+- 浮动 QML 专项 15/15：中央合并、四边分割、全局坐标命中、宿主遮挡、鼠标拖动、Esc、锁定／移动权限、工作区外释放、内容和窗口生命周期。
+- Gallery Dock 专项 4/4；检查左侧分割预览截图，覆盖目标半区。离屏环境字体显示为方框，未据此宣称文字视觉验收完成。
+- 库和 Gallery 的 qmllint 通过；文档检查通过，同时修正组件目录总数 117 → 119。
+- 全库 CTest 15/17 通过。`led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的三个 `SelectionControls::test_compactComboDisplayFits` 密度用例失败。直接运行 QML 日志为 366 通过、3 失败；这两个失败区域未在本次修改。
+- 日志：`build/dock-floating-result.txt`、`build/dock-gallery-result.txt`、`build/dock-ctest.log`、`build/dock-all-qml.txt`、`build/dock-led-result.txt`。
+
+未验证原生 Windows 跨窗口鼠标抓取、Wayland、多显示器和不同 DPI；当前目标仅限原主工作区，拖入浮动宿主尚未实现。复现及手工验收见 [验证方法](VALIDATION.md)。
+
 ## 姿态球与设备无关体感输入（2026-10-19）
 
 环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；software/offscreen，以及 XCB 上的实际 Vulkan/OpenGL。
