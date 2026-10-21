@@ -109,6 +109,8 @@ CatAttitudeIndicator/CatTiltControlPanel 是新增 QML 类型，既有公开类�
 
 新增独立 Pimpl 类型 DockController，安装真实头、DockController.h 和 DockController 转发头，新增两个 QML 组件。既有导出类、元对象和 SOVERSION 不变。DockGeometry.js 为内部实现；布局快照使用显式版本号。
 
-Dock P3 在 DockController 末尾追加浮动窗口属性与非虚方法；旧方法、信号、枚举和 Pimpl 对象布局不变。DockFloatingWindow 为内部 QML 类型，不新增公开类型。布局格式写入 v2，同时读取 v1；未来版本不自动接受。
+DockController 的浮动窗口属性与非虚方法保留既有方法、信号、枚举和 Pimpl 对象布局。`dockToWorkspace` 是新增非虚方法，不改变已有函数签名或 SOVERSION。DockFloatingWindow、DockDragArea、DockDragPreview、DockDropOverlay、DockTabButton 与 DockGeometry.js 均为内部实现，不作为公共接口。
 
-本机 Qt 6.12 Release 的 Dock P3 新安装消费者与 P0–P2 已编译消费者替换检查通过；已确认旧消费者加载候选 libQCatUiKit.so.1。该结果不代表其他平台的 ABI 验证。
+布局格式写入 v2，同时读取 v1。v2 的可选字符串 `returnNode` 用于整列／整行回停；旧 v2 不含此字段仍可读，类型错误则拒绝整份恢复请求。新增此可选字段未提高格式版本，未来未知版本仍被拒绝。
+
+2026-10-21 Windows／Qt 6.12 MSVC Release 检查保留原 1384 个导出符号，新增 1 个；独立安装消费者和旧测试程序加载新 DLL 均通过。Linux 的既有替换检查早于此次新增方法；各次平台、工具链和调用范围见[历史记录](VALIDATION_HISTORY.md)，不据此推断其他平台已验证。

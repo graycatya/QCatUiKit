@@ -2,64 +2,19 @@
 
 [文档索引](README.md) · [历史执行记录](VALIDATION_HISTORY.md)
 
-本文维护可复现的检查入口。最近已记录的完整回归为 **2026-10-19，Ubuntu 26.04 x86_64、Qt 6.12.0 Release**；以下为既有记录摘要，不代表每次文档修改都重新执行了产品测试。
+本文维护可重复执行的检查步骤。测试结果必须结合日期、平台和检查范围阅读；文档更新不表示产品测试已重新运行。逐次执行摘要保留在[历史记录](VALIDATION_HISTORY.md)。
 
-## Dock 浮动窗口与回停（2026-10-20，P3 前两步）
+## 最近结果摘要
 
-环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release。离屏测试使用 software/offscreen；原生测试使用 XCB/OpenGL，
-日志确认 AMD Radeon 780M Graphics、Mesa 26.1.6。
+| 范围 | 最近记录 | 结果与限制 |
+| --- | --- | --- |
+| Dock、全库回归 | 2026-10-21，Windows 11、Qt 6.12.0、MSVC 2022 Release | Dock 控制器 16/16、工作区 12/12、浮动 25/25、Gallery Dock 15/15；构建及库／Gallery qmllint 通过。全库 CTest 为 15/17，仍有 LED 与下拉框宽度失败 |
+| Windows 现存失败 | 同上 | `led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的 `SelectionControls::test_compactComboDisplayFits` 三种密度失败。全套 QML 为 383 通过、3 失败；未宣称全库通过 |
+| Dock 安装与兼容 | 同上 | 独立安装消费者可调用 C++／QML 的 `dockToWorkspace`；保留原 1384 个导出符号，新增 1 个；旧测试程序加载新库 10/10 通过 |
+| Linux 全库回归 | 2026-10-20，Ubuntu 26.04、Qt 6.12.0 Release | 当时 CTest 17/17、浮动 software/offscreen 与 XCB/OpenGL 各 8/8；早于最新跨窗口与外边缘修改，不作为最新版本的 Linux 全量验收 |
+| Linux 图表 GPU | 2026-10-19，同一 Linux／Qt 环境 | AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 二维／三维／PNG 192／22／7，OpenGL 二维／三维 192／22；未开启 Khronos validation layer |
 
-| 检查 | 结果 |
-| --- | --- |
-| 构建、lint、全量回归 | 构建与库／Gallery qmllint 通过；CTest 17/17 通过 |
-| 浮动专项最终版 | software/offscreen 8/8、XCB/OpenGL 8/8（含初始化／清理） |
-| 覆盖行为 | 输入实例与焦点保持、弹层重新打开、关闭请求拒绝／接受、标签组恢复、隐藏／销毁清理、窗口尺寸保存、屏幕外布局修正 |
-| 图表迁移 | 浮动、回停、再次恢复后检查红色系列像素，验证实际渲染而非仅对象存在 |
-| C++ 控制器 | 原标签索引／分割比例恢复、整组浮动、原目标消失回退、跨主树与浮动组的重复 ID 拒绝、v1 兼容读取 |
-| Gallery 专项 | 4/4（含初始化／清理）：真实按钮浮动整组、不可关闭编辑器阻止系统关闭、回停、窄屏 |
-| 安装与替换 | 新安装消费者通过；上一阶段已编译消费者加载新 libQCatUiKit.so.1 通过，动态库解析路径确认指向候选安装目录 |
-| 视觉与翻译 | 明暗浮动窗口／图表预览；新增中英文文案完整；git diff --check 通过 |
-
-浮动专项仅允许 offscreen 插件的已知 `propagateSizeHints()` 能力提示，其余警告导致失败；XCB 原生检查没有该提示。
-未验证 Windows、macOS、Wayland、Vulkan、Qt 6.8、实际多显示器热插拔或混合 DPI。
-本批仅实现浮动与按钮／API 回停，跨窗口拖拽尚未实现。接口见 [Dock 工作区](DOCKING.md)。
-
-下面保留 P0–P2 阶段的验证记录。
-
-## 单窗口 Dock（2026-10-20）
-
-环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；QML 与 Gallery 使用 offscreen/software。
-
-| 检查 | 结果 |
-| --- | --- |
-| 全量构建与 CTest | 构建通过，17/17 个测试组通过 |
-| 最终界面修改后的回归 | qml_contracts、gallery_contracts 2/2 通过；包含新增窄屏 Gallery 测试 |
-| Dock QML 专项 | 6/6（含初始化／清理）：内容保留、恢复、取消、真实鼠标拖拽、分隔条及最小尺寸 |
-| Gallery Dock 专项 | 3/3（含初始化／清理）：窄屏、关闭／打开、恢复初始布局；警告视为失败 |
-| lint | QCatUiKit_qmllint 与 qcat-gallery_qmllint 通过 |
-| 安装消费者 | tests/auto/cmake/dock-consumer 通过；三种公开头、导出类、安装后的 QML 类型可用 |
-| 视觉检查 | 中文明色桌面、720px 暗色、360px mobile；窄屏示例使用横向滚动 |
-| 其他 | 两种语言新增文案完整，git diff --check 通过 |
-
-独立消费者运行时必须使用与构建一致的 Qt 库与 QML 导入目录，避免系统 Qt 和安装套件混用。
-本批不包含浮动窗口／跨窗口拖拽，不声称验证 Windows、macOS、Wayland、Qt 6.8 或真实 GPU 后端。
-接口与实施边界见 [Dock 工作区](DOCKING.md)。
-
-## 姿态球与设备无关体感输入（2026-10-19）
-
-环境：Ubuntu 26.04 x86_64、Qt 6.12.0 Release；software/offscreen，以及 XCB 上的实际 Vulkan/OpenGL。
-Vulkan 日志确认 AMD Radeon 780M Graphics / RADV PHOENIX，Mesa 26.1.6；未开启 Khronos validation layer。
-新增公开 CatAttitudeIndicator、CatTiltControlPanel 和 TiltController，接口与输入坐标约定见 [姿态与体感](ATTITUDE.md)。
-
-| 检查 | 结果 |
-| --- | --- |
-| 完整 CTest | 16/16 组通过，含 tilt_controller；默认图形契约使用 software/offscreen |
-| 控件 QML / Gallery | software 349/349；Gallery software 与 Vulkan DPR 1 各 811/811；表格列宽拖动曾有一次未稳定复现的波动 |
-| 二维／三维／PNG RHI | Linux XCB、AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 分别为 192／22／7 项通过，OpenGL 二维／三维为 192／22 |
-| Windows 历史覆盖 | Qt 6.12 MSVC Release 的 D3D11／OpenGL 图表记录；当时 led_pipeline 有失败，不能用后续 Linux 通过结果宣称 Windows 问题已修复 |
-| macOS 历史覆盖 | 2026-10-14，Qt 6.10.2 arm64 Debug、software；早于后续图表及姿态接口，不代表 Metal 或新接口验收 |
-
-详细环境、初次失败、复测及安装消费者证据见 [历史验证记录](VALIDATION_HISTORY.md)。Qt 6.8 最低版本、其他 GPU／驱动、Metal／D3D12、真机触屏、真实传感器及设备丢失没有由上述结果获得通用验证。
+计数包含测试初始化／清理。Dock 的 Windows 原生窗口测试使用 QtTest 合成鼠标与 software 渲染；多屏混合 DPI、实际热插拔和 Wayland 仍需单独验收。不同日期、平台的通过结果不能互相替代；最低 Qt 6.8、其他 GPU／驱动、真机触屏和设备丢失也没有由这些结果获得通用验证。
 
 ## 自动测试入口
 
@@ -76,6 +31,7 @@ ctest --test-dir build/release --output-on-failure
 | CTest 名称 | 主要覆盖 |
 | --- | --- |
 | models | 主题 Token、TableModel／ChatModel 数据与通知协议 |
+| dock_controller | Dock 分割、标签、浮动／回停、工作区外边缘、布局格式和失败时保持布局不变 |
 | tilt_controller | 四元数、校准、输入映射、授权、超时与事件循环延迟 |
 | charts_3d | 三维数据、相机、材质、拾取和切片 |
 | charts_extended | 气泡、格网、等值线、OHLC、箱线和雷达契约 |
@@ -117,21 +73,34 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 上述结果验证数据保留与交互行为。Gallery 的最慢批次和操作频率不包含后续完整绘制，不能当作 GPU 帧率或网络性能。
 
-## 视觉检查
+## Dock 专项检查
 
-Dock 浮动拖回专项可直接运行构建目录的 `tst_qml`，传入
-`-input tests/auto/qml/data/tst_dockfloating.qml -import build/release/qml`，并设置上述离屏软件环境。
-覆盖中央合并、四方向分割、预览取消、宿主遮挡、鼠标拖出浮动和鼠标／Esc 操作。原生窗口还应手工验证：
-跨窗口专项还覆盖主工作区→已有浮动组、浮动组→其他浮动组、目标预览／Esc、源空宿主销毁、空主工作区拖回、权限及保存恢复。
-随动缩略窗回归覆盖窗口间空白区域连续移动、标题与实际内容图像加载、输入穿透与不接收焦点标志、目标标签栏高亮，以及 Esc／释放／销毁期间的清理；入口仍为 `tst_dockfloating.qml`。原生平台测试之外，多屏 DPI 与 Wayland 的预览坐标／输入抓取需实机验收。
-浮动目标当前仅合并标签；API 对该目标的四方向分割请求必须原子拒绝。将目标窗口置于源窗口旁，用同一组鼠标事件在原生平台重跑，检查取消后内容和窗口几何不变。
-将主工作区标签拖出边界并释放，检查窗口出现在释放点附近，Esc 和 `floatable: false` 阻止浮动；
-Gallery 的 `tests/auto/gallery/data/tst_dock.qml` 还必须覆盖完整 `Main` 页面，检查外层滚动容器不抢占标签拖动，拖出时页面滚动位置不变。
-标题／标签外观改动后，验证标题栏浮动按钮、标题文字拖出、五方向指示格的命中与实际分割位置一致；同时检查双行标题计入最低高度，以及浮动目标仅提示中央合并。
-工作区外边缘回归使用完整 Gallery Main：浮动属性面板，再从应用内标签拖到左右边缘，检查属性列贯穿全高、日志不再横跨其下；上下边缘检查贯穿全宽。同时检查 Esc、保存恢复与回停按钮保留编辑器／日志子树。入口为 Gallery `tst_dock.qml` 的 `test_floatPropertiesBackToWorkspaceEdge` 和 `test_dockBackPreservesPropertiesFullHeight`。
-分隔条回归覆盖鼠标点击后移出恢复颜色、键盘聚焦提示、方向键调整，以及键盘操作后再次鼠标点击／移出的状态切换，入口为 `tst_dock.qml` 的 `test_splitterMouseExitAndKeyboardFocus`。
-将浮动窗口移至主窗口旁，拖动浮动标签到主工作区中央和四边，检查预览、释放提交、Esc 取消，
-并在不同 DPI 的显示器之间重复；Wayland 的全局坐标和窗口定位能力需单独验收。
+控制器可通过 CTest 单独运行：
+
+```sh
+ctest --test-dir build/release -R '^dock_controller$' --output-on-failure
+```
+
+工作区与浮动专项使用构建目录中的 `tst_qml`，分别传入 `-input tests/auto/qml/data/tst_dock.qml` 或 `-input tests/auto/qml/data/tst_dockfloating.qml`，并加上 `-import build/release/qml`。Gallery 专项用 `tst_gallery`，输入为 `tests/auto/gallery/data/tst_dock.qml`。程序的具体位置随构建布局而定。
+
+离屏检查设置 `QT_QPA_PLATFORM=offscreen` 和 `QT_QUICK_BACKEND=software`；Windows 原生窗口复查改为 `QT_QPA_PLATFORM=windows`。多配置构建使用同一配置的测试程序与 QML 模块。
+
+| 操作 | 应看到的结果 |
+| --- | --- |
+| 拖动主工作区标签到外部后松开 | 出现浮动窗口，保留原内容；外层 Gallery 页面不随标签拖动滚动 |
+| 在主窗口与浮动窗口之间、两个浮动窗口之间拖动标签 | 预览跟随鼠标，松开后合并；源窗口没有剩余面板时销毁 |
+| 拖动中按 Esc，或取消鼠标抓取 | 原布局和窗口几何保持不变，随动预览消失 |
+| 浮动属性面板，再拖到工作区右侧外边缘 | 属性列贯穿整个主布局高度，日志只在左侧；其他三个外边缘同理 |
+| 拖到编辑器组内的右方向格 | 仅拆分编辑器组，日志布局不被扩展成侧列 |
+| 点击回停按钮，或保存后恢复布局 | 编辑器／日志组合与属性整列位置保持正确；旧版 v2 没有 returnNode 仍可恢复 |
+| 鼠标点击分隔条后移出，再用键盘调整 | 鼠标高亮消失，键盘焦点提示与方向键调整仍有效 |
+| 禁止移动／浮动，或锁定布局 | 对应用户操作不可执行，已有内容不变 |
+
+外边缘专项为 Gallery `tst_dock.qml` 的 `test_floatPropertiesBackToWorkspaceEdge` 与 `test_dockBackPreservesPropertiesFullHeight`；分隔条专项为 QML `tst_dock.qml` 的 `test_splitterMouseExitAndKeyboardFocus`。浮动专项还检查内容／焦点／弹层、权限、关闭请求、输入穿透预览和生命周期。
+
+原生平台手工验收时，在并排窗口之间拖动，检查缩略图经过窗口间空白区域仍可见、取消后布局不变。在不同 DPI 的显示器之间重复操作；Wayland 的全局坐标与窗口定位能力需单独确认。浮动窗口目前仅支持标签合并，不应显示内部拆分能力，控制器对其分割请求应拒绝且不改变布局。
+
+## 视觉检查
 
 检查与改动相关的亮暗模式、三种密度、宽窄布局、焦点、禁用、长文本及空数据。可用 Gallery 保存当前窗口：
 
@@ -178,6 +147,8 @@ cmake --build build/dock-consumer
 ## 文档与示例检查
 
 从仓库根目录运行 `python tools/check_docs.py`，检查本地 Markdown／HTML 资源链接、标题锚点、代码围栏和 Cat 组件目录覆盖。该工具不访问外网，不替代 QML 编译或运行验证。
+
+更新 Dock 文档时，对照 `qcatdockcontroller.h` 的 `Q_INVOKABLE`、`Q_PROPERTY` 和 signals，以及两个 CatDock QML 文件的应用接口，逐项检查名称、默认值、返回值和权限。内部状态属性不应列为应用接口。把 DOCKING.md 的最小 QML 示例放入临时 Qt Quick 测试的 Component，以 `createTemporaryObject` 创建；等待面板注册后，确认日志位于编辑器下方，再检查保存／关闭／恢复以及 `dockToWorkspace(..., Right, 0.75)` 的右侧面板和比例。使用上文的 `tst_qml -input ... -import ...` 方法运行，测试产物留在忽略的构建目录中。
 
 修改技能后，检查 SKILL.md 的路由、参考链接和模板是否对应当前公开接口。模板构建与实际交互方法见 [技能构建参考](../../../skills/qcatuikit-ui/references/build-and-verify.md)。文档截图的生成与人工复核见 [截图指南](SCREENSHOTS.md)。
 

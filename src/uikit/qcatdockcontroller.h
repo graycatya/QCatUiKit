@@ -49,7 +49,9 @@ class QCATUIKIT_EXPORT DockController : public QObject
     Q_INVOKABLE bool setFloatingGeometry(const QString &windowId, double x, double y, double width,
                                          double height);
     Q_INVOKABLE void constrainFloatingWindows();
-    // Split against the whole main workspace, rather than a single tab group.
+    // Split against the whole main workspace. Accepts Left/Right/Top/Bottom only.
+    // ratio is the first (left/top) child's fraction, finite and strictly between 0 and 1.
+    // For Right/Bottom the incoming panel receives 1 - ratio. Registered closed panels reopen.
     Q_INVOKABLE bool dockToWorkspace(const QString &id, Position position, double ratio = 0.5);
 
   signals:

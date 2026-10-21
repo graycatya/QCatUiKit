@@ -256,6 +256,6 @@
 
 | 类型 | 接口与行为 |
 | --- | --- |
-| CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、最低尺寸和 `sizeConstrained`；标题栏／扁平标签、随动缩略窗、方向指示与预览、跨窗口拖拽、浮动／回停 |
+| CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、`dragging`、最低尺寸和 `sizeConstrained`；标题栏／扁平标签、随动缩略窗、方向指示与预览、跨窗口拖拽、浮动／回停 |
 | CatDockPanel | `dockId`、`title`、`content`、最小尺寸、`closable`、`movable`、`floatable`、`closeRequested()`；内容实例保持 |
-| DockController | 面板注册、停靠、关闭／打开、激活、排序和版本化 JSON 布局；见 [Dock 工作区](DOCKING.md) |
+| DockController | 面板注册、组内／工作区外边缘停靠、浮动／回停、关闭／打开、激活、排序和版本化 JSON 布局；见 [Dock 工作区](DOCKING.md) |
