@@ -127,7 +127,9 @@ v = sign(a) * max(abs(a) - deadzone, 0) / (fullScale - deadzone)
 output = (1 - expo) * v + expo * v^3
 ```
 
-### 最小接入
+### C++ 调用顺序
+
+下面是调用片段，应用须提供 `deviceToReference`、`monotonicMicroseconds` 和 `applicationAllowsControl`，并持续提交采样；不是独立可运行程序。使用前包含 `<QCatUiKit/TiltController>`。
 
 ```cpp
 QCatUiKit::TiltController tilt;

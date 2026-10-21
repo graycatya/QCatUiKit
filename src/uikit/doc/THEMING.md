@@ -2,7 +2,9 @@
 
 [文档索引](README.md) · [组件目录](COMPONENTS.md)
 
-主题从 Seed（品牌色、字号、圆角、明暗模式、密度）推导语义 Token，再由组件消费。`Theme` 是每个 QML 引擎独立的默认 `ThemePalette` 单例，不是跨引擎全局 QObject。
+修改 `Theme` 可以统一调整控件的颜色、字号、圆角和交互密度。主题配置（Seed）会生成一组有明确用途的值（Token），例如 `text` 表示正文颜色、`controlHeight` 表示推荐控件高度；组件通过绑定使用这些值。
+
+`Theme` 是每个 QML 引擎独立的默认 `ThemePalette` 单例。下面的赋值写在应用根对象的 `Component.onCompleted` 中：
 
 ```qml
 Component.onCompleted: {
@@ -41,6 +43,8 @@ Component.onCompleted: {
 ## 局部主题
 
 每个带主题的组件具有 `theme` 属性。自定义 `ThemePalette` 通过属性显式传递；组合组件会继续把该对象传给其内部子控件。应用自己添加的子控件需要显式绑定，避免隐式遍历任意对象树。
+
+下面两个对象声明在同一页面中，使用时添加 `import QtQuick` 和 `import QCatUiKit`：
 
 ```qml
 ThemePalette {

@@ -18,6 +18,7 @@ Read only what the task needs:
 - `src/uikit/doc/MODELS.md`: TableModel, ChatModel, TreeModel and their view contracts.
 - `src/uikit/doc/CHARTS.md`, `CHARTS3D.md`, `CHARTSTATISTICS.md`, `CHARTEXTENSIONS.md`: the requested chart family, data ownership, limits, interaction and export.
 - `src/uikit/doc/SLIDERS.md`: scalar/range editing and chart viewport synchronization.
+- `src/uikit/doc/DOCKING.md`: panel registration, tabs/splits, workspace outer edges, floating windows and layout persistence.
 - `src/uikit/doc/LEDWORKFLOW.md`, `LEDPREVIEW.md`: layout, Deck/Storage/Mixer, multi-channel output and GPU preview.
 - `src/uikit/doc/ATTITUDE.md`: aircraft display and independent application-supplied tilt input.
 - `src/uikit/doc/BUILDING.md`: CMake integration, QML import paths and runtime deployment.

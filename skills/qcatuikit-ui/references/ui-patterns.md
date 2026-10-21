@@ -5,6 +5,7 @@
 | Intent | Public types and distinctions |
 | --- | --- |
 | Page or panel | CatWindow, CatPane; use Qt Quick Layouts for structure |
+| Rearrangeable workspace | CatDockWorkspace with CatDockPanel; use the workspace controller for docking and persistence, and outer-edge targets for full-height columns or full-width rows |
 | Text and validation | CatTextField / CatTextArea with invalid; CatPasswordField for passwords |
 | Numeric input | CatSpinBox for integers, CatNumberBox for decimals; configure bounds |
 | Slider | CatSlider for one value, CatRangeSlider for an interval, CatSliderField for slider plus precise numeric input; see SLIDERS.md |

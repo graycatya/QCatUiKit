@@ -36,7 +36,7 @@ These images were captured on 2026-10-12; see [capture scenarios and regeneratio
 | CMake / C++ | CMake 3.24 or later and a C++17 compiler |
 | Gallery | Qt LinguistTools; file dialog examples use QtQuick.Dialogs |
 | Automated tests | Qt Test and QuickTest |
-| Graphics runtime | A Qt Quick backend for the target platform; the software backend can run offscreen checks |
+| Graphics runtime | 2D controls/charts support software rendering; 3D charts and LED previews require a hardware graphics backend |
 
 Charts are implemented by QCatUiKit and do not require Qt Charts, Qt Graphs, or WebEngine.
 
@@ -66,7 +66,7 @@ See [Building and integration](src/uikit/doc/BUILDING.md) for Windows multi-conf
 Build from source:
 
 ```cmake
-add_subdirectory(path/to/QCatUiKit)
+add_subdirectory(path/to/QCatUiKit qcat-uikit)
 target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
 ```
 

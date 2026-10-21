@@ -1,12 +1,14 @@
 # 滑块与精确输入
 
-`import QCatUiKit` 提供三个公开类型：`CatSlider`（单值）、`CatRangeSlider`（区间）和 `CatSliderField`（滑块加数值框）。三者复用主题颜色与密度；新增刻度、提示等外观默认关闭，原有单滑块保持原来的外观。基础实现使用 Qt 6.8 已有的 Templates API。
+[文档索引](README.md) · [组件目录](COMPONENTS.md)
+
+`import QCatUiKit` 提供三个公开类型：`CatSlider`（单值）、`CatRangeSlider`（区间）和 `CatSliderField`（滑块加数值框）。三者复用主题颜色与密度，刻度和数值提示默认关闭。使用本页对象片段时添加 `import QtQuick` 和 `import QCatUiKit`，并放入有明确尺寸的页面。
 
 ## CatSlider
 
 继承 Qt Quick Templates Slider，保留 `from/to/value`、`orientation`、`stepSize`、`snapMode`、`live`、`position/visualPosition`、`moved`、鼠标、触摸及方向键操作。
 
-| 新增属性 | 默认值 | 用途 |
+| 属性 | 默认值 | 用途 |
 | --- | --- | --- |
 | `trackThickness` / `handleDiameter` | `4` / `22` | 轨道厚度与手柄直径；按逻辑像素计算 |
 | `tickInterval` | `0` | 均匀刻度的间隔；非正数关闭 |
@@ -38,7 +40,7 @@ CatSlider {
 
 继承 Qt Quick Templates RangeSlider，保留 `first.value`、`second.value`、两端的 `moved`、`setValues(first, second)`、方向、镜像、步长、吸附与 `live`。起始手柄、结束手柄按固定顺序获得键盘焦点，默认不可交叉。支持 `from > to` 的反向数值域；“起始”始终指向 `from` 一侧。
 
-轨道、手柄、刻度、数值提示与格式属性与 `CatSlider` 一致，但区间填充由两个端点决定。
+`trackThickness`、`handleDiameter`、刻度、数值提示及格式属性与 `CatSlider` 一致。区间填充由两个端点决定，不提供单值滑块的 `fillOrigin`、`defaultValue` 或 `defaultIndicatorVisible`；恢复目标使用下表两个默认端点。
 
 | 属性 | 默认值 | 用途 |
 | --- | --- | --- |
@@ -62,9 +64,11 @@ CatRangeSlider {
     tickInterval: 20; tickLabelsVisible: true
     valueToolTipVisible: true
     Accessible.name: qsTr("Selected interval")
-    onMoved: controller.setRange(first.value, second.value)
+    onMoved: console.log("用户选择区间", first.value, second.value)
 }
 ```
+
+应用接入时，将 `onMoved` 中的日志替换为真实模型写回或图表轴的 `setRange()`；程序同步使用 `setValues()`。
 
 ## CatSliderField
 

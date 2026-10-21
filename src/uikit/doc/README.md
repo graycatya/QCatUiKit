@@ -4,6 +4,10 @@
 
 本文档描述当前源码提供的接口、工具和运行方式。项目使用 `import QCatUiKit` 和 CMake 目标 `QCatUiKit::QCatUiKit`；当前数字版本为 1.0.0，默认发布渠道为 experimental。
 
+第一次使用时，先按[构建与接入](BUILDING.md)运行 Gallery，再从[组件目录](COMPONENTS.md)选择控件。专题页先说明用法与结果，再列接口和限制；示例中的调用片段需要放在标明的 QML 处理器或 C++ 上下文中。
+
+当前能力以专题页和源码为准。[历史验证记录](VALIDATION_HISTORY.md)保留过去的平台与结果，其中的阶段名和“待实现”只描述当时状态；[截图说明](SCREENSHOTS.md)标明图片采集时间，旧截图不代表最新全部功能。
+
 ## 按任务阅读
 
 | 任务 | 文档 |

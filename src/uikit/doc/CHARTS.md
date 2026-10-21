@@ -2,9 +2,23 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-QCatUiKit 图表使用私有 QQuickRhiItem 绘制 GPU 数据层，通过 Qt Quick SceneGraph 合成背景、网格、文字和交互覆盖层，提供图表容器、坐标轴、数据序列及统计适配器。随共享库和 QML 模块一起安装，支持 Qt 6.8+、C++17，无需 Qt Charts、Qt Graphs 或 WebEngine。
+用 `CatChart` 显示图表，用 `CatChartSeries` 提交数据，通过 `xAxis`／`yAxis` 设置坐标范围。应用可以组合多条系列，支持缩放、选择、实时更新和 PNG 导出。
+
+图表在 GPU 后端使用私有 QQuickRhiItem 绘制数据，Qt Quick 合成文字和交互层；二维也提供软件回退。随共享库和 QML 模块一起安装，支持 Qt 6.8+、C++17，无需 Qt Charts、Qt Graphs 或 WebEngine。
 
 私有 QQuickRhiItem 数据层已接入十种基础二维图表，支持阶梯／样条曲线、虚线、显式断点、区间面积、四种预设及纹理标记、六种柱状布局，以及局部／分离饼图和多层同心环。扩展适配器提供气泡与色带映射、格网／滚动热力图、雷达增强、等高线／填色区域、OHLC／成交量、箱线／离群点，见 [扩展图表](CHARTEXTENSIONS.md)；普通／百分比堆叠面积、直方图、公共线性拟合／残差带与瀑布图见 [统计图表适配器](CHARTSTATISTICS.md)。`scene3D` 提供三维场景，三维数据、相机、Blinn–Phong／Phong 材质及图表见 [三维图表](CHARTS3D.md)。图层、缓存、线程和未覆盖能力见 [图表渲染架构与边界](CHART_RENDERING.md)；本页描述当前已实现接口。
+
+## 按任务查找
+
+| 想完成的操作 | 阅读位置 |
+| --- | --- |
+| 创建第一张图、提交或追加数据 | [入口](#入口)、[数据与图表类型](#数据与图表类型) |
+| 改曲线、标记、虚线或填充 | [曲线与点标记](#曲线与点标记)、[虚线与显式断点](#虚线与显式断点)、[面积外观](#面积基线与填充外观) |
+| 显示上下界或统计结果 | [区间面积](#区间面积)、[统计图表](CHARTSTATISTICS.md) |
+| 配置坐标轴、平移与缩放 | [坐标轴与刻度](#坐标轴与刻度)、[框选缩放](#框选缩放)、[触摸交互](#触摸平移与双指缩放) |
+| 选中记录或自定义显示 | [选择与拾取](#选择与拾取)、[QML 委托](#自定义-qml-委托) |
+| 保存当前图为图片 | [图像导出](#图像导出) |
+| 排查性能或运行演示 | 文末的 [Gallery](#gallery-数据操作与压力测试) 与 [渲染诊断](#渲染与验证) |
 
 ![中文桌面图表预览](images/gallery-charts-desktop.png)
 
@@ -45,8 +59,11 @@ CatChart {
 
 C++ 调用方链接 `QCatUiKit::QCatUiKit`。可以直接将 ChartItem 加到 QQuickWindow 的 contentItem，数据与计算不需要 QML 引擎。
 
+下面是已创建 `QQuickWindow window` 后的调用片段；应用仍需创建 QGuiApplication、显示窗口并运行事件循环：
+
 ```cpp
 #include <QCatUiKit/ChartItem>
+#include <QQuickWindow>
 
 auto *chart = new QCatUiKit::ChartItem(window.contentItem());
 chart->setSize({640, 360});
@@ -88,7 +105,7 @@ series->appendSamples({{0, 2, 1, {}}, {1, 4, 1, {}}});
 
 所有对象 API 在其所属线程调用。工作线程将完整批次通过 queued connection 提交；追加／替换在其他线程调用会返回 false。`sampleAt` 的引用不能跨修改保留。`addSeries` 不转移 QObject 所有权；C++ 调用方管理系列，或将图表作为父对象。移除、清空和销毁系列会断开连接。
 
-`displayBudget` 默认每条曲线 2,048，0 关闭概览采样，其他有效值至少为 8。数据始终完整保留；有序 X 的直线／阶梯／样条 Line、Area 超过预算后使用曲段层次索引：按当前轴坐标和视口宽度选取首尾点及真实曲线峰谷，分别处理每个连续段，避免跨断点连线。分组锚定原始数据，固定缩放比例下平移仅改变映射和边缘裁剪，不因可见范围起点变化而重新选择内部标记点；缩放后自动展开细分，细节处仍绘制原始曲段。预算为目标而非顶点硬上限，断点数量、曲线过冲及细分会增加实际绘制量。
+`displayBudget` 默认每条曲线 2,048，0 关闭概览采样，其他有效值至少为 8。数据始终完整保留；有序 X 的直线／阶梯／样条 Line、Area 超过预算后使用曲段层次索引（LOD，按当前可见细节选择绘制量）：按当前轴坐标和视口宽度选取首尾点及真实曲线峰谷，分别处理每个连续段，避免跨断点连线。分组锚定原始数据，固定缩放比例下平移仅改变映射和边缘裁剪，不因可见范围起点变化而重新选择内部标记点；缩放后自动展开细分，细节处仍绘制原始曲段。预算为目标而非顶点硬上限，断点数量、曲线过冲及细分会增加实际绘制量。
 
 样条控制点与层次索引不随平移、缩放、尺寸、颜色或线宽变化重建；数据、断点、轴 scale、曲线模式／张力或实际图表类型变化才使对应系列缓存失效。视口使用固定轴范围时跳过全量自动极值统计。索引边界包含控制多边形，保留从可见 X 范围之外过冲进入绘图区的曲段。概览中的点标记只显示代表性原始节点；命中先定位概览对应源曲段，再用原始曲线检查，返回原始记录而非概览极值。虚线沿当前显示路径计算相位。
 
@@ -250,6 +267,14 @@ CatChart {
 }
 ```
 
+### 独立上下边界的对齐
+
+区间面积也可调用 `setRangeBoundaries(lower, upper, alignment)`，两数组各项使用 `{x, y, label?, breakBefore?}`。两个数组都必须严格递增且 X 唯一。默认 ExactAlignment 要求数量和每个 X 完全一致，否则返回 false 并保留旧数据。LinearAlignment 在共同覆盖范围内取 X 的并集，按数据坐标线性插值，不外推；插值后的成对记录再应用 curveMode。重复／无序 X、非法数值、单侧空数组、无共同范围均拒绝；两侧均空表示清空。对齐是一次快照转换，at() 返回生成后的成对记录，capacity 仍保留末尾记录。
+
+插值不穿过任一边界的 breakBefore 区间：缺失区间内无法配对的 X 被跳过，下一个有效配对点保留断点；一侧的断点同时隔离上下边界和填充。精确节点标签优先取上界，其次下界，纯插值节点没有标签。名称 lower／upper 在交叉后仍保持原意。
+
+有序的大规模 RangeArea 在所有七种 curveMode 下共享分层区间索引，保留上下两边界的实际极值、首尾点及连续区间。小于显示预算对应屏幕宽度的区间才聚合；缩放到细节恢复原曲线。边界交叉仍拆分填充，断点隔离索引根节点。平移复用缓存，颜色／线宽／填充变化不重新拟合；数据、曲线算法或轴尺度变化会重建。LOD 拾取通过候选区间细查原始曲线，返回原始成对记录，不把聚合端点当成原值。无序数据保持精确遍历，displayBudget=0 可关闭 LOD。
+
 ## 饼图与同心环
 
 Pie 与 Doughnut 默认仍只显示第一条可见系列，忽略非正 Y 值；`Doughnut + multiRing: true` 按添加顺序由外向内排列所有可见、非空系列。每环独立归一化，使用最大正值缩放求和，支持 `1e308` 等大权重。全零或全隐藏的非空系列保留空环；清空、移除或隐藏整个系列后，其余环重新均分可用厚度。
@@ -363,11 +388,15 @@ CatChart {
 
 QML 中 theme 默认指向全局 Theme，也可设置局部 ThemePalette；纯 C++ 默认使用内部的 ThemePalette。颜色、字体、图例、网格、提示与坐标文字随主题变化。未设置序列 color 时使用主题调色板；backgroundColor、textColor 和 font 可显式覆盖，并可 reset 恢复主题值。外部主题销毁时安全回退到内部主题；可重新设置 `theme: null` 恢复 QML 全局主题。系列颜色与扇区标签根据主题调整；主题切换不会改变坐标轴方向。
 
+### 坐标轴与刻度
+
 xAxis/yAxis 支持 Linear、Logarithmic、DateTime、Category。DateTime 坐标为 UTC Unix 毫秒；Category 坐标从 0 开始。对数轴要求正范围并跳过非正样本。自动范围考虑可见系列以及正负堆叠累计值。`setRange(min,max)` 切换到手动范围；`automatic=true` 恢复自动。
 
 `reversed` 默认 false，可分别反转 X 和 Y 的显示方向。范围仍须满足 minimum < maximum，数据和记录顺序不变；线性、对数、时间、分类轴均支持。映射／反映射、原始记录拾取、鼠标／键盘平移、滚轮／锚点缩放、框选和触摸手势使用同一方向。`resetView()` 仅恢复自动范围，保留反向及次刻度配置。径向图不使用笛卡尔轴方向和次刻度。
 
 反向时单调样条仍先按数据坐标拟合；自然样条和大数据 LOD 缓存可复用。柱形标签的起点／终点跟随柱子的增长方向。`PlotBottomBaseline` 始终指绘图区物理底部（反向 Y 时为最大值）；默认零值／自定义基线仍表示数值，渐变方向仍使用绘图区的屏幕方向。
+
+`tickCount` 默认 6，设置值会限制到 2–12，表示主刻度数量的目标值。绘制时会选择便于阅读的间隔，并根据空间省略标签，因此不保证恰好显示这个数量。三维轴仍使用自己的五个候选标签，不受此值控制。
 
 `minorTickCount` 默认 0，钳制到 0–10，表示每个主刻度间隔内的次刻度数。线性和 UTC 时间轴等值细分，对数轴在 log10 空间等距细分；视口边缘的不完整间隔也显示可见次刻度。分类轴忽略次刻度。次刻度不显示文字，网格颜色透明度为主网格的 45%；`gridVisible=false` 同时关闭两种网格，轴边刻线仍显示。
 
@@ -454,6 +483,104 @@ CatChart {
 
 库提供可选淡入，不提供几何形变动画；reducedMotion 不会停止应用主动追加数据。多轴与堆叠面积见相应接口；径向图不支持笛卡尔缩放／平移。
 
+## 实例化与纹理标记
+
+柱体及 Circle／Square／Triangle／Diamond 标记使用私有 RHI 实例管线，每个矩形／标记为一个 28 字节实例，共享四边形；圆形及多边形边缘由片元阶段求覆盖率。边框条也走矩形实例，保持既有填充与边框顺序。Line／Area 节点标记绘制于曲线之上。支持硬件实例化的后端批量提交，不支持的后端用相同解析着色器逐四边形回退；software 由 QPainter 绘制相同预设形状。`renderingStatistics()` 增加 instanceCount／instanceUploads，uploadedBytes 累计数据顶点与实例上传，不包括固定四边形和统一缓冲；静止／悬停不上传系列实例，局部变化复用缓冲和未改前后区间。
+
+`markerShape: CatChartSeries.TextureMarker` 搭配 `markerTexture` 本地／qrc 图片，用 markerSize（Bubble 用 value 半径）定义正方形显示范围。保留图片颜色及 alpha，再乘系列 color 的 alpha；透明角落仍属于该正方形拾取范围。空／失败纹理回退为系列颜色方形，`markerTextureError` 提供原因。纹理尺寸、相对路径和重载规则与 fillTexture 相同。缩放和尺寸调整复用 GPU 图片。
+
+柱形标签支持 `barLabelRotation`（默认 0，有限值 -180..180 度）。围绕文本中心旋转，定位、柱体内边距和标签避让使用旋转后的包围框；放不下的内置标签继续省略。文字纹理随角度复用。
+
+## 自定义 QML 委托
+
+系列的 `pointDelegate`、`barDelegate`、`labelDelegate` 接受 `Component`，默认 null。点委托作用于散点／气泡以及已显示的曲线标记（LOD 后的标记）；柱体委托作用于六种柱状布局；标签委托作用于通过布局避让的柱形和饼／环标签。隐藏或不合适的标签不会因委托重新出现。
+
+`CatChart.delegateBudget` 默认 128，允许 0–1024，三种委托共享预算。仅为当前可见图元创建对象，超限或错误组件保留内置绘制；`activeDelegateCount` 和 `delegateError` 报告当前结果。根对象必须为 `QQuickItem`，可声明 `required property var chartData`，其中包含原始记录、index、seriesIndex、seriesName、kind（point/bar/label）、color、text，以及适用时的 percentage。图表管理根项位置、尺寸和旋转，子项可用 anchors 自由布局。柱体根项使用裁剪后尺寸。
+
+委托在 GUI 线程创建，按系列／种类／记录索引复用，数据更新会更新 chartData；平移离屏、隐藏、删除系列、替换组件或缩减预算会释放对象。组件仍归应用所有，图表拥有创建的根项。所有委托位于 GPU 数据之上、提示覆盖层之下；可使用标准 Qt Quick 输入处理器，主动接收事件的委托优先于图表导航。纯 C++ 不设置委托时无需 QML 引擎。
+
+```qml
+CatChartSeries {
+    markerSize: 20
+    pointDelegate: Component {
+        Rectangle {
+            required property var chartData
+            color: chartData.color
+            radius: width / 4
+            border.color: "white"
+            border.width: 2
+        }
+    }
+}
+```
+
+## 选择与拾取
+
+`selectionMode` 为 `NoSelection`（默认）、`SingleSelection` 或 `MultiSelection`。单击／触摸轻点在单选模式替换选择，多选模式逐条切换；空白处清除。拖动平移、框选缩放不会选择记录。应用也可用 `selectPoint(seriesIndex, index, selected=true)`、`isPointSelected` 和 `clearSelection()` 控制选择；无效索引返回 false。`selectedPoints` 按系列、原始记录索引排列，变更发出 `selectionChanged`。最多保留 4096 条选择。
+
+选择保存在图表中，同一系列可以在不同图表有独立选择。任何该系列的数据变化都会清除其选择，以免容量覆盖后错选另一条记录；颜色／显隐／轴变化保留选择，移除／销毁系列会释放状态。切换至关闭或单选模式清空已有选择。NoSelection 仅关闭输入自动选择，程序仍可显式选择。
+
+`selectionColor` 默认使用主题 warning 色，可覆盖及复位；`selectionWidth` 为 1–8 逻辑像素，默认 2。独立覆盖层为原始标记、柱体、单元、扇区或区间上下界绘制轮廓，选择与悬停不上传数据缓冲。委托的 chartData.selected／hovered 同步更新。dataAt 返回的原始记录附带 selected 状态。
+
+屏幕包围盒索引用于标记／柱体、曲线段、区间和扇区候选查询，保留原绘制顺序与 LOD 原始记录精化。`renderingStatistics()` 的 `pickNodesVisited`、`pickCandidates` 是最近一次查询的诊断计数；有序曲线的原始点继续通过 X 二分筛选。这里没有同步 GPU 读回。
+
+## 主题过渡
+
+`animationsEnabled` 默认 false，保持原有即时呈现。启用后，主题或系列外观变化触发数据与文字的淡入，新增选择触发轮廓淡入；不是数值插值或几何形变动画。时长采用当前 ThemePalette 的 `motionDuration`，上限 2000 ms。`transitionRunning`／`transitionChanged` 可观察进行状态。
+
+淡入只更新图层透明度，动画帧不重新准备几何或上传系列缓冲。鼠标导航、容量滚动和应用主动数据更新保持即时，过渡期间到达的数据正常呈现。`reducedMotion` 或 duration=0 会立即结束正在进行的动画并显示最终状态；隐藏图表或禁用过渡也会结束动画。software、RHI 和委托图层使用相同的合成淡入。应用在自定义委托中编写的独立动画仍由应用管理，应自行绑定减少动态效果设置。
+
+饼／环外置标签先按两侧列避让，再检查同侧、跨环及跨侧引线。重叠或交叉时优先保留占比较大的路线；`outsideLabelCandidates`／`outsideLabelsShown` 诊断计数表示路线筛选前后数量。省略标签始终不会删除数据，也不会改变扇区拾取。
+
+## 图像导出
+
+`exportImage(destination, pixelSize)` 异步抓取当前 CatChart 子树并保存为 PNG，适用于二维 RHI、二维 software 和支持的三维 RHI 后端。包含当前标题、轴、图例、数据、选择／提示／十字线及图表内部的 QML 委托；不包含图表外部的按钮、父项背景或独立 Popup。透明背景保留 alpha。
+
+- `destination` 是绝对本地 `file:` URL，扩展名为 `.png`，不接受网络、qrc、查询或片段。C++ 用 `QUrl::fromLocalFile(path)`；QML 可以直接传入 `FileDialog.selectedFile`。目录必须已经存在。成功保存会原子替换已有文件；抓取、编码或提交失败保留原文件。
+- `pixelSize` 是实际像素尺寸。省略或传入 `Qt.size(-1,-1)` 时使用当前逻辑尺寸乘窗口 DPR，向上取整。显式尺寸不再乘 DPR；每边 1–8192 像素，总量不超过 32,000,000 像素。非等比例尺寸会拉伸视图。增大尺寸缩放当前视图，不改变布局、LOD 或三维网格精度，也不承诺重新生成高分辨率 RHI 数据纹理。
+- 返回 `true` 表示抓取请求已接受，不表示文件已保存。`exportingImage` 从接受到完成为 true。每次调用通过 `imageExportFinished(destination, success, error)` 返回结果；参数无效／忙碌等拒绝立即返回 false 并发出失败信号，进行中的请求继续执行。
+- 图表须挂载到可见窗口、保持可见且尺寸非零。捕获后续渲染帧，不冻结实时数据；需要确定时刻的快照时由应用暂停更新。抓取异步，PNG 编码与原子写入在对象线程完成，不适合连续逐帧导出。
+- 抓取超过 15 秒报告失败；等待期间销毁图表会取消请求、不写文件且不再发信号。三维 software 后端拒绝导出，避免把不支持的占位画面当作三维结果。
+
+```qml
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Dialogs as Dialogs
+import QCatUiKit
+
+ColumnLayout {
+    width: 720; height: 480
+    CatChart {
+        id: chart
+        Layout.fillWidth: true
+        Layout.preferredHeight: 360
+        title: qsTr("Observations")
+        CatChartSeries {
+            name: qsTr("Samples")
+            Component.onCompleted: setData([{x: 0, y: 1}, {x: 1, y: 3}, {x: 2, y: 2}])
+        }
+        onImageExportFinished: (destination, success, error) => {
+            status.text = success ? qsTr("Image saved") : error;
+        }
+    }
+    CatButton {
+        text: qsTr("Export PNG")
+        enabled: !chart.exportingImage
+        onClicked: saveDialog.open()
+    }
+    CatLabel { id: status; Layout.fillWidth: true; wrapMode: Text.Wrap }
+    Dialogs.FileDialog {
+        id: saveDialog
+        fileMode: Dialogs.FileDialog.SaveFile
+        nameFilters: [qsTr("PNG image (*.png)")]
+        defaultSuffix: "png"
+        onAccepted: chart.exportImage(selectedFile)
+    }
+}
+```
+
+库提供当前视图的图像导出。配置保存／恢复、版本迁移、图表同步、原始数据导出和额外可访问数据表由应用根据自身模型实现。
+
 ## Gallery 数据操作与压力测试
 
 笛卡尔演示均可切换“平移／框选缩放”和框选轴；中英文切换及增删数据保留交互设置，恢复示例切回平移与双轴，并开启触摸导航。“触摸平移与双指缩放”开关可让拖动改为滚动页面；界面提示随状态和语言更新。窗口尺寸变化会取消正在进行的手势。
@@ -505,106 +632,3 @@ CatChart {
 计数跨窗口重建累计，software 路径不增加 RHI 计数。诊断方法没有属性通知信号；需要连续观察时由调用方选择刷新间隔。
 
 自动测试位于 tests/auto/charts、tests/auto/qml/data/tst_charts.qml、tests/auto/gallery/data/tst_charts.qml 和 tests/auto/gallery/tst_gallerychartdata.cpp。安装消费者、测试命令与平台覆盖见 [验证说明](VALIDATION.md)。
-
-
-区间面积也可调用 `setRangeBoundaries(lower, upper, alignment)`，两数组各项使用 `{x, y, label?, breakBefore?}`。两个数组都必须严格递增且 X 唯一。默认 ExactAlignment 要求数量和每个 X 完全一致，否则返回 false 并保留旧数据。LinearAlignment 在共同覆盖范围内取 X 的并集，按数据坐标线性插值，不外推；插值后的成对记录再应用 curveMode。重复／无序 X、非法数值、单侧空数组、无共同范围均拒绝；两侧均空表示清空。对齐是一次快照转换，at() 返回生成后的成对记录，capacity 仍保留末尾记录。
-
-插值不穿过任一边界的 breakBefore 区间：缺失区间内无法配对的 X 被跳过，下一个有效配对点保留断点；一侧的断点同时隔离上下边界和填充。精确节点标签优先取上界，其次下界，纯插值节点没有标签。名称 lower／upper 在交叉后仍保持原意。
-
-有序的大规模 RangeArea 在所有七种 curveMode 下共享分层区间索引，保留上下两边界的实际极值、首尾点及连续区间。小于显示预算对应屏幕宽度的区间才聚合；缩放到细节恢复原曲线。边界交叉仍拆分填充，断点隔离索引根节点。平移复用缓存，颜色／线宽／填充变化不重新拟合；数据、曲线算法或轴尺度变化会重建。LOD 拾取通过候选区间细查原始曲线，返回原始成对记录，不把聚合端点当成原值。无序数据保持精确遍历，displayBudget=0 可关闭 LOD。
-
-
-柱体及 Circle／Square／Triangle／Diamond 标记现使用私有 RHI 实例管线，每个矩形／标记为一个 28 字节实例，共享四边形；圆形及多边形边缘由片元阶段求覆盖率。边框条也走矩形实例，保持既有填充与边框顺序。Line／Area 节点标记绘制于曲线之上。支持硬件实例化的后端批量提交，不支持的后端用相同解析着色器逐四边形回退；software 由 QPainter 绘制相同预设形状。`renderingStatistics()` 增加 instanceCount／instanceUploads，uploadedBytes 累计数据顶点与实例上传，不包括固定四边形和统一缓冲；静止／悬停不上传系列实例，局部变化复用缓冲和未改前后区间。
-
-`markerShape: CatChartSeries.TextureMarker` 搭配 `markerTexture` 本地／qrc 图片，用 markerSize（Bubble 用 value 半径）定义正方形显示范围。保留图片颜色及 alpha，再乘系列 color 的 alpha；透明角落仍属于该正方形拾取范围。空／失败纹理回退为系列颜色方形，`markerTextureError` 提供原因。纹理尺寸、相对路径和重载规则与 fillTexture 相同。缩放和尺寸调整复用 GPU 图片。
-
-柱形标签支持 `barLabelRotation`（默认 0，有限值 -180..180 度）。围绕文本中心旋转，定位、柱体内边距和标签避让使用旋转后的包围框；放不下的内置标签继续省略。文字纹理随角度复用。
-
-### 有预算的 QML 委托
-
-系列的 `pointDelegate`、`barDelegate`、`labelDelegate` 接受 `Component`，默认 null。点委托作用于散点／气泡以及已显示的曲线标记（LOD 后的标记）；柱体委托作用于六种柱状布局；标签委托作用于通过布局避让的柱形和饼／环标签。隐藏或不合适的标签不会因委托重新出现。
-
-`CatChart.delegateBudget` 默认 128，允许 0–1024，三种委托共享预算。仅为当前可见图元创建对象，超限或错误组件保留内置绘制；`activeDelegateCount` 和 `delegateError` 报告当前结果。根对象必须为 `QQuickItem`，可声明 `required property var chartData`，其中包含原始记录、index、seriesIndex、seriesName、kind（point/bar/label）、color、text，以及适用时的 percentage。图表管理根项位置、尺寸和旋转，子项可用 anchors 自由布局。柱体根项使用裁剪后尺寸。
-
-委托在 GUI 线程创建，按系列／种类／记录索引复用，数据更新会更新 chartData；平移离屏、隐藏、删除系列、替换组件或缩减预算会释放对象。组件仍归应用所有，图表拥有创建的根项。所有委托位于 GPU 数据之上、提示覆盖层之下；可使用标准 Qt Quick 输入处理器，主动接收事件的委托优先于图表导航。纯 C++ 不设置委托时无需 QML 引擎。
-
-```qml
-CatChartSeries {
-    markerSize: 20
-    pointDelegate: Component {
-        Rectangle {
-            required property var chartData
-            color: chartData.color
-            radius: width / 4
-            border.color: "white"
-            border.width: 2
-        }
-    }
-}
-```
-
-### 显式选择与索引拾取
-
-`selectionMode` 为 `NoSelection`（默认）、`SingleSelection` 或 `MultiSelection`。单击／触摸轻点在单选模式替换选择，多选模式逐条切换；空白处清除。拖动平移、框选缩放不会选择记录。应用也可用 `selectPoint(seriesIndex, index, selected=true)`、`isPointSelected` 和 `clearSelection()` 控制选择；无效索引返回 false。`selectedPoints` 按系列、原始记录索引排列，变更发出 `selectionChanged`。最多保留 4096 条选择。
-
-选择保存在图表中，同一系列可以在不同图表有独立选择。任何该系列的数据变化都会清除其选择，以免容量覆盖后错选另一条记录；颜色／显隐／轴变化保留选择，移除／销毁系列会释放状态。切换至关闭或单选模式清空已有选择。NoSelection 仅关闭输入自动选择，程序仍可显式选择。
-
-`selectionColor` 默认使用主题 warning 色，可覆盖及复位；`selectionWidth` 为 1–8 逻辑像素，默认 2。独立覆盖层为原始标记、柱体、单元、扇区或区间上下界绘制轮廓，选择与悬停不上传数据缓冲。委托的 chartData.selected／hovered 同步更新。dataAt 返回的原始记录附带 selected 状态。
-
-屏幕包围盒索引用于标记／柱体、曲线段、区间和扇区候选查询，保留原绘制顺序与 LOD 原始记录精化。`renderingStatistics()` 的 `pickNodesVisited`、`pickCandidates` 是最近一次查询的诊断计数；有序曲线的原始点继续通过 X 二分筛选。这里没有同步 GPU 读回。
-
-### 主题与可选过渡
-
-`animationsEnabled` 默认 false，保持原有即时呈现。启用后，主题或系列外观变化触发数据与文字的淡入，新增选择触发轮廓淡入；不是数值插值或几何形变动画。时长采用当前 ThemePalette 的 `motionDuration`，上限 2000 ms。`transitionRunning`／`transitionChanged` 可观察进行状态。
-
-淡入只更新图层透明度，动画帧不重新准备几何或上传系列缓冲。鼠标导航、容量滚动和应用主动数据更新保持即时，过渡期间到达的数据正常呈现。`reducedMotion` 或 duration=0 会立即结束正在进行的动画并显示最终状态；隐藏图表或禁用过渡也会结束动画。software、RHI 和委托图层使用相同的合成淡入。应用在自定义委托中编写的独立动画仍由应用管理，应自行绑定减少动态效果设置。
-
-饼／环外置标签先按两侧列避让，再检查同侧、跨环及跨侧引线。重叠或交叉时优先保留占比较大的路线；`outsideLabelCandidates`／`outsideLabelsShown` 诊断计数表示路线筛选前后数量。省略标签始终不会删除数据，也不会改变扇区拾取。
-
-## 图像导出
-
-`exportImage(destination, pixelSize)` 异步抓取当前 CatChart 子树并保存为 PNG，适用于二维 RHI、二维 software 和支持的三维 RHI 后端。包含当前标题、轴、图例、数据、选择／提示／十字线及图表内部的 QML 委托；不包含图表外部的按钮、父项背景或独立 Popup。透明背景保留 alpha。
-
-- `destination` 是绝对本地 `file:` URL，扩展名为 `.png`，不接受网络、qrc、查询或片段。C++ 用 `QUrl::fromLocalFile(path)`；QML 可以直接传入 `FileDialog.selectedFile`。目录必须已经存在。成功保存会原子替换已有文件；抓取、编码或提交失败保留原文件。
-- `pixelSize` 是实际像素尺寸。省略或传入 `Qt.size(-1,-1)` 时使用当前逻辑尺寸乘窗口 DPR，向上取整。显式尺寸不再乘 DPR；每边 1–8192 像素，总量不超过 32,000,000 像素。非等比例尺寸会拉伸视图。增大尺寸缩放当前视图，不改变布局、LOD 或三维网格精度，也不承诺重新生成高分辨率 RHI 数据纹理。
-- 返回 `true` 表示抓取请求已接受，不表示文件已保存。`exportingImage` 从接受到完成为 true。每次调用通过 `imageExportFinished(destination, success, error)` 返回结果；参数无效／忙碌等拒绝立即返回 false 并发出失败信号，进行中的请求继续执行。
-- 图表须挂载到可见窗口、保持可见且尺寸非零。捕获后续渲染帧，不冻结实时数据；需要确定时刻的快照时由应用暂停更新。抓取异步，PNG 编码与原子写入在对象线程完成，不适合连续逐帧导出。
-- 抓取超过 15 秒报告失败；等待期间销毁图表会取消请求、不写文件且不再发信号。三维 software 后端拒绝导出，避免把不支持的占位画面当作三维结果。
-
-```qml
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Dialogs as Dialogs
-import QCatUiKit
-
-ColumnLayout {
-    CatChart {
-        id: chart
-        Layout.fillWidth: true
-        Layout.preferredHeight: 360
-        title: qsTr("Observations")
-        CatChartSeries {
-            name: qsTr("Samples")
-            Component.onCompleted: setData([{x: 0, y: 1}, {x: 1, y: 3}, {x: 2, y: 2}])
-        }
-        onImageExportFinished: (destination, success, error) => {
-            status.text = success ? qsTr("Image saved") : error;
-        }
-    }
-    CatButton {
-        text: qsTr("Export PNG")
-        enabled: !chart.exportingImage
-        onClicked: saveDialog.open()
-    }
-    CatLabel { id: status; Layout.fillWidth: true; wrapMode: Text.Wrap }
-    Dialogs.FileDialog {
-        id: saveDialog
-        fileMode: Dialogs.FileDialog.SaveFile
-        nameFilters: [qsTr("PNG image (*.png)")]
-        defaultSuffix: "png"
-        onAccepted: chart.exportImage(selectedFile)
-    }
-}
-```
-
-M5 仅提供图像导出。配置保存／恢复、版本迁移、图表同步、原始数据导出和额外可访问数据表由应用根据自身模型实现。

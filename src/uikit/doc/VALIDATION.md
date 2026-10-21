@@ -146,7 +146,16 @@ cmake --build build/dock-consumer
 
 ## 文档与示例检查
 
-从仓库根目录运行 `python tools/check_docs.py`，检查本地 Markdown／HTML 资源链接、标题锚点、代码围栏和 Cat 组件目录覆盖。该工具不访问外网，不替代 QML 编译或运行验证。
+从仓库根目录运行 `python tools/check_docs.py`，检查本地 Markdown／HTML 资源链接、标题锚点、代码围栏、当前指南中的重复正文和 Cat 组件目录覆盖。它还从模块 CMake 的公开头列表提取 `Q_PROPERTY`／`Q_INVOKABLE` 名称，检查对应专题是否提到这些名称。历史验证记录允许不同日期重复描述同一结果，不参与重复正文拦截。
+
+这只是结构和名称覆盖检查，不证明默认值、签名、线程要求或行为正确，也不访问外网。新增公开子系统时，同步维护脚本中的专题映射。
+
+全库文档复查按以下顺序进行：
+
+1. 检查根目录 README／贡献约定、文档目录、Gallery README 和技能参考，列出覆盖范围；历史记录只核对结构、链接与保留证据，不能把旧结果当作新测试。
+2. 对照 CMake 的安装头／类型列表、公开头、QML 组件和相关实现，检查类型名、主要属性、方法、默认值、错误与所有权；用测试确认容易误读的行为。
+3. 从当前指南提取 QML 对象示例，在 Qt Quick Test 中加载。没有 import 的对象片段补标准导入，多个并列对象放入 Item；属性赋值和事件处理器片段须放到说明的上下文，不当作独立文件加载。
+4. 运行重复正文与名称覆盖检查，再检查差异。示例加载只能证明语法与创建，交互、几何、GPU 和部署另行验证；当前文档检查不要求把所有历史平台重新测一遍。
 
 更新 Dock 文档时，对照 `qcatdockcontroller.h` 的 `Q_INVOKABLE`、`Q_PROPERTY` 和 signals，以及两个 CatDock QML 文件的应用接口，逐项检查名称、默认值、返回值和权限。内部状态属性不应列为应用接口。把 DOCKING.md 的最小 QML 示例放入临时 Qt Quick 测试的 Component，以 `createTemporaryObject` 创建；等待面板注册后，确认日志位于编辑器下方，再检查保存／关闭／恢复以及 `dockToWorkspace(..., Right, 0.75)` 的右侧面板和比例。使用上文的 `tst_qml -input ... -import ...` 方法运行，测试产物留在忽略的构建目录中。
 

@@ -6,6 +6,20 @@
 `LedDeck`、`LedMixer`、`LedStorageBrowser`、`LedLayoutSettings`、`LedPreviewSettings`、
 `LedOutputSettings` 是公共 QML 控件，不依赖 Gallery。
 
+先用布局确定“灯点在哪里”，再由 A／B 两个播放器生成颜色，混合器合成最终帧，最后分别送往预览和设备输出。预设保存在仓库中；加载预设只改变播放器的工作副本，保存才写回仓库。
+
+| 文中名称 | 可以怎样理解 |
+| --- | --- |
+| Layout | 灯点的位置和编号 |
+| Provider / Effect | 算法提供者／一种效果算法 |
+| Storage / Place | 预设集合／集合中的一个槽位，槽位可以为空 |
+| Repository | 管理多个预设集合的仓库 |
+| Deck | 独立播放器；A／B 可播放同一个预设，但进度和参数互不影响 |
+| Mixer | 把 A／B 混合，再应用总亮度或全黑 |
+| Profile / Patch | 设备通道定义／逻辑灯点到设备地址的映射 |
+
+只想显示已有 RGBA8 灯点数据时，从 [LedPreview 与 LedSource](LEDPREVIEW.md) 开始即可，不需要组装整条管线。
+
 ## 最小可运行装配
 
 ```qml
@@ -60,6 +74,7 @@ Gallery 配置三个设备分组，分别观察前三个逻辑灯点。
 
 真实头命名为 `qcat*.h`，同时安装带 `.h` 和无扩展名的转发头，例如
 `<QCatUiKit/qcatlightingframe.h>`、`<QCatUiKit/LightingFrame.h>`、`<QCatUiKit/LightingFrame>`。
+C++ 类使用全局命名空间中的 `QCat` 前缀，例如 `QCatLedDeck`、`QCatLedMixer`、`QCatLedStorageRepository`；`LedDeck` 是 QML 控件名称，`LedDeckRuntime` 是其运行时对象名称。
 
 配置方法、模型、Registry 和 Adapter 在对象所属线程调用。`QCatLightingFrame` 是不可变值，
 构造时深拷贝外部字节；`latestFrame()` 可跨线程读取。灯点位置和通道均为连续缓冲区。
@@ -75,9 +90,9 @@ Gallery 配置三个设备分组，分别观察前三个逻辑灯点。
 
 ## 布局
 
-`configuration` 是带 `version:1` 的 QVariantMap。`validateConfiguration()` 返回字段错误，
-`apply()` 在后台生成并保留最后请求；失败不替换当前布局。`applyNow()` 是同步 C++/测试/配置恢复入口，
-交互式大布局使用 `apply()`。`configuration` 和 `snapshot()` 只描述已经应用的状态。
+`configuration` 是带 `version:1` 的 QVariantMap。`validateConfiguration(configuration)` 返回错误字符串，空字符串表示通过；`defaultConfiguration()` 返回默认配置副本。
+`apply(configuration)` 在后台生成并保留最后请求；失败不替换当前布局。`busy` 表示有正在执行或等待的请求，`lastError` 提供错误说明。
+`applyNow(configuration)` 是同步入口，返回是否成功，C++／QML 都可调用；大布局可能阻塞界面，交互时优先使用 `apply()`。`configuration`、`pointCount`、`revision` 和 C++ `snapshot()` 只描述已经应用的状态，成功应用发出 `layoutChanged()`。
 
 布局、预览设置和灯具映射对话框先编辑草稿。数值输入支持 Enter、Tab 或点击其他控件结束编辑；
 直接点击“应用”也会校验并提交当前输入，无须先按 Enter。非法文本会阻止应用并聚焦对应输入框。
@@ -145,6 +160,8 @@ Provider 提供算法，Storage 是集合，Place 是预设配置，Deck 是运�
 内置 `qcat.waves`（rainbow/ripple）和 `qcat.channels`（solid/chase）演示两个独立提供者。
 `solid` 可编辑所有当前发光通道；`chase` 的 channel 从 0 起，可选择 W/CW/WW 做真实通道动画。
 
+Registry 的 `effects` 提供已注册效果描述，`effect(providerId, effectId)` 查询一项；`validatePlace(place)` 返回错误字符串，空字符串表示可以使用。C++ 的 `prepare(...)` 根据配置和布局创建独立实例；调用方应检查返回值和错误。
+
 描述包含 id/version/name/schemas/reverse 和参数列表 `{id,name,default,min,max}`。
 当前控件提供无限时长的播放，不展示未实现的有限时长、定位或循环控件。
 内置 Provider 支持反向时间；C++ 允许 -8…8，基础 UI 采用 0…8。
@@ -167,6 +184,27 @@ conversion、brightness、speed、thumbnail、configVersion。独立 W/CW/WW 位
 | previous / next | 活动预设所属集合的可用槽位，边界不循环，忽略正在浏览的其它集合 |
 | editPlace / setParameter | 编辑本 Deck 的工作副本；不自动保存 |
 | savePlace / saveTo | 显式写入当前或另一可写 Repository 的指定槽位 |
+| `loadConfiguration(place, activate = false)` | 不通过仓库直接加载一份预设配置；activate 为 true 时从头播放 |
+| `selectEffect(providerId, effectId, schema)` | 以默认参数准备并播放指定算法，生成未保存的工作配置 |
+| `configuration()` / `restoreConfiguration(configuration)` | 读取／恢复播放器配置；恢复后从 t=0 暂停，返回是否接受恢复请求 |
+
+### 播放器运行状态
+
+| LedDeckRuntime 属性 | 默认值／用途 |
+| --- | --- |
+| `layout` / `registry` / `repository` | 注入布局、算法目录和当前浏览仓库；独立创建时需自行连接 |
+| `source`（只读） | 本播放器的 RGBA8 预览源，供 LedPreview 使用 |
+| `playing` / `loading`（只读） | 是否播放／是否有待完成的预设准备 |
+| `effectTime`（只读） | 当前效果时间，单位秒；不是墙钟时间 |
+| `productionInterval` | 默认 16 ms，允许 4–1000；控制效果调度，与预览帧率和设备发送周期独立 |
+| `speed` / `brightness` | 均默认 1；speed 允许 −8…8，反向需算法支持；brightness 允许 0…1 |
+| `browsingStorage`（只读） | 浏览中的集合 ID，不代表正在播放的集合 |
+| `activeRepositoryId` / `activeStorage` / `activePlace`（只读） | 活动预设的仓库／集合／槽位身份 |
+| `activeLocation`（只读） | 活动来源的位置标记，随配置保存／恢复；业务识别应使用上述完整身份 |
+| `workingPlace` / `parameterDefinitions`（只读） | 当前工作配置副本／当前算法参数定义 |
+| `lastError`（只读） | 最近一次运行或配置错误 |
+
+准备预设包含后台任务，方法返回 true 表示请求被接受，不表示已发布首帧。观察 `loading`、`stateChanged()` 和 `frameReady()`；配置变化通过 `settingsChanged()` 通知。C++ `latestFrame()` 读取不可变通道帧快照。
 
 空槽位、缺失算法、错误版本或参数无效均保留原活动预设并报告错误。加载中的选择与已经活动的选择分开。
 活动身份包含 `activeRepositoryId/activeStorage/activePlace`；切换数据源只是浏览，ID 相同的外部副本也不会被误标为当前活动槽位。
@@ -179,6 +217,12 @@ Master 在混合后再作用一次。相机、预览亮度或混合比例不推�
 仓库提供 `createStorage/savePlace/renamePlace/copyPlace/clearPlace`，以及 `document/replaceDocument`。
 数据库/服务适配器可派生 Repository 并覆写 `persist(candidate,error)`，先保存成功才提交内存状态；
 异步拉取后在对象线程调用 replaceDocument。只读仓库禁止修改，但可以通过 saveTo 另存到其它仓库。
+
+### 仓库查询和列表模型
+
+`repositoryId` 是仓库身份，`storages` 返回集合列表；`places(storageId)` 返回槽位列表，`place(storageId, placeId)` 查询单个槽位。`readOnly` 默认 false，设为 true 后禁止编辑。`thumbnail(...)` 按需生成预览图，`thumbnailRevision`／`thumbnailsChanged()` 通知缩略图更新；数据变更监听 `changed()`，错误读取 `lastError` 并监听 `statusChanged()`。
+
+`LedPlaceModel` 把槽位包装为列表模型，设置 `repository`、`registry` 和 `storageId` 后，可通过 `get(row)` 读取配置副本。角色为 `placeId`、`name`、`empty`、`error`、`number`；行索引从 0 开始，显示编号 number 从 1 开始。`LedStorageBrowser` 的 `runtime` 连接播放器；浏览只读仓库时，可通过 `writableRepository` 指定另存目标。
 
 `exportJson(storageId?,placeId?)` 区分 repository/storage/place，外层 `{version:1,kind,data}`。
 `importJson()` 原子校验后追加集合；集合 ID 冲突则生成新的集合和槽位 ID；Place 导入明确替换目标槽位，
@@ -206,6 +250,23 @@ Mix 0 等于 A，1 等于 B，0.5 的 255/0 混合用 qRound 得到 128。
 Freeze 保持全部混合通道，Master/Blackout 继续有效；布局或工作 Schema 改变会解除 Freeze。
 Blackout、Master=0、stop 清零当前全部通道。预览亮度完全不进入最终帧。
 
+### 混合器接口
+
+| LedMixerRuntime 接口 | 默认值／用途 |
+| --- | --- |
+| `deckA` / `deckB` / `layout` | 输入播放器和共享布局 |
+| `crossfader` | 默认 0.5，范围 0…1；0 为 A，1 为 B |
+| `master` | 默认 1，范围 0…1；混合后的总亮度 |
+| `blackout` / `freeze` | 默认 false；全黑输出／保持混合帧 |
+| `workingSchema` / `conversion` | 默认 `Lighting.RGB_CW_WW` / `Lighting.Strict`；工作颜色模型和转换策略 |
+| `source`（只读） | 最终输出对应的 RGBA8 预览源 |
+| `channelSample()` | 最终帧第一个灯点的各发光通道值；不是整帧 |
+| `remix()` | 立即重新混合；通常已由输入或设置变化自动调度 |
+| `configuration()` / `restoreConfiguration(configuration)` | 保存／恢复设置；恢复会解除 freeze 和 blackout |
+| `lastError`（只读） | 最近错误；状态变化监听 `statusChanged()`，新帧监听 `frameReady()` |
+
+C++ 还可用 `mixFrames(a, b)` 提交两个不可变输入帧，通过 `latestFrame()` 读取最终通道帧。`settingsChanged()` 通知配置变化。
+
 | Conversion | 行为 |
 | --- | --- |
 | Strict | 只接受同模型；通道重排由 Profile 处理 |
@@ -231,6 +292,21 @@ firstPoint/pointCount/startChannel。逻辑索引从 0 起，地址从 1 起。�
 enabled 控制发送周期、重复保持和启用；布局/映射修改取消旧事务。
 `MemoryOutputBackend` 线程安全地保存最新完整帧，250ms 更新诊断，UI 只显示每端口前 32 字节。
 后台接口和内存验证不需要窗口、LedPreview 或 GPU 读回。
+
+### 设备输出接口
+
+| LedOutput 接口 | 默认值／用途 |
+| --- | --- |
+| `mixer` / `memoryBackend` | 最终帧来源／内存接收器；C++ 可用 `setBackend(shared_ptr)` 接入自己的发送实现 |
+| `profiles`（只读） / `applyProfiles(profiles)` | 查询／整体替换映射；校验失败返回 false，保留原映射 |
+| `enabled` | 默认 true；关闭会取消旧事务，不代表已向硬件发送全黑 |
+| `interval` | 默认 25 ms，允许 4–10000；设备发送周期 |
+| `repeatFrames` | 默认 true；没有新帧时是否重复发送当前帧 |
+| `cancel()` | 取消旧事务；需要持续停止发送时还应设置 enabled=false |
+| `configuration()` / `restoreConfiguration(configuration)` | 保存／恢复映射、周期和重复策略；不保存 enabled |
+| `lastError`（只读） | 最近映射／发送错误；监听 `statusChanged()`，配置变化监听 `settingsChanged()` |
+
+`MemoryOutputBackend.ports` 提供端口诊断与前 32 字节，`receivedFrames` 为累计接收次数，`frameId`／`mappingRevision` 标识最近版本；这些属性通过 `diagnosticsChanged()` 更新。C++ `latestFrame()` 返回完整帧，`consumer()` 用于连接发送端。诊断显示不等于设备已收到数据。
 
 ## 保存与恢复
 

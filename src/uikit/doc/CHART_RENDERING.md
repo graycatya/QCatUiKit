@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [二维 API](CHARTS.md) · [三维 API](CHARTS3D.md) · [验证方法](VALIDATION.md)
 
-CatChart 使用私有 QQuickRhiItem 数据层与 Qt Quick SceneGraph 合成。原 RHI 迁移 M0–M5 的约定范围已完成，M5 最终范围为当前视图 PNG 导出。各阶段执行证据保存在 [历史验证记录](VALIDATION_HISTORY.md)；迁移前基线为 `70b5c84`。本文维护现有实现和明确边界，具体属性及数据语义以专题 API 为准。
+CatChart 使用私有 QQuickRhiItem 数据层与 Qt Quick SceneGraph 合成。当前提供二维／三维绘制、交互和当前视图 PNG 导出。迁移过程与执行证据保存在[历史验证记录](VALIDATION_HISTORY.md)。本文维护现有实现和明确边界，具体属性及数据语义以专题 API 为准。
 
 ## 图层与线程
 

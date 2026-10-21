@@ -36,7 +36,7 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 | CMake / C++ | CMake 3.24 或更高，C++17 编译器 |
 | Gallery | Qt LinguistTools；文件对话框示例使用 QtQuick.Dialogs |
 | 自动测试 | Qt Test、QuickTest |
-| 图形运行时 | 目标平台的 Qt Quick 后端；软件后端可用于离屏检查 |
+| 图形运行时 | 二维控件／图表可使用软件后端；三维图表和 LED 预览需要硬件图形后端 |
 
 图表由本库实现，无需 Qt Charts、Qt Graphs 或 WebEngine。
 
@@ -66,7 +66,7 @@ Windows 多配置构建、最小库构建、安装及部署见 [构建与接入]
 源码接入：
 
 ```cmake
-add_subdirectory(path/to/QCatUiKit)
+add_subdirectory(path/to/QCatUiKit qcat-uikit)
 target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
 ```
 

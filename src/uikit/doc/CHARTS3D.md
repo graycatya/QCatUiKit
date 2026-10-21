@@ -2,7 +2,9 @@
 
 [文档索引](README.md) · [二维图表](CHARTS.md) · [渲染架构](CHART_RENDERING.md)
 
-`CatChart.scene3D` 是图表拥有的 `CatChartScene3D`。设置 `enabled: true` 显示三维场景，关闭后恢复原二维系列；两套数据和选择独立保存。内部使用私有 `QQuickRhiItem`、窗口的 QRhi、深度缓冲、共享网格与实例缓冲，不依赖 Qt Graphs。
+三维图表可显示空间散点、分组柱阵、轨迹和规则曲面。用 `CatChartSeries3D` 提供 XYZ 数据，加入 `CatChart.scene3D.series`，再设置 `scene3D.enabled: true`。
+
+`scene3D` 是图表拥有的 `CatChartScene3D`，无需自行创建。关闭三维后恢复原二维系列；两套数据和选择分别保留。三维需要硬件图形后端；软件后端会显示不可用提示。内部渲染不依赖 Qt Graphs。
 
 ```qml
 import QtQuick

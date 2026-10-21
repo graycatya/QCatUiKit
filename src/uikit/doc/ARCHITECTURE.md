@@ -12,6 +12,7 @@
   │    ├─ TableModel / ChatModel / TreeModel：数据模型
   │    ├─ CatChart / 坐标轴 / 系列 / 适配器：二维与三维图表
   │    ├─ LedPreview / Deck / Storage / Mixer：LED 工作流
+  │    ├─ CatDockWorkspace / DockController：面板停靠与浮动
   │    └─ CatAttitudeIndicator / TiltController：姿态与体感
   └─ QCatUiKit 共享库
        ├─ 主题、表格、消息的公开 C++ 类
@@ -41,6 +42,7 @@ Gallery 应用
 | `examples/uikit/gallery/` | Gallery 页面、控制器、翻译及演示资源 |
 | `tests/auto/models/` | 主题、消息与表格模型协议 |
 | `tests/auto/led/` | LED 帧、管线、输出和真实 GPU 预览 |
+| `tests/auto/dock/` | 停靠控制器、布局恢复与工作区边缘 |
 | `tests/auto/motion/` | TiltController 输入、校准、授权与超时 |
 | `skills/qcatuikit-ui/` | UI 技能、按需参考与安装包应用模板 |
 | `tools/` | 文档校验与 Gallery 截图工具 |
@@ -71,7 +73,7 @@ CMake 统一链接 `QCatUiKit::QCatUiKit`。QML 公开名称由组件文件、�
 
 模型只管理数据与标准 Qt 模型通知，不决定光标、列宽或窗口大小。TableModel 使用 QAbstractTableModel，ChatModel 使用 QAbstractListModel，TreeModel 提供只读层次数据。视图负责布局、选择、滚动与 delegate。
 
-所有 QObject API 在所属线程调用。工作线程准备批次，通过 queued connection 交给模型或图表对象；不要并发读写容器，也不要跨数据修改保留内部样本引用。
+除明确声明为线程安全的 LED 提交／快照接口外，QObject API 在所属线程调用。工作线程准备批次，通过 queued connection 交给模型或图表对象；不要并发读写容器，也不要跨数据修改保留内部样本引用。
 
 图表将数据和样式更新合并到 polish 阶段，在 GUI 线程准备不可变布局与图元快照。私有 QQuickRhiItem 负责数据层的 GPU 缓冲和透明离屏绘制；背景／网格及独立文字／交互覆盖层通过 SceneGraph 合成。software 后端通过图像绘制回退；具体数据、诊断与性能边界见 [图表](CHARTS.md)。
 
@@ -118,7 +120,7 @@ CatTiltControlPanel 只显示状态并发出用户请求。设备传感器、屏
 新增组件同步维护模块 CMake、组件目录、GalleryCatalog、交互预览、翻译及相关检查。布局使用逻辑像素和主题 Token，输入优先采用 Qt Controls 的焦点、键盘、禁用与可访问性协议。详见 [贡献指南](../../../CONTRIBUTING.md) 和 [验证说明](VALIDATION.md)。
 
 
-### Dock 工作区
+## Dock 工作区
 
 DockController 使用 Pimpl 保存独立布局树和面板 ID 注册表，负责分割、标签操作及事务式 JSON 恢复。
 CatDockWorkspace 根据树计算几何并布置已有 CatDockPanel；内容实例不随布局重建，业务状态由应用内容持有。

@@ -4,6 +4,34 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## 全库文档核对与整理（2026-10-21）
+
+检查仓库中的全部 34 份 Markdown，包括根入口、专题、Gallery、技能参考和品牌资源说明。按下表核对现行文档的用途、接口入口、过期内容、重复说明和阅读顺序；历史文件保留原有日期及平台范围，不把旧结果改写为本次执行。
+
+| 范围 | 文档 | 数量 |
+| --- | --- | --- |
+| 根入口与约定 | README.md、README.en.md、CONTRIBUTING.md、AGENTS.md | 4 |
+| 控件和数据接口 | COMPONENTS、THEMING、MODELS、SLIDERS、ATTITUDE、DOCKING | 6 |
+| 图表 | CHARTS、CHARTS3D、CHARTEXTENSIONS、CHARTSTATISTICS、CHART_RENDERING | 5 |
+| LED | LEDPREVIEW、LEDWORKFLOW | 2 |
+| 构建与维护 | BUILDING、ARCHITECTURE、ABI、VERSIONING、MAINTENANCE | 5 |
+| 验证与截图 | VALIDATION、VALIDATION_HISTORY、SCREENSHOTS | 3 |
+| 文档导航与说明 | 文档 README、AGENT_UI、品牌 README | 3 |
+| Gallery | examples/uikit/gallery/README.md | 1 |
+| UI 技能 | SKILL.md 与四份 references | 5 |
+
+对照模块 CMake 的 32 个安装头，以及对应公开声明、QML 文件和相关实现，补充坐标轴 tickCount、LED 布局／仓库／播放器／混合器／设备输出接口，澄清同步调用、后台准备、停止发送、尺寸与线程边界。删除组件目录重复三维段落；ABI 的逐批演进说明已在本历史文件存在，当前指南改为规则与边界。2026-10-12 的 LED 圆片基准从预览指南原样移至本文件末尾。图表与 Gallery 的追加说明归回对应章节，补上任务导航、术语解释、片段上下文和 Dock 技能入口。未修改库运行代码或公开接口。
+
+实际检查环境为 Windows 11、Qt 6.12.0 MSVC Release，复用 `build/dock-validation`，测试使用 offscreen/software：
+
+- `python tools/check_docs.py` 通过：34 份文档的本地链接、锚点、围栏、重复正文与 119 个 Cat 类型覆盖；对应专题包含 360 个 Q_PROPERTY 和 168 个 Q_INVOKABLE 声明的名称。这是名称覆盖，不等于所有签名、信号和行为均已自动验证。
+- 从当前指南提取 35 个 QML 对象示例，逐项创建并等待事件循环；Qt Quick Test 37/37（含初始化／清理），没有 QWARN、ReferenceError 或 TypeError。无 import 的片段补标准导入，并列对象加 Item 容器；处理器片段不当作独立文件加载。
+- 文档默认值专项 6/6（含初始化／清理）：主题三种密度／减少动效、模型副本及消息默认值、轴刻度默认值与限制、LED 播放／混合／发送默认参数。
+- 检查工具的重复正文正例会被拒绝，围栏内重复代码不被误报；临时屏蔽主题专题时，公开接口名称缺失会被拒绝。`git diff --check` 通过。
+- 临时提取脚本、专项和日志位于忽略的 `build/doc-examples/`、`build/check_doc_examples.py`、`build/audit_api_mentions.py`；重复检查步骤见 VALIDATION 的“文档与示例检查”。
+
+本次不重新构建产品或重跑完整 CTest、GPU、安装部署及其他平台；QML 示例创建不代表全部交互、像素或性能验收。外网链接未联网检查；带日期截图仍按原采集环境标注。全库已有产品测试失败继续保留在最近结果摘要中。
+
 ## Dock 接口与文档整理（2026-10-21）
 
 核对 DockController 头文件、实现、CatDockWorkspace／CatDockPanel 和相关测试。专题文档覆盖 16 个可调用方法、3 个控制器属性和 3 个信号；补充工作区／面板属性表、默认值、关闭确认、布局快照字段、右侧停靠比例及内部实现边界。公开头补充 ratio 方向说明，未修改接口签名或运行行为。
@@ -780,3 +808,20 @@ CatAttitudeIndicator/CatTiltControlPanel 是新增 QML 类型，既有公开类�
 未增加 Qt Sensors 或协议库依赖；新接口的四元数使用既有 QtGui 依赖。
 
 本机 Linux / Qt 6.12 Release 的姿态安装消费者与历史图表二进制替换检查通过；此前 745 个 QCatUiKit 函数符号全部保留。该验证不代替其他平台的 ABI 检查。
+
+## LED 圆片版本基准记录（2026-10-12）
+
+2026-10-12，Windows 11 x64，MSVC 19.39 Release，Qt 6.12.0，NVIDIA GeForce RTX 5060 Ti，D3D11。Gallery 窗口 1200×840，DPR 1，Deck A/B backing 为 281×320，Output 为 278×320 物理像素。三路同时运行，灯点直径 6 逻辑像素，透视视图，混合 50%，Output 亮度 100%，sampleCount 1。每组暖机 2 秒、测量约 10 秒：
+
+| 布局 | 每路点数（总点数） | 颜色提交 Hz | LED pass FPS（A / Output / B） | window frameSwapped Hz |
+| --- | --- | --- | --- | --- |
+| 二维矩阵 | 10,000（30,000） | 62.5 | 59.2 / 59.2 / 59.2 | 59.2 |
+| 二维矩阵 | 100,000（300,000） | 62.5 | 59.8 / 59.9 / 59.9 | 59.9 |
+| 三维球形 | 10,000（30,000） | 62.4 | 59.8 / 59.8 / 59.8 | 59.9 |
+| 三维球形 | 100,000（300,000） | 62.5 | 59.6 / 59.7 / 59.6 | 59.7 |
+
+另以三路各 100,000 球形点、`--led-interval 4`、暖机 2 秒、测量约 5 秒，测得颜色提交 213.4 Hz、三路 LED pass 与 frameSwapped 均约 59.8 Hz。数据生产和渲染频率独立，GUI 停滞的合并通知测试还验证了不会积累颜色帧队列。测量未包括 GPU 时间戳或显示器实际扫描完成；这些短时结果不保证更大窗口、不同显卡或长期负载稳定达到 60 FPS。
+
+实际完成：干净编译库/Gallery/测试、两组 QML lint、10 组 CTest（Windows 离屏测试指定系统字体目录）、安装并构建运行独立 LED 消费者。真实窗口测试分别在 D3D11、OpenGL 和 D3D11 DPR 2 上通过，覆盖三路颜色、圆形裁剪及像素大小、深度遮挡、帧内存隔离、混合 0/50/100%、Output 亮度、鼠标左/中键/滚轮/双击、2D 忽略旋转但保留平移缩放、空/单点/重合布局、1 万/10 万动态布局、resize/MSAA、控件销毁重建、跨窗口以及场景图释放重建。Gallery 的英/中文和窄屏页面创建由回归测试覆盖，宽屏/窄屏还检查实际截图。
+
+原始 JSON、日志、截图为本地构建产物，未加入版本控制。源码保持 Qt 6.8 最低要求，但本次没有实编/运行 Qt 6.8，也未验证 Linux/macOS、Vulkan、Metal、D3D12。上述结果只代表列出的实际工具链与环境。

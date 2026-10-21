@@ -57,6 +57,72 @@ def anchors(lines):
     return found
 
 
+def duplicate_paragraphs(path, lines, errors):
+    """Reject repeated prose in current guides; dated history may repeat findings."""
+    if path.name == "VALIDATION_HISTORY.md":
+        return
+    seen = {}
+    paragraph = []
+
+    def check():
+        if not paragraph:
+            return
+        number = paragraph[0][0]
+        value = " ".join(line.strip() for _, line in paragraph)
+        # Headings, tables and lists can legitimately reuse standard labels.
+        if len(value) >= 30 and not re.match(r"^(?:[#|>]|[-*+]\s|\d+[.)]\s)", value):
+            if value in seen:
+                errors.append(f"{path.relative_to(ROOT)}:{number}: duplicate prose paragraph "
+                              f"(first at line {seen[value]})")
+            else:
+                seen[value] = number
+        paragraph.clear()
+
+    for number, line in enumerate(lines, 1):
+        if line.strip():
+            paragraph.append((number, line))
+        else:
+            check()
+    check()
+
+
+def public_api_mentions(cmake, errors):
+    """Check name coverage in topic guides, not behavioral or signature correctness."""
+    headers = re.search(r"set\(qcat_public_headers\s+(.*?)\)", cmake, re.S)[1].split()
+    property_count = method_count = 0
+    for name in headers:
+        code = (ROOT / "src/uikit" / name).read_text(encoding="utf-8")
+        if name.startswith("qcatchart") or name == "qcatwaterfall.h":
+            topics = ["CHARTS.md", "CHARTS3D.md", "CHARTEXTENSIONS.md",
+                      "CHARTSTATISTICS.md", "COMPONENTS.md"]
+        elif name.startswith("qcatled") or name == "qcatlightingframe.h":
+            topics = ["LEDPREVIEW.md", "LEDWORKFLOW.md"]
+        elif name == "qcatthemepalette.h":
+            topics = ["THEMING.md"]
+        elif name in ("qcattablemodel.h", "qcatchatmodel.h"):
+            topics = ["MODELS.md"]
+        elif name == "qcattiltcontroller.h":
+            topics = ["ATTITUDE.md"]
+        elif name == "qcatdockcontroller.h":
+            topics = ["DOCKING.md"]
+        else:
+            topics = ["VERSIONING.md", "ABI.md"]
+        text = "\n".join((DOC / topic).read_text(encoding="utf-8") for topic in topics)
+        properties = []
+        for macro in re.findall(r"Q_PROPERTY\((.*?)\)", code, re.S):
+            match = re.search(r"\b(\w+)\s+(?:READ|MEMBER)\b", macro)
+            if match:
+                properties.append(match[1])
+        methods = re.findall(r"Q_INVOKABLE\s+[\w:*<> ]+?\s+(\w+)\s*\(", code)
+        property_count += len(properties)
+        method_count += len(methods)
+        missing = sorted({name for name in properties + methods
+                          if not re.search(r"\b" + re.escape(name) + r"\b", text)})
+        if missing:
+            errors.append(f"{name}: API names missing from topic guides: {', '.join(missing)}")
+    return property_count, method_count
+
+
 def main():
     errors = []
     paths = markdown_files()
@@ -64,6 +130,7 @@ def main():
     headings = {p: anchors(lines) for p, lines in texts.items()}
     links = 0
     for path, lines in texts.items():
+        duplicate_paragraphs(path, lines, errors)
         for number, line in enumerate(lines, 1):
             targets = re.findall(r"!?\[[^]\n]*\]\(\s*(<[^>]+>|[^\s)]+)", line)
             targets += re.findall(r"\b(?:src|href)=[\"']([^\"']+)[\"']", line)
@@ -90,6 +157,7 @@ def main():
                     errors.append(f"{path.relative_to(ROOT)}:{number}: {message}")
 
     cmake = (ROOT / "src/uikit/CMakeLists.txt").read_text(encoding="utf-8")
+    property_count, method_count = public_api_mentions(cmake, errors)
     types = set(re.findall(r"qml/(Cat\w+)\.qml", cmake))
     for header in (ROOT / "src/uikit").glob("*.h"):
         if header.name.endswith("_p.h"):
@@ -107,7 +175,9 @@ def main():
     if errors:
         print("\n".join(errors))
         return 1
-    print(f"Checked {len(paths)} Markdown files, {links} local links, code fences, and {len(types)} public Cat types.")
+    print(f"Checked {len(paths)} Markdown files, {links} local links, code fences, duplicate prose, and {len(types)} public Cat types.")
+    print(f"Topic guides mention {property_count} public C++ Q_PROPERTY and "
+          f"{method_count} Q_INVOKABLE declarations (name coverage only).")
     return 0
 
 
