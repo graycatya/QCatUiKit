@@ -14,3 +14,4 @@ if(QCATUIKIT_BUILD_EXAMPLES)
 endif()
 
 add_subdirectory(dock)
+add_subdirectory(docknative)

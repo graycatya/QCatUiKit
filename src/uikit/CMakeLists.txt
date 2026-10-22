@@ -53,6 +53,7 @@ qt_add_qml_module(QCatUiKit
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
         qcatdockcontroller.cpp
+        qcatdocknativedrag.cpp qcatdocknativedrag_p.h
         qcattiltcontroller.cpp
         qcatthemepalette.cpp qcatchatmodel.cpp qcattablemodel.cpp
         qcatchartmapping.cpp qcatchartcontour.cpp
@@ -186,6 +187,16 @@ target_include_directories(QCatUiKit PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PRIVATE Qt6::QuickControls2 Qt6::GuiPrivate)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(QCAT_WAYLAND_CLIENT QUIET IMPORTED_TARGET wayland-client)
+        if(TARGET PkgConfig::QCAT_WAYLAND_CLIENT)
+            target_include_directories(QCatUiKit PRIVATE ${QCAT_WAYLAND_CLIENT_INCLUDE_DIRS})
+            target_compile_definitions(QCatUiKit PRIVATE QCATUIKIT_HAS_WAYLAND_CLIENT)
+        endif()
+    endif()
+endif()
 qt_add_shaders(QCatUiKit ledpreview_shaders
     PREFIX /QCatUiKit
     FILES shaders/ledpreview.vert shaders/ledpreview.frag)

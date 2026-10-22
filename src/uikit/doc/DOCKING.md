@@ -183,6 +183,18 @@ Esc、鼠标抓取取消、浮动标签在所有目标区域外释放均保留�
 重叠的浮动窗口按最近激活顺序命中，覆盖主工作区的浮动窗口优先。源宿主自身不接受此拖动。
 也可通过回停按钮或 `dockBack()` 返回。
 
+### 原生 Wayland
+
+组件根据实际加载的 Qt 平台插件选择交互路径。`wayland`／`wayland-egl` 使用原生拖放；Linux `xcb`（包括 XWayland）、Windows、macOS 继续使用原有鼠标拖动与随动缩略窗。Gallery 不强制切换平台插件。
+
+Wayland 的缩略图在启动拖放前捕获，由合成器随鼠标显示。停靠命中使用接收窗口的局部拖放坐标，不以浮窗的 `x`／`y` 推算桌面真实位置。普通浮窗的初始位置由合成器安排，组件不通过 `setPosition()` 强制摆放。
+
+合成器支持 `xdg-toplevel-drag-v1` 时，拖动已停靠面板会临时创建浮窗，交给合成器移动；释放到有效目标后停靠，释放到空白处保留浮窗，取消则恢复拖动前布局。已有单面板浮窗也可随拖动移动；多标签浮窗中的单标签使用原生拖放图标，不将整组窗口附加到该标签的拖动。
+
+未提供该协议或未编译协议探测支持时，工作区内部使用局部拖动，拖出工作区后创建浮窗并请求系统移动；浮窗内部标题用于系统移动，拖回／合并使用面板标签的原生拖放。在此降级路径中，工作区拖出与跨浮窗合并可能需要两次拖动；Qt 无法发起系统移动请求时，组件撤销本次临时浮动。
+
+实现仅使用 Qt Gui／Quick 和可选的 MIT 许可 `libwayland-client`，不依赖 Qt Wayland Compositor。协议探测只在 Wayland 进程中动态加载传输库，不给 XCB 部署增加强制链接依赖。顶层拖动使用 Qt 6.8+ 内部的 dock-window MIME 桥接，升级 Qt 时需要单独回归；这不属于 QCatUiKit 的公开 API。
+
 ## 当前限制
 
 - 浮动窗口只支持标签合并，不支持内部四方向分割。
@@ -194,6 +206,7 @@ Esc、鼠标抓取取消、浮动标签在所有目标区域外释放均保留�
 
 - 布局／持久化：`src/uikit/qcatdockcontroller.h/.cpp`。
 - 呈现与交互：`qml/CatDockWorkspace.qml`、`qml/CatDockPanel.qml`；内部 `DockTabButton.qml`、`DockDragArea.qml`、`DockDropOverlay.qml` 统一标题／标签、拖动和指示器，`DockDragPreview.qml` 提供穿透输入的随动缩略窗，`DockGeometry.js` 计算几何及方向命中，`DockFloatingWindow.qml` 管理原生宿主。
+- Wayland：`qcatdocknativedrag_p.h/.cpp` 处理平台判断、协议探测、原生缩略图和窗口局部拖放事件；`tests/auto/docknative` 与 `tests/auto/qml/data/tst_dockwayland.qml` 验证适配器和 QML 状态转换。原有浮动测试继续覆盖非 Wayland 路径。
 - 演示：`examples/uikit/gallery/GalleryDockPreview.qml`，Gallery 页面 ID `dock-workspace`。
 - Gallery 窄屏／关闭／恢复回归：`tests/auto/gallery/data/tst_dock.qml`；示例在最小尺寸不足时提供横向滚动。
 - C++ 行为：`tests/auto/dock/tst_dockcontroller.cpp`；QML 生命周期／交互：`tests/auto/qml/data/tst_dock.qml`。

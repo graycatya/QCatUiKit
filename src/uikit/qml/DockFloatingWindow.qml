@@ -29,9 +29,9 @@ Window {
     function applyRecord(value) {
         applying = true;
         // Unrelated layout changes must not overwrite pending native move/resize events.
-        if (!initialized || value.geometry.x !== record.geometry.x)
+        if (!workspace.nativeWaylandDrag && (!initialized || value.geometry.x !== record.geometry.x))
             x = value.geometry.x;
-        if (!initialized || value.geometry.y !== record.geometry.y)
+        if (!workspace.nativeWaylandDrag && (!initialized || value.geometry.y !== record.geometry.y))
             y = value.geometry.y;
         if (!initialized || value.geometry.width !== record.geometry.width)
             width = value.geometry.width;
@@ -79,6 +79,7 @@ Window {
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 DockDragArea {
+                    windowMoveHandle: true
                     workspace: floating.workspace
                     panelId: floating.record.active
                     focusItem: parent

@@ -38,6 +38,12 @@ Item {
     property Item headerFocusItem: null
     property string headerFocusId: ""
     property bool ready: false
+    readonly property bool nativeWaylandDrag: nativeDrag.enabled
+    readonly property bool nativeToplevelDrag: nativeDrag.toplevelDragSupported
+    property string nativeDragLayout: ""
+    property string nativeDragPanel: ""
+    property var nativeDropTarget: null
+    property bool nativeDragCancelled: false
     implicitWidth: 720
     implicitHeight: 480
     clip: true
@@ -152,6 +158,8 @@ Item {
                 floatingOrder = floatingOrder.concat([record.id]);
             }
             host.applyRecord(record);
+            if (nativeWaylandDrag)
+                nativeDrag.watchWindow(host, record.id);
             placeFloatingPanels(record, host.panelHost);
         }
         for (const id of Object.keys(floatingHosts)) {
@@ -182,12 +190,13 @@ Item {
                     }
                 }
         }
-        const point = panel.mapToGlobal(20, 20);
+        const point = nativeWaylandDrag ? Qt.point(0, 0) : panel.mapToGlobal(20, 20);
         const w = Math.max(320, panel.width), h = Math.max(240, panel.height + headerHeight);
         if (!dockState.floatPanel(id, wholeGroup))
             return false;
         dockState.setFloatingGeometry(dockState.floatingWindowForPanel(id), point.x, point.y, w, h);
-        dockState.constrainFloatingWindows();
+        if (!nativeWaylandDrag)
+            dockState.constrainFloatingWindows();
         return true;
     }
     function requestCloseWindow(id) {
@@ -212,7 +221,7 @@ Item {
         hasDragPoint = false;
         dragImageResult = null;
         const generation = ++dragGeneration;
-        if (!dragPreviewHost)
+        if (!nativeWaylandDrag && !dragPreviewHost)
             dragPreviewHost = dragPreviewFactory.createObject(control, { workspace: control });
         const panel = registry[id];
         if (panel.visible && panel.width > 0 && panel.height > 0) {
@@ -250,6 +259,98 @@ Item {
         }
         const point = mapFromGlobal(x, y);
         updateDrag(point.x, point.y);
+    }
+    function beginWaylandDrag(id, source) {
+        const panel = registry[id];
+        if (!nativeWaylandDrag || !ready || layoutLocked || !panel || !panel.movable || nativeDrag.active)
+            return;
+        const origin = source.Window.window;
+        nativeDrag.prepare(panel, panel.title, tokens.surface, tokens.text, tokens.primary, tokens.fontSize);
+        nativeDragLayout = dockState.saveLayout();
+        nativeDragPanel = id;
+        nativeDropTarget = null;
+        nativeDragCancelled = false;
+        let floating = null;
+        if (nativeToplevelDrag && panel.floatable) {
+            const windowId = dockState.floatingWindowForPanel(id);
+            const record = dockState.floatingWindows.find(window => window.id === windowId);
+            if (!record) {
+                if (!floatPanel(id)) {
+                    nativeDragLayout = "";
+                    nativeDragPanel = "";
+                    return;
+                }
+                updateWindows();
+            }
+            if (!record || record.tabs.length === 1)
+                floating = panel.Window.window;
+        }
+        dragId = id;
+        hasDragPoint = false;
+        dropTarget = null;
+        floatDropPoint = null;
+        nativeDrag.start(origin, floating, Qt.point(40, headerHeight / 2));
+    }
+    function updateWaylandDrag(windowId, position) {
+        dropTarget = null;
+        floatDropPoint = null;
+        hasDragPoint = false;
+        nativeDrag.acceptsDrop = false;
+        if (!ready || !dragId || layoutLocked || !visible || !enabled || !registry[dragId] || !registry[dragId].movable)
+            return;
+        if (windowId) {
+            const host = floatingHosts[windowId];
+            if (host && host.visible && host.visibility !== Window.Minimized
+                    && dockState.floatingWindowForPanel(dragId) !== windowId && registry[dragId].floatable) {
+                const target = host.record.tabs.find(id => id !== dragId);
+                if (target)
+                    dropTarget = { target: target, position: DockController.Center, windowId: windowId };
+            }
+        } else if (Window.window && Window.window.visible && Window.window.visibility !== Window.Minimized) {
+            const point = mapFromItem(Window.window.contentItem, position.x, position.y);
+            dragPoint = point;
+            hasDragPoint = true;
+            updateDrag(point.x, point.y);
+            floatDropPoint = null;
+        }
+        nativeDrag.acceptsDrop = dropTarget !== null;
+    }
+    function finishWaylandDrag(moved) {
+        if (!ready)
+            return;
+        const snapshot = nativeDragLayout, id = nativeDragPanel, target = nativeDropTarget;
+        const accepted = moved && !nativeDragCancelled && !layoutLocked && registry[id] && registry[id].movable;
+        nativeDragLayout = "";
+        nativeDragPanel = "";
+        nativeDropTarget = null;
+        cancelDrag();
+        if (accepted && target) {
+            dragId = id;
+            dropTarget = target;
+            finishDrag();
+        } else if (!accepted || !nativeToplevelDrag) {
+            if (snapshot)
+                dockState.restoreLayout(snapshot);
+        }
+    }
+    function updateWaylandLocalDrag(source, x, y) {
+        const point = mapFromItem(source, x, y);
+        dragPoint = point;
+        hasDragPoint = true;
+        updateDrag(point.x, point.y);
+        if (!floatDropPoint)
+            return;
+        const id = dragId, snapshot = dockState.saveLayout();
+        cancelDrag();
+        if (floatPanel(id)) {
+            updateWindows();
+            if (!nativeDrag.moveWindow(registry[id].Window.window))
+                dockState.restoreLayout(snapshot);
+        }
+    }
+    function moveWaylandWindow(source, id) {
+        return nativeWaylandDrag && !layoutLocked && registry[id] && registry[id].movable
+                && nativeDrag.moveWindow(source.Window.window);
     }
     function updateDrag(x, y) {
         dropTarget = null;
@@ -334,6 +435,10 @@ Item {
         }
     }
     function cancelDrag() {
+        if (nativeWaylandDrag && nativeDrag.active) {
+            nativeDragCancelled = true;
+            nativeDrag.cancel();
+        }
         ++dragGeneration;
         dragId = "";
         hasDragPoint = false;
@@ -369,10 +474,14 @@ Item {
     }
     Component.onCompleted: {
         ready = true;
+        if (nativeWaylandDrag)
+            nativeDrag.watchWindow(Window.window, "");
         synchronize();
     }
     Component.onDestruction: {
         ready = false;
+        if (nativeWaylandDrag)
+            nativeDrag.cancel();
         if (dragPreviewHost)
             dragPreviewHost.destroy();
         for (const id of Object.keys(registry)) {
@@ -395,6 +504,56 @@ Item {
     DockController {
         id: dockState
         onLayoutChanged: Qt.callLater(control.updateWindows)
+    }
+    DockNativeDrag {
+        id: nativeDrag
+        onMoved: (windowId, position) => control.updateWaylandDrag(windowId, position)
+        onLeft: {
+            control.dropTarget = null;
+            control.hasDragPoint = false;
+            acceptsDrop = false;
+        }
+        onDropped: control.nativeDropTarget = control.dropTarget
+        onFinished: moved => control.finishWaylandDrag(moved)
+    }
+    Connections {
+        target: control.Window
+        function onWindowChanged() {
+            if (control.nativeWaylandDrag)
+                nativeDrag.watchWindow(control.Window.window, "");
+        }
+    }
+    Rectangle {
+        // Local preview only for compositors without toplevel-drag support.
+        // Native QDrag supplies its own compositor-positioned thumbnail.
+        z: 1000
+        visible: control.nativeWaylandDrag && control.dragging && !nativeDrag.active && control.hasDragPoint
+        x: control.dragPoint.x + 20
+        y: control.dragPoint.y + 24
+        width: 240
+        height: 180
+        radius: 5
+        color: control.tokens.surface
+        border.color: control.tokens.primary
+        border.width: 2
+        Text {
+            x: 10
+            y: 4
+            width: parent.width - 20
+            height: 28
+            text: control.registry[control.dragId] ? control.registry[control.dragId].title : ""
+            color: control.tokens.text
+            elide: Text.ElideRight
+        }
+        Image {
+            x: 8
+            y: 34
+            width: parent.width - 16
+            height: parent.height - 42
+            source: control.dragImageResult ? control.dragImageResult.url : ""
+            fillMode: Image.PreserveAspectFit
+            cache: false
+        }
     }
     Item {
         id: panelLayer

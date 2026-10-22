@@ -6,6 +6,8 @@
 
 需要 CMake 3.24+、C++17 编译器和 Qt 6.8+。Qt 组件为 Core、Gui、Qml、Quick、QuickControls2、ShaderTools，以及匹配版本的 GuiPrivate 开发头（图表及 LED RHI 渲染）。开启 Gallery 时需要 LinguistTools；开启测试时需要 Test、QuickTest。Ninja 可作为单配置或多配置生成器。
 
+Linux 原生 Wayland Dock 的顶层拖动协议探测可选使用 `pkg-config` 和 `wayland-client` 开发头（通常为 `libwayland-dev`）。探测代码运行时动态加载系统 `libwayland-client`，不强制链接该库；缺少开发头时仍能构建，Dock 使用系统移动降级路径，操作差异见 [Dock 原生 Wayland](DOCKING.md#原生-wayland)。无需 Qt Wayland Compositor 开发包。
+
 | CMake 选项 | 默认值 | 用途 |
 | --- | --- | --- |
 | `QCATUIKIT_BUILD_EXAMPLES` | `ON` | 构建 Gallery 及其内部 QML 模块 |

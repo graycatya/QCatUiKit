@@ -8,6 +8,7 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| Wayland Dock 平台分支 | 2026-10-22，Ubuntu 26.04、Qt 6.12.0 Release | 构建、库／Gallery lint、CTest 18/18 通过；Wayland 适配器 5/5、QML 状态 6/6。XCB 原有浮动坐标失败在未修改基线也复现；真实鼠标拖放和 Windows/macOS 本次未验收，详见历史记录 |
 | Dock、全库回归 | 2026-10-21，Windows 11、Qt 6.12.0、MSVC 2022 Release | Dock 控制器 16/16、工作区 12/12、浮动 25/25、Gallery Dock 15/15；构建及库／Gallery qmllint 通过。全库 CTest 为 15/17，仍有 LED 与下拉框宽度失败 |
 | Windows 现存失败 | 同上 | `led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的 `SelectionControls::test_compactComboDisplayFits` 三种密度失败。全套 QML 为 383 通过、3 失败；未宣称全库通过 |
 | Dock 安装与兼容 | 同上 | 独立安装消费者可调用 C++／QML 的 `dockToWorkspace`；保留原 1384 个导出符号，新增 1 个；旧测试程序加载新库 10/10 通过 |
@@ -32,6 +33,7 @@ ctest --test-dir build/release --output-on-failure
 | --- | --- |
 | models | 主题 Token、TableModel／ChatModel 数据与通知协议 |
 | dock_controller | Dock 分割、标签、浮动／回停、工作区外边缘、布局格式和失败时保持布局不变 |
+| dock_native | Wayland 平台隔离；原生平台直接运行时还验证缩略图像素与窗口局部拖放事件。CTest 离屏运行跳过这两项原生检查 |
 | tilt_controller | 四元数、校准、输入映射、授权、超时与事件循环延迟 |
 | charts_3d | 三维数据、相机、材质、拾取和切片 |
 | charts_extended | 气泡、格网、等值线、OHLC、箱线和雷达契约 |
@@ -99,6 +101,20 @@ ctest --test-dir build/release -R '^dock_controller$' --output-on-failure
 外边缘专项为 Gallery `tst_dock.qml` 的 `test_floatPropertiesBackToWorkspaceEdge` 与 `test_dockBackPreservesPropertiesFullHeight`；分隔条专项为 QML `tst_dock.qml` 的 `test_splitterMouseExitAndKeyboardFocus`。浮动专项还检查内容／焦点／弹层、权限、关闭请求、输入穿透预览和生命周期。
 
 原生平台手工验收时，在并排窗口之间拖动，检查缩略图经过窗口间空白区域仍可见、取消后布局不变。在不同 DPI 的显示器之间重复操作；Wayland 的全局坐标与窗口定位能力需单独确认。浮动窗口目前仅支持标签合并，不应显示内部拆分能力，控制器对其分割请求应拒绝且不改变布局。
+
+在实际 Wayland 会话中直接运行适配器与 QML 状态专项，避免 CTest 的 offscreen 环境覆盖：
+
+```sh
+QT_QPA_PLATFORM=wayland QT_QUICK_BACKEND=software \
+  ./build/release/tests/auto/docknative/tst_docknative
+QT_QPA_PLATFORM=wayland QT_QUICK_BACKEND=software \
+  ./build/release/tests/auto/qml/tst_qml \
+  -input tests/auto/qml/data/tst_dockwayland.qml -import build/release/qml
+```
+
+适配器日志应显示实际 QPA 及顶层拖动协议是否可用；缩略图测试检查捕获到面板像素，事件测试注入窗口局部拖放事件。QML 测试检查主窗口坐标转换、浮窗合并、取消恢复和移动权限。它们没有提供真实输入序列，不能代替原生 `QDrag::exec()`、`xdg-toplevel-drag` 和 `startSystemMove()` 的完整手工拖动验收。
+
+手工分别拖动浮窗内部标题和标签，确认鼠标旁确有内容缩略图；测试拖入主窗／另一个浮窗、移出所有窗口、释放与 Esc。支持顶层拖动协议时检查空白处释放保留浮窗、取消恢复原布局；降级路径的操作差异见 [Dock 原生 Wayland](DOCKING.md#原生-wayland)。XCB／XWayland 仍运行原有浮动专项，并检查 `dock_native` 日志为 `QPA: xcb`、协议支持为 false；有原生坐标失败时使用同机未修改基线作对照。Windows/macOS 继续各自的原生窗口回归。
 
 ## 视觉检查
 

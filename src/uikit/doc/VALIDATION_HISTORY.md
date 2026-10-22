@@ -4,6 +4,23 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## Dock 原生 Wayland 独立路径（2026-10-22）
+
+以用户还原后的代码为基线，按实际 QPA 插件选择平台路径：原生 Wayland 使用独立的原生拖放／系统移动适配器，XCB（包括 XWayland）、Windows、macOS 保留既有 MouseArea、全局坐标命中和随动缩略窗。Gallery 未添加平台强制设置。Wayland 图标在原生拖放开始前同步捕获，停靠命中改用接收窗口的局部坐标；支持顶层拖动扩展时临时浮动并交给合成器移动，取消时恢复布局。
+
+新增适配器没有 Qt Wayland Compositor／Qt Wayland Client 模块链接。可选 Wayland C 开发头用于协议探测，MIT 许可 `libwayland-client` 仅在 Wayland 进程动态加载。`readelf -d` 检查库的 NEEDED 项，没有新增 Wayland 传输库或 Qt Wayland 模块依赖。Qt 的 dock-window 私有 MIME 桥接与无扩展时的操作差异已在 DOCKING 记录。
+
+实际环境：Ubuntu 26.04、Qt 6.12.0 GCC Release，现有 Desktop Release 构建目录，窗口测试均使用 software 后端。
+
+- 构建、`QCatUiKit_qmllint`、`qcat-gallery_qmllint` 通过；最终 `ctest --output-on-failure --timeout 300 --parallel 2` 为 18/18，耗时约 124 秒。离屏浮动专项为 25/25。新增原生专属检查在 offscreen 下跳过，不能将 CTest 全通过解释为原生拖动验收。
+- 直接使用 `QT_QPA_PLATFORM=wayland` 运行 `tst_docknative`：5/5，日志确认 `toplevel-drag: true`；检查源面板像素已进入缩略图、窗口局部事件、有效／无效落点与跨工作区令牌隔离。事件检查注入 Qt 拖放事件，没有执行完整的 compositor 拖动。
+- 同一 Wayland 会话运行 `tst_dockwayland.qml`：6/6，检查主窗偏移后的局部坐标转换、浮窗合并、取消恢复、面板内容保留和系统移动权限。Qt 在测试启动前有 text-input-v3 `disableSurface ... but ... is focused` 警告；未修改输入法环境，测试函数中的严格警告检查通过。
+- 另建未定义协议探测编译宏的独立适配器测试构建，在 Wayland 下 5/5，日志为 `toplevel-drag: false`。这验证缺少可选探测代码时适配器仍可编译与路由，不证明系统移动降级手势已完成真机验收。曾尝试全局禁用 PkgConfig 来模拟缺失依赖，但本机 Qt GuiPrivate 的 XKB 查找依赖 PkgConfig，配置即失败，故未把该尝试当作组件降级构建结果。
+- XCB 平台隔离测试为 3 通过、2 跳过：QPA 为 `xcb`、协议支持为 false，不安装原生事件过滤器，也不发起系统移动或原生拖放。原有 XCB 浮动全组最终对照为当前代码 24/25、独立 HEAD 基线 23/25；两者均在既有 `test_pointerMergeIntoFloating` 的浮动源场景出现命中断言或 y 坐标相差 34 的失败。更早一次当前全组为 22/25，不将这些不稳定结果宣称为 XCB 全通过。对照基线用 `git archive HEAD` 导出到临时目录独立配置构建，未改动工作区或 Git 历史。
+- `python tools/check_docs.py` 与 `git diff --check` 通过；公开 C++ 头和已有控制器 ABI 未修改。
+
+本次没有真实鼠标输入序列，因此尚未验收原生 `QDrag::exec()` 的完整生命周期、拖放图标在真实拖动中的显示、扩展附加窗口的实际移动以及系统移动降级手势。Windows/macOS、最低 Qt 6.8、其他合成器、GPU 后端和混合 DPI 本次也未实机复测。重复方法与手工清单见 VALIDATION 的 Dock 专项。
+
 ## 全库文档核对与整理（2026-10-21）
 
 检查仓库中的全部 34 份 Markdown，包括根入口、专题、Gallery、技能参考和品牌资源说明。按下表核对现行文档的用途、接口入口、过期内容、重复说明和阅读顺序；历史文件保留原有日期及平台范围，不把旧结果改写为本次执行。
