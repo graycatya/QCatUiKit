@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
-#include <QtQuickTest/quicktest.h>
-#include <QtQml/qqmlextensionplugin.h>
+#include "../testfonts.h"
 #include <QFont>
 #include <QGuiApplication>
-#include <QQmlEngine>
 #include <QQmlContext>
+#include <QQmlEngine>
 #include <QTemporaryDir>
+#include <QtQml/qqmlextensionplugin.h>
+#include <QtQuickTest/quicktest.h>
 Q_IMPORT_QML_PLUGIN(QCatUiKit_GalleryPlugin)
 class GalleryTestSetup : public QObject
 {
     Q_OBJECT
     QTemporaryDir exportDirectory;
-public slots:
+  public slots:
     void qmlEngineAvailable(QQmlEngine *engine)
     {
         engine->rootContext()->setContextProperty(
@@ -20,11 +21,7 @@ public slots:
     }
     void applicationAvailable()
     {
-        QFont font = QGuiApplication::font();
-        const QString family = font.defaultFamily();
-        if (!family.isEmpty())
-            font.setFamilies({family});
-        QGuiApplication::setFont(font);
+        initializeTestFonts();
     }
 };
 

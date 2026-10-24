@@ -14,6 +14,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         endif()
     endif()
 endif()
-add_test(NAME dock_native COMMAND tst_docknative)
+qcat_add_test(NAME dock_native COMMAND tst_docknative)
 set_tests_properties(dock_native PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")

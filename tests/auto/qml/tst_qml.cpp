@@ -1,32 +1,41 @@
 // SPDX-License-Identifier: Apache-2.0
-#include <QtQuickTest/quicktest.h>
+#include "../testfonts.h"
 #include <QAnimationDriver>
 #include <QElapsedTimer>
 #include <QFont>
 #include <QGuiApplication>
 #include <QTimer>
+#include <QtQuickTest/quicktest.h>
 
 // Simulate an animation clock advancing faster than real time, as can happen
 // when a render loop assumes vsync throttling that the graphics driver ignores.
 class FastAnimationDriver : public QAnimationDriver
 {
-public:
+  public:
     explicit FastAnimationDriver(QObject *parent) : QAnimationDriver(parent)
     {
         m_timer.setTimerType(Qt::PreciseTimer);
         m_timer.setInterval(4);
         connect(&m_timer, &QTimer::timeout, this, &FastAnimationDriver::advance);
-        connect(this, &QAnimationDriver::started, this, [this] {
-            m_clock.start();
-            m_timer.start();
-        });
+        connect(this, &QAnimationDriver::started, this,
+                [this]
+                {
+                    m_clock.start();
+                    m_timer.start();
+                });
         connect(this, &QAnimationDriver::stopped, &m_timer, &QTimer::stop);
     }
 
-    void advance() override { advanceAnimation(); }
-    qint64 elapsed() const override { return m_clock.isValid() ? m_clock.elapsed() * 5 : 0; }
+    void advance() override
+    {
+        advanceAnimation();
+    }
+    qint64 elapsed() const override
+    {
+        return m_clock.isValid() ? m_clock.elapsed() * 5 : 0;
+    }
 
-private:
+  private:
     QElapsedTimer m_clock;
     QTimer m_timer;
 };
@@ -34,15 +43,10 @@ private:
 class QuickTestSetup : public QObject
 {
     Q_OBJECT
-public slots:
+  public slots:
     void applicationAvailable()
     {
-        // Resolve the platform's generic font once before warning-strict tests.
-        QFont font = QGuiApplication::font();
-        const QString family = font.defaultFamily();
-        if (!family.isEmpty())
-            font.setFamilies({family});
-        QGuiApplication::setFont(font);
+        initializeTestFonts();
         if (qEnvironmentVariableIntValue("QCATUIKIT_TEST_FAST_ANIMATION_DRIVER"))
         {
             m_driver = new FastAnimationDriver(this);
@@ -56,7 +60,7 @@ public slots:
         m_driver = nullptr;
     }
 
-private:
+  private:
     FastAnimationDriver *m_driver = nullptr;
 };
 

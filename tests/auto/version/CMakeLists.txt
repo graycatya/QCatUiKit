@@ -7,6 +7,6 @@ target_compile_definitions(tst_version PRIVATE
     EXPECTED_RELEASE_CHANNEL="${QCATUIKIT_RELEASE_CHANNEL}"
     EXPECTED_EXPERIMENTAL=${QCATUIKIT_IS_EXPERIMENTAL}
     EXPECTED_ABI_VERSION=${QCATUIKIT_ABI_VERSION})
-add_test(NAME version COMMAND tst_version)
+qcat_add_test(NAME version COMMAND tst_version)
 set_tests_properties(version PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QSG_RHI_BACKEND=software;QT_QUICK_BACKEND=software")

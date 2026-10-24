@@ -88,7 +88,8 @@ TestCase {
         verify(waitForRendering(combo));
         const text = combo.contentItem;
         verify(text.width - text.leftPadding - text.rightPadding >= text.contentWidth,
-               "Compact label must fit horizontally: width=" + text.width + " content=" + text.contentWidth + " padding=" + text.leftPadding + "," + text.rightPadding);
+               "Compact label must fit horizontally: width=" + text.width + " content=" + text.contentWidth + " padding=" + text.leftPadding + "," + text.rightPadding
+               + " text=" + text.text + " font=" + text.font.family + " pixelSize=" + text.font.pixelSize);
         verify(text.height - text.topPadding - text.bottomPadding >= text.contentHeight,
                "Combo label must fit vertically");
     }

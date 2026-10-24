@@ -13,6 +13,16 @@
 class LedRenderTests : public QObject
 {
     Q_OBJECT
+    // Compare LED content below the QML toolbar. The render-only fixture below
+    // separately compares the full GPU output with no excluded pixels.
+    static QImage previewContent(QQuickWindow *window, QCatLedPreview *preview)
+    {
+        const auto image = window->grabWindow();
+        const qreal dpr = image.width() / qreal(window->width());
+        const auto origin = preview->mapToScene(QPointF(0, 48));
+        return image.copy(qRound(origin.x() * dpr), qRound(origin.y() * dpr),
+                          qRound(preview->width() * dpr), qRound((preview->height() - 48) * dpr));
+    }
   private slots:
     void geometrySpacingSlicesAndIndependentThrottling()
     {
@@ -194,7 +204,10 @@ class LedRenderTests : public QObject
         QVERIFY(project.output()->applyProfiles({profile.configuration()}));
         QTRY_VERIFY(!project.deckA()->loading() && !project.deckB()->loading());
         QTRY_VERIFY(project.memoryBackend()->latestFrame() != nullptr);
-        const auto held = project.memoryBackend()->latestFrame()->ports[0].channels;
+        // Loading completion precedes the first mixed/output frame. Wait for the
+        // requested channels, rather than accidentally using an earlier black frame.
+        const auto held = QByteArray::fromHex("0000004dcc");
+        QTRY_COMPARE(project.memoryBackend()->latestFrame()->ports[0].channels, held);
         QQuickWindow window;
         window.resize(240, 240);
         QCatLedPreview preview(window.contentItem());
@@ -264,7 +277,9 @@ class LedRenderTests : public QObject
         QVERIFY(source.submitFrame(QByteArray::fromHex("00ff00ffff0000ff"), 1));
         preview->setSource(&source);
         QTRY_COMPARE(preview->renderedFrameId(), quint64(1));
-        const auto initial = window->grabWindow();
+        const auto initial = previewContent(window, preview);
+        QVERIFY(!initial.isNull());
+        const auto resetCamera = preview->camera();
         // Multiple moves exceed the flick threshold and must remain with the preview.
         for (const auto button : {Qt::LeftButton, Qt::MiddleButton})
         {
@@ -272,23 +287,90 @@ class LedRenderTests : public QObject
             for (int step = 1; step <= 6; ++step)
                 QTest::mouseMove(window, {100 + step * 8, 180 - step * 15}, 20);
             QTest::mouseRelease(window, button, Qt::NoModifier, {148, 90});
-            QTest::qWait(80);
             QCOMPARE(window->property("scrollY").toReal(), 0.0);
-            QVERIFY(window->grabWindow() != initial);
+            QVERIFY(preview->camera() != resetCamera);
+            QTRY_VERIFY(previewContent(window, preview) != initial);
             preview->resetView();
-            QTest::qWait(80);
-            QCOMPARE(window->grabWindow(), initial);
+            QCOMPARE(preview->camera(), resetCamera);
+            QTRY_COMPARE(previewContent(window, preview), initial);
         }
         QTest::wheelEvent(window, {140, 130}, {0, 120});
-        QTest::qWait(80);
         QCOMPARE(window->property("scrollY").toReal(), 0.0);
-        QVERIFY(window->grabWindow() != initial);
+        QVERIFY(preview->camera()["zoom"].toDouble() > resetCamera["zoom"].toDouble());
+        QTRY_VERIFY(previewContent(window, preview) != initial);
         // Dragging outside the preview must still scroll the enclosing page.
         QTest::mousePress(window, Qt::LeftButton, Qt::NoModifier, {300, 240});
         for (int step = 1; step <= 6; ++step)
             QTest::mouseMove(window, {300, 240 - step * 15}, 20);
         QTest::mouseRelease(window, Qt::LeftButton, Qt::NoModifier, {300, 150});
         QTRY_VERIFY(window->property("scrollY").toReal() > 50);
+    }
+    void cameraMouseInput()
+    {
+        QQmlEngine engine;
+        engine.addImportPath(QStringLiteral(QCAT_QML_IMPORT_PATH));
+        QQmlComponent factory(&engine);
+        factory.setData(R"(
+            import QtQuick
+            import QCatUiKit
+            Window {
+                width: 240; height: 260; visible: true
+                LedPreview { objectName: "preview"; anchors.fill: parent;
+                             showStatistics: false; pointSize: 30 }
+            }
+        )",
+                        QUrl());
+        QScopedPointer<QObject> root(factory.create());
+        QVERIFY2(root, qPrintable(factory.errorString()));
+        auto *window = qobject_cast<QQuickWindow *>(root.data());
+        QVERIFY(window);
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        auto *preview = root->findChild<QCatLedPreview *>("preview");
+        QVERIFY(preview);
+        QCatLedSource source;
+        source.setLayout({{-0.5f, 0, 0.5f}, {0.5f, 0, -0.5f}});
+        QVERIFY(source.submitFrame(QByteArray::fromHex("00ff00ffff0000ff"), 1));
+        preview->setSource(&source);
+        QTRY_COMPARE(preview->renderedFrameId(), quint64(1));
+        const auto resetCamera = preview->camera();
+        // Input is tested on the real QML control. Compare the LED viewport below
+        // its toolbar; text rasterization is not the camera's rendering contract.
+        const auto content = [window, preview]() { return previewContent(window, preview); };
+        const auto initial = content();
+        QVERIFY(!initial.isNull());
+        QSignalSpy cameraChanges(preview, &QCatLedPreview::cameraChanged);
+        QTest::mousePress(window, Qt::LeftButton, Qt::NoModifier, {80, 100});
+        QTest::mouseMove(window, {130, 125}, 20);
+        QTest::mouseRelease(window, Qt::LeftButton, Qt::NoModifier, {130, 125});
+        QVERIFY(!cameraChanges.isEmpty());
+        QVERIFY(preview->camera()["yaw"].toDouble() != 0);
+        QVERIFY(preview->camera()["pitch"].toDouble() != 0);
+        QCOMPARE(preview->camera()["panX"], resetCamera["panX"]);
+        QCOMPARE(preview->camera()["panY"], resetCamera["panY"]);
+        QTRY_VERIFY(content() != initial);
+
+        QTest::mouseDClick(window, Qt::LeftButton, Qt::NoModifier, {80, 100});
+        QCOMPARE(preview->camera(), resetCamera);
+        QTRY_COMPARE(content(), initial);
+
+        QTest::mousePress(window, Qt::MiddleButton, Qt::NoModifier, {80, 100});
+        QTest::mouseMove(window, {110, 115}, 20);
+        QTest::mouseRelease(window, Qt::MiddleButton, Qt::NoModifier, {110, 115});
+        QVERIFY(preview->camera()["panX"].toDouble() != 0);
+        QVERIFY(preview->camera()["panY"].toDouble() != 0);
+        QCOMPARE(preview->camera()["yaw"], resetCamera["yaw"]);
+        QCOMPARE(preview->camera()["pitch"], resetCamera["pitch"]);
+        QTRY_VERIFY(content() != initial);
+        preview->resetView();
+        QCOMPARE(preview->camera(), resetCamera);
+        QTRY_COMPARE(content(), initial);
+
+        QTest::wheelEvent(window, {100, 120}, {0, 120});
+        QVERIFY(preview->camera()["zoom"].toDouble() > resetCamera["zoom"].toDouble());
+        QTRY_VERIFY(content() != initial);
+        preview->resetView();
+        QCOMPARE(preview->camera(), resetCamera);
+        QTRY_COMPARE(content(), initial);
     }
     void framesCameraAndLifecycle()
     {
@@ -300,9 +382,9 @@ class LedRenderTests : public QObject
             import QCatUiKit
             Window {
                 width: 600; height: 240; visible: true; color: "black"
-                LedPreview { objectName: "a"; width: 200; height: 240; showStatistics: false; pointSize: 30 }
-                LedPreview { objectName: "output"; x: 200; width: 200; height: 240; showStatistics: false; pointSize: 30 }
-                LedPreview { objectName: "b"; x: 400; width: 200; height: 240; showStatistics: false; pointSize: 30 }
+                LedPreviewRenderItem { objectName: "a"; width: 200; height: 240; showStatistics: false; pointSize: 30 }
+                LedPreviewRenderItem { objectName: "output"; x: 200; width: 200; height: 240; showStatistics: false; pointSize: 30 }
+                LedPreviewRenderItem { objectName: "b"; x: 400; width: 200; height: 240; showStatistics: false; pointSize: 30 }
             }
         )",
                         QUrl());
@@ -347,6 +429,8 @@ class LedRenderTests : public QObject
                     b->renderedFrameId() == 2);
         image = window->grabWindow();
         QVERIFY(pixel(image, 100, 120).blue() > 200);
+        // Render-only fixture: compare every pixel, without unrelated toolbar text.
+        const auto resetCamera = a->camera();
         // Change camera and check the actual rendered image, then reset restores it.
         a->orbit(100, 50);
         a->pan(15, 10);
@@ -354,27 +438,8 @@ class LedRenderTests : public QObject
         QTest::qWait(80);
         QVERIFY(window->grabWindow() != image);
         a->resetView();
+        QCOMPARE(a->camera(), resetCamera);
         QTRY_COMPARE_WITH_TIMEOUT(window->grabWindow(), image, 2000);
-        QTest::mousePress(window, Qt::LeftButton, Qt::NoModifier, {80, 80});
-        QTest::mouseMove(window, {130, 105}, 20);
-        QTest::mouseRelease(window, Qt::LeftButton, Qt::NoModifier, {130, 105});
-        QTest::qWait(80);
-        QVERIFY(window->grabWindow() != image);
-        QTest::mouseDClick(window, Qt::LeftButton, Qt::NoModifier, {80, 80});
-        QTRY_COMPARE_WITH_TIMEOUT(window->grabWindow(), image, 2000);
-        QTest::mousePress(window, Qt::MiddleButton, Qt::NoModifier, {80, 80});
-        QTest::mouseMove(window, {110, 90}, 20);
-        QTest::mouseRelease(window, Qt::MiddleButton, Qt::NoModifier, {110, 90});
-        QTest::qWait(80);
-        QVERIFY(window->grabWindow() != image);
-        a->resetView();
-        a->orbit(100, 0);
-        QTest::qWait(80);
-        const auto beforeWheel = window->grabWindow();
-        QTest::wheelEvent(window, {100, 120}, {0, 120});
-        QTest::qWait(80);
-        QVERIFY(window->grabWindow() != beforeWheel);
-        a->resetView();
         source.setLayout({{-1, -0.5f, 0}, {1, 0.5f, 0}});
         QByteArray ownedFrame = QByteArray::fromHex("00ff00ff0000ffff");
         QVERIFY(source.submitFrame(ownedFrame, 1));

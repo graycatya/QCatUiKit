@@ -4,6 +4,33 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## 测试可靠性与运行器（2026-10-24）
+
+沿用下节 Windows 11、Qt 6.12.0、MSVC 2022 Release 环境，范围为全部已注册测试及四组可选 GPU 测试。仅修改测试、测试构建与验证文档，没有修改库或 Gallery 运行代码。
+
+- 所有测试使用共同注册入口，默认超时 300 秒并保留原有更短限制；Windows 自动配置 Qt／库 DLL 路径及离屏字体目录。QML／Gallery 启动时检查字体数据库，缺少字体会失败。保留下拉框原有三种密度、原有宽度与完整文字可容纳断言，增加字体诊断信息。
+- 修正 Custom 布局测试的 C++ 单元素嵌套列表构造，检查实际 XYZ 坐标，并补充平铺列表被拒绝、布局版本和点数保持不变的断言。
+- LED 原有完整 GPU 像素、透明度、尺寸、资源重建与生命周期检查保留在不带工具栏的真实渲染项上；增加独立的真实 QML 鼠标输入用例，验证左键旋转、中键平移、滚轮缩放和双击复位的相机状态及 LED 像素。交互测试只排除顶部工具栏，纯渲染测试仍比较完整图像，没有扩大像素容差。滚动嵌套测试保留滚动归属检查，使用条件等待替代固定渲染等待；节流／静止等必须观察时间区间的等待保留。
+- 预览设置与设备输出隔离测试先等待明确的 RGB/CW/WW 通道值 `00 00 00 4d cc`，避免以尚未更新的黑帧作基线。
+- QtTest 报告逐组写入构建目录，由运行器转发给 CTest。反向验证使用仅位于忽略构建目录的 `QVERIFY2(false, ...)` 用例：运行器返回 1 并输出实际 FAIL；带空格的程序／报告路径验证通过。另验证不存在的程序启动失败会返回非零，并清空旧报告。未将这些预期失败计入正式套件的通过数。
+- 第一轮全量 CTest（新日志运行器接入前）为 22/22，`-j 2` 耗时 121.79 秒。运行器接入后曾出现 18/22：四组 GPU 测试均在首个窗口显示检查失败，后续用例仍执行。定位为 Windows `execute_process` 隐藏首窗的启动行为，改由 `cmd /d /c call` 消费该启动标志，未改动窗口显示断言或延长其等待。该失败轮聚合日志保存在 `build/test-improvements-hidden-window.log`。
+- 修正运行器后的 LED 专项执行 `ctest --test-dir <build> -R '^led_render$' --output-on-failure --repeat until-fail:3`，三次全部通过，每次 10 通过、0 失败、0 跳过，总耗时 23.98 秒。此命令遇到失败即停止，不是重试至通过。
+- 最终版本执行 `ctest --test-dir <build> --output-on-failure -j 2`：22/22 组通过，0 组失败，耗时 122.41 秒，四组 GPU 均通过。最终聚合日志另存于 `build/test-improvements-final-ctest.log`；LED 三次重复验证的最后一次报告另存于 `build/test-improvements-led-repeat.txt`；运行器反向验证输出见 `build/failure-probes/negative-spaces-output.txt` 与 `negative-loader-output.txt`。
+
+完整构建、`QCatUiKit_qmllint` 与 `qcat-gallery_qmllint` 已通过。可重复方法与日志位置见 VALIDATION。本轮不涵盖其他操作系统、最低 Qt 6.8、其他 GPU／驱动、真实输入设备和原生 Wayland 手工验收；没有新增跳过或预期失败标记。
+
+## Windows 全量单元测试（2026-10-24）
+
+环境：Windows 11、Qt 6.12.0、MSVC 2022 Release，使用现有 Desktop Release 构建目录。开启 `QCATUIKIT_TEST_LED_GPU=ON` 与 `QCATUIKIT_TEST_CHART_GPU=ON` 后重新配置、完整构建通过，再执行 `ctest --test-dir <build> --output-on-failure -j 1`。22 组中 19 组通过、3 组失败，总耗时 247.45 秒；包含三组图表 GPU 测试与 LED GPU 测试。未修改运行代码。
+
+CTest 未捕获 QtTest 正文，因此对三个失败组使用 `-o <log>,txt` 单独复跑；QML 复跑沿用 CTest 的 offscreen/software 环境与构建目录 QML 导入路径。失败均复现：
+
+- `led_render`：8 通过、1 失败。`LedRenderTests::framesCameraAndLifecycle()` 在 `tests/auto/led/tst_ledrender.cpp:364` 比较图像失败：鼠标双击复位后，窗口图像未恢复为原图。
+- `led_pipeline`：14 通过、1 失败。`LedPipelineTests::layoutMappingAndValidation()` 在 `tests/auto/led/tst_ledpipeline.cpp:189` 的 `m.applyNow(c)` 返回 false；该处输入为单点 Custom 布局。
+- `qml_contracts`：385 通过、3 失败、4 跳过。`SelectionControls::test_compactComboDisplayFits` 的 `density_0`、`density_1`、`density_2` 均在 `tests/auto/qml/data/tst_selectioncontrols.qml:90` 失败；可用宽度分别为 92、80、80，文字内容宽度均为 98。
+
+其余 19 组（含 Gallery、Dock 与图表 GPU）均通过。日志保存在忽略的构建目录：`build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release/Testing/Temporary/LastTest.log`，以及同目录的 `led-render-details.txt`、`led-pipeline-details.txt`、`qml-contracts-details.txt`。这些结果不包含真实鼠标手工验收、其他平台或 Qt 6.8 运行验证。
+
 ## Dock 原生 Wayland 独立路径（2026-10-22）
 
 以用户还原后的代码为基线，按实际 QPA 插件选择平台路径：原生 Wayland 使用独立的原生拖放／系统移动适配器，XCB（包括 XWayland）、Windows、macOS 保留既有 MouseArea、全局坐标命中和随动缩略窗。Gallery 未添加平台强制设置。Wayland 图标在原生拖放开始前同步捕获，停靠命中改用接收窗口的局部坐标；支持顶层拖动扩展时临时浮动并交给合成器移动，取消时恢复布局。

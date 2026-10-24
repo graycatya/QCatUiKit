@@ -185,9 +185,20 @@ class LedPipelineTests : public QObject
             centers += p.x == 0 && p.y == 0;
         QCOMPARE(centers, 1);
         c["type"] = "Custom";
-        c["positions"] = QVariantList{QVariantList{1, 2, 3}};
-        QVERIFY(m.applyNow(c));
+        // Explicit QVariant avoids copying the inner QList into the outer list.
+        c["positions"] = QVariantList{QVariant(QVariantList{1, 2, 3})};
+        QVERIFY2(m.applyNow(c), qPrintable(m.lastError()));
+        QCOMPARE(m.pointCount(), 1);
+        QCOMPARE(m.snapshot()->positions[0].x, 1.0f);
+        QCOMPARE(m.snapshot()->positions[0].y, 2.0f);
+        QCOMPARE(m.snapshot()->positions[0].z, 3.0f);
         QCOMPARE(m.snapshot()->countX, 0);
+        const auto customRevision = m.revision();
+        c["positions"] = QVariantList{1, 2, 3};
+        QVERIFY(!m.applyNow(c));
+        QVERIFY(m.lastError().contains("XYZ triples"));
+        QCOMPARE(m.revision(), customRevision);
+        QCOMPARE(m.pointCount(), 1);
     }
     void coalescedLayoutRequests()
     {

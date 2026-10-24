@@ -8,9 +8,10 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| Windows 全库测试可靠性 | 2026-10-24，Windows 11、Qt 6.12.0、MSVC 2022 Release | 最终 CTest 22/22（含四组 GPU），并行度 2，耗时 122.41 秒；LED 连续三次各 10/10。构建、库／Gallery lint 通过。测试运行器的故意失败与启动失败反向验证均正确返回非零；未新增跳过，原有平台专属跳过仍保留。详见历史记录 |
 | Wayland Dock 平台分支 | 2026-10-22，Ubuntu 26.04、Qt 6.12.0 Release | 构建、库／Gallery lint、CTest 18/18 通过；Wayland 适配器 5/5、QML 状态 6/6。XCB 原有浮动坐标失败在未修改基线也复现；真实鼠标拖放和 Windows/macOS 本次未验收，详见历史记录 |
 | Dock、全库回归 | 2026-10-21，Windows 11、Qt 6.12.0、MSVC 2022 Release | Dock 控制器 16/16、工作区 12/12、浮动 25/25、Gallery Dock 15/15；构建及库／Gallery qmllint 通过。全库 CTest 为 15/17，仍有 LED 与下拉框宽度失败 |
-| Windows 现存失败 | 同上 | `led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的 `SelectionControls::test_compactComboDisplayFits` 三种密度失败。全套 QML 为 383 通过、3 失败；未宣称全库通过 |
+| Windows 旧基线失败 | 同上；保留历史对照 | `led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的 `SelectionControls::test_compactComboDisplayFits` 三种密度失败。后续测试可靠性改进与复跑结果见历史记录，不将旧结果当作当前结果 |
 | Dock 安装与兼容 | 同上 | 独立安装消费者可调用 C++／QML 的 `dockToWorkspace`；保留原 1384 个导出符号，新增 1 个；旧测试程序加载新库 10/10 通过 |
 | Linux 全库回归 | 2026-10-20，Ubuntu 26.04、Qt 6.12.0 Release | 当时 CTest 17/17、浮动 software/offscreen 与 XCB/OpenGL 各 8/8；早于最新跨窗口与外边缘修改，不作为最新版本的 Linux 全量验收 |
 | Linux 图表 GPU | 2026-10-19，同一 Linux／Qt 环境 | AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 二维／三维／PNG 192／22／7，OpenGL 二维／三维 192／22；未开启 Khronos validation layer |
@@ -28,6 +29,12 @@ ctest --test-dir build/release --output-on-failure
 ```
 
 多配置生成器使用相同的 `--config Release` 与 `ctest -C Release`。关闭 Gallery 时不会注册 Gallery 相关测试。
+
+所有测试通过 `qcat_add_test` 注册，默认超时为 300 秒；各组已有的更短超时继续生效。GPU 渲染组共享 `qcat_gpu_window` 资源锁，因此可以用 `ctest --test-dir build/release --output-on-failure -j 2` 并行运行整套测试，而不会同时启动多个 GPU 测试窗口。资源锁只协调同一次 CTest 调用；不要同时从多个终端运行 GPU 组。
+
+Windows CTest 自动补充构建库与 Qt DLL 的运行路径，并默认把系统字体目录传给 offscreen 插件。可以通过 CMake 的 `QCATUIKIT_TEST_FONT_DIR` 指定其他字体目录；Linux 等已有字体数据库的平台无需设置。QML 与 Gallery 测试启动时检查字体数据库，缺少字体直接报错，不用缺字方框的宽度判断布局。直接运行离屏测试程序时，需自行设置 `QT_QPA_FONTDIR`（Windows）。
+
+QtTest 各组使用独立文本报告，由 CMake 运行器把报告转发到 CTest；进程失败、崩溃或没有报告都会使 CTest 失败。日志在对应构建子目录的 `<CTest 名称>-<配置>.txt`，完整聚合输出见构建目录的 `Testing/Temporary/LastTest.log`。每次启动先清空该组旧报告，避免将旧结果当作本次执行证据。直接运行测试程序不经过运行器，可用 `-o <log>,txt` 保存日志。
 
 | CTest 名称 | 主要覆盖 |
 | --- | --- |
