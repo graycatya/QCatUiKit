@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+set(QCATUIKIT_INSTALL_LAYOUT "QT" CACHE STRING "Install layout: QT or STANDALONE")
+set_property(CACHE QCATUIKIT_INSTALL_LAYOUT PROPERTY STRINGS QT STANDALONE)
+if(NOT QCATUIKIT_INSTALL_LAYOUT MATCHES "^(QT|STANDALONE)$")
+    message(FATAL_ERROR "QCATUIKIT_INSTALL_LAYOUT must be QT or STANDALONE")
+endif()
+
+if(QCATUIKIT_INSTALL_LAYOUT STREQUAL "QT")
+    # These target installation paths come from the Qt package, including cross builds.
+    # Never query a host Qt executable to infer a target layout.
+    if(PROJECT_IS_TOP_LEVEL AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "${QT6_INSTALL_PREFIX}" CACHE PATH "Install prefix" FORCE)
+    endif()
+    set(CMAKE_INSTALL_BINDIR "${QT6_INSTALL_BINS}")
+    set(CMAKE_INSTALL_LIBDIR "${QT6_INSTALL_LIBS}")
+    set(CMAKE_INSTALL_INCLUDEDIR "${QT6_INSTALL_HEADERS}")
+    set(QCATUIKIT_INSTALL_CMAKEDIR "${QT6_INSTALL_LIBS}/cmake")
+    set(qcat_default_qmldir "${QT6_INSTALL_QML}")
+else()
+    set(qcat_default_qmldir "")
+endif()
+include(GNUInstallDirs)
+if(QCATUIKIT_INSTALL_LAYOUT STREQUAL "STANDALONE")
+    set(QCATUIKIT_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake")
+    set(qcat_default_qmldir "${CMAKE_INSTALL_LIBDIR}/qml")
+endif()
+set(QCATUIKIT_INSTALL_QMLDIR "${qcat_default_qmldir}" CACHE PATH
+    "QML import root, relative to CMAKE_INSTALL_PREFIX")
+unset(qcat_default_qmldir)
+message(STATUS "QCatUiKit install layout: ${QCATUIKIT_INSTALL_LAYOUT}; prefix: ${CMAKE_INSTALL_PREFIX}; QML: ${QCATUIKIT_INSTALL_QMLDIR}")

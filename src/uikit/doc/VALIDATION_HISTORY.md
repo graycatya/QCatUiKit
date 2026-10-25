@@ -4,6 +4,20 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## Qt 套件安装与双配置（2026-10-25）
+
+后续补验全部既有消费者：`consumer`、`led-consumer`、`charts-consumer`、`attitude-consumer`、`dock-consumer`、`version_consumer`，均仅指定本机 Qt 6.12.0 MSVC 套件前缀，以 Ninja Multi-Config 独立构建。六个工程的 Debug／Release 编译及共 12 次运行全部通过（退出码 0）。运行时清除 QML 导入环境变量，仅使用 Qt 的 bin；图表程序显式传入该套件 qml 目录，姿态和 Dock 使用安装包导出的 QML 路径。版本参数为 `1.0.0-experimental experimental`。LED 未设置字体路径的首次离屏运行有 Qt 字体目录提示但两种配置均通过；其他离屏消费者设置 Windows 字体目录。日志位于忽略的 `build/installed-consumer-*.log` 和各消费者的 `build/*-{Debug,Release}.{stdout,stderr}.log`。本轮验证不包含真实 GPU 渲染。
+
+Windows、Qt 6.12.0、MSVC 2022。默认 `QT` 安装布局取自所用 Qt 包，新增 Qt6 组件包装入口，保留独立包和 `STANDALONE` 布局。Windows Debug 库与 QML 插件使用 `d` 后缀；安装包要求构建时的同一 Qt 版本。
+
+- 使用 `build/qt-module`、Ninja Multi-Config，关闭 Gallery 和常规测试，Release／Debug 均构建成功。全新配置默认前缀为所用 Qt 套件，QML 安装根目录为 `qml`。
+- 两种配置先安装到 `build/qt-module-stage`。32 个公开头及两组转发头、两种库／插件、两种 CMake 配置导出和 Qt6 组件入口均已安装。暂存消费者使用 Qt 的附加包前缀，普通 QML 应用与纯插件消费者在两种模式下共四次运行退出码均为 0。
+- 实际安装到本机 Qt 6.12.0 MSVC 套件。`tests/auto/cmake/qt-module-consumer` 只指定 Qt 前缀，`QT_ADDITIONAL_PACKAGES_PREFIX_PATH` 为空；CMake 配置和两种模式的构建无缺失插件目标警告。清除 QML 导入环境变量，仅用 Qt 的 bin 搜索 DLL，两个消费者各运行 Release／Debug，四次退出码均为 0。程序未调用 `addImportPath`；纯插件消费者仅链接 Qt Quick。普通消费者的 qmllint 通过。
+- `STANDALONE` 模式另安装到 `build/qt-standalone-stage`，QML 位于 `lib/qml`；通过独立 `find_package(QCatUiKit)` 编译并运行 Dock 的 C++／QML 消费者，退出码为 0。随后将 `build/qt-module` 恢复为 `QT` 布局及本机 Qt 前缀。
+- 既有 `build/dock-validation` 的库、Gallery、测试程序构建及库／Gallery qmllint 通过。未重跑 Linux、macOS、交叉编译、最低 Qt 版本、GPU 图形验收或旧二进制替换检查；非 Windows 的相对 RPATH 本次仅更新计算规则，未运行验收。
+- `ctest --test-dir build/dock-validation --output-on-failure -j 2`：18/18 通过，耗时 148.81 秒；可选 GPU 组未开启。`python tools/check_docs.py`：34 份 Markdown、450 个本地链接、119 个公开类型通过。
+- 日志保存在忽略的 `build/qt-module-*.log`、`build/qt-standalone*.log` 和 `build/qt-install-regression-*.log`。可复现步骤见 [当前验证方法](VALIDATION.md#qt-套件安装)。
+
 ## C/C++ 模块目录整理（2026-10-25）
 
 Windows、Qt 6.12.0、MSVC 2022 Release。将 79 个源码、头文件和版本模板归入 `core`、`theme`、`models`、`docking`、`motion`、`charts`、`led`，不改变公开接口。使用现有 `build/dock-validation` 验证目录，本次未开启可选 GPU 测试。

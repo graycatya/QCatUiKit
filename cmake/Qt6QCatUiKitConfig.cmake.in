@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(QCatUiKit @PROJECT_VERSION@ CONFIG
+    PATHS "${CMAKE_CURRENT_LIST_DIR}/../QCatUiKit" NO_DEFAULT_PATH)
+if(NOT TARGET Qt6::QCatUiKit)
+    add_library(Qt6::QCatUiKit INTERFACE IMPORTED)
+    set_target_properties(Qt6::QCatUiKit PROPERTIES
+        INTERFACE_LINK_LIBRARIES QCatUiKit::QCatUiKit)
+endif()
+if(NOT QT_NO_CREATE_VERSIONLESS_TARGETS AND NOT TARGET Qt::QCatUiKit)
+    add_library(Qt::QCatUiKit INTERFACE IMPORTED)
+    set_target_properties(Qt::QCatUiKit PROPERTIES
+        INTERFACE_LINK_LIBRARIES Qt6::QCatUiKit)
+endif()
+set(Qt6QCatUiKit_VERSION "@Qt6_VERSION@")
+set(Qt6QCatUiKit_FOUND TRUE)
+check_required_components(Qt6QCatUiKit)

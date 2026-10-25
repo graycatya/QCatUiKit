@@ -16,7 +16,9 @@ Linux 原生 Wayland Dock 的顶层拖动协议探测可选使用 `pkg-config` �
 | `QCATUIKIT_TEST_LED_GPU` | `OFF` | 注册 LED 真实 GPU 测试，需开启测试 |
 | `QCATUIKIT_RELEASE_CHANNEL` | `experimental` | `experimental` 或 `stable`，独立于编译模式 |
 | `CMAKE_BUILD_TYPE` | 由生成器／调用方决定 | 单配置生成器的 Debug／Release 等模式 |
-| `CMAKE_INSTALL_PREFIX` | 由平台决定 | 安装目标目录，可用安装命令的 `--prefix` 覆盖 |
+| `QCATUIKIT_INSTALL_LAYOUT` | `QT` | 跟随所用 Qt 的安装布局；`STANDALONE` 使用 GNUInstallDirs 和 `<libdir>/qml` |
+| `QCATUIKIT_INSTALL_QMLDIR` | 跟随安装布局 | 相对安装前缀的 QML 导入根目录；切换布局时用 `-UQCATUIKIT_INSTALL_QMLDIR` 重算默认值 |
+| `CMAKE_INSTALL_PREFIX` | 顶层 `QT` 构建默认所用 Qt 前缀 | 安装目标目录；保留显式设置，可用安装命令的 `--prefix` 覆盖 |
 | `CMAKE_PREFIX_PATH` | 由调用方提供 | Qt 及已安装依赖的 CMake 包搜索路径 |
 
 构建命令从仓库根目录执行，Qt 路径须替换为本机相应编译器套件。构建输出与源码分离。
@@ -61,23 +63,50 @@ cmake --build build/library --parallel
 
 ## 安装
 
+默认按所用 Qt 套件安装，使用与该 Qt 匹配的编译器。在 Windows 的 MSVC 开发者终端中，可一次配置并安装两种编译模式：
+
+```powershell
+cmake -S . -B build/qt-module -G "Ninja Multi-Config" `
+  -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2022_64" `
+  -DQCATUIKIT_BUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF
+cmake --build build/qt-module --config Release --parallel
+cmake --build build/qt-module --config Debug --parallel
+cmake --install build/qt-module --config Release
+cmake --install build/qt-module --config Debug
+```
+
+全新顶层构建默认将安装前缀设为该 Qt 的 `QT6_INSTALL_PREFIX`。已有构建缓存若保存了其他前缀，需要重新配置 `-DCMAKE_INSTALL_PREFIX=/path/to/Qt/kit`。Windows 的库与插件 Debug 名称带 `d` 后缀，Release 无后缀；CMake 导出文件保存两种配置，QML 插件由 Qt 按当前编译模式选择。非 Windows 平台本次未增加双配置库名，使用各自配置的独立前缀。库使用 Qt 私有渲染头，安装包要求构建时的同一 Qt 版本及兼容工具链。
+
+库、插件及头文件路径使用 Qt 包导出的目标安装布局，包括交叉编译的目标路径，不执行宿主机的 qmake 推测目标路径。QML 插件的相对 RPATH 随安装布局计算。安装到 Qt 套件后，同一套件的应用、QML 工具使用默认路径即可发现模块；发布应用仍需按下文部署依赖，目标机器不会自动拥有开发机的安装目录。
+
+也可以保留 Qt 布局但先安装到独立目录检查：
+
 ```sh
 cmake --install build/release --prefix "$PWD/stage"
 ```
 
-多配置构建加 `--config Release`。安装布局由 GNUInstallDirs 控制，`<libdir>` 通常为 `lib`，也可能为 `lib64`：
+多配置构建加 `--config Release`。默认 `QT` 布局中的目录取自 Qt；常见 SDK 如下。设置 `QCATUIKIT_INSTALL_LAYOUT=STANDALONE` 可保留原 GNUInstallDirs 布局，QML 则位于 `<libdir>/qml`。显式覆盖 `QCATUIKIT_INSTALL_QMLDIR` 时，运行时也要使用相应导入路径。
 
 | 安装位置 | 内容 |
 | --- | --- |
 | `include/QCatUiKit` | 公开头及转发头 |
 | `<libdir>`；Windows 的 `bin` | 共享库、链接库 |
-| `<libdir>/qml/QCatUiKit` | QML 插件、qmldir、类型信息、QML／JS 文件 |
-| `<libdir>/cmake/QCatUiKit` | CMake 包配置与导出目标 |
+| `qml/QCatUiKit`（或 Qt 的 `QT6_INSTALL_QML`） | QML 插件、qmldir、类型信息、QML／JS 文件 |
+| `<libdir>/cmake/QCatUiKit`、`<libdir>/cmake/Qt6QCatUiKit` | 独立包导出目标及 Qt6 组件入口 |
 | `share/QCatUiKit` | LICENSE、NOTICE 和附带许可证 |
 
 安装目标包含库与 QML 模块；Gallery 从构建目录运行。文档保存在源码仓库。
 
 ## 应用接入
+
+安装到所用 Qt 套件后，CMake 只需指定 Qt 的前缀即可：
+
+```cmake
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QCatUiKit)
+target_link_libraries(myapp PRIVATE Qt6::Quick Qt6::QCatUiKit)
+```
+
+QML 使用 `import QCatUiKit`，无需 `engine.addImportPath()`。`Qt::QCatUiKit` 也在未禁用无版本目标时提供。QCatUiKit 的 API 版本仍为独立版本，不随 Qt 组件包装入口的版本改变。
 
 使用安装包的最小应用包含下面的 `CMakeLists.txt`、`main.cpp` 和 `Main.qml`。QML 示例可直接使用 [项目 README](../../../README.md) 中的 ApplicationWindow。
 
@@ -125,12 +154,12 @@ cmake -S . -B build -GNinja \
   -DCMAKE_PREFIX_PATH="/absolute/stage;/path/to/Qt/6.x/gcc_64" \
   -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
-QML_IMPORT_PATH=/absolute/stage/lib/qml \
+QML_IMPORT_PATH=/absolute/stage/qml \
   LD_LIBRARY_PATH=/absolute/stage/lib:/path/to/Qt/6.x/gcc_64/lib \
   ./build/myapp
 ```
 
-按实际安装布局替换 `lib`。CMake 包变量 `QCatUiKit_QML_IMPORT_PATH` 给出安装包的 QML 根目录；它不会自动修改任意宿主的运行时导入路径。应用也可以把模块部署到上例的 `<app>/qml/QCatUiKit`。
+按实际 Qt 布局替换 `lib`、`qml`（`STANDALONE` 为 `<libdir>/qml`）。CMake 包变量 `QCatUiKit_QML_IMPORT_PATH` 给出安装包的 QML 根目录；它不会自动修改独立前缀宿主的运行时导入路径。应用也可以把模块部署到上例的 `<app>/qml/QCatUiKit`。
 
 以上安装包示例通过 NO_IMPORT_SCAN 使用运行时共享插件，并为 qmllint 设置模块搜索路径；完整可复制应用见 [技能模板](../../../skills/qcatuikit-ui/assets/starter)。
 
@@ -163,7 +192,8 @@ add_subdirectory(path/to/QCatUiKit qcat-uikit)
 
 ```sh
 cmake -S tests/auto/cmake/consumer -B build/consumer -GNinja \
-  -DCMAKE_PREFIX_PATH="$PWD/stage;/path/to/Qt/6.x/gcc_64"
+  -DCMAKE_PREFIX_PATH="$PWD/stage;/path/to/Qt/6.x/gcc_64" \
+  -DCMAKE_BUILD_TYPE=Release
 cmake --build build/consumer
 LD_LIBRARY_PATH="$PWD/stage/lib:/path/to/Qt/6.x/gcc_64/lib" \
   ./build/consumer/consumer

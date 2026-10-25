@@ -14,9 +14,12 @@ cmake -S . -B build -GNinja \
 cmake --build build --parallel
 cmake --build build --target qcat-ui-starter_qmllint
 LD_LIBRARY_PATH=/absolute/qcat-stage/lib:/path/to/Qt/6.x/gcc_64/lib \
-  ./build/qcat-ui-starter --qml-import-path /absolute/qcat-stage/lib/qml
+  ./build/qcat-ui-starter --qml-import-path /absolute/qcat-stage/qml
 ```
 
+The commands use the default QT install layout. For STANDALONE, replace the QML
+root with `<prefix>/<libdir>/qml`. When installed inside the matching Qt kit,
+only its prefix and runtime library path are needed; omit --qml-import-path.
 Use the actual lib directory (possibly lib64). The runtime Qt must match the build;
 finding a CMake package alone does not set every indirect shared-library search path.
 On Windows, use the matching Qt/compiler kit, add Qt/bin and qcat-stage/bin to PATH,
@@ -29,7 +32,7 @@ window capture and exits. For a headless local check on Linux:
 ```sh
 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
   LD_LIBRARY_PATH=/absolute/qcat-stage/lib:/path/to/Qt/6.x/gcc_64/lib \
-  ./build/qcat-ui-starter --qml-import-path /absolute/qcat-stage/lib/qml \
+  ./build/qcat-ui-starter --qml-import-path /absolute/qcat-stage/qml \
   --screenshot /tmp/qcat-ui.png
 ```
 

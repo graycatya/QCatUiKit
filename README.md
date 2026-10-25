@@ -70,14 +70,14 @@ add_subdirectory(path/to/QCatUiKit qcat-uikit)
 target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
 ```
 
-安装包接入：
+安装到当前 Qt 套件后接入：
 
 ```cmake
-find_package(QCatUiKit 1 REQUIRED)
-target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QCatUiKit)
+target_link_libraries(myapp PRIVATE Qt6::Quick Qt6::QCatUiKit)
 ```
 
-应用还需让 QML 引擎找到构建或安装目录中的模块；完整 CMake 与部署示例见 [构建与接入](src/uikit/doc/BUILDING.md)。
+默认安装布局跟随构建所用 Qt，执行 `cmake --install <build>` 即安装到该套件（显式指定过安装前缀时沿用该前缀）。QML 可直接 `import QCatUiKit`。保留独立 `find_package(QCatUiKit)` 入口；独立前缀及源码接入仍需设置运行时模块路径。Windows Debug／Release 可安装到同一套件。完整步骤及部署说明见 [构建与接入](src/uikit/doc/BUILDING.md)。
 
 ```qml
 import QtQuick

@@ -8,6 +8,7 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| Qt 套件安装与双配置 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Debug／Release | Qt6 组件发现、真实套件默认 QML 路径、两配置各两个消费者及独立模式通过；构建、库／Gallery lint、CTest 18/18 通过，可选 GPU 未开启 |
 | C/C++ 模块目录整理 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Release | 构建、库／Gallery lint、CTest 18/18、独立安装消费者及文档检查通过；本次未开启可选 GPU 测试，详见历史记录 |
 | Windows 全库测试可靠性 | 2026-10-24，Windows 11、Qt 6.12.0、MSVC 2022 Release | 最终 CTest 22/22（含四组 GPU），并行度 2，耗时 122.41 秒；LED 连续三次各 10/10。构建、库／Gallery lint 通过。测试运行器的故意失败与启动失败反向验证均正确返回非零；未新增跳过，原有平台专属跳过仍保留。详见历史记录 |
 | Wayland Dock 平台分支 | 2026-10-22，Ubuntu 26.04、Qt 6.12.0 Release | 构建、库／Gallery lint、CTest 18/18 通过；Wayland 适配器 5/5、QML 状态 6/6。XCB 原有浮动坐标失败在未修改基线也复现；真实鼠标拖放和 Windows/macOS 本次未验收，详见历史记录 |
@@ -145,19 +146,41 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 
 ## 安装与独立消费者
 
+### Qt 套件安装
+
+按 [构建说明](BUILDING.md#安装) 使用同一多配置构建目录，依次构建并安装 Release、Debug。在 Windows 检查 `bin/QCatUiKit.dll`、`bin/QCatUiKitd.dll`、两个链接库及 QML 目录中的两个插件都存在，CMake 包目录保留 `QCatUiKitTargets-release.cmake` 和 `QCatUiKitTargets-debug.cmake`。
+
+安装到 Qt 套件后，仅指定该 Qt 前缀构建以下消费者：
+
+```powershell
+cmake -S tests/auto/cmake/qt-module-consumer -B build/qt-module-consumer `
+  -G "Ninja Multi-Config" -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2022_64"
+cmake --build build/qt-module-consumer --config Release
+cmake --build build/qt-module-consumer --config Debug
+```
+
+该工程使用 `find_package(Qt6 COMPONENTS Quick QCatUiKit)`。`qt-module-consumer` 验证公开头、C++ 调用及普通 QML 模块的导入扫描；`qml-plugin-consumer` 仅链接 Qt Quick，验证从磁盘加载插件。清除 `QML_IMPORT_PATH`／`QML2_IMPORT_PATH`，仅将所用 Qt 的 `bin` 加入 PATH，两种配置分别运行两个程序，检查退出码均为 0。程序不调用 `addImportPath`。离屏运行可设置 `QT_QPA_PLATFORM=offscreen` 和 `QT_QUICK_BACKEND=software`；这不构成 GPU 验收。
+
+安装到暂存前缀时，Qt6 组件搜索还需设置 `QT_ADDITIONAL_PACKAGES_PREFIX_PATH=<stage>`，运行时使用 `<stage>/bin` 和 `<stage>/<QML目录>`。暂存检查不能替代清除这些设置后的真实 Qt 套件检查。另以 `QCATUIKIT_INSTALL_LAYOUT=STANDALONE` 检查旧的 `<libdir>/qml` 布局和下列独立包入口。
+
+### 独立包入口
+
+现有消费者工程包括 `consumer`、`led-consumer`、`charts-consumer`、`attitude-consumer`、`dock-consumer`、`version_consumer`。它们也可直接使用安装到 Qt 套件中的独立包入口；Windows 使用同一 Qt 前缀及 Ninja Multi-Config，各构建 Debug／Release，并将该 Qt 的 bin 加入 PATH。离屏运行设置 `QT_QPA_PLATFORM=offscreen`、`QT_QUICK_BACKEND=software`、`QT_QPA_FONTDIR=%WINDIR%/Fonts`。`charts-consumer` 的参数为安装的 QML 根目录；`version-consumer` 的参数为预期版本字符串及渠道；其余无须参数。LED 消费者验证对象、数据和 QML 创建，不创建真实 GPU 窗口。
+
 安装后的检查不依赖源码头文件路径。普通消费者见 [构建说明](BUILDING.md)。图表消费者：
 
 ```sh
 cmake --install build/release --prefix "$PWD/stage"
 cmake -S tests/auto/cmake/charts-consumer -B build/charts-consumer -GNinja \
-  -DCMAKE_PREFIX_PATH="$PWD/stage;/path/to/Qt/6.x/gcc_64"
+  -DCMAKE_PREFIX_PATH="$PWD/stage;/path/to/Qt/6.x/gcc_64" \
+  -DCMAKE_BUILD_TYPE=Release
 cmake --build build/charts-consumer
 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
   LD_LIBRARY_PATH="$PWD/stage/lib:/path/to/Qt/6.x/gcc_64/lib" \
-  ./build/charts-consumer/charts-consumer "$PWD/stage/lib/qml"
+  ./build/charts-consumer/charts-consumer "$PWD/stage/qml"
 ```
 
-按实际安装布局替换 lib。Windows 将项目与 Qt 的 bin 目录加入 PATH。版本消费者的构建和运行参数见 [版本管理](VERSIONING.md)，已编译程序的库替换检查见 [ABI](ABI.md)。
+按实际安装布局替换 lib 和 qml；`STANDALONE` 的 QML 根目录为 `<libdir>/qml`。Windows 将项目与 Qt 的 bin 目录加入 PATH。版本消费者的构建和运行参数见 [版本管理](VERSIONING.md)，已编译程序的库替换检查见 [ABI](ABI.md)。
 
 安装消费者不属于常规 CTest 组；更改导出头、依赖、安装路径或 ABI 时单独运行，并记录结果。
 

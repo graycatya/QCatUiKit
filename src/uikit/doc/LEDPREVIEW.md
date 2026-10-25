@@ -125,7 +125,7 @@ cmake -S tests/auto/cmake/led-consumer -B build/led-consumer -G Ninja -DCMAKE_PR
 cmake --build build/led-consumer
 ```
 
-运行消费者时设置安装包 `bin` / `lib` 的动态库路径与 `QML_IMPORT_PATH=/absolute/stage/led/lib/qml`。无需将 GuiPrivate 作为消费者依赖。
+运行消费者时设置安装包 `bin` / `lib` 的动态库路径与 `QML_IMPORT_PATH=/absolute/stage/led/qml`。无需将 GuiPrivate 作为消费者依赖。
 
 ## 验证与历史数据
 

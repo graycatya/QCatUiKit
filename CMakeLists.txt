@@ -19,7 +19,6 @@ if(QCATUIKIT_RELEASE_CHANNEL STREQUAL "experimental")
 endif()
 message(STATUS "QCatUiKit ${QCATUIKIT_VERSION_STRING} (ABI ${QCATUIKIT_ABI_VERSION})")
 
-include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(CTest)
 option(QCATUIKIT_BUILD_EXAMPLES "Build the component gallery" ON)
@@ -28,6 +27,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Shade
 if(NOT TARGET Qt6::GuiPrivate)
     find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
 endif()
+include(cmake/QCatUiKitInstallDirs.cmake)
 qt_standard_project_setup(REQUIRES 6.8)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,13 +49,23 @@ endif()
 
 configure_package_config_file(cmake/QCatUiKitConfig.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfig.cmake"
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QCatUiKit")
+    INSTALL_DESTINATION "${QCATUIKIT_INSTALL_CMAKEDIR}/QCatUiKit"
+    PATH_VARS QCATUIKIT_INSTALL_QMLDIR)
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfigVersion.cmake"
     VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 install(EXPORT QCatUiKitTargets NAMESPACE QCatUiKit::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QCatUiKit")
+    DESTINATION "${QCATUIKIT_INSTALL_CMAKEDIR}/QCatUiKit")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/QCatUiKitConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QCatUiKit")
+    DESTINATION "${QCATUIKIT_INSTALL_CMAKEDIR}/QCatUiKit")
+configure_package_config_file(cmake/Qt6QCatUiKitConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/Qt6QCatUiKitConfig.cmake"
+    INSTALL_DESTINATION "${QCATUIKIT_INSTALL_CMAKEDIR}/Qt6QCatUiKit")
+# Qt6 requests its own version when resolving COMPONENTS, independently of our API version.
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/Qt6QCatUiKitConfigVersion.cmake"
+    VERSION ${Qt6_VERSION} COMPATIBILITY SameMajorVersion)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Qt6QCatUiKitConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/Qt6QCatUiKitConfigVersion.cmake"
+    DESTINATION "${QCATUIKIT_INSTALL_CMAKEDIR}/Qt6QCatUiKit")
 install(FILES LICENSE NOTICE DESTINATION "${CMAKE_INSTALL_DATADIR}/QCatUiKit")
 install(DIRECTORY LICENSES/ DESTINATION "${CMAKE_INSTALL_DATADIR}/QCatUiKit/licenses")

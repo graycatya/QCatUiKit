@@ -70,14 +70,14 @@ add_subdirectory(path/to/QCatUiKit qcat-uikit)
 target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
 ```
 
-Use an installed package:
+Use the module installed into the current Qt kit:
 
 ```cmake
-find_package(QCatUiKit 1 REQUIRED)
-target_link_libraries(myapp PRIVATE QCatUiKit::QCatUiKit)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QCatUiKit)
+target_link_libraries(myapp PRIVATE Qt6::Quick Qt6::QCatUiKit)
 ```
 
-The QML engine must also be able to find the module in the build or installation directory. See [Building and integration](src/uikit/doc/BUILDING.md) for complete CMake and deployment examples.
+The default install layout follows the build's Qt kit. Run `cmake --install <build>` to install into that kit (an explicitly configured prefix is preserved), then use `import QCatUiKit` directly. The standalone `find_package(QCatUiKit)` entry remains available; separate prefixes and source builds still need a runtime module path. Windows Debug and Release can share one installed kit. See [Building and integration](src/uikit/doc/BUILDING.md) for complete steps and deployment examples.
 
 ```qml
 import QtQuick

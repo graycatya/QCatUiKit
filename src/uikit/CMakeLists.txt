@@ -215,19 +215,26 @@ qt_add_shaders(QCatUiKit chart_shaders
 set_target_properties(QCatUiKit PROPERTIES
     VERSION ${PROJECT_VERSION} SOVERSION ${QCATUIKIT_ABI_VERSION}
     CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES)
+if(WIN32)
+    # Qt's Windows plugin loader selects the matching debug DLL from the same qmldir.
+    set_target_properties(QCatUiKit QCatUiKitplugin PROPERTIES DEBUG_POSTFIX d)
+endif()
+file(RELATIVE_PATH qcat_plugin_to_lib
+    "${CMAKE_INSTALL_PREFIX}/${QCATUIKIT_INSTALL_QMLDIR}/QCatUiKit"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 if(APPLE)
-    set_target_properties(QCatUiKitplugin PROPERTIES INSTALL_RPATH "@loader_path/../..")
+    set_target_properties(QCatUiKitplugin PROPERTIES INSTALL_RPATH "@loader_path/${qcat_plugin_to_lib}")
 elseif(UNIX)
-    set_target_properties(QCatUiKitplugin PROPERTIES INSTALL_RPATH "$ORIGIN/../..")
+    set_target_properties(QCatUiKitplugin PROPERTIES INSTALL_RPATH "$ORIGIN/${qcat_plugin_to_lib}")
 endif()
 install(TARGETS QCatUiKit EXPORT QCatUiKitTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS QCatUiKitplugin
-    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/QCatUiKit
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/QCatUiKit)
+install(TARGETS QCatUiKitplugin EXPORT QCatUiKitTargets
+    RUNTIME DESTINATION ${QCATUIKIT_INSTALL_QMLDIR}/QCatUiKit
+    LIBRARY DESTINATION ${QCATUIKIT_INSTALL_QMLDIR}/QCatUiKit)
 install(FILES ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit/qmldir
     ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit/QCatUiKit.qmltypes
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/QCatUiKit)
-install(DIRECTORY qml/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/QCatUiKit/qml FILES_MATCHING PATTERN "*.qml" PATTERN "*.js")
+    DESTINATION ${QCATUIKIT_INSTALL_QMLDIR}/QCatUiKit)
+install(DIRECTORY qml/ DESTINATION ${QCATUIKIT_INSTALL_QMLDIR}/QCatUiKit/qml FILES_MATCHING PATTERN "*.qml" PATTERN "*.js")

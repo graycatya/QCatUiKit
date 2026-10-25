@@ -42,7 +42,7 @@ For task-specific composition, consult [UI patterns](references/ui-patterns.md).
 
 For an existing app, preserve its CMake target, navigation, localization and model ownership. For a new installed-package consumer, copy and adapt [assets/starter](assets/starter), which contains a complete CMake/C++/QML application with a responsive records form and table. Replace its sample content and actions with the requested product behavior.
 
-The starter expects Qt 6.8+, CMake 3.24+, C++17 and an installed QCatUiKit package. Configure with both installation prefixes in CMAKE_PREFIX_PATH. Its `--qml-import-path` option supplies the runtime module root during development; packaged apps can use an adjacent qml directory. See [build and verification](references/build-and-verify.md) for concrete commands.
+The starter expects Qt 6.8+, CMake 3.24+, C++17 and an installed QCatUiKit package built with the same Qt version and compatible toolchain. When installed into the Qt kit, its default QML import path works directly; applications may use `find_package(Qt6 COMPONENTS Quick QCatUiKit)` and `Qt6::QCatUiKit`. The starter retains the standalone package entry. For a separate prefix, configure with both prefixes in CMAKE_PREFIX_PATH and use `--qml-import-path` for its runtime module root (`<prefix>/qml` in the default Qt layout; `<prefix>/<libdir>/qml` for STANDALONE). Packaged apps can use an adjacent qml directory. See [build and verification](references/build-and-verify.md) for concrete commands.
 
 Do not add Qt Charts, Graphs, WebEngine, a Widgets hierarchy, or a new library API just to compose an ordinary page. If public controls cannot meet a real requirement, explain the gap and implement a scoped app-level composition or the requested library change.
 
