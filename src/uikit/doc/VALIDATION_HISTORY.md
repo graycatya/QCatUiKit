@@ -4,6 +4,17 @@
 
 以下保留各次执行时的平台、结果、失败和范围限制。记录中的“当前”“待实现”“本轮”仅指对应日期，不代表最新接口或待办；按日期和检查范围阅读，不将不同平台结果合并。忽略目录中的日志路径是当时的本地产物位置，仓库不保证携带这些文件。
 
+## C/C++ 模块目录整理（2026-10-25）
+
+Windows、Qt 6.12.0、MSVC 2022 Release。将 79 个源码、头文件和版本模板归入 `core`、`theme`、`models`、`docking`、`motion`、`charts`、`led`，不改变公开接口。使用现有 `build/dock-validation` 验证目录，本次未开启可选 GPU 测试。
+
+- `cmake --build build/dock-validation --parallel 4`：库、Gallery 及测试程序构建通过；CMake 自动重新配置到新目录。
+- `cmake --build build/dock-validation --target QCatUiKit_qmllint qcat-gallery_qmllint`：通过。
+- `ctest --test-dir build/dock-validation --output-on-failure -j 2`：18/18 通过，耗时 138.67 秒。
+- 安装到独立 `build/uikit-structured-stage`；使用 `tests/auto/cmake/consumer`、Ninja、`CMAKE_BUILD_TYPE=Release` 和该安装前缀配置消费者，构建及运行退出码均为 0。安装的 32 个公开头、32 个兼容转发头、32 个类名转发头均存在，未包含源码目录绝对路径。消费者与库须使用同一编译模式。
+- `python tools/check_docs.py`：34 份 Markdown、448 个本地链接、119 个公开 Cat 类型通过；专题覆盖 360 个属性和 168 个可调用方法名称。
+- 日志位于忽略的 `build/uikit-restructure-{validation,lint,ctest,install,consumer}.log`。未重跑 Linux、macOS、最低 Qt 版本、旧二进制兼容及 GPU 图形验收。
+
 ## 测试可靠性与运行器（2026-10-24）
 
 沿用下节 Windows 11、Qt 6.12.0、MSVC 2022 Release 环境，范围为全部已注册测试及四组可选 GPU 测试。仅修改测试、测试构建与验证文档，没有修改库或 Gallery 运行代码。

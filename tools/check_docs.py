@@ -92,6 +92,7 @@ def public_api_mentions(cmake, errors):
     property_count = method_count = 0
     for name in headers:
         code = (ROOT / "src/uikit" / name).read_text(encoding="utf-8")
+        name = Path(name).name
         if name.startswith("qcatchart") or name == "qcatwaterfall.h":
             topics = ["CHARTS.md", "CHARTS3D.md", "CHARTEXTENSIONS.md",
                       "CHARTSTATISTICS.md", "COMPONENTS.md"]
@@ -159,7 +160,7 @@ def main():
     cmake = (ROOT / "src/uikit/CMakeLists.txt").read_text(encoding="utf-8")
     property_count, method_count = public_api_mentions(cmake, errors)
     types = set(re.findall(r"qml/(Cat\w+)\.qml", cmake))
-    for header in (ROOT / "src/uikit").glob("*.h"):
+    for header in (ROOT / "src/uikit").rglob("*.h"):
         if header.name.endswith("_p.h"):
             continue
         types.update(re.findall(r"QML_NAMED_ELEMENT\((Cat\w+)\)", header.read_text(encoding="utf-8")))

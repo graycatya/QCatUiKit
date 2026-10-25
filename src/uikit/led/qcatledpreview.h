@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 #include "qcatledsource.h"
-#include "qcatuikitglobal.h"
+#include <QCatUiKit/qcatuikitglobal.h>
 #include <QColor>
 #include <QQuickRhiItem>
 #include <QVariantMap>

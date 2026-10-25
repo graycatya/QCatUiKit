@@ -3,7 +3,7 @@
 #include "qcatchartaxis.h"
 #include "qcatchartscene3d.h"
 #include "qcatchartseries.h"
-#include "qcatthemepalette.h"
+#include <QCatUiKit/qcatthemepalette.h>
 #include <QFont>
 #include <QQmlListProperty>
 #include <QQuickItem>

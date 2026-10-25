@@ -8,6 +8,7 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| C/C++ 模块目录整理 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Release | 构建、库／Gallery lint、CTest 18/18、独立安装消费者及文档检查通过；本次未开启可选 GPU 测试，详见历史记录 |
 | Windows 全库测试可靠性 | 2026-10-24，Windows 11、Qt 6.12.0、MSVC 2022 Release | 最终 CTest 22/22（含四组 GPU），并行度 2，耗时 122.41 秒；LED 连续三次各 10/10。构建、库／Gallery lint 通过。测试运行器的故意失败与启动失败反向验证均正确返回非零；未新增跳过，原有平台专属跳过仍保留。详见历史记录 |
 | Wayland Dock 平台分支 | 2026-10-22，Ubuntu 26.04、Qt 6.12.0 Release | 构建、库／Gallery lint、CTest 18/18 通过；Wayland 适配器 5/5、QML 状态 6/6。XCB 原有浮动坐标失败在未修改基线也复现；真实鼠标拖放和 Windows/macOS 本次未验收，详见历史记录 |
 | Dock、全库回归 | 2026-10-21，Windows 11、Qt 6.12.0、MSVC 2022 Release | Dock 控制器 16/16、工作区 12/12、浮动 25/25、Gallery Dock 15/15；构建及库／Gallery qmllint 通过。全库 CTest 为 15/17，仍有 LED 与下拉框宽度失败 |
@@ -17,6 +18,10 @@
 | Linux 图表 GPU | 2026-10-19，同一 Linux／Qt 环境 | AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 二维／三维／PNG 192／22／7，OpenGL 二维／三维 192／22；未开启 Khronos validation layer |
 
 计数包含测试初始化／清理。Dock 的 Windows 原生窗口测试使用 QtTest 合成鼠标与 software 渲染；多屏混合 DPI、实际热插拔和 Wayland 仍需单独验收。不同日期、平台的通过结果不能互相替代；最低 Qt 6.8、其他 GPU／驱动、真机触屏和设备丢失也没有由这些结果获得通用验证。
+
+## 源码目录调整检查
+
+移动 C/C++ 实现后，重新配置 CMake，执行下节的全量构建、库／Gallery qmllint 和 CTest。再按 [安装包检查](BUILDING.md#检查安装包) 安装到独立目录并构建消费者，确认公开头和转发头仍可使用。运行 `python tools/check_docs.py`，确认模块内公开头仍纳入文档覆盖检查。目录职责及新增模块约定见 [维护入口](MAINTENANCE.md)。
 
 ## 自动测试入口
 

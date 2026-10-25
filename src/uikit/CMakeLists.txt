@@ -9,17 +9,17 @@ set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml PRO
 # Generate the build-tree include facade; install the real headers and portable
 # forwarding headers rather than the absolute build-tree forwarding headers.
 set(qcat_public_headers
-    qcatdockcontroller.h
-    qcattiltcontroller.h
-    qcatuikitglobal.h
-    qcatuikitversion.h
-    qcatthemepalette.h
-    qcatchatmodel.h
-    qcattablemodel.h
-    qcatchartcolorscale.h qcatchartbubble.h qcatchartgrid.h qcatchartcontour.h
-    qcatchartohlc.h qcatchartboxplot.h
-    qcatwaterfall.h qcatchartfit.h qcatcharthistogram.h qcatchartstack.h
-    qcatchartseries3d.h qcatchartscene3d.h qcatchartaxis.h qcatchartseries.h qcatchartitem.h qcatledsource.h qcatledpreview.h qcatledlayoutmodel.h qcatlightingframe.h qcatledeffectregistry.h qcatledstorage.h qcatleddeck.h qcatledmixer.h qcatledoutput.h qcatledproject.h)
+    docking/qcatdockcontroller.h
+    motion/qcattiltcontroller.h
+    core/qcatuikitglobal.h
+    core/qcatuikitversion.h
+    theme/qcatthemepalette.h
+    models/qcatchatmodel.h
+    models/qcattablemodel.h
+    charts/qcatchartcolorscale.h charts/qcatchartbubble.h charts/qcatchartgrid.h charts/qcatchartcontour.h
+    charts/qcatchartohlc.h charts/qcatchartboxplot.h
+    charts/qcatwaterfall.h charts/qcatchartfit.h charts/qcatcharthistogram.h charts/qcatchartstack.h
+    charts/qcatchartseries3d.h charts/qcatchartscene3d.h charts/qcatchartaxis.h charts/qcatchartseries.h charts/qcatchartitem.h led/qcatledsource.h led/qcatledpreview.h led/qcatledlayoutmodel.h led/qcatlightingframe.h led/qcatledeffectregistry.h led/qcatledstorage.h led/qcatleddeck.h led/qcatledmixer.h led/qcatledoutput.h led/qcatledproject.h)
 set(qcat_compat_headers DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
 set(qcat_class_headers DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
@@ -27,11 +27,12 @@ set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
 foreach(qcat_header qcat_compat_header qcat_class_header IN ZIP_LISTS
         qcat_public_headers qcat_compat_headers qcat_class_headers)
-    file(WRITE "${qcat_include_dir}/${qcat_header}"
+    get_filename_component(qcat_header_name "${qcat_header}" NAME)
+    file(WRITE "${qcat_include_dir}/${qcat_header_name}"
         "#include \"${CMAKE_CURRENT_SOURCE_DIR}/${qcat_header}\"\n")
     foreach(qcat_forwarding_header IN ITEMS "${qcat_compat_header}" "${qcat_class_header}")
         file(WRITE "${qcat_forwarding_dir}/${qcat_forwarding_header}"
-            "#include \"${qcat_header}\"\n")
+            "#include \"${qcat_header_name}\"\n")
         configure_file("${qcat_forwarding_dir}/${qcat_forwarding_header}"
             "${qcat_include_dir}/${qcat_forwarding_header}" COPYONLY)
         install(FILES "${qcat_forwarding_dir}/${qcat_forwarding_header}"
@@ -39,7 +40,7 @@ foreach(qcat_header qcat_compat_header qcat_class_header IN ZIP_LISTS
     endforeach()
 endforeach()
 install(FILES ${qcat_public_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/QCatUiKit")
-configure_file(qcatuikitversiondata_p.h.in qcatuikitversiondata_p.h @ONLY)
+configure_file(core/qcatuikitversiondata_p.h.in qcatuikitversiondata_p.h @ONLY)
 
 qt_add_qml_module(QCatUiKit
     SHARED
@@ -52,19 +53,19 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
-        qcatdockcontroller.cpp
-        qcatdocknativedrag.cpp qcatdocknativedrag_p.h
-        qcattiltcontroller.cpp
-        qcatthemepalette.cpp qcatchatmodel.cpp qcattablemodel.cpp
-        qcatchartmapping.cpp qcatchartcontour.cpp
-        qcatchartfinancial.cpp
-        qcatwaterfall.cpp qcatchartfit.cpp qcatcharthistogram.cpp qcatchartstack.cpp qcatchartstatistics_p.h
-        qcatchartaxis.cpp qcatchartseries.cpp qcatchartitem.cpp qcatchartmath_p.h qcatchartcurves_p.h qcatchartlabels_p.h qcatchartlod_p.h qcatchartdelegates_p.h qcatchartpicking_p.h
-        qcatchartrhiitem.cpp qcatchartrhiitem_p.h
-        qcatchartseries3d.cpp qcatchartscene3d.cpp qcatchart3d_p.h qcatchartrhiitem3d.cpp
-        qcatledsource.cpp qcatledsource_p.h qcatledpreview.cpp qcatledlayoutmodel.cpp qcatlightingframe.cpp qcatledeffectregistry.cpp qcatledstorage.cpp qcatleddeck.cpp qcatledmixer.cpp qcatledoutput.cpp qcatledproject.cpp
-        qcattreemodel_p.h qcattreemodel.cpp
-        qcatuikitversion.cpp qcatuikitinfo_p.h qcatuikitinfo.cpp
+        docking/qcatdockcontroller.cpp
+        docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
+        motion/qcattiltcontroller.cpp
+        theme/qcatthemepalette.cpp models/qcatchatmodel.cpp models/qcattablemodel.cpp
+        charts/qcatchartmapping.cpp charts/qcatchartcontour.cpp
+        charts/qcatchartfinancial.cpp
+        charts/qcatwaterfall.cpp charts/qcatchartfit.cpp charts/qcatcharthistogram.cpp charts/qcatchartstack.cpp charts/qcatchartstatistics_p.h
+        charts/qcatchartaxis.cpp charts/qcatchartseries.cpp charts/qcatchartitem.cpp charts/qcatchartmath_p.h charts/qcatchartcurves_p.h charts/qcatchartlabels_p.h charts/qcatchartlod_p.h charts/qcatchartdelegates_p.h charts/qcatchartpicking_p.h
+        charts/qcatchartrhiitem.cpp charts/qcatchartrhiitem_p.h
+        charts/qcatchartseries3d.cpp charts/qcatchartscene3d.cpp charts/qcatchart3d_p.h charts/qcatchartrhiitem3d.cpp
+        led/qcatledsource.cpp led/qcatledsource_p.h led/qcatledpreview.cpp led/qcatledlayoutmodel.cpp led/qcatlightingframe.cpp led/qcatledeffectregistry.cpp led/qcatledstorage.cpp led/qcatleddeck.cpp led/qcatledmixer.cpp led/qcatledoutput.cpp led/qcatledproject.cpp
+        models/qcattreemodel_p.h models/qcattreemodel.cpp
+        core/qcatuikitversion.cpp core/qcatuikitinfo_p.h core/qcatuikitinfo.cpp
     QML_FILES
         qml/CatDockWorkspace.qml qml/CatDockPanel.qml qml/DockGeometry.js qml/DockFloatingWindow.qml
         qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml
@@ -185,7 +186,15 @@ target_compile_definitions(QCatUiKit PRIVATE QCATUIKIT_BUILD)
 target_include_directories(QCatUiKit PUBLIC
     $<BUILD_INTERFACE:${QCatUiKit_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/core
+        ${CMAKE_CURRENT_SOURCE_DIR}/theme
+        ${CMAKE_CURRENT_SOURCE_DIR}/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/docking
+        ${CMAKE_CURRENT_SOURCE_DIR}/motion
+        ${CMAKE_CURRENT_SOURCE_DIR}/charts
+        ${CMAKE_CURRENT_SOURCE_DIR}/led
+        ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PRIVATE Qt6::QuickControls2 Qt6::GuiPrivate)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(PkgConfig QUIET)

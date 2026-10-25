@@ -204,7 +204,7 @@ Wayland 的缩略图在启动拖放前捕获，由合成器随鼠标显示。停
 
 ## 实现与验证入口
 
-- 布局／持久化：`src/uikit/qcatdockcontroller.h/.cpp`。
+- 布局／持久化：`src/uikit/docking/qcatdockcontroller.h/.cpp`。
 - 呈现与交互：`qml/CatDockWorkspace.qml`、`qml/CatDockPanel.qml`；内部 `DockTabButton.qml`、`DockDragArea.qml`、`DockDropOverlay.qml` 统一标题／标签、拖动和指示器，`DockDragPreview.qml` 提供穿透输入的随动缩略窗，`DockGeometry.js` 计算几何及方向命中，`DockFloatingWindow.qml` 管理原生宿主。
 - Wayland：`qcatdocknativedrag_p.h/.cpp` 处理平台判断、协议探测、原生缩略图和窗口局部拖放事件；`tests/auto/docknative` 与 `tests/auto/qml/data/tst_dockwayland.qml` 验证适配器和 QML 状态转换。原有浮动测试继续覆盖非 Wayland 路径。
 - 演示：`examples/uikit/gallery/GalleryDockPreview.qml`，Gallery 页面 ID `dock-workspace`。

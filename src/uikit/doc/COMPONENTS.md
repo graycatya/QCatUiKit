@@ -10,8 +10,8 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatChart](../qcatchartitem.h) | 图表容器；`chartType`、`series`、`xAxis/yAxis`、`theme`、`interactive`；缩放、平移、单选／多选、预算委托、可选过渡、图例、提示及默认反走样；`renderingStatistics()` 查询渲染与上传诊断。 |
-| [CatChartAxis](../qcatchartaxis.h) | `scale`、`minimum/maximum`、`automatic`、`categories`、`orientation`、`side`、`visible`、`reversed`、`minorTickCount`、`setRange()`；线性、对数、UTC 时间与分类轴。 |
+| [CatChart](../charts/qcatchartitem.h) | 图表容器；`chartType`、`series`、`xAxis/yAxis`、`theme`、`interactive`；缩放、平移、单选／多选、预算委托、可选过渡、图例、提示及默认反走样；`renderingStatistics()` 查询渲染与上传诊断。 |
+| [CatChartAxis](../charts/qcatchartaxis.h) | `scale`、`minimum/maximum`、`automatic`、`categories`、`orientation`、`side`、`visible`、`reversed`、`minorTickCount`、`setRange()`；线性、对数、UTC 时间与分类轴。 |
 | [CatChartColorScale](CHARTEXTENSIONS.md) | 自动／固定范围、预乘颜色插值和色条。 |
 | [CatChartBubble](CHARTEXTENSIONS.md) | 独立半径／面积编码、大小倍数与颜色映射。 |
 | [CatChartGrid](CHARTEXTENSIONS.md) | 格网、缺失单元、单点更新、滚动行、密集纹理／稀疏实例。 |
@@ -22,7 +22,7 @@
 | [CatWaterfall](CHARTSTATISTICS.md) | `steps`、`initialValue`、`resetOnSubtotal`、`connectorsVisible`、`series`；增减、小计、总计和累计值拾取。 |
 | [CatChartStack](CHARTSTATISTICS.md) | `sources`、只读 `series`、`percentage`、`error`；严格 X 对齐、正负分组、过零切段及共享断点的堆叠面积适配器。 |
 | [CatHistogram](CHARTSTATISTICS.md) | `values`、`binCount`、`binEdges`、`normalization`、`series`；保留原始观测值，生成频数／频率／密度及箱边界拾取信息。 |
-| [CatChartSeries](../qcatchartseries.h) | `type`、`name`、`color`、`visible`、`capacity`、`count`；`curveMode`、`splineTension`、`markerShape`、`markerSize`、`markersVisible`；阶梯／样条、预设／纹理标记、六种柱图布局、多轴关联、多停止点／纹理填充、点／柱体／标签委托；`append()`、`appendData()`、`setData()`、`at()`、`clear()`。 |
+| [CatChartSeries](../charts/qcatchartseries.h) | `type`、`name`、`color`、`visible`、`capacity`、`count`；`curveMode`、`splineTension`、`markerShape`、`markerSize`、`markersVisible`；阶梯／样条、预设／纹理标记、六种柱图布局、多轴关联、多停止点／纹理填充、点／柱体／标签委托；`append()`、`appendData()`、`setData()`、`at()`、`clear()`。 |
 
 曲线外观还支持 `strokeStyle`、`dashPattern`、`dashOffset`；面积支持 `areaBaselineMode/areaBaseline`；Area／RangeArea 共用 `fillColor/borderColor`、`fillStyle/fillEndColor` 和 `fillOpacity`。断点使用批次字段 `breakBefore` 或 `setBreakBefore()`；区间面积使用 `RangeArea` 与 `setRangeData()`／`appendRangeData()`，C++ 对应独立 `RangeSample` 契约。RangeArea 的上下界共用七种 `curveMode` 与 `splineTension`，并支持断点、交叉填充和双边界极值范围。完整语义见 [图表指南](CHARTS.md)。
 
@@ -209,7 +209,7 @@
 
 上述类型均不依赖 Qt Sensors 或 MAVLink；飞机遥测、手机采集和通信由应用接入，两套数据源独立。
 
-[LedPreview](../qml/LedPreview.qml) / [LedSource](../qcatledsource.h) 提供 `source`、`viewMode`、`pointSize`、`previewBrightness`、`backgroundColor`、`showStatistics`、`resetView()`；使用 RHI 实例化灯点和独立 RGBA8 实时帧。详见 [LED 预览](LEDPREVIEW.md)。
+[LedPreview](../qml/LedPreview.qml) / [LedSource](../led/qcatledsource.h) 提供 `source`、`viewMode`、`pointSize`、`previewBrightness`、`backgroundColor`、`showStatistics`、`resetView()`；使用 RHI 实例化灯点和独立 RGBA8 实时帧。详见 [LED 预览](LEDPREVIEW.md)。
 
 公共 `LedDeck`、`LedMixer`、`LedStorageBrowser` 和 `LedLayoutSettings` / `LedPreviewSettings` / `LedOutputSettings` 提供独立播放、Storage 预设、共享布局与灯具配置交互。`LedProject` 可选装配多通道管线，支持 RGB、RGBW、RGB＋冷白＋暖白，并通过 `MemoryOutputBackend` 验证设备分支。完整接口和最小示例见 [LED 工作流](LEDWORKFLOW.md)。
 

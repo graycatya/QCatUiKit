@@ -23,7 +23,7 @@ Read only what the task needs:
 - `src/uikit/doc/ATTITUDE.md`: aircraft display and independent application-supplied tilt input.
 - `src/uikit/doc/BUILDING.md`: CMake integration, QML import paths and runtime deployment.
 
-Confirm unfamiliar properties in `src/uikit/qml/Cat*.qml`, public `src/uikit/qcat*.h`, or the installed `QCatUiKit.qmltypes`. Gallery snippets are examples; `GalleryChartData`, `GalleryDataDemo`, `GalleryIcon`, `GalleryLedDemo` and `QCatUiKit.Gallery` are not public application dependencies.
+Confirm unfamiliar properties in `src/uikit/qml/Cat*.qml`, public `src/uikit/<module>/qcat*.h`, or the installed `QCatUiKit.qmltypes`. Gallery snippets are examples; `GalleryChartData`, `GalleryDataDemo`, `GalleryIcon`, `GalleryLedDemo` and `QCatUiKit.Gallery` are not public application dependencies.
 
 ## Compose the interface
 

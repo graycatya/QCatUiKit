@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 qt_add_executable(tst_docknative tst_docknative.cpp
-    ${PROJECT_SOURCE_DIR}/src/uikit/qcatdocknativedrag.cpp
-    ${PROJECT_SOURCE_DIR}/src/uikit/qcatdocknativedrag_p.h)
+    ${PROJECT_SOURCE_DIR}/src/uikit/docking/qcatdocknativedrag.cpp
+    ${PROJECT_SOURCE_DIR}/src/uikit/docking/qcatdocknativedrag_p.h)
 target_link_libraries(tst_docknative PRIVATE Qt6::Quick Qt6::Qml Qt6::Test)
-target_include_directories(tst_docknative PRIVATE ${PROJECT_SOURCE_DIR}/src/uikit)
+target_include_directories(tst_docknative PRIVATE ${PROJECT_SOURCE_DIR}/src/uikit/docking)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(PkgConfig QUIET)
     if(PkgConfig_FOUND)
