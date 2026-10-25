@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0
+cmake_minimum_required(VERSION 3.24)
+project(ThorVGIntegrationCheck LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+option(QCATUIKIT_THORVG_TEST_QRHI "Also validate the owned QRhi adapter against the pinned ThorVG" OFF)
+set(QCATUIKIT_ENABLE_THORVG ${QCATUIKIT_THORVG_TEST_QRHI} CACHE BOOL "" FORCE)
+if(QCATUIKIT_THORVG_TEST_QRHI)
+    find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui ShaderTools GuiPrivate)
+endif()
+set(QCATUIKIT_BUILD_THORVG ON CACHE BOOL "" FORCE)
+include("${CMAKE_CURRENT_LIST_DIR}/../../../../cmake/ExecuteDownloadProjects.cmake")
+add_executable(thorvg-check main.cpp)
+target_link_libraries(thorvg-check PRIVATE ThorVG::ThorVG)
+if(QCATUIKIT_THORVG_TEST_QRHI)
+    target_compile_definitions(thorvg-check PRIVATE QCAT_TEST_QRHI)
+endif()
+enable_testing()
+add_test(NAME thorvg_svg COMMAND thorvg-check)
+
+if(QCATUIKIT_THORVG_TEST_QRHI AND WIN32)
+    set_tests_properties(thorvg_svg PROPERTIES ENVIRONMENT_MODIFICATION
+        "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+endif()

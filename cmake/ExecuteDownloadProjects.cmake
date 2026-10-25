@@ -1,0 +1,153 @@
+# SPDX-License-Identifier: Apache-2.0
+include_guard(GLOBAL)
+include("${CMAKE_CURRENT_LIST_DIR}/QCatUiKitBuildTools.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/QCatUiKitMsvcDependencies.cmake")
+set(QCATUIKIT_THORVG_SOURCE_DIR "" CACHE PATH "Optional local ThorVG development checkout")
+if(QCATUIKIT_ENABLE_THORVG)
+    set(QCATUIKIT_BUILD_THORVG ON)
+endif()
+if(NOT QCATUIKIT_BUILD_THORVG)
+    return()
+endif()
+include(ExternalProject)
+set(QCATUIKIT_NINJA_EXECUTABLE "" CACHE FILEPATH "Optional Ninja executable override")
+if(NOT QCATUIKIT_NINJA_EXECUTABLE)
+    if(CMAKE_GENERATOR MATCHES "Ninja")
+        set(QCATUIKIT_NINJA_EXECUTABLE "${CMAKE_MAKE_PROGRAM}")
+    else()
+        find_program(QCATUIKIT_NINJA_EXECUTABLE NAMES ninja REQUIRED)
+    endif()
+endif()
+set(QCATUIKIT_THORVG_MESON_OPTIONS "" CACHE STRING "Additional Meson setup options (CMake list)")
+set(QCATUIKIT_THORVG_CROSS_FILE "" CACHE FILEPATH "Meson cross file for cross-compilation")
+if(CMAKE_CROSSCOMPILING AND NOT QCATUIKIT_THORVG_CROSS_FILE)
+    message(FATAL_ERROR "Cross-compiling ThorVG requires QCATUIKIT_THORVG_CROSS_FILE")
+endif()
+
+function(qcat_apply_thorvg_overlay source overlay fingerprint)
+    file(LOCK "${source}.overlay.lock" GUARD FUNCTION TIMEOUT 600)
+    set(marker "${source}/.qcat-qrhi-overlay")
+    if(EXISTS "${marker}")
+        file(READ "${marker}" current)
+        if(current STREQUAL fingerprint)
+            return()
+        endif()
+    endif()
+    file(COPY "${overlay}/" DESTINATION "${source}")
+    file(WRITE "${marker}" "${fingerprint}")
+endfunction()
+
+if(QCATUIKIT_THORVG_SOURCE_DIR)
+    get_filename_component(qcat_thorvg_source "${QCATUIKIT_THORVG_SOURCE_DIR}" ABSOLUTE)
+    set(qcat_thorvg_label local)
+else()
+    set(revision v1.1.3)
+    set(archive_hash "03850904c300e5969560d49446eab3e534c4160c379909f32bc49a32ea6f4072")
+    if(QCATUIKIT_ENABLE_THORVG)
+        set(overlay "${CMAKE_CURRENT_LIST_DIR}/../adapters/qcatthorvgqrhi/overlay")
+        file(GLOB_RECURSE overlay_files CONFIGURE_DEPENDS RELATIVE "${overlay}" "${overlay}/*")
+        list(SORT overlay_files)
+        set(fingerprint "${revision}")
+        foreach(name IN LISTS overlay_files)
+            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${overlay}/${name}")
+            file(SHA256 "${overlay}/${name}" file_hash)
+            string(APPEND fingerprint "${name}:${file_hash}\n")
+        endforeach()
+        string(SHA256 fingerprint "${fingerprint}")
+        string(SUBSTRING "${fingerprint}" 0 12 short_hash)
+        set(qcat_thorvg_label "qrhi-v1.1.3-${short_hash}")
+    else()
+        set(qcat_thorvg_label v1.1.3)
+    endif()
+    if(QCATUIKIT_ENABLE_THORVG)
+        # Keep compiler source paths short on Windows, including nested clones.
+        set(qcat_source_name "tvg-${short_hash}")
+    else()
+        set(qcat_source_name "tvg-v1.1.3")
+    endif()
+    set(qcat_thorvg_source "${QCATUIKIT_THIRDPARTY_DIR}/${qcat_source_name}")
+    qcat_fetch_archive("https://codeload.github.com/thorvg/thorvg/zip/${revision}"
+        "${archive_hash}" "${QCATUIKIT_THIRDPARTY_DOWNLOAD_DIR}/thorvg-${revision}.zip"
+        "${qcat_thorvg_source}" TRUE)
+    if(QCATUIKIT_ENABLE_THORVG)
+        qcat_apply_thorvg_overlay("${qcat_thorvg_source}" "${overlay}" "${fingerprint}")
+    endif()
+endif()
+if(NOT EXISTS "${qcat_thorvg_source}/meson.build")
+    message(FATAL_ERROR "ThorVG source must contain meson.build")
+endif()
+if(QCATUIKIT_ENABLE_THORVG AND NOT EXISTS "${qcat_thorvg_source}/inc/qcatthorvgqrhicanvas.h")
+    message(FATAL_ERROR "The selected development checkout must provide inc/qcatthorvgqrhicanvas.h")
+endif()
+set(qcat_thorvg_engines cpu)
+if(QCATUIKIT_ENABLE_THORVG)
+    set(qcat_thorvg_engines cpu,qrhi)
+endif()
+set(qcat_thorvg_root "${CMAKE_CURRENT_BINARY_DIR}/third_party/thorvg-${qcat_thorvg_label}")
+set(qcat_thorvg_prefix "${qcat_thorvg_root}/install/$<CONFIG>")
+set(qcat_thorvg_build "${qcat_thorvg_root}/meson/$<CONFIG>")
+set(qcat_thorvg_library libthorvg-1.a)
+set(qcat_cpp_command "${CMAKE_CXX_COMPILER}")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(qcat_cpp_command "${QCATUIKIT_PYTHON_EXECUTABLE}" "${QCATUIKIT_MSVC_LAUNCHER}" -- "${CMAKE_CXX_COMPILER}")
+endif()
+string(REPLACE ";" "|" qcat_cpp_command "${qcat_cpp_command}")
+string(REPLACE ";" "|" qcat_meson_command "${QCATUIKIT_MESON_COMMAND}")
+string(REPLACE ";" "|" qcat_thorvg_options "${QCATUIKIT_THORVG_MESON_OPTIONS}")
+set(qcat_qt_bin "")
+set(qcat_qsb_bin "")
+if(TARGET Qt6::qmake)
+    set(qcat_qt_bin "$<TARGET_FILE_DIR:Qt6::qmake>")
+endif()
+if(TARGET Qt6::qsb)
+    set(qcat_qsb_bin "$<TARGET_FILE_DIR:Qt6::qsb>")
+endif()
+ExternalProject_Add(qcat-thorvg
+    SOURCE_DIR "${qcat_thorvg_source}"
+    BINARY_DIR "${qcat_thorvg_root}/meson"
+    DOWNLOAD_COMMAND "" UPDATE_COMMAND ""
+    CONFIGURE_COMMAND "${CMAKE_COMMAND}"
+        "-DMESON=${qcat_meson_command}" "-DNINJA=${QCATUIKIT_NINJA_EXECUTABLE}"
+        "-DCXX_COMMAND=${qcat_cpp_command}" "-DENGINES=${qcat_thorvg_engines}"
+        "-DQT_BIN_DIR=${qcat_qt_bin}" "-DQSB_BIN_DIR=${qcat_qsb_bin}"
+        "-DCONFIG=$<CONFIG>" "-DMSVC=${MSVC}"
+        "-DSOURCE_DIR=<SOURCE_DIR>" "-DBUILD_DIR=${qcat_thorvg_build}"
+        "-DINSTALL_DIR=${qcat_thorvg_prefix}" "-DCROSS_FILE=${QCATUIKIT_THORVG_CROSS_FILE}"
+        "-DEXTRA_OPTIONS=${qcat_thorvg_options}"
+        -P "${CMAKE_CURRENT_LIST_DIR}/ConfigureThorvg.cmake"
+    BUILD_COMMAND "${CMAKE_COMMAND}" -E env "NINJA=${QCATUIKIT_NINJA_EXECUTABLE}"
+        ${QCATUIKIT_MESON_COMMAND} compile -C "${qcat_thorvg_build}"
+    INSTALL_COMMAND ${QCATUIKIT_MESON_COMMAND} install -C "${qcat_thorvg_build}" --no-rebuild --only-changed
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${qcat_thorvg_prefix}/share/licenses/thorvg"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "<SOURCE_DIR>/LICENSE"
+            "${qcat_thorvg_prefix}/share/licenses/thorvg/LICENSE"
+    BUILD_ALWAYS TRUE
+    BUILD_BYPRODUCTS "${qcat_thorvg_prefix}/lib/${qcat_thorvg_library}"
+    USES_TERMINAL_BUILD TRUE)
+ExternalProject_Add_StepDependencies(qcat-thorvg configure "${CMAKE_CURRENT_LIST_DIR}/ConfigureThorvg.cmake")
+add_library(ThorVG::ThorVG STATIC IMPORTED GLOBAL)
+set_target_properties(ThorVG::ThorVG PROPERTIES INTERFACE_COMPILE_DEFINITIONS TVG_STATIC
+    INTERFACE_INCLUDE_DIRECTORIES "${qcat_thorvg_source}/inc")
+if(CMAKE_CONFIGURATION_TYPES)
+    set(qcat_thorvg_configs ${CMAKE_CONFIGURATION_TYPES})
+else()
+    set(qcat_thorvg_configs "${CMAKE_BUILD_TYPE}")
+endif()
+if(qcat_thorvg_configs)
+    foreach(config IN LISTS qcat_thorvg_configs)
+        string(TOUPPER "${config}" upper_config)
+        set_property(TARGET ThorVG::ThorVG APPEND PROPERTY IMPORTED_CONFIGURATIONS "${config}")
+        set_property(TARGET ThorVG::ThorVG PROPERTY "IMPORTED_LOCATION_${upper_config}"
+            "${qcat_thorvg_root}/install/${config}/lib/${qcat_thorvg_library}")
+    endforeach()
+else()
+    set_property(TARGET ThorVG::ThorVG PROPERTY IMPORTED_LOCATION "${qcat_thorvg_root}/install/lib/${qcat_thorvg_library}")
+endif()
+find_package(Threads REQUIRED)
+target_link_libraries(ThorVG::ThorVG INTERFACE Threads::Threads ${CMAKE_DL_LIBS})
+if(QCATUIKIT_ENABLE_THORVG)
+    target_link_libraries(ThorVG::ThorVG INTERFACE Qt6::GuiPrivate)
+endif()
+add_dependencies(ThorVG::ThorVG qcat-thorvg)
+message(STATUS "ThorVG sources: ${qcat_thorvg_source}")
+message(STATUS "ThorVG ${qcat_thorvg_engines}: automatic dependency target ready")

@@ -33,12 +33,4 @@ class QCatUiKitInfo : public QObject
     bool isStable() const;
     bool isExperimental() const;
 };
-// Compatibility registration for the original public QML name.
-struct QCatUiKitInfoCompat
-{
-    Q_GADGET
-    QML_FOREIGN(QCatUiKit::QCatUiKitInfo)
-    QML_NAMED_ELEMENT(LibraryInfo)
-    QML_SINGLETON
-};
 } // namespace QCatUiKit

@@ -11,6 +11,9 @@ Linux 原生 Wayland Dock 的顶层拖动协议探测可选使用 `pkg-config` �
 | CMake 选项 | 默认值 | 用途 |
 | --- | --- | --- |
 | `QCATUIKIT_BUILD_EXAMPLES` | `ON` | 构建 Gallery 及其内部 QML 模块 |
+| `QCATUIKIT_ENABLE_THORVG` | `ON` | 自动准备并构建三种矢量 UI 组件的实验 QRhi 后端 |
+| `QCATUIKIT_THORVG_SOURCE_DIR` | 空 | 开发用源码覆盖；默认自动下载固定源码并应用仓库内 QRhi 实现 |
+| `QCATUIKIT_BUILD_THORVG` | 跟随 ENABLE_THORVG | 通过 Meson 构建静态库；仅 CPU 模式使用 v1.1.3 |
 | `BUILD_TESTING` | `ON` | 构建自动测试并注册 CTest 测试组 |
 | `QCATUIKIT_TEST_CHART_GPU` | `OFF` | 注册二维／三维及导出的真实图形窗口测试，需开启测试 |
 | `QCATUIKIT_TEST_LED_GPU` | `OFF` | 注册 LED 真实 GPU 测试，需开启测试 |
@@ -60,6 +63,28 @@ cmake --build build/library --parallel
 ```
 
 该配置不需要 LinguistTools、Test 或 QuickTest。库仍包含全部公开组件和图表。交叉编译通过目标平台 Qt 的 CMake toolchain 配置，运行时依赖必须与目标架构匹配。
+
+## Qt Creator 自动配置与 ThorVG
+
+clone 后直接用 Qt Creator 打开根目录 `CMakeLists.txt`，选择匹配的 Qt 6 MSVC 套件并配置 Debug 或 Release，然后构建。默认启用 SVG、Lottie 和画布后端，无需准备相邻 ThorVG 仓库、安装 Meson 或设置本机源码路径。首次配置需要联网；下载均校验固定 SHA-256，并使用文件锁防止不同构建目录同时解压。
+
+| 路径选项 | 默认目录 | 内容 |
+| --- | --- | --- |
+| `QCATUIKIT_THIRDPARTY_DIR` | `<source>/3rdparty` | 校验并准备好的依赖源码 |
+| `QCATUIKIT_THIRDPARTY_DOWNLOAD_DIR` | `<source>/3rdparty-download` | 可复用的原始压缩包 |
+| `QCATUIKIT_BUILD_TOOLS_DIR` | `<source>/3rdparty-tools` | Meson 1.9.2 与按需下载的 Python |
+
+这些目录不进入 Git，可在首次配置时修改为共享缓存目录。Windows x64 优先使用已有 Python 3.7+；没有时自动下载独立 Python 3.12.10，不修改系统或运行 pip。其他主机需要 Python 3.7+。Ninja 使用 Qt Creator 套件提供的工具。可用 `QCATUIKIT_PYTHON_EXECUTABLE`、`QCATUIKIT_MESON_EXECUTABLE`、`QCATUIKIT_NINJA_EXECUTABLE` 覆盖工具；`QCATUIKIT_BOOTSTRAP_PYTHON=ON` 可验证独立 Python 路径。
+
+CPU-only 和默认 QRhi 构建均固定使用官方 `v1.1.3` 源码及相同 SHA-256 校验。QRhi 是本项目维护的适配实现：在该官方版本上应用 `adapters/qcatthorvgqrhi/overlay`，不要求官方提供 QRhi，保持指定的基础版本。三个 Meson 覆盖入口以 v1.1.3 为基础，仅加入 QRhi 接入，保留上游版本号与其他选项。来源见 [实现记录](../../../adapters/qcatthorvgqrhi/README.md)。适配画布类型为 `QCatUiKit::ThorvgQrhiCanvas`，自有实现按 QCatUiKit 命名，适配入口仅为 `qcatthorvgqrhicanvas.h`。源码目录标识包括补丁内容指纹；文件列表及内容变化都会触发重新配置，更新实现会生成新的依赖目录。可用 `QCATUIKIT_THORVG_SOURCE_DIR` 显式选择自维护源码，该目录必须提供当前适配头 `inc/qcatthorvgqrhicanvas.h`。
+
+配置阶段准备源码和工具，编译阶段通过 `ExternalProject` 调用 Meson 构建和安装。源码和压缩包可在 Debug／Release 间共用；产物分别保存在 `<build>/third_party/thorvg-<identity>/meson/<config>` 和 `install/<config>`，MSVC 使用 `/MDd`／`/MD`。启用 CPU、QRhi 和 SVG／Lottie／TTF 加载器，关闭额外工具及测试；静态库名为 `libthorvg-1.a`，私有链接进 QCatUiKit，不单独安装到 Qt。
+
+离线时可复用上述三个目录，或预先放入与 CMake 中 URL、文件名、SHA-256 一致的压缩包；首次离线构建前仍须准备完整缓存。修改本地源码后，正常构建会调用 Meson 增量编译。交叉编译必须提供 `QCATUIKIT_THORVG_CROSS_FILE`，不自动转换 CMake toolchain；本次验证范围为 Windows x64 MSVC。
+
+禁用矢量渲染使用 `-DQCATUIKIT_ENABLE_THORVG=OFF -DQCATUIKIT_BUILD_THORVG=OFF`。组件类型仍保留，报告 `backendAvailable=false`。仅验证官方 v1.1.3 的 CPU 依赖使用 `-DQCATUIKIT_ENABLE_THORVG=OFF -DQCATUIKIT_BUILD_THORVG=ON`。额外 Meson 参数可通过 `QCATUIKIT_THORVG_MESON_OPTIONS` 传入，但不得改变静态库类型、安装目录或库名。组件行为及限制见 [矢量图形与动画](VECTOR.md)。
+
+MSVC 编译器输出经 `cmake/msvc_compiler_launcher.py` 统一为 UTF-8 和固定 ASCII include 前缀，避免中文工具链在 Qt Creator 无控制台环境下把本地编码写入 Ninja 规则，同时保留真实编译返回码。GuiPrivate 的版本绑定警告属于 Qt 私有接口的正常提示；应使用构建时匹配的 Qt 套件。
 
 ## 安装
 
@@ -174,6 +199,20 @@ add_subdirectory(path/to/QCatUiKit qcat-uikit)
 这两个开关作用于共享 CMake 缓存；应用还需要自己的测试时应保留所需的 BUILD_TESTING 设置。链接目标不变，构建目录中的模块位于项目设置的 `QT_QML_OUTPUT_DIRECTORY`；将该路径加入宿主导入路径。
 
 ## 部署与排错
+
+### Qt Creator 的 Ninja 规则与类型信息
+
+如果 CMake 在 `ninja -t recompact` 阶段提示 `unknown build rule`，先核对同一构建目录的 `build.ninja` 与 `CMakeFiles/rules.ninja` 是否一致。配置曾中断、生成文件来自不同轮次时可能出现规则引用缺失；不能仅凭该错误认定某个 C++ 测试无法编译。避免 IDE 和命令行同时配置同一个构建目录。
+
+在对应编译器环境重新配置现有目录，然后构建类型注册目标及应用：
+
+```sh
+cmake -S . -B <build>
+cmake --build <build> --target QCatUiKit_qmltyperegistration qcat-gallery-ui_qmltyperegistration
+cmake --build <build> --parallel
+```
+
+Gallery 关闭时省略它的类型注册目标。`.qmltypes` 由 Qt 工具生成，首次构建前 IDE 可能报告尚不存在；应检查 `<build>/qml/QCatUiKit/QCatUiKit.qmltypes` 及 Gallery 子目录中的 `qcat-gallery-ui.qmltypes`，不要手写空文件或复制其他构建配置的产物。构建成功后重新加载项目，让 Qt Creator 刷新 QML 类型信息。GuiPrivate 的 Qt 版本绑定提示与 Ninja 规则错误是不同事项。
 
 将库、QML 插件、qmldir、QML 文件和匹配的 Qt 运行时一起部署。Linux 插件带指向库目录的相对 RPATH；Windows 要使项目和 Qt 的 DLL 可被搜索到；macOS 插件使用相对 loader 路径。应用打包仍需使用目标平台的 Qt 部署工具处理 Qt 模块、平台插件和图像插件。
 

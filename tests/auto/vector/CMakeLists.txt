@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+qt_add_executable(tst_vector tst_vector.cpp)
+target_link_libraries(tst_vector PRIVATE QCatUiKit::QCatUiKit Qt6::Test Qt6::Quick)
+target_compile_definitions(tst_vector PRIVATE QCAT_VECTOR_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
+qcat_add_test(NAME vector_contracts COMMAND tst_vector)
+set_tests_properties(vector_contracts PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+option(QCATUIKIT_TEST_VECTOR_GPU "Register the ThorVG QRhi pixel and playback checks" OFF)
+if(QCATUIKIT_TEST_VECTOR_GPU AND QCATUIKIT_ENABLE_THORVG)
+    qcat_add_test(NAME vector_render COMMAND tst_vector)
+    set_tests_properties(vector_render PROPERTIES ENVIRONMENT "QCAT_VECTOR_GPU=1")
+endif()

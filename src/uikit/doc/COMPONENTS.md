@@ -2,9 +2,19 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-当前包含 119 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
+当前包含 122 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
 
 所有带主题的组件默认 `theme: Theme`，`tokens` 为解析后的只读视图。继承 Qt 控件的类型支持相应基类的标准属性、信号、方法及可访问性语义；表格列出本库的主要入口。内部 id、子对象树与 SurfaceImpl 不属于公开接口。
+
+## 矢量图形与动画
+
+| 组件 | 主要 API / 行为 |
+| --- | --- |
+| [CatSvgImage](VECTOR.md) | `source`／`sourceData`、`fillMode`、`status`／`errorString`；原生 QRhi SVG 显示。 |
+| [CatLottieAnimation](VECTOR.md) | `autoPlay`、`progress`、`loops`、`playbackRate`、`play()`／`pause()`／`stop()`／`restart()`；Lottie 播放与定位。 |
+| [CatVectorCanvas](VECTOR.md) | `viewBox`、`shapes`、`appendShape()`／`clearShapes()`；矩形、椭圆、路径及线性／径向渐变。 |
+
+上述组件共享 C++／QML `VectorItem`，默认跟随主题及减少动效设置；必须启用实验性 ThorVG QRhi 后端才能渲染，未启用或 software 后端会报告错误。详细线程、属性和构建约定见专题。
 
 ## 图表
 
@@ -243,7 +253,6 @@
 | Theme / ThemePalette | 每个引擎的默认主题与可显式传入的局部主题，见 [主题](THEMING.md) |
 | TableModel / ChatModel / TreeModel | 表格、消息和层次数据，见 [模型](MODELS.md) |
 | QCatUiKit | 只读运行时版本单例，见 [版本管理](VERSIONING.md) |
-| LibraryInfo | 与 QCatUiKit 提供相同版本属性的兼容入口 |
 
 图表的数据格式、坐标和渲染边界见 [图表指南](CHARTS.md)。批量编辑、对话收发、输入提交及百万数据配置见 [Gallery 使用指南](../../../examples/uikit/gallery/README.md)。
 

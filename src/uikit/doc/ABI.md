@@ -12,6 +12,8 @@ QML 维护属性、信号、方法与可观察行为的兼容性。内部视觉�
 
 ## 变更规则
 
+新增的 `QCatUiKit::VectorItem` 采用 Qt 基类加 const unique_ptr Pimpl，公开头不依赖 ThorVG。三个 Cat 矢量组件与该公开类型的接口见 [矢量专题](VECTOR.md)。启用 QRhi 时 ThorVG 静态链接到共享库，安装使用者无需包含 ThorVG 头或自行链接其目标；既有类型的布局和 ABI 版本不变。
+
 `QCatLedSource` 和 `QCatLedPreview` 也使用 Pimpl；`QCatLedSource::Position` 的三个 float 字段与 12 字节布局属于公开接口。现有公开类的对象布局和 ABI 版本保持兼容。
 
 - 保留公开类名、命名空间、基类、导出符号、函数签名、对象大小及虚函数布局。
@@ -27,7 +29,7 @@ QML 维护属性、信号、方法与可观察行为的兼容性。内部视觉�
 
 库、QML 插件、qmldir、类型信息、QML 文件及资源须成套部署，并匹配所用 Qt。QML 编译缓存与 Qt 版本有关。先退出应用再替换发行文件；不支持进程运行中卸载热替换。
 
-版本函数在共享库中执行，返回实际加载库的信息。QML 的 QCatUiKit 和 LibraryInfo 单例提供相同只读属性；其 C++ 实现不作为公开类安装。
+版本函数在共享库中执行，返回实际加载库的信息。QML 的 QCatUiKit 单例提供只读属性；其 C++ 实现不作为公开类安装。
 
 ## Linux 动态替换检查
 

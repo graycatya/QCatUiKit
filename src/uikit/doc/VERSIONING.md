@@ -51,7 +51,7 @@ Text {
 }
 ```
 
-`QCatUiKit` 是模块信息的公开只读单例，属性从 C++ 运行时查询接口取得。C++ 实现类为 `QCatUiKitInfo`，定义在私有头 `qcatuikitinfo_p.h` 中，不作为公开类安装。`LibraryInfo` 是提供相同属性的兼容入口；应用建议使用 `QCatUiKit`。每个 QML 引擎自行创建单例对象。
+`QCatUiKit` 是模块信息的公开只读单例，属性从 C++ 运行时查询接口取得。C++ 实现类为 `QCatUiKitInfo`，定义在私有头 `qcatuikitinfo_p.h` 中，不作为公开类安装。每个 QML 引擎自行创建单例对象。
 
 使用命名空间导入 `import QCatUiKit as UiKit` 时，访问入口为 `UiKit.QCatUiKit.version`。
 

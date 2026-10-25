@@ -17,8 +17,11 @@
 | `motion/` | 倾斜与姿态控制 |
 | `charts/` | 二维／三维图表、统计和渲染实现 |
 | `led/` | LED 数据源、布局、效果、存储、混合、输出与预览 |
+| `vector/` | SVG、Lottie、声明式形状画布及 ThorVG QRhi 私有实现 |
 
 新增模块时建立同级目录，并在 `src/uikit/CMakeLists.txt` 显式登记源文件和私有包含目录（QML 类型注册代码需要按文件名查找头文件）。公开头列表使用相对模块路径，与兼容转发头、类名转发头保持一一对应。构建和安装仍提供扁平的 `QCatUiKit/<header>` 包含入口，应用无需依赖内部模块路径。相关测试显式加入所需私有头目录。版本数据头生成到构建目录。
+
+适配实现放在 `adapters/`，模块名采用 `qcat` 前缀和全小写，例如 `adapters/qcatthorvgqrhi/`。自有 C/C++ 文件使用小写 `qcatthorvgqrhi` 前缀，私有头以 `_p.h` 结尾，类型位于 `QCatUiKit` 或 `QCatUiKit::ThorvgQrhiPrivate`；上游构建入口保留相应路径和许可；自动下载源码和构建产物仍分别放在忽略的缓存与构建目录中。
 
 ## 按改动定位
 
@@ -29,7 +32,7 @@
 | 新公开 C++ 类 | 相近公开头、ABI.md 的接口约定 | CMake 三组头列表／sources、专题 API、C++ 测试、安装消费者 |
 | Gallery 演示 | `examples/uikit/gallery/GalleryCatalog.qml` 中组件 ID，再定位 Preview | 演示页面、可复制示例、两种语言 TS、Gallery 测试 |
 | Dock | DOCKING.md 的实现与验证入口 | 控制器／QML／Gallery 分别按实际改动读取 |
-| 构建／安装 | BUILDING.md、模块 CMake | 安装消费者；公开 ABI 变更检查历史消费者 |
+| 构建／安装 | BUILDING.md、模块 CMake、`cmake/QCatUiKitBuildTools.cmake`、`ExecuteDownloadProjects.cmake`、`QCatUiKitMsvcDependencies.cmake`、`adapters/qcatthorvgqrhi/` | 安装消费者；公开 ABI 变更检查历史消费者 |
 
 ## 检索与读取
 

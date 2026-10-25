@@ -21,6 +21,7 @@ Read only what the task needs:
 - `src/uikit/doc/DOCKING.md`: panel registration, tabs/splits, workspace outer edges, floating windows and layout persistence.
 - `src/uikit/doc/LEDWORKFLOW.md`, `LEDPREVIEW.md`: layout, Deck/Storage/Mixer, multi-channel output and GPU preview.
 - `src/uikit/doc/ATTITUDE.md`: aircraft display and independent application-supplied tilt input.
+- `src/uikit/doc/VECTOR.md`: CatSvgImage, CatLottieAnimation and CatVectorCanvas, playback and declarative shapes. The experimental ThorVG QRhi backend is built automatically by default; check backendAvailable/status and follow the theme's reducedMotion setting.
 - `src/uikit/doc/BUILDING.md`: CMake integration, QML import paths and runtime deployment.
 
 Confirm unfamiliar properties in `src/uikit/qml/Cat*.qml`, public `src/uikit/<module>/qcat*.h`, or the installed `QCatUiKit.qmltypes`. Gallery snippets are examples; `GalleryChartData`, `GalleryDataDemo`, `GalleryIcon`, `GalleryLedDemo` and `QCatUiKit.Gallery` are not public application dependencies.

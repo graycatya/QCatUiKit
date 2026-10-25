@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+cmake_minimum_required(VERSION 3.24)
+project(QCatMsvcIncremental LANGUAGES CXX)
+set(QCATUIKIT_ENABLE_THORVG OFF CACHE BOOL "" FORCE)
+set(QCATUIKIT_BUILD_THORVG OFF CACHE BOOL "" FORCE)
+include("${CMAKE_CURRENT_LIST_DIR}/../../../../cmake/QCatUiKitMsvcDependencies.cmake")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/头文件")
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/头文件/dependency.h")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/头文件/dependency.h" "#define QCAT_DEPENDENCY_VALUE 1\n")
+endif()
+add_executable(msvc-incremental main.cpp)
+target_include_directories(msvc-incremental PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/头文件")

@@ -88,6 +88,24 @@ QtObject {
     ]
     readonly property var components: GalleryChartCatalog.entries.concat([
         {
+            id: "svg-image", name: "CatSvgImage", category: "media",
+            title: qsTr("SVG image"),
+            description: qsTr("Display scalable vector images with loading status and aspect controls."), icon: "media",
+            code: "CatSvgImage { width: 320; height: 200; source: \"illustration.svg\" }"
+        },
+        {
+            id: "lottie-animation", name: "CatLottieAnimation", category: "media",
+            title: qsTr("Lottie animation"),
+            description: qsTr("Play, pause and seek vector animations."), icon: "media",
+            code: "CatLottieAnimation { width: 320; height: 200; source: \"animation.json\"; autoPlay: true }"
+        },
+        {
+            id: "vector-canvas", name: "CatVectorCanvas", category: "media",
+            title: qsTr("Vector canvas"),
+            description: qsTr("Draw shapes and paths with solid or gradient fills and strokes."), icon: "media",
+            code: "CatVectorCanvas { width: 320; height: 200; shapes: [{ type: \"ellipse\", x: 10, y: 10, width: 80, height: 80, fill: \"#3b82f6\" }] }"
+        },
+        {
             id: "dock-workspace",
             name: "CatDockWorkspace",
             category: "layout",

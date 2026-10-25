@@ -8,6 +8,9 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| 文档与旧接口清理 | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 全量构建、lint；版本／QML／Gallery 启动／矢量契约 4/4，D3D11 7/7；旧 QML 与适配别名已移除 |
+| 矢量 UI 与自有 QRhi | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 官方 ThorVG v1.1.3，全量构建和 lint、矢量契约 1/1、D3D11 7/7；未覆盖其他平台与全部格式特性 |
+| ThorVG v1.1.3 Meson 接入 | 2026-10-25，Windows、MSVC Release | 含 QRhi 的独立静态库运行时版本、画布创建、SVG CPU 像素检查 1/1；CPU-only 使用相同官方版本 |
 | Qt 套件安装与双配置 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Debug／Release | Qt6 组件发现、真实套件默认 QML 路径、两配置各两个消费者及独立模式通过；构建、库／Gallery lint、CTest 18/18 通过，可选 GPU 未开启 |
 | C/C++ 模块目录整理 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Release | 构建、库／Gallery lint、CTest 18/18、独立安装消费者及文档检查通过；本次未开启可选 GPU 测试，详见历史记录 |
 | Windows 全库测试可靠性 | 2026-10-24，Windows 11、Qt 6.12.0、MSVC 2022 Release | 最终 CTest 22/22（含四组 GPU），并行度 2，耗时 122.41 秒；LED 连续三次各 10/10。构建、库／Gallery lint 通过。测试运行器的故意失败与启动失败反向验证均正确返回非零；未新增跳过，原有平台专属跳过仍保留。详见历史记录 |
@@ -21,6 +24,8 @@
 计数包含测试初始化／清理。Dock 的 Windows 原生窗口测试使用 QtTest 合成鼠标与 software 渲染；多屏混合 DPI、实际热插拔和 Wayland 仍需单独验收。不同日期、平台的通过结果不能互相替代；最低 Qt 6.8、其他 GPU／驱动、真机触屏和设备丢失也没有由这些结果获得通用验证。
 
 ## 源码目录调整检查
+
+Qt Creator 构建目录若出现 Ninja 未知规则或类型描述缺失，按 [构建排错](BUILDING.md#qt-creator-的-ninja-规则与类型信息) 重新生成同一目录，再执行全量构建和库／Gallery qmllint。等构建进程结束后，运行 `ninja -C <build> -t recompact` 检查生成图可解析；确认两个模块的 .qmltypes 文件存在且非空，库文件包含新公开类型。最后运行 `ctest --test-dir <build> -R '^(gallery_smoke|qml_contracts|vector_contracts)$' --output-on-failure` 检查启动和类型创建，不把该选择性检查写成全部 GPU 测试通过。
 
 移动 C/C++ 实现后，重新配置 CMake，执行下节的全量构建、库／Gallery qmllint 和 CTest。再按 [安装包检查](BUILDING.md#检查安装包) 安装到独立目录并构建消费者，确认公开头和转发头仍可使用。运行 `python tools/check_docs.py`，确认模块内公开头仍纳入文档覆盖检查。目录职责及新增模块约定见 [维护入口](MAINTENANCE.md)。
 
@@ -146,6 +151,30 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 
 ## 安装与独立消费者
 
+### 矢量 UI 与 QRhi
+
+按 [矢量专题](VECTOR.md) 开启本地实验后端，同时配置 `QCATUIKIT_TEST_VECTOR_GPU=ON`。运行 `ctest --test-dir <build> -C Release -R '^vector_' --output-on-failure`；Debug 使用对应配置或独立构建目录。`vector_contracts` 检查输入校验、QML 创建和 software 错误状态；`vector_render` 需要可暴露的真实窗口，检查 SVG 像素、适配／拉伸、尺寸变化、解码失败后恢复、Lottie 播放／暂停／定位／结束、路径和两种渐变、QML 嵌套数据及窗口迁移。
+
+GPU 测试不使用 offscreen/software，且与其他 GPU 测试共用窗口锁。Windows 可用 `QSG_RHI_BACKEND=d3d11` 显式选择后端。测试中 QML 画布截图保存于测试工作目录的 `vector-qml-canvas.png`。窗口未暴露时会暂停播放时钟，尚未得到绘制机会时内容可能保持 Loading；不要以隐藏启动的 GUI 程序作为 GPU 运行验收。
+
+安装启用后端的库到独立前缀，构建 `tests/auto/cmake/vector-consumer`，使用 `find_package(QCatUiKit)`，按同一配置编译。将安装库和 Qt 的 bin 加入 PATH 后直接运行 `vector-consumer`；程序验证三种公开头、C++ SVG 与 QML 画布的状态和像素，不依赖 ThorVG 头或导出目标。
+
+Windows 增量构建还需检查 `ninja -C <build> -t deps src/uikit/CMakeFiles/QCatUiKit.dir/qcatuikit_qmltyperegistrations.cpp.obj` 的依赖数非零，且包含 `qcatvectoritem.h`。本项目会保留调用方的编译器 launcher，将实际 `/showIncludes` 输出统一为 UTF-8 和固定 ASCII 前缀；仅设置 VSLANG 在缺少英语资源时不足以保证依赖扫描正确。修复此前零依赖的构建目录后，应重编译旧对象并确认记录已恢复。
+
+### ThorVG 构建验证示例
+
+此工程单独检查 CMake 到 Meson 的接入，无需编译 Qt 库或 Gallery。准备 Ninja 和编译器环境后运行（Meson 自动准备）：
+
+```sh
+cmake -S tests/auto/cmake/thorvg-consumer -B build/thorvg-check -G "Ninja Multi-Config"
+cmake --build build/thorvg-check --config Release
+ctest --test-dir build/thorvg-check -C Release --output-on-failure
+cmake --build build/thorvg-check --config Debug
+ctest --test-dir build/thorvg-check -C Debug --output-on-failure
+```
+
+Meson 默认自动准备，无需加入 PATH；可用 `-DQCATUIKIT_MESON_EXECUTABLE=/path/to/meson` 覆盖。示例链接 `ThorVG::ThorVG`，检查运行库版本为 1.1.3，再解析 SVG、通过 CPU 光栅化并验证中心像素，覆盖下载校验、静态链接和渲染调用。下载缓存位置及默认选项见 [构建说明](BUILDING.md#qt-creator-自动配置与-thorvg)。该测试不属于常规 CTest，也不验证 GPU 或全部 SVG／Lottie 特性。
+
 ### Qt 套件安装
 
 按 [构建说明](BUILDING.md#安装) 使用同一多配置构建目录，依次构建并安装 Release、Debug。在 Windows 检查 `bin/QCatUiKit.dll`、`bin/QCatUiKitd.dll`、两个链接库及 QML 目录中的两个插件都存在，CMake 包目录保留 `QCatUiKitTargets-release.cmake` 和 `QCatUiKitTargets-debug.cmake`。
@@ -215,3 +244,39 @@ cmake --build build/dock-consumer
 ## 结果记录原则
 
 只写实际执行的配置和结果。容量验证、CPU 数据处理、渲染性能、长时间稳定性分别记录；不同设备和构建模式的耗时不能直接混用。文档、翻译或低影响修改按相关性选择检查，无需把不相关平台写为已通过。
+
+## 全新 Qt Creator 自动依赖验证（Windows MSVC）
+
+使用新的输出目录运行，已有目录不会被删除：
+
+```powershell
+python tools/validate_fresh_bootstrap.py `
+  --qt-prefix C:/Qt/6.x/msvc2022_64 `
+  --vsdevcmd "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/Tools/VsDevCmd.bat" `
+  --qtcreator-helper build/qtcreator-debug/.qtcreator/cmake-helper/qtcreator-project.cmake `
+  --output build/fresh-qtcreator-validation --managed-python
+```
+
+脚本从当前源码生成不带依赖缓存的副本，路径含空格；使用 Qt Creator helper 和无控制台 MSVC 环境配置 Debug／Release，不传本机 ThorVG 或 Meson 路径。检查自动下载与独立 Python、完整构建、QML lint、qmltypes、Ninja recompact、矢量相关 CTest 和原生 D3D11 画布截图。随后修改中文目录中的真实头文件，确认增量构建的程序输出从 1 变为 2。每步日志及最终 report.json 保存在输出目录。测试需联网、Windows 图形会话以及可用的 Qt Creator helper；不覆盖 Linux/macOS 或交叉编译。
+
+验证被中断时，可对同一输出目录追加 `--resume`，复用原副本和缓存，旧日志会改名保留。恢复运行不代表再次完成无缓存下载验证；首次配置日志保留初始证据。界面测试应串行运行，避免不同测试窗口互相影响输入和暴露状态。
+
+适配目录或其 CMake 路径调整后，在匹配编译器环境执行 `cmake -S . -B <build>` 和 `cmake --build <build> --target qcat-thorvg`，检查覆盖目录定位、内容指纹及 Meson 构建。核对 `adapters/qcatthorvgqrhi/PROVENANCE.json` 中每个文件的 SHA-256，确认当前适配源码与记录一致；`original_files` 保留最初实验实现的文件哈希，`files` 表示当前维护版本。
+
+调整适配内部命名后，重新构建 QCatUiKit 并运行 `vector_contracts`；在原生图形会话设置 `QCAT_VECTOR_GPU=1` 后运行 `tst_vector`，检查像素、播放和跨窗口释放。检查生成的 Ninja 重新配置依赖包含适配源文件，并确认只安装当前适配入口 `qcatthorvgqrhicanvas.h`。
+
+### 固定版本与自有 QRhi 后端一起验证
+
+在匹配的编译器环境中执行：
+
+```powershell
+cmake -S tests/auto/cmake/thorvg-consumer -B build/thorvg-qrhi-check -GNinja `
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/path/to/Qt/kit `
+  -DQCATUIKIT_THORVG_TEST_QRHI=ON
+cmake --build build/thorvg-qrhi-check --parallel
+ctest --test-dir build/thorvg-qrhi-check --output-on-failure
+```
+
+该模式直接链接含自有 QRhi 后端的静态库，检查运行时版本为 1.1.3、创建适配画布，并执行 SVG CPU 像素验证。再运行主项目原生 `tst_vector`，检查 QRhi 像素和播放，避免只修改版本字符串而未验证真实调用。不传该选项时，消费者仍验证 CPU-only 构建。
+
+清理类型注册或适配入口后，运行 `ctest --test-dir <build> -R "^(version|qml_contracts|vector_contracts|gallery_smoke)$" --output-on-failure`，再运行原生矢量测试和两组 lint。重新生成 qmltypes 并核对公开类型；不要用旧安装目录或构建目录中残留的兼容文件判断当前接口。

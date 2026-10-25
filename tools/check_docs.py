@@ -17,7 +17,8 @@ def markdown_files():
     # Deliberately exclude local build/stage trees and editor state.
     return sorted({*ROOT.glob("*.md"), *DOC.rglob("*.md"),
                    *(ROOT / "skills").rglob("*.md"),
-                   *(ROOT / "examples").rglob("*.md")})
+                   *(ROOT / "examples").rglob("*.md"),
+                   ROOT / "adapters/qcatthorvgqrhi/README.md"})
 
 
 def prose(path, errors):
@@ -102,6 +103,8 @@ def public_api_mentions(cmake, errors):
             topics = ["THEMING.md"]
         elif name in ("qcattablemodel.h", "qcatchatmodel.h"):
             topics = ["MODELS.md"]
+        elif name == "qcatvectoritem.h":
+            topics = ["VECTOR.md"]
         elif name == "qcattiltcontroller.h":
             topics = ["ATTITUDE.md"]
         elif name == "qcatdockcontroller.h":

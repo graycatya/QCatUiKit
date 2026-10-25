@@ -13,6 +13,7 @@
   │    ├─ CatChart / 坐标轴 / 系列 / 适配器：二维与三维图表
   │    ├─ LedPreview / Deck / Storage / Mixer：LED 工作流
   │    ├─ CatDockWorkspace / DockController：面板停靠与浮动
+  │    ├─ CatSvgImage / CatLottieAnimation / CatVectorCanvas：矢量显示与动画
   │    └─ CatAttitudeIndicator / TiltController：姿态与体感
   └─ QCatUiKit 共享库
        ├─ 主题、表格、消息的公开 C++ 类
@@ -35,7 +36,9 @@ Gallery 应用
 | --- | --- |
 | `.cmake.conf` | 基础版本数字 |
 | 根 `CMakeLists.txt` | 依赖、构建选项、发布渠道和包导出 |
-| `cmake/` | 安装包配置模板 |
+| `cmake/` | 自动依赖准备、Meson 外部构建、安装包配置与 MSVC 依赖处理 |
+| `adapters/qcatthorvgqrhi/` | 自有 ThorVG QRhi 后端，基于官方 v1.1.3 |
+| `3rdparty/`、`3rdparty-download/`、`3rdparty-tools/` | 自动准备的源码、下载缓存与工具，不进入 Git |
 | `src/uikit/` | 共享库 C++ 公开头、私有头与实现 |
 | `src/uikit/qml/` | Cat 组件、Theme、内部视觉实现与变换辅助代码 |
 | `src/uikit/doc/` | 当前功能、接入、维护和验证文档 |
@@ -43,6 +46,7 @@ Gallery 应用
 | `tests/auto/models/` | 主题、消息与表格模型协议 |
 | `tests/auto/led/` | LED 帧、管线、输出和真实 GPU 预览 |
 | `tests/auto/dock/` | 停靠控制器、布局恢复与工作区边缘 |
+| `tests/auto/vector/` | 矢量加载、状态、画布、原生像素与播放 |
 | `tests/auto/motion/` | TiltController 输入、校准、授权与超时 |
 | `skills/qcatuikit-ui/` | UI 技能、按需参考与安装包应用模板 |
 | `tools/` | 文档校验与 Gallery 截图工具 |
@@ -59,7 +63,7 @@ C++ 文件采用小写名称，私有头以 `_p.h` 结尾且不安装。QML 文�
 
 C++ 公开状态类采用 Qt 基类加 `const std::unique_ptr<Impl>` 的布局，状态与算法位于实现文件。构造、析构和导出函数在共享库中执行；兼容边界见 [ABI](ABI.md)。
 
-真实公开头位于 `src/uikit`。配置阶段生成构建目录的转发头；安装包提供真实头和相对路径转发头，例如：
+真实公开头按模块位于 `src/uikit/<module>/`。配置阶段生成构建目录的转发头；安装包提供真实头和相对路径转发头，例如：
 
 - `<QCatUiKit/qcatthemepalette.h>`
 - `<QCatUiKit/ThemePalette>`
@@ -126,3 +130,9 @@ DockController 使用 Pimpl 保存独立布局树和面板 ID 注册表，负责
 CatDockWorkspace 根据树计算几何并布置已有 CatDockPanel；内容实例不随布局重建，业务状态由应用内容持有。
 最低尺寸计算与当前工作区尺寸分离，宿主可据此设置最小窗口或外部滚动区域，避免尺寸绑定循环。
 浮动宿主共享控制器和面板注册表，只切换视觉父项；回停提示和窗口几何纳入版本 2 布局。同一工作区内支持主窗口与浮动窗口之间的标签拖动，窗口外的随动预览由独立、输入穿透的预览窗提供。组内分割与工作区外边缘分割分别作用于目标标签组和整个主布局；回停记录相邻子树，避免完整侧列只回到单个面板旁。公开接口和限制见 [Dock 工作区](DOCKING.md)。
+
+## 矢量渲染
+
+公开入口为 VectorItem 和三个 Cat 矢量组件，属性和边界见 [矢量专题](VECTOR.md)。QCatUiKit 私有链接基于官方 ThorVG v1.1.3 的 CPU／QRhi 静态库；组件使用自有 QRhi 画布，不自动退回 CPU 光栅化。
+
+SVG／Lottie 解析、动画求值与几何准备在 CPU 上执行。当前适配使用 QPainterPath、QPainterPathStroker 和 qTriangulate 准备形状；最终光栅化、着色与合成由 QRhi 驱动 GPU。GUI 线程读取文件并发布快照，ThorVG 对象和 GPU 资源在渲染线程创建、使用和销毁。运行时后端可用性和设备能力应通过组件状态判断。

@@ -84,10 +84,6 @@ TestCase {
         compare(QCatUiKit.version, base + (QCatUiKit.isExperimental ? "-experimental" : ""));
         verify(QCatUiKit.abiVersion > 0);
     }
-    function test_libraryInfoCompatibility() {
-        for (const property of ["version", "versionMajor", "versionMinor", "versionPatch", "abiVersion", "releaseChannel", "isStable", "isExperimental"])
-            compare(LibraryInfo[property], QCatUiKit[property]);
-    }
     function test_loading() {
         const button = createTemporaryObject(buttonFactory, test, {
             loading: true

@@ -27,12 +27,11 @@ class VersionTests : public QObject
         QTest::addColumn<QString>("infoType");
         QTest::newRow("module-info") << QStringLiteral("QCatUiKit");
         QTest::newRow("qualified-module-info") << QStringLiteral("UiKit.QCatUiKit");
-        QTest::newRow("legacy-library-info") << QStringLiteral("LibraryInfo");
     }
     void qmlIdentity()
     {
         QFETCH(QString, infoType);
-        // Both public names and separate engines must expose the same identity.
+        // Qualified/unqualified access and separate engines must expose the same identity.
         for (int iteration = 0; iteration < 2; ++iteration)
         {
             QQmlEngine engine;

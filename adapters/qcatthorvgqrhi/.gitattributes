@@ -1,0 +1,2 @@
+# Preserve the exact bytes recorded in PROVENANCE.json.
+overlay/** -text

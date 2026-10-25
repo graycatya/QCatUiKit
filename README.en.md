@@ -6,7 +6,8 @@
 
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
-- **119 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **122 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **Vector UI (experimental QRhi backend)**: CatSvgImage, CatLottieAnimation and CatVectorCanvas provide SVG display, playback, shapes, paths and gradients, using automatically prepared, pinned ThorVG sources and the bundled experimental QRhi implementation.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
@@ -34,9 +35,10 @@ These images were captured on 2026-10-12; see [capture scenarios and regeneratio
 | --- | --- |
 | Qt | 6.8 or later: Core, Gui, Qml, Quick, QuickControls2, ShaderTools, matching GuiPrivate development headers |
 | CMake / C++ | CMake 3.24 or later and a C++17 compiler |
+| Dependency setup | Initial configuration needs network access; Meson is prepared automatically; Python is bootstrapped when needed on Windows x64, while other hosts need Python 3.7+ |
 | Gallery | Qt LinguistTools; file dialog examples use QtQuick.Dialogs |
 | Automated tests | Qt Test and QuickTest |
-| Graphics runtime | 2D controls/charts support software rendering; 3D charts and LED previews require a hardware graphics backend |
+| Graphics runtime | 2D controls/charts support software rendering; 3D charts, LED previews and vector components require a hardware graphics backend |
 
 Charts are implemented by QCatUiKit and do not require Qt Charts, Qt Graphs, or WebEngine.
 

@@ -1,0 +1,41 @@
+{
+  "upstream": "https://github.com/thorvg/thorvg",
+  "revision": "v1.1.3",
+  "archive_sha256": "03850904c300e5969560d49446eab3e534c4160c379909f32bc49a32ea6f4072",
+  "source_version": "1.1.3",
+  "origin": "QRhi experimental working tree supplied by the project owner",
+  "packaging_change": "Official v1.1.3 Meson entry points with QRhi integration, running Meson Python and canonical QCatUiKit C++ naming. Only qcatthorvgqrhicanvas.h is installed for the owned adapter.",
+  "files": {
+    "inc/qcatthorvgqrhicanvas.h": "134aee2e0e45615d576d5128d95f0f030c0f04cc4417329d60436d2e5c6eedce",
+    "meson.build": "01ba0f71a50b01eaf48e71bc991d2b1c871caadfed4f46b15382cb8540d7d47c",
+    "meson_options.txt": "0250e5db4fe65a0b5639bab8c5fdb447251df8588bf6f9479363913da24d9ba7",
+    "src/renderer/gpu_engine/qrhi/embed_shader.py": "a1893e574f812f59161351a7556482fcdcb6f338cb009a3c8fa188e0ab511a52",
+    "src/renderer/gpu_engine/qrhi/meson.build": "e50202585c151cf04b6deed08747721a2b2edcb82c4d08029c06ca1df46a3c8a",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhicanvas.cpp": "f93650349198214f751d121cbf1b749725d7310393dd3c62aa37d614d96ceb3f",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhicompositor.cpp": "933b697ed88dbddda4991ea0df24d57172f8ba96188d5895979e354f68aeea19",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhieffects.cpp": "1487a1bebe335d4cbc15ad4842e5af9580190fca96d76c15f1b314f7bece785d",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhimaterial.cpp": "b79b2ad9d4b640359405427f96cff35472a718332af842c6344f4e78ad4b40a4",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhirenderer.cpp": "c88ccba128615d186052cf1657c9045c974c169405e867dfe1b050534ba5be4c",
+    "src/renderer/gpu_engine/qrhi/qcatthorvgqrhirenderer_p.h": "ffa35b0adfe4ad0712483120cb21025c83e897723a499cccc704a38c543ac94b",
+    "src/renderer/gpu_engine/qrhi/solid.frag": "a517a0d2088d61ac3585f9aabb5334a549b583e319d1646a7e4bd36166d49a48",
+    "src/renderer/gpu_engine/qrhi/solid.vert": "5cba6496d41532fb7e122fda020e91a1271e666c0717796c3cd240dfe4a5f63b",
+    "src/renderer/meson.build": "11cf0f3c3a2bf79387253d58fba96d18c02cf83f4af7b64dfb105082343c779c"
+  },
+  "original_files": {
+    "inc/thorvg_qrhi.h": "b745785a2cf681782834ce171668c6c50b033b0ef9ab4a14d2b93fadf3b76927",
+    "meson.build": "235e384c9e78df864ff82ca7452298e71adc9c3b42eef28a1eea85c21455b9ea",
+    "meson_options.txt": "dae077aecbd38c38e7d1d2497c0e2ff54798abbcb3efbe8b70a50254cfa1e0e3",
+    "src/renderer/gpu_engine/qrhi/embed_shader.py": "a1893e574f812f59161351a7556482fcdcb6f338cb009a3c8fa188e0ab511a52",
+    "src/renderer/gpu_engine/qrhi/meson.build": "50c9f1d16fc1d3a0e6bc6e5b18ee57afd005fa66512e2c4cb316dd1a3c18f804",
+    "src/renderer/gpu_engine/qrhi/solid.frag": "a517a0d2088d61ac3585f9aabb5334a549b583e319d1646a7e4bd36166d49a48",
+    "src/renderer/gpu_engine/qrhi/solid.vert": "5cba6496d41532fb7e122fda020e91a1271e666c0717796c3cd240dfe4a5f63b",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiCanvas.cpp": "ab87b440f79c998bb74d41b6bb33fec0694ca24944d0cf5517091096bd7a8acf",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiCompositor.cpp": "9ab7a565d8a77bb537e771b269bb4d1de3395392d83bf0b78ad57979fbf2598b",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiEffects.cpp": "b25c7e5c469531f99dd27589fb4c14f02077fb2518dffd080eea45005bd1945c",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiMaterial.cpp": "24f55ed186bc6cf68f6452799e0622b0a985477e12d92319b4b3909d1d3728ce",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiRenderer.cpp": "94a2ad77e6433db44f80707d2ecedc95d4a96a03cce8657eae8757abf215ef6b",
+    "src/renderer/gpu_engine/qrhi/tvgQrhiRenderer.h": "65f5bbb4ff4ef144000f0f6dd8abe67ae9aed1aecc9f22c51dd73abdb81b898f",
+    "src/renderer/meson.build": "11cf0f3c3a2bf79387253d58fba96d18c02cf83f4af7b64dfb105082343c779c"
+  },
+  "experimental_origin_revision": "22d2e2451adc2eb7631f973b87570b7e704a3f93"
+}

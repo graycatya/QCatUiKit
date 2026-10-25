@@ -6,12 +6,13 @@
 
 第一次使用时，先按[构建与接入](BUILDING.md)运行 Gallery，再从[组件目录](COMPONENTS.md)选择控件。专题页先说明用法与结果，再列接口和限制；示例中的调用片段需要放在标明的 QML 处理器或 C++ 上下文中。
 
-当前能力以专题页和源码为准。[历史验证记录](VALIDATION_HISTORY.md)保留过去的平台与结果，其中的阶段名和“待实现”只描述当时状态；[截图说明](SCREENSHOTS.md)标明图片采集时间，旧截图不代表最新全部功能。
+当前能力以专题页和源码为准。[历史验证记录](VALIDATION_HISTORY.md)保留过去的平台与结果，这些结果只适用于当时列出的范围；[截图说明](SCREENSHOTS.md)标明图片采集时间，旧截图不代表最新全部功能。
 
 ## 按任务阅读
 
 | 任务 | 文档 |
 | --- | --- |
+| 显示 SVG、播放 Lottie、绘制路径与渐变画布 | [矢量图形与动画](VECTOR.md) |
 | 构建库、运行 Gallery、安装到应用 | [构建与接入](BUILDING.md) |
 | Dock 分割／标签、浮动回停和布局保存恢复 | [Dock 工作区](DOCKING.md) |
 | 定位维护入口、减少重复检索 | [维护入口](MAINTENANCE.md) |
@@ -40,8 +41,8 @@
 
 GPU 渲染和兼容 RGBA8 接口见 [LED 预览](LEDPREVIEW.md)；共享布局、Deck/Storage、多通道混合及设备内存输出见 [LED 工作流](LEDWORKFLOW.md)。
 
-- **QML**：119 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController 和版本信息单例。
-- **C++**：主题、表格、消息、图表、坐标轴、序列、LED 工作流、TiltController、DockController 和版本查询接口；公开头安装到 `include/QCatUiKit`。
+- **QML**：122 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController、VectorItem 和版本信息单例。
+- **C++**：主题、表格、消息、图表、坐标轴、序列、LED 工作流、TiltController、DockController、VectorItem 和版本查询接口；公开头安装到 `include/QCatUiKit`。
 - **Gallery**：独立示例应用，数据生成器、压力测试控制器、导航和翻译管理属于示例实现，不是安装库 API。
 
 组件目录介绍本库的属性及行为；继承自 Qt Quick Controls 的组件同时支持对应基类的标准 API。私有头、内部 QML 类型、控件子对象树与示例控制器不作为应用接口。

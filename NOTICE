@@ -13,3 +13,13 @@ MIT license: LICENSES/MIT.txt.
 ChartAxis, ChartSeries, ChartItem, private chart math and gallery demonstration data:
 QCatUiKit.Charts / QtNativeCharts — Copyright (c) 2026 QtChartJs Contributors.
 MIT license: LICENSES/QtNativeCharts-MIT.txt.
+
+Build dependency:
+
+ThorVG — Copyright (c) 2020 - 2026 ThorVG Project.
+Source: https://github.com/thorvg/thorvg
+MIT license: LICENSES/ThorVG-MIT.txt.
+Both CPU-only and QRhi builds use official v1.1.3. The QRhi build additionally
+applies our experimental implementation in adapters/qcatthorvgqrhi/overlay.
+Downloaded sources and managed build tools retain their upstream licenses.
+ThorVG is statically linked into QCatUiKit when the vector backend is enabled.

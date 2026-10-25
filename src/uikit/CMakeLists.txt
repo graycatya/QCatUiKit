@@ -19,9 +19,10 @@ set(qcat_public_headers
     charts/qcatchartcolorscale.h charts/qcatchartbubble.h charts/qcatchartgrid.h charts/qcatchartcontour.h
     charts/qcatchartohlc.h charts/qcatchartboxplot.h
     charts/qcatwaterfall.h charts/qcatchartfit.h charts/qcatcharthistogram.h charts/qcatchartstack.h
-    charts/qcatchartseries3d.h charts/qcatchartscene3d.h charts/qcatchartaxis.h charts/qcatchartseries.h charts/qcatchartitem.h led/qcatledsource.h led/qcatledpreview.h led/qcatledlayoutmodel.h led/qcatlightingframe.h led/qcatledeffectregistry.h led/qcatledstorage.h led/qcatleddeck.h led/qcatledmixer.h led/qcatledoutput.h led/qcatledproject.h)
-set(qcat_compat_headers DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h)
-set(qcat_class_headers DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject)
+    charts/qcatchartseries3d.h charts/qcatchartscene3d.h charts/qcatchartaxis.h charts/qcatchartseries.h charts/qcatchartitem.h led/qcatledsource.h led/qcatledpreview.h led/qcatledlayoutmodel.h led/qcatlightingframe.h led/qcatledeffectregistry.h led/qcatledstorage.h led/qcatleddeck.h led/qcatledmixer.h led/qcatledoutput.h led/qcatledproject.h
+    vector/qcatvectoritem.h)
+set(qcat_compat_headers DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h VectorItem.h)
+set(qcat_class_headers DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject VectorItem)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -53,6 +54,7 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
+        vector/qcatvectoritem.cpp vector/qcatvectorshape_p.h
         docking/qcatdockcontroller.cpp
         docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
         motion/qcattiltcontroller.cpp
@@ -67,6 +69,7 @@ qt_add_qml_module(QCatUiKit
         models/qcattreemodel_p.h models/qcattreemodel.cpp
         core/qcatuikitversion.cpp core/qcatuikitinfo_p.h core/qcatuikitinfo.cpp
     QML_FILES
+        qml/CatSvgImage.qml qml/CatLottieAnimation.qml qml/CatVectorCanvas.qml
         qml/CatDockWorkspace.qml qml/CatDockPanel.qml qml/DockGeometry.js qml/DockFloatingWindow.qml
         qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml
         qml/CatAttitudeIndicator.qml qml/CatTiltControlPanel.qml
@@ -187,6 +190,7 @@ target_include_directories(QCatUiKit PUBLIC
     $<BUILD_INTERFACE:${QCatUiKit_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/vector
         ${CMAKE_CURRENT_SOURCE_DIR}/core
         ${CMAKE_CURRENT_SOURCE_DIR}/theme
         ${CMAKE_CURRENT_SOURCE_DIR}/models
@@ -195,6 +199,10 @@ target_include_directories(QCatUiKit PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/charts
         ${CMAKE_CURRENT_SOURCE_DIR}/led
         ${CMAKE_CURRENT_BINARY_DIR})
+if(QCATUIKIT_ENABLE_THORVG)
+    target_compile_definitions(QCatUiKit PRIVATE QCATUIKIT_HAS_THORVG)
+    target_link_libraries(QCatUiKit PRIVATE ThorVG::ThorVG)
+endif()
 target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PRIVATE Qt6::QuickControls2 Qt6::GuiPrivate)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(PkgConfig QUIET)

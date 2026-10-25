@@ -15,3 +15,5 @@ endif()
 
 add_subdirectory(dock)
 add_subdirectory(docknative)
+
+add_subdirectory(vector)

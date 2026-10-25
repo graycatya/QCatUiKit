@@ -3,3 +3,9 @@
 /graphify-out/
 /.qt/
 *.user
+
+/3rdparty/
+/3rdparty-download/
+/3rdparty-tools/
+
+/vector-qml-canvas.png
