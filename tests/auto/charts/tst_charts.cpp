@@ -448,6 +448,40 @@ class ChartTests : public QObject
         QCOMPARE(c.yAxis(), nullptr);
         QCOMPARE(chart.axisForSeries(&c, Qt::Vertical), chart.yAxis());
     }
+    void dateTimeNavigationKeepsPlot_data()
+    {
+        QTest::addColumn<double>("span");
+        QTest::addColumn<bool>("farSide");
+        QTest::addColumn<int>("fontSize");
+        for (double span : {100., 600000., 864000000.})
+            for (bool farSide : {false, true})
+                for (int fontSize : {12, 18})
+                    QTest::newRow(qPrintable(QString("%1-%2-%3").arg(span).arg(farSide).arg(fontSize)))
+                        << span << farSide << fontSize;
+    }
+    void dateTimeNavigationKeepsPlot()
+    {
+        QFETCH(double, span);
+        QFETCH(bool, farSide);
+        QFETCH(int, fontSize);
+        TestChart chart;
+        chart.setSize({800, 600});
+        auto font = chart.font();
+        font.setPixelSize(fontSize);
+        chart.setFont(font);
+        chart.yAxis()->setScale(ChartAxis::DateTime);
+        chart.yAxis()->setSide(farSide ? ChartAxis::FarSide : ChartAxis::NearSide);
+        QVERIFY(chart.setViewRange(1, 101, 1, 1 + span));
+        const auto plot = chart.plotRect();
+        const QPointF value(51, 1 + span * .8);
+        const auto anchor = chart.mapToPosition(value);
+        chart.zoomAt(2, anchor);
+        QCOMPARE(chart.plotRect(), plot);
+        QVERIFY(QLineF(chart.mapToPosition(value), anchor).length() < 1e-8);
+        chart.panBy({21, -13});
+        QCOMPARE(chart.plotRect(), plot);
+        QVERIFY(QLineF(chart.mapToPosition(value), anchor + QPointF(21, -13)).length() < 1e-8);
+    }
     void reversedAxisMapping_data()
     {
         QTest::addColumn<int>("scale");

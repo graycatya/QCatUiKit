@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 #pragma once
+#if defined(__APPLE__) && defined(__aarch64__)
+// Qt's qYieldCpu() uses __yield on Apple Clang; declare it before Qt headers.
+#include <arm_acle.h>
+#endif
 #include "tvgRender.h"
 #include <QImage>
 #include <QMatrix4x4>
@@ -222,7 +226,7 @@ struct Renderer final : tvg::RenderMethod
     Target *allocateTarget();
     Target *planLayer(const Layer &, unsigned depth = 0);
     Target *planEffect(Target *, const Effect &, const tvg::RenderRegion &);
-    Draw fullscreen(QRhiTexture *, Uniform = {}, QRhiTexture * = nullptr, QRhiTexture * = nullptr);
+    Draw fullscreen(QRhiTexture *, Uniform, QRhiTexture * = nullptr, QRhiTexture * = nullptr);
     Uniform defaults(int mode) const;
     bool uploadMaterial(Material &, QRhiResourceUpdateBatch *);
     QRhiGraphicsPipeline *pipelineFor(QRhiRenderTarget *, QRhiShaderResourceBindings *);

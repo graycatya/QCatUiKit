@@ -8,6 +8,7 @@
 
 | 范围 | 最近记录 | 结果与限制 |
 | --- | --- | --- |
+| macOS 日期时间轴与字体回归 | 2026-10-25，macOS arm64、Qt 6.10.2、Apple Clang 21、Debug／Release | 两配置全量构建、库／Gallery lint、CTest 各 19/19 组通过；原有 Wayland 专属跳过保留。Metal 矢量两配置各 7/7、Release 图表像素 192/192；未验证 Windows／Linux，详见历史记录 |
 | 文档与旧接口清理 | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 全量构建、lint；版本／QML／Gallery 启动／矢量契约 4/4，D3D11 7/7；旧 QML 与适配别名已移除 |
 | 矢量 UI 与自有 QRhi | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 官方 ThorVG v1.1.3，全量构建和 lint、矢量契约 1/1、D3D11 7/7；未覆盖其他平台与全部格式特性 |
 | ThorVG v1.1.3 Meson 接入 | 2026-10-25，Windows、MSVC Release | 含 QRhi 的独立静态库运行时版本、画布创建、SVG CPU 像素检查 1/1；CPU-only 使用相同官方版本 |
@@ -22,6 +23,14 @@
 | Linux 图表 GPU | 2026-10-19，同一 Linux／Qt 环境 | AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 二维／三维／PNG 192／22／7，OpenGL 二维／三维 192／22；未开启 Khronos validation layer |
 
 计数包含测试初始化／清理。Dock 的 Windows 原生窗口测试使用 QtTest 合成鼠标与 software 渲染；多屏混合 DPI、实际热插拔和 Wayland 仍需单独验收。不同日期、平台的通过结果不能互相替代；最低 Qt 6.8、其他 GPU／驱动、真机触屏和设备丢失也没有由这些结果获得通用验证。
+
+## macOS ThorVG 编译兼容检查
+
+使用匹配的 macOS Qt 套件配置 Release 构建，保留默认开启的 ThorVG。修改 QRhi overlay 后直接执行 `cmake --build <build> --parallel`，确认 CMake 自动刷新依赖源码指纹，并编译 ThorVG、主库、Gallery 和测试程序。然后执行 `cmake --build <build> --target QCatUiKit_qmllint qcat-gallery_qmllint` 及 `ctest --test-dir <build> --output-on-failure -j 2`。重点确认 Apple arm64 的 Qt 头文件不再出现 `__yield` 未声明，以及嵌套 `Uniform` 的默认参数错误。运行时断言失败须单独记录；编译和离屏测试不能替代 Metal 像素验证。
+
+日期时间轴定向回归可在对应构建目录执行 `QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software tests/auto/charts/tst_charts reversedAxisMapping dateTimeNavigationKeepsPlot`，检查反向映射、三种时间格式、左右轴及两种字号的缩放锚点和平移距离，不放宽原有坐标阈值。QML 测试初始化须选择字体数据库中真实存在的字体，保留 `failOnWarning` 检查。
+
+真实 macOS 图形会话中，从临时输出目录运行对应构建产物，使用 `env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=cocoa QSG_RHI_BACKEND=metal QSG_INFO=1 QCAT_VECTOR_GPU=1 <build>/tests/auto/vector/tst_vector` 验证矢量像素与播放；运行 `<build>/tests/auto/charts/tst_chartrender` 时使用相同图形环境但不需要 `QCAT_VECTOR_GPU`。检查日志实际设备与后端；`no screens available` 表示未完成图形测试，不能记为通过。Debug 使用独立构建目录重复构建、lint 和 CTest。
 
 ## 源码目录调整检查
 

@@ -392,6 +392,8 @@ QML 中 theme 默认指向全局 Theme，也可设置局部 ThemePalette；纯 C
 
 xAxis/yAxis 支持 Linear、Logarithmic、DateTime、Category。DateTime 坐标为 UTC Unix 毫秒；Category 坐标从 0 开始。对数轴要求正范围并跳过非正样本。自动范围考虑可见系列以及正负堆叠累计值。`setRange(min,max)` 切换到手动范围；`automatic=true` 恢复自动。
 
+纵向 DateTime 轴按当前字体的最宽数字预留刻度文字空间。同一时间格式内平移或缩放时，数字及字偶间距变化不会改变轴边距；时间格式、字体或图表尺寸改变时仍会重新布局。
+
 `reversed` 默认 false，可分别反转 X 和 Y 的显示方向。范围仍须满足 minimum < maximum，数据和记录顺序不变；线性、对数、时间、分类轴均支持。映射／反映射、原始记录拾取、鼠标／键盘平移、滚轮／锚点缩放、框选和触摸手势使用同一方向。`resetView()` 仅恢复自动范围，保留反向及次刻度配置。径向图不使用笛卡尔轴方向和次刻度。
 
 反向时单调样条仍先按数据坐标拟合；自然样条和大数据 LOD 缓存可复用。柱形标签的起点／终点跟随柱子的增长方向。`PlotBottomBaseline` 始终指绘图区物理底部（反向 Y 时为最大值）；默认零值／自定义基线仍表示数值，渐变方向仍使用绘图区的屏幕方向。

@@ -145,3 +145,33 @@ env -u QT_QUICK_BACKEND \
 增加 `QT_SCALE_FACTOR=2` 运行高 DPI 全量组合。CTest 中的 `gallery_contracts` 默认强制 offscreen／software，不能用其结果代替上述 Vulkan 验证。日志、首轮失败记录及矩阵脚本保存在忽略目录 `build-release/chart-vulkan/`，最终全量日志为 `gallery-full-dpr1-final.txt`、`gallery-full-dpr2.txt`、`gallery-full-software-final.txt`；汇总见 `gallery-validation-summary.json`。
 
 “全量通过”指现有 Gallery 自动测试及目录页面均通过，不表示穷举每页的所有状态或逐像素人工验收；人工视觉检查仍为下一节记录的三个图表场景。本次未扩大到其他操作系统、GPU／驱动、Wayland 或 Qt 版本。
+
+
+## macOS ThorVG QRhi 编译修复（2026-10-25）
+
+环境：macOS 26.6.2 arm64、Apple Clang 21.0.0、Qt 6.10.2、Ninja Release。使用现有 Qt Creator Release 构建目录，默认开启 ThorVG。
+
+修复前实际构建在 QRhi overlay 失败：Qt `qyieldcpu.h` 调用的 `__yield` 未声明，以及 `Renderer::fullscreen` 在外层类定义完成前使用带成员默认初始化的嵌套 `Uniform` 作为默认参数。最小编译片段分别复现这两类错误。修复在 Apple arm64 上提前包含 `<arm_acle.h>`，并在调用位置显式传入 `Uniform{}`，不修改本机 Qt 或生成的依赖缓存。
+
+执行 `cmake --build <build> --parallel 6` 后，依赖源码指纹自动刷新，ThorVG、主库、Gallery 及测试程序全部编译链接成功。库与 Gallery 的两组 qmllint 通过；`git diff --check` 和 `python3 tools/check_docs.py` 通过。
+
+`ctest --test-dir <build> --output-on-failure -j 2` 为 16/19 通过，耗时 96.81 秒。`vector_contracts`、`gallery_smoke` 通过。失败组为：`charts` 的 `reversedAxisMapping(2-0..3)` 四项坐标精度断言；`qml_contracts` 和 `gallery_contracts` 各一项因缺少 `Sans Serif` 的字体别名警告被判失败。三个失败组尚未修复，不声明全库测试通过。本次未验证 Debug、Metal 像素渲染或其他平台。
+
+构建、lint 和 CTest 原始日志分别保存在本机临时文件 `qcat-macos-build-fixed.log`、`qcat-macos-lint.log`、`qcat-macos-ctest.log`，不纳入版本控制。
+
+
+## macOS 日期时间轴与测试字体回归（2026-10-25）
+
+环境沿用上一节的 macOS 26.6.2 arm64、Qt 6.10.2、Apple Clang 21.0.0；真实 GPU 日志确认 Apple M4／Metal。
+
+图表诊断确认原失败不是浮点误差：日期时间刻度的数字／字偶间距变化令左边距从 102.3125 变为 102.25 逻辑像素，缩放锚点移动 0.03125 像素。纵向 DateTime 轴现按最宽数字预留同格式文字空间，其他轴类型仍使用原有测量路径。保留原 `1e-8` 缩放和平移断言，新增三种时间格式、左右轴、12／18px 字号共 12 个布局回归用例。使用原图表实现执行同一组 `reversedAxisMapping dateTimeNavigationKeepsPlot` 为 18 通过、12 失败；恢复修复后为 30 通过、0 失败、0 跳过（包含初始化／清理）。反向验证只暂时替换图表实现，随后恢复并重新编译。
+
+字体修复仅限测试初始化：保留可用时优先 Segoe UI，其他情况选择 QFontInfo 解析且存在于字体数据库的字体，必要时使用数据库中的真实字体；不再依赖可能为不存在的 Sans Serif 的 defaultFamily。保留 QML 的 failOnWarning 和全部功能断言，没有新增跳过、屏蔽警告或放宽容差。
+
+Release 全量构建及库／Gallery qmllint 通过；CTest 19/19 组通过，耗时 102.49 秒。其中 charts 177 通过，qml_contracts 387 通过／4 项原有 Wayland 跳过，gallery_contracts 845 通过。dock_native 另有 2 项原有 Wayland 专属跳过；vector_contracts 离屏模式的 2 项 GPU 跳过另由以下 Metal 测试覆盖，不宣称离屏检查执行了 GPU 用例。
+
+Debug 全量构建及库／Gallery qmllint 通过；CTest 19/19 组通过，耗时 139.58 秒。charts 177 通过，qml_contracts 387 通过／4 项原有 Wayland 跳过，gallery_contracts 845 通过；原有 dock_native 平台限制及 vector_contracts 离屏跳过与 Release 相同。两配置均没有新增失败或跳过。
+
+真实图形会话中，Release 矢量 Metal 测试 7 通过、0 失败、0 跳过；Debug 矢量 Metal 测试同为 7/0/0。Release 图表 Metal 像素回归 192 通过、0 失败、0 跳过。首次在沙箱内尝试矢量 Metal 测试因 no screens available 中止；获准访问系统图形会话后重新执行并确认实际 Metal 设备，上述通过数只来自重跑结果。
+
+原始证据保存在本机临时目录：`qcat-chart-before-tests.log`、`qcat-chart-focused.log`、`qcat-unit-release-build.log`、`qcat-unit-release-ctest.log`、`qcat-unit-release-lint.log`、`qcat-unit-debug-build.log`、`qcat-unit-debug-ctest.log`、`qcat-unit-debug-lint.log`、`qcat-vector-metal-native.log`、`qcat-vector-debug-metal-native.log`、`qcat-chart-metal-native.log`。本轮未实编 Windows／Linux，也未运行三维图表／LED Metal 专项，不能据此声明这些平台或功能通过。

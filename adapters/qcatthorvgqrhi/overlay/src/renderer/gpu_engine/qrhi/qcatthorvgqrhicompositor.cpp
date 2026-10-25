@@ -145,7 +145,7 @@ Renderer::Target *Renderer::planLayer(const Layer &layer, unsigned depth)
         return nullptr;
     std::vector<Draw> pending;
     if (&layer == &root && !clearFrame && history)
-        pending.push_back(fullscreen(history->texture.get()));
+        pending.push_back(fullscreen(history->texture.get(), Uniform{}));
     for (const auto &cmd : layer.commands)
     {
         std::vector<Draw> draws;
@@ -331,7 +331,7 @@ bool Renderer::postRender()
         updates->release();
         return false;
     }
-    passes.push_back({renderTarget, {fullscreen(result->texture.get())}});
+    passes.push_back({renderTarget, {fullscreen(result->texture.get(), Uniform{})}});
     size_t drawCount = 0;
     for (const auto &pass : passes)
         drawCount += pass.draws.size();

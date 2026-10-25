@@ -1843,9 +1843,28 @@ class ChartItem::Impl
             {
                 double extent = 76;
                 const auto range = axisRanges.value(axis);
+                // Reserve the same space for every digit in a date/time format.
+                // Proportional digits must not move the plot during navigation.
+                double digitWidth = 0;
+                if (axis->scale() == ChartAxis::DateTime)
+                    for (ushort digit = '0'; digit <= '9'; ++digit)
+                        digitWidth = std::max(digitWidth, metrics.horizontalAdvance(QChar(digit)));
                 for (double tick : ticks(range, axis->scale(), axis->tickCount()))
-                    extent =
-                        std::max(extent, metrics.horizontalAdvance(label(tick, axis, range)) + 16);
+                {
+                    const QString text = label(tick, axis, range);
+                    double width = metrics.horizontalAdvance(text);
+                    if (axis->scale() == ChartAxis::DateTime)
+                    {
+                        double reserved = 0;
+                        for (QChar character : text)
+                            reserved += character.isDigit() ? digitWidth
+                                                            : metrics.horizontalAdvance(character);
+                        // Keep the reservation independent of pair kerning too;
+                        // the label lane adds padding below for glyph overhang.
+                        width = reserved;
+                    }
+                    extent = std::max(extent, width + 16);
+                }
                 entry.extent = std::min(extent, std::max(76., q->width() - 120));
             }
             margin += entry.extent;
