@@ -27,7 +27,33 @@ The current default version is **1.0.0-experimental**, with **ABI major version 
 
 [Dark touch preview](src/uikit/doc/images/gallery-touch.png) · [Narrow layout](src/uikit/doc/images/gallery-mobile.png) · [Charts preview](src/uikit/doc/images/gallery-charts-desktop.png)
 
-These images were captured on 2026-10-12; see [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md).
+The basic previews above were captured on 2026-10-12. Current feature previews follow below; see [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md).
+
+## Feature previews
+
+These screenshots were captured from the current Gallery on **2026-10-26**. The 3D, LED and vector pages use a native graphics session; the vector QRhi backend remains experimental. Tilt data comes from the simulator, without real sensors or flight-control integration.
+
+| 3D charts | Aircraft attitude |
+| --- | --- |
+| [![3D surface, lighting and camera](src/uikit/doc/images/gallery-charts-3d.png)](src/uikit/doc/CHARTS3D.md) | [![Aircraft attitude instrument](src/uikit/doc/images/gallery-attitude.png)](src/uikit/doc/ATTITUDE.md) |
+| [Surfaces, camera, lighting and slices](src/uikit/doc/CHARTS3D.md) | [Aircraft telemetry display, separate from phone input](src/uikit/doc/ATTITUDE.md) |
+
+| Tilt input | Dock workspace |
+| --- | --- |
+| [![Calibrated two-axis tilt preview](src/uikit/doc/images/gallery-tilt.png)](src/uikit/doc/ATTITUDE.md) | [![Tabbed and split dock panels](src/uikit/doc/images/gallery-dock.png)](src/uikit/doc/DOCKING.md) |
+| [Simulated quaternions, calibration and control state](src/uikit/doc/ATTITUDE.md) | [Tabs, splits, floating, docking back and saved layouts](src/uikit/doc/DOCKING.md) |
+
+| LedPreview and workflow | Vector UI: SVG |
+| --- | --- |
+| [![LED decks, mixer and point previews](src/uikit/doc/images/gallery-led.png)](src/uikit/doc/LEDWORKFLOW.md) | [![CatSvgImage joy expression](src/uikit/doc/images/gallery-vector-svg.png)](src/uikit/doc/VECTOR.md) |
+| [Independent A/B decks, storage, mixer and memory output](src/uikit/doc/LEDWORKFLOW.md) | [SVG display and scaling with the experimental QRhi backend](src/uikit/doc/VECTOR.md) |
+
+| Vector UI: Lottie | Vector UI: canvas |
+| --- | --- |
+| [![CatLottieAnimation character](src/uikit/doc/images/gallery-vector-lottie.png)](src/uikit/doc/VECTOR.md) | [![CatVectorCanvas paths and gradients](src/uikit/doc/images/gallery-vector-canvas.png)](src/uikit/doc/VECTOR.md) |
+| [Playback, pause and seeking; a paused frame is shown](src/uikit/doc/VECTOR.md) | [Declarative shapes, paths, fills and gradients](src/uikit/doc/VECTOR.md) |
+
+See [capture scenarios and regeneration](src/uikit/doc/SCREENSHOTS.md) for the environment, captured states and commands. Images do not replace interaction, platform or performance validation.
 
 ## Requirements
 
@@ -127,6 +153,11 @@ Use the [documentation index](src/uikit/doc/README.md) to find a guide by task. 
 - [Data models and conversation](src/uikit/doc/MODELS.md)
 - [Theming and interaction density](src/uikit/doc/THEMING.md)
 - [Chart APIs and data conventions](src/uikit/doc/CHARTS.md)
+- [3D charts](src/uikit/doc/CHARTS3D.md)
+- [Attitude and tilt](src/uikit/doc/ATTITUDE.md)
+- [Dock workspaces](src/uikit/doc/DOCKING.md)
+- [LedPreview](src/uikit/doc/LEDPREVIEW.md) and [LED workflow](src/uikit/doc/LEDWORKFLOW.md)
+- [Vector UI and experimental QRhi backend](src/uikit/doc/VECTOR.md)
 - [Architecture](src/uikit/doc/ARCHITECTURE.md), [versioning](src/uikit/doc/VERSIONING.md), and [ABI](src/uikit/doc/ABI.md)
 - [Validation and test commands](src/uikit/doc/VALIDATION.md), and [contributing](CONTRIBUTING.md)
 

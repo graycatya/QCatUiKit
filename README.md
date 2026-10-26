@@ -27,7 +27,33 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 
 [暗色触摸预览](src/uikit/doc/images/gallery-touch.png) · [窄屏预览](src/uikit/doc/images/gallery-mobile.png) · [图表预览](src/uikit/doc/images/gallery-charts-desktop.png)
 
-截图采集于 2026-10-12；[截图场景与生成方法](src/uikit/doc/SCREENSHOTS.md)。
+以上基础预览采集于 2026-10-12；下方专题预览已补充当前功能。[截图场景与生成方法](src/uikit/doc/SCREENSHOTS.md)。
+
+## 专题预览
+
+以下截图采集于 **2026-10-26**，展示当前 Gallery 的实际页面。三维图表、LED 和矢量 UI 使用原生图形会话捕获；矢量 QRhi 后端仍为实验功能。截图中的体感数据来自模拟器，不代表真实传感器或飞控联调。
+
+| 三维图表 | 姿态与体感 |
+| --- | --- |
+| [![三维曲面、光照与相机](src/uikit/doc/images/gallery-charts-3d.png)](src/uikit/doc/CHARTS3D.md) | [![飞机姿态仪](src/uikit/doc/images/gallery-attitude.png)](src/uikit/doc/ATTITUDE.md) |
+| [三维曲面、相机、光照与切片](src/uikit/doc/CHARTS3D.md) | [飞机遥测显示，独立于手机控制输入](src/uikit/doc/ATTITUDE.md) |
+
+| 体感输入 | Dock 工作区 |
+| --- | --- |
+| [![校准后的双轴体感输入预览](src/uikit/doc/images/gallery-tilt.png)](src/uikit/doc/ATTITUDE.md) | [![面板标签与分割工作区](src/uikit/doc/images/gallery-dock.png)](src/uikit/doc/DOCKING.md) |
+| [模拟四元数、稳定校准与控制状态](src/uikit/doc/ATTITUDE.md) | [标签、分割、浮动回停与布局保存恢复](src/uikit/doc/DOCKING.md) |
+
+| LedPreview 与工作流 | 矢量 UI：SVG |
+| --- | --- |
+| [![LED 双 Deck、混合与灯点预览](src/uikit/doc/images/gallery-led.png)](src/uikit/doc/LEDWORKFLOW.md) | [![CatSvgImage 喜悦表情](src/uikit/doc/images/gallery-vector-svg.png)](src/uikit/doc/VECTOR.md) |
+| [独立 A/B Deck、预设仓库、Mixer 与内存输出](src/uikit/doc/LEDWORKFLOW.md) | [SVG 显示与缩放模式，实验 QRhi 后端](src/uikit/doc/VECTOR.md) |
+
+| 矢量 UI：Lottie | 矢量 UI：画布 |
+| --- | --- |
+| [![CatLottieAnimation 角色动画](src/uikit/doc/images/gallery-vector-lottie.png)](src/uikit/doc/VECTOR.md) | [![CatVectorCanvas 路径与渐变](src/uikit/doc/images/gallery-vector-canvas.png)](src/uikit/doc/VECTOR.md) |
+| [播放、暂停和进度定位；图中为暂停帧](src/uikit/doc/VECTOR.md) | [声明式形状、路径、填充与渐变](src/uikit/doc/VECTOR.md) |
+
+完整采集环境、场景状态与复现命令见 [截图与更新](src/uikit/doc/SCREENSHOTS.md)。这些图片不替代全部交互、平台或性能验证。
 
 ## 环境要求
 
@@ -127,6 +153,11 @@ Gallery 的每个组件页面包含交互预览和 QML 示例。顶部切换语�
 - [数据模型与对话](src/uikit/doc/MODELS.md)
 - [主题与交互密度](src/uikit/doc/THEMING.md)
 - [图表接口与数据约定](src/uikit/doc/CHARTS.md)
+- [三维图表](src/uikit/doc/CHARTS3D.md)
+- [姿态与体感](src/uikit/doc/ATTITUDE.md)
+- [Dock 工作区](src/uikit/doc/DOCKING.md)
+- [LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)、[LED 工作流](src/uikit/doc/LEDWORKFLOW.md)
+- [矢量 UI 与实验 QRhi 后端](src/uikit/doc/VECTOR.md)
 - [架构](src/uikit/doc/ARCHITECTURE.md)、[版本](src/uikit/doc/VERSIONING.md)、[ABI](src/uikit/doc/ABI.md)
 - [验证范围与运行方法](src/uikit/doc/VALIDATION.md)、[贡献指南](CONTRIBUTING.md)
 

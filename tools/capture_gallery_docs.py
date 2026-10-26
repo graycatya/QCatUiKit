@@ -17,6 +17,8 @@ def main():
     parser.add_argument("--build-dir", required=True, type=Path)
     parser.add_argument("--config", default="Debug")
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--mode", choices=["software", "native"], default="software",
+                        help="Native mode needs a real graphics session and captures newer feature pages.")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     build = args.build_dir.resolve()
@@ -31,8 +33,14 @@ def main():
     runner = next((p for p in candidates if p.is_file()), None)
     if runner is None:
         parser.error("Build tst_gallery with BUILD_TESTING=ON and QCATUIKIT_BUILD_EXAMPLES=ON first.")
-    template = (root / "tools/gallery_docs/tst_capture.qml.in").read_text(encoding="utf-8")
-    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", QT_QUICK_BACKEND="software")
+    template_name = "tst_capture_native.qml.in" if args.mode == "native" else "tst_capture.qml.in"
+    template = (root / "tools/gallery_docs" / template_name).read_text(encoding="utf-8")
+    env = dict(os.environ)
+    if args.mode == "software":
+        env.update(QT_QPA_PLATFORM="offscreen", QT_QUICK_BACKEND="software")
+    else:
+        if env.get("QT_QUICK_BACKEND") == "software" or env.get("QT_QPA_PLATFORM") in ("offscreen", "minimal"):
+            parser.error("Native capture requires a graphics backend and an exposed window.")
     with tempfile.TemporaryDirectory(prefix="qcat-gallery-docs-") as temporary:
         work = Path(temporary)
         fixture = work / "tst_capture.qml"
@@ -41,8 +49,9 @@ def main():
         command = [str(runner), "-import", str(build / "qml"), "-input", str(fixture)]
         subprocess.run(command, env=env, check=True, timeout=180)
         screenshots = sorted(work.glob("gallery-*.png"))
-        if len(screenshots) != 9:
-            raise RuntimeError(f"Expected 9 screenshots, got {len(screenshots)}")
+        expected = 8 if args.mode == "native" else 9
+        if len(screenshots) != expected:
+            raise RuntimeError(f"Expected {expected} screenshots, got {len(screenshots)}")
         # Publish only a complete successful capture set. No image manipulation.
         sizes = []
         for screenshot in screenshots:

@@ -1,0 +1,99 @@
+// SPDX-License-Identifier: Apache-2.0
+import QtQuick
+import QtTest
+import QCatUiKit
+import QCatUiKit.Gallery
+
+TestCase {
+    name: "GalleryNativeDocumentation"
+    when: windowShown
+    readonly property string outputDirectory: @CAPTURE_DIRECTORY@
+    Component { id: factory; Main {} }
+
+    function vectorIn(item) {
+        if (item instanceof VectorItem) return item;
+        for (const child of item.children || []) {
+            const found = vectorIn(child);
+            if (found) return found;
+        }
+        return null;
+    }
+    function test_capture_data() {
+        return [
+            {tag: "charts-3d", page: "home", width: 1440, height: 900, chart: true},
+            {tag: "attitude", page: "attitude-indicator", width: 1280, height: 900},
+            {tag: "tilt", page: "tilt-control", width: 1280, height: 900},
+            {tag: "dock", page: "dock-workspace", width: 1440, height: 900},
+            {tag: "led", page: "led-preview", width: 1440, height: 900},
+            {tag: "vector-svg", page: "svg-image", width: 1280, height: 900, vector: true},
+            {tag: "vector-lottie", page: "lottie-animation", width: 1280, height: 900, vector: true},
+            {tag: "vector-canvas", page: "vector-canvas", width: 1280, height: 900, vector: true}
+        ];
+    }
+    function test_capture(data) {
+        failOnWarning(/.*/);
+        Theme.reducedMotion = true;
+        GalleryLanguage.language = "en";
+        const gallery = createTemporaryObject(factory, this, {
+            initialPage: data.page, width: data.width, height: data.height,
+            initialDensity: 0, darkTheme: false
+        });
+        verify(gallery !== null);
+        try {
+            verify(waitForRendering(gallery.contentItem));
+            if (data.chart) {
+                verify(gallery.showChartDemo(19));
+                tryVerify(() => findChild(gallery.contentItem, "chart3DPreview") !== null);
+                const preview = findChild(gallery.contentItem, "chart3DPreview");
+                preview.type = 3;
+                tryVerify(() => preview.exportChart.scene3D.supported, 30000);
+                compare(preview.exportChart.scene3D.error, "");
+                verify(waitForPolish(gallery.contentItem));
+                const scroll = findChild(gallery.contentItem, "galleryContentScroll");
+                const plot = preview.exportChart;
+                const top = plot.mapToItem(scroll.contentItem.contentItem, 0, 0).y;
+                scroll.contentItem.contentY = Math.max(0, top - 140);
+            }
+            if (data.page === "tilt-control") {
+                const preview = findChild(gallery.contentItem, "tiltPreview");
+                verify(preview !== null);
+                preview.controller.enabled = true;
+                tryVerify(() => preview.controller.sampleFresh);
+                verify(preview.controller.calibrate());
+                tryCompare(preview.controller, "state", TiltController.Ready, 10000);
+                preview.phoneRoll = 12;
+                preview.phonePitch = 8;
+                wait(300);
+            }
+            if (data.page === "led-preview") {
+                for (const name of ["ledDeckA", "ledOutput", "ledDeckB"]) {
+                    const preview = findChild(gallery.contentItem, name);
+                    verify(preview !== null);
+                    tryVerify(() => preview.renderedFrames > 0, 30000);
+                    compare(preview.renderError, "");
+                    console.log(name + ": " + JSON.stringify(preview.renderingInfo));
+                }
+            }
+            if (data.vector) {
+                tryVerify(() => vectorIn(gallery.contentItem) !== null);
+                const vector = vectorIn(gallery.contentItem);
+                verify(vector.backendAvailable);
+                tryCompare(vector, "status", VectorItem.Ready, 60000);
+                if (data.page === "lottie-animation") {
+                    vector.pause();
+                    vector.progress = 0.1;
+                }
+                tryVerify(() => vector.renderedFrames > 0);
+            }
+            wait(300);
+            verify(waitForPolish(gallery.contentItem));
+            compare(gallery.width, data.width);
+            compare(gallery.height, data.height);
+            // Static reduced-motion pages need no spontaneous extra frame.
+            // grabImage requests its own render after the state checks above.
+            grabImage(gallery.contentItem).save(outputDirectory + "/gallery-" + data.tag + ".png");
+        } finally {
+            gallery.close();
+        }
+    }
+}

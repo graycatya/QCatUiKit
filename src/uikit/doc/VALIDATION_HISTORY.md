@@ -4,6 +4,14 @@
 
 仅保留当前版本依据、安装及跨平台检查和可复现基准。过期的实验版本、目录迁移过程和逐批开发日志已清理。各条结果仅适用于列出的日期、平台和范围，不代表本次全部重新执行。
 
+## README 专题截图补充（2026-10-26）
+
+Linux、Qt 6.12.0 Release，XWayland（Qt xcb）/ OpenGL、AMD Radeon 780M、Mesa 26.1.6、DPR 1。`cmake --build build-release --target tst_gallery --parallel 4` 与 `qcat-gallery-ui_qmllint` 通过。使用 `tools/capture_gallery_docs.py --mode native` 捕获八个真实 Gallery 场景，10/10 通过（含初始化/清理），无失败/跳过；核查全部图片后发布。图片尺寸：三维、Dock、LED 为 1440×900，姿态、体感及 SVG/Lottie/Canvas 为 1280×900。
+
+三维图片展示规则曲面；体感完成模拟输入校准并保持 Ready，未接管；LED 三路存在成功绘制且无 renderError；矢量三页均为 Ready，Lottie 暂停于 10%（画面约第 85/852 帧）。本轮不验证真实传感器、飞控、外部灯光设备、完整浮动拖动或其他平台。中英文 README 同步增加专题展示和文档入口，保留旧基础截图及其采集日期。
+
+首次 Wayland 捕获被 Qt 输入焦点警告判为失败，改用 XWayland；初次大窗口被桌面约束，复核后改用显式尺寸检查并滚动至三维图表区域。仅发布最终通过且逐张查看的批次。文档检查、Python 语法检查及 diff 空白检查通过。
+
 ## OpenSpec 项目设计基线（2026-10-26）
 
 新增 `openspec/design.md`，整理当前模块职责、公开/私有边界、数据流、线程生命周期、构建安装及验证结构，链接现有架构和专题文档；该文件为项目自定义架构上下文，不是 change 的设计产物。不新增 proposal/tasks，不修改业务实现或主规约。

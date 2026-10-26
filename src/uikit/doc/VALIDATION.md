@@ -304,3 +304,15 @@ git diff --check
 ```
 
 检查 Purpose、Dependencies、Requirements、Data Model、Known Deviations / Technical Debt、Non-Goals、Assumptions 的顺序，及每个 Scenario 的 WHEN / THEN。结构校验不替代行为测试；涉及实现的后续变更仍按本页对应模块执行验证。
+
+## README 专题截图
+
+使用 [截图指南](SCREENSHOTS.md) 的 native 模式补充三维图表、飞机姿态、体感、Dock、LED 和三种矢量页面。构建 `tst_gallery` 后在可暴露窗口的图形会话执行：
+
+```sh
+QT_QPA_PLATFORM=xcb python3 tools/capture_gallery_docs.py \
+  --build-dir build-release --config Release --mode native \
+  --output-dir /tmp/qcat-native-doc-images
+```
+
+先检查八张图片的实际曲面、仪表、校准状态、面板布局、三路灯点和矢量 Ready 状态，再发布至文档图片目录。场景不会拼接，长页面只捕获当前可视区域；不以图片声明完整交互或物理设备验收。默认 software 模式继续用于原有九张基础截图。
