@@ -92,7 +92,7 @@ rectangle 使用 x/y/width/height 和圆角 radius；ellipse 使用同样矩形�
 
 Gallery 提供 svg-image、lottie-animation、vector-canvas 三个页面，包含缩放方式、播放／暂停、进度定位、重新加载及添加形状的操作。Gallery 的示例资源只用于演示，应用应提供自己的 SVG／JSON。
 
-源码位于 src/uikit/vector；公开类使用 Pimpl。文件在 GUI 线程读取，单份数据上限 16 MiB；解析、ThorVG 对象和 QRhi 资源只在渲染线程使用与销毁。带版本号的线程安全快照回传状态，过期加载结果不覆盖新内容。
+源码位于 src/uikit/vector；公开类使用 Pimpl。文件在 GUI 线程读取，单份数据上限 64 MiB；解析、ThorVG 对象和 QRhi 资源只在渲染线程使用与销毁。带版本号的线程安全快照回传状态，过期加载结果不覆盖新内容。
 
 本地 SVG 的外部资源以源文件目录解析；qrc／sourceData 的图片请嵌入 SVG，Qt 资源路径不自动映射到普通文件。不提供脚本执行、网络下载、SVG 编辑器或全部 SVG／Lottie 特性的等价承诺。
 

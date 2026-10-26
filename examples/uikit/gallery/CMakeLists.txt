@@ -24,7 +24,7 @@ qt_add_qml_module(qcat-gallery-ui
         GallerySettingsPage.qml GalleryComponentPage.qml GalleryPreview.qml GalleryExtendedPreview.qml GalleryChartPreview.qml
         GalleryDataPreview.qml GalleryDataStressPanel.qml GalleryChartAdvancedPreview.qml GalleryChartAxesPreview.qml GalleryChart3DPreview.qml GalleryChartRadialPreview.qml GalleryChartAreaOptions.qml GalleryChartStrokeOptions.qml GalleryChartInteractionOptions.qml GalleryChartDelegateOptions.qml GalleryChartMotionOptions.qml
         GalleryLedPreview.qml
-    RESOURCES assets/vector-demo.svg assets/vector-demo.json assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png)
+    RESOURCES assets/Emotion_Joy.svg assets/CatGray_All_Actions.json assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png)
 set(qcat_gallery_brand_dir "${QCatUiKit_SOURCE_DIR}/src/uikit/doc/images/brand/qcat-uikit")
 set(qcat_gallery_brand_files)
 foreach(qcat_gallery_icon_size IN ITEMS 16 24 32 48 64 128 256 512)

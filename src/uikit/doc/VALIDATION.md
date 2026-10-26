@@ -162,6 +162,8 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
 
 ### 矢量 UI 与 QRhi
 
+Gallery 的 `svg-image` 与 `lottie-animation` 页面分别使用 `Emotion_Joy.svg` 和 `CatGray_All_Actions.json`。构建 `qcat-gallery` 后，在真实图形会话运行 `<build>/examples/uikit/gallery/qcat-gallery --page svg-image` 与 `--page lottie-animation`，检查状态为 Ready；动画页检查播放、暂停及进度定位。完整动画约 57 MiB，需使用当前 64 MiB 加载上限的库。
+
 按 [矢量专题](VECTOR.md) 开启本地实验后端，同时配置 `QCATUIKIT_TEST_VECTOR_GPU=ON`。运行 `ctest --test-dir <build> -C Release -R '^vector_' --output-on-failure`；Debug 使用对应配置或独立构建目录。`vector_contracts` 检查输入校验、QML 创建和 software 错误状态；`vector_render` 需要可暴露的真实窗口，检查 SVG 像素、适配／拉伸、尺寸变化、解码失败后恢复、Lottie 播放／暂停／定位／结束、路径和两种渐变、QML 嵌套数据及窗口迁移。
 
 GPU 测试不使用 offscreen/software，且与其他 GPU 测试共用窗口锁。Windows 可用 `QSG_RHI_BACKEND=d3d11` 显式选择后端。测试中 QML 画布截图保存于测试工作目录的 `vector-qml-canvas.png`。窗口未暴露时会暂停播放时钟，尚未得到绘制机会时内容可能保持 Loading；不要以隐藏启动的 GUI 程序作为 GPU 运行验收。

@@ -91,13 +91,13 @@ QtObject {
             id: "svg-image", name: "CatSvgImage", category: "media",
             title: qsTr("SVG image"),
             description: qsTr("Display scalable vector images with loading status and aspect controls."), icon: "media",
-            code: "CatSvgImage { width: 320; height: 200; source: \"illustration.svg\" }"
+            code: "CatSvgImage { width: 320; height: 200; source: \"assets/Emotion_Joy.svg\" }"
         },
         {
             id: "lottie-animation", name: "CatLottieAnimation", category: "media",
             title: qsTr("Lottie animation"),
             description: qsTr("Play, pause and seek vector animations."), icon: "media",
-            code: "CatLottieAnimation { width: 320; height: 200; source: \"animation.json\"; autoPlay: true }"
+            code: "CatLottieAnimation { width: 320; height: 200; source: \"assets/CatGray_All_Actions.json\"; autoPlay: true }"
         },
         {
             id: "vector-canvas", name: "CatVectorCanvas", category: "media",

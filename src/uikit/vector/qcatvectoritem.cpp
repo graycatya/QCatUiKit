@@ -517,18 +517,18 @@ void VectorItem::prepare()
                          QStringLiteral("Cannot open vector source: %1").arg(file.errorString()));
                 return;
             }
-            if (file.size() > 16 * 1024 * 1024)
+            if (file.size() > 64 * 1024 * 1024)
             {
-                setState(Error, QStringLiteral("Vector source exceeds 16 MiB"));
+                setState(Error, QStringLiteral("Vector source exceeds 64 MiB"));
                 return;
             }
             d->bytes = file.readAll();
             if (url.isLocalFile())
                 d->resourcePath = QFileInfo(url.toLocalFile()).absolutePath().toUtf8();
         }
-        if (d->bytes.isEmpty() || d->bytes.size() > 16 * 1024 * 1024)
+        if (d->bytes.isEmpty() || d->bytes.size() > 64 * 1024 * 1024)
         {
-            setState(Error, QStringLiteral("Vector data is empty or exceeds 16 MiB"));
+            setState(Error, QStringLiteral("Vector data is empty or exceeds 64 MiB"));
             return;
         }
     }

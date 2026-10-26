@@ -4,6 +4,12 @@
 
 仅保留当前版本依据、安装及跨平台检查和可复现基准。过期的实验版本、目录迁移过程和逐批开发日志已清理。各条结果仅适用于列出的日期、平台和范围，不代表本次全部重新执行。
 
+## Gallery CatGray 矢量资源（2026-10-26）
+
+Gallery 的 SVG／Lottie 演示替换为用户提供的 `Emotion_Joy.svg`、`CatGray_All_Actions.json`，复制后 SHA-256 与原件一致。JSON 为 60,050,409 字节，无需额外外部图片；VectorItem 的文件及内存数据上限由 16 MiB 调整到 64 MiB。
+
+Linux Qt 6.12.0 Release：`cmake --build build-release --target qcat-gallery --parallel 4`、`cmake --build build-release --target qcat-gallery-ui_qmllint tst_vector --parallel 4` 通过；`ctest --test-dir build-release -R '^vector_contracts$' --output-on-failure` 1/1 通过。真实 Wayland 会话运行 Gallery 的 `--page svg-image --screenshot /tmp/qcat-new-svg.png` 与 `--page lottie-animation --screenshot /tmp/qcat-new-lottie.png`，两页均为 Ready，SVG 喜悦表情与 Lottie 角色可见；动画截图为第 16/852 帧，已记录 5 次绘制。未手动验收暂停、定位、窄屏或其他平台。文档校验和 diff 空白检查通过。
+
 ## 文档与旧接口清理（2026-10-25）
 
 核对公开头列表、QML 类型注册、矢量属性／方法实现、构建配置及当前文档。移除旧版本单例 `LibraryInfo`，版本入口统一为 `QCatUiKit`；移除 `thorvg_qrhi.h`／`tvg::QrhiCanvas` 别名及旧头接入回退，适配入口统一为 `qcatthorvgqrhicanvas.h`／`QCatUiKit::ThorvgQrhiCanvas`。旧 QML 调用方和外部实验源码需迁移；这些旧入口的源码兼容不再保留，未删除导出的 C++ 函数或改变公开对象布局。

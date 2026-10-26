@@ -14,8 +14,8 @@ Item {
     readonly property string exampleCode: componentId === "vector-canvas"
         ? 'CatVectorCanvas {\n    width: 320; height: 200\n    viewBox: Qt.rect(0, 0, 160, 100)\n    shapes: [{ type: "ellipse", x: 20, y: 10, width: 120, height: 80, fill: Theme.tokens.primary }]\n}'
         : componentId === "lottie-animation"
-          ? 'CatLottieAnimation {\n    width: 320; height: 200\n    source: "animation.json"\n    autoPlay: true\n    loops: -1\n}'
-          : 'CatSvgImage {\n    width: 320; height: 200\n    source: "illustration.svg"\n    fillMode: VectorItem.PreserveAspectFit\n}'
+          ? 'CatLottieAnimation {\n    width: 320; height: 200\n    source: "assets/CatGray_All_Actions.json"\n    autoPlay: true\n    loops: -1\n}'
+          : 'CatSvgImage {\n    width: 320; height: 200\n    source: "assets/Emotion_Joy.svg"\n    fillMode: VectorItem.PreserveAspectFit\n}'
     implicitHeight: layout.implicitHeight
     ColumnLayout {
         id: layout
@@ -83,8 +83,8 @@ Item {
             text: qsTr("Status: %1 | Rendered frames: %2").arg(control.stateText).arg(control.vector?.renderedFrames ?? 0)
         }
     }
-    Component { id: svgScene; CatSvgImage { source: Qt.resolvedUrl("assets/vector-demo.svg") } }
-    Component { id: animationScene; CatLottieAnimation { source: Qt.resolvedUrl("assets/vector-demo.json") } }
+    Component { id: svgScene; CatSvgImage { source: Qt.resolvedUrl("assets/Emotion_Joy.svg") } }
+    Component { id: animationScene; CatLottieAnimation { source: Qt.resolvedUrl("assets/CatGray_All_Actions.json") } }
     Component {
         id: canvasScene
         CatVectorCanvas {
