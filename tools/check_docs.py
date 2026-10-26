@@ -59,9 +59,7 @@ def anchors(lines):
 
 
 def duplicate_paragraphs(path, lines, errors):
-    """Reject repeated prose in current guides; dated history may repeat findings."""
-    if path.name == "VALIDATION_HISTORY.md":
-        return
+    """Reject repeated prose in current guides."""
     seen = {}
     paragraph = []
 

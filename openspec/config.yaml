@@ -10,7 +10,7 @@ context: |
   基线 specs 只描述已经实现的行为；发现的不一致、缺陷和隐患记入 Known Deviations / Technical Debt。
   编写基线不得修改业务代码、修复缺陷、重构或新增能力，不自动同步其他 spec。
   新功能和行为修改使用独立 change，不能伪装成既有基线。
-  文档修改运行 python tools/check_docs.py；验证方法与执行证据分别维护于 VALIDATION.md 和 VALIDATION_HISTORY.md。
+  文档修改运行 python tools/check_docs.py；可重复执行的验证方法维护于 VALIDATION.md，变更执行证据记录在对应 change 中并随变更归档。
 
 rules:
   specs:

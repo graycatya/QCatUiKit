@@ -160,7 +160,7 @@ LightingFrame.Description：QString projectId；quint64 layoutRevision/frameId/i
 ## Non-Goals
 
 - 本模块 SHALL NOT 内置 DMX、Art-Net、sACN、USB 或串口协议。
-- 本模块 SHALL NOT 提供完整灯具库、Cue、MADRIX 文件兼容或商业算法。
+- 本模块 SHALL NOT 提供完整灯具库、Cue、第三方项目文件兼容或商业算法。
 
 ## Assumptions
 

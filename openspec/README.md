@@ -57,7 +57,7 @@
 
 ## 检查
 
-规约整理的重复检查及 dated evidence 分别见 [验证方法](../src/uikit/doc/VALIDATION.md) 和 [执行记录](../src/uikit/doc/VALIDATION_HISTORY.md)。
+可重复执行的检查见[验证方法](../src/uikit/doc/VALIDATION.md)。具体变更的验证结果记录在对应 change 中并随变更归档，不另设独立历史记录。
 
 ```sh
 openspec list --specs

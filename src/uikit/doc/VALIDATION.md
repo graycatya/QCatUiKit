@@ -1,28 +1,8 @@
 # 验证范围与运行方法
 
-[文档索引](README.md) · [历史执行记录](VALIDATION_HISTORY.md)
+[文档索引](README.md)
 
-本文维护可重复执行的检查步骤。测试结果必须结合日期、平台和检查范围阅读；文档更新不表示产品测试已重新运行。逐次执行摘要保留在[历史记录](VALIDATION_HISTORY.md)。
-
-## 最近结果摘要
-
-| 范围 | 最近记录 | 结果与限制 |
-| --- | --- | --- |
-| macOS 日期时间轴与字体回归 | 2026-10-25，macOS arm64、Qt 6.10.2、Apple Clang 21、Debug／Release | 两配置全量构建、库／Gallery lint、CTest 各 19/19 组通过；原有 Wayland 专属跳过保留。Metal 矢量两配置各 7/7、Release 图表像素 192/192；未验证 Windows／Linux，详见历史记录 |
-| 文档与旧接口清理 | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 全量构建、lint；版本／QML／Gallery 启动／矢量契约 4/4，D3D11 7/7；旧 QML 与适配别名已移除 |
-| 矢量 UI 与自有 QRhi | 2026-10-25，Windows、Qt 6.12.0、MSVC Debug | 官方 ThorVG v1.1.3，全量构建和 lint、矢量契约 1/1、D3D11 7/7；未覆盖其他平台与全部格式特性 |
-| ThorVG v1.1.3 Meson 接入 | 2026-10-25，Windows、MSVC Release | 含 QRhi 的独立静态库运行时版本、画布创建、SVG CPU 像素检查 1/1；CPU-only 使用相同官方版本 |
-| Qt 套件安装与双配置 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Debug／Release | Qt6 组件发现、真实套件默认 QML 路径、两配置各两个消费者及独立模式通过；构建、库／Gallery lint、CTest 18/18 通过，可选 GPU 未开启 |
-| C/C++ 模块目录整理 | 2026-10-25，Windows、Qt 6.12.0、MSVC 2022 Release | 构建、库／Gallery lint、CTest 18/18、独立安装消费者及文档检查通过；本次未开启可选 GPU 测试，详见历史记录 |
-| Windows 全库测试可靠性 | 2026-10-24，Windows 11、Qt 6.12.0、MSVC 2022 Release | 最终 CTest 22/22（含四组 GPU），并行度 2，耗时 122.41 秒；LED 连续三次各 10/10。构建、库／Gallery lint 通过。测试运行器的故意失败与启动失败反向验证均正确返回非零；未新增跳过，原有平台专属跳过仍保留。详见历史记录 |
-| Wayland Dock 平台分支 | 2026-10-22，Ubuntu 26.04、Qt 6.12.0 Release | 构建、库／Gallery lint、CTest 18/18 通过；Wayland 适配器 5/5、QML 状态 6/6。XCB 原有浮动坐标失败在未修改基线也复现；真实鼠标拖放和 Windows/macOS 本次未验收，详见历史记录 |
-| Dock、全库回归 | 2026-10-21，Windows 11、Qt 6.12.0、MSVC 2022 Release | Dock 控制器 16/16、工作区 12/12、浮动 25/25、Gallery Dock 15/15；构建及库／Gallery qmllint 通过。全库 CTest 为 15/17，仍有 LED 与下拉框宽度失败 |
-| Windows 旧基线失败 | 同上；保留历史对照 | `led_pipeline` 的 `layoutMappingAndValidation` 在 `m.applyNow(c)` 失败；`qml_contracts` 的 `SelectionControls::test_compactComboDisplayFits` 三种密度失败。后续测试可靠性改进与复跑结果见历史记录，不将旧结果当作当前结果 |
-| Dock 安装与兼容 | 同上 | 独立安装消费者可调用 C++／QML 的 `dockToWorkspace`；保留原 1384 个导出符号，新增 1 个；旧测试程序加载新库 10/10 通过 |
-| Linux 全库回归 | 2026-10-20，Ubuntu 26.04、Qt 6.12.0 Release | 当时 CTest 17/17、浮动 software/offscreen 与 XCB/OpenGL 各 8/8；早于最新跨窗口与外边缘修改，不作为最新版本的 Linux 全量验收 |
-| Linux 图表 GPU | 2026-10-19，同一 Linux／Qt 环境 | AMD Radeon 780M／RADV、Mesa 26.1.6；Vulkan DPR 1／2 二维／三维／PNG 192／22／7，OpenGL 二维／三维 192／22；未开启 Khronos validation layer |
-
-计数包含测试初始化／清理。Dock 的 Windows 原生窗口测试使用 QtTest 合成鼠标与 software 渲染；多屏混合 DPI、实际热插拔和 Wayland 仍需单独验收。不同日期、平台的通过结果不能互相替代；最低 Qt 6.8、其他 GPU／驱动、真机触屏和设备丢失也没有由这些结果获得通用验证。
+本文维护可重复执行的检查步骤。测试结果必须结合日期、平台和检查范围阅读；文档更新不表示产品测试已重新运行。具体变更的验证结果记录在对应 OpenSpec change 中并随变更归档，注明命令、日期、平台、结果及未覆盖范围。
 
 ## macOS ThorVG 编译兼容检查
 
@@ -88,7 +68,7 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 普通图形契约的 CTest 配置会设置离屏及软件后端；可选的 GPU 组需要真实图形窗口，不能沿用 software 环境。直接运行 Qt Quick 软件契约测试时，需要自行设置 `QT_QPA_PLATFORM=offscreen`、`QT_QUICK_BACKEND=software` 并传入构建目录的 QML 导入路径。
 
-真实后端测试可在配置时开启 `QCATUIKIT_TEST_CHART_GPU`／`QCATUIKIT_TEST_LED_GPU`，然后通过 `ctest --test-dir build/release -R '^(chart_render|chart_3d_render|chart_export_render|led_render)$' --output-on-failure` 运行。用 `QSG_RHI_BACKEND` 选择后端并核对日志；Linux 应使用实际图形会话的 XCB／Wayland 平台，而非强制 offscreen。平台命令和实际执行环境见 [历史记录](VALIDATION_HISTORY.md)。
+真实后端测试可在配置时开启 `QCATUIKIT_TEST_CHART_GPU`／`QCATUIKIT_TEST_LED_GPU`，然后通过 `ctest --test-dir build/release -R '^(chart_render|chart_3d_render|chart_export_render|led_render)$' --output-on-failure` 运行。用 `QSG_RHI_BACKEND` 选择后端并核对日志；Linux 应使用实际图形会话的 XCB／Wayland 平台，而非强制 offscreen。实际执行环境、后端与结果记录在对应 OpenSpec change 中。
 
 ## 数据量与交互验证
 
@@ -243,7 +223,7 @@ cmake --build build/dock-consumer
 
 全库文档复查按以下顺序进行：
 
-1. 检查根目录 README／贡献约定、文档目录、Gallery README 和技能参考，列出覆盖范围；历史记录只核对结构、链接与保留证据，不能把旧结果当作新测试。
+1. 检查根目录 README／贡献约定、文档目录、Gallery README 和技能参考，列出覆盖范围；OpenSpec 归档只核对结构、链接与保留证据，不能把旧结果当作新测试。
 2. 对照 CMake 的安装头／类型列表、公开头、QML 组件和相关实现，检查类型名、主要属性、方法、默认值、错误与所有权；用测试确认容易误读的行为。
 3. 从当前指南提取 QML 对象示例，在 Qt Quick Test 中加载。没有 import 的对象片段补标准导入，多个并列对象放入 Item；属性赋值和事件处理器片段须放到说明的上下文，不当作独立文件加载。
 4. 运行重复正文与名称覆盖检查，再检查差异。示例加载只能证明语法与创建，交互、几何、GPU 和部署另行验证；当前文档检查不要求把所有历史平台重新测一遍。

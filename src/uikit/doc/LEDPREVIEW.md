@@ -24,7 +24,7 @@ Windows 请从 x64 MSVC 开发终端执行，并使用相同 ABI 的 Qt 包。�
 
 在 Windows 离屏测试环境中，如 Qt 报缺少 `lib/fonts`，可设置 `QT_QPA_FONTDIR=C:/Windows/Fonts` 后运行 CTest。生产运行使用系统字体，通常无需该设置。
 
-实际实现对照了 [Qt 6.12 QQuickRhiItemRenderer](https://doc.qt.io/qt-6.12/qquickrhiitemrenderer.html)、[QRhi](https://doc.qt.io/qt-6.12/qrhi.html)、[QRhiCommandBuffer](https://doc.qt.io/qt-6.12/qrhicommandbuffer.html)，以及本机 Qt 6.12.0 的 `qquickrhiitem.h` 和 `rhi/qrhi.h`。最低版本的生命周期规则参考 [Qt 6.8 文档](https://doc.qt.io/qt-6.8/qquickrhiitemrenderer.html)。实际运行环境与结果见[验证记录](VALIDATION_HISTORY.md)。
+实际实现对照了 [Qt 6.12 QQuickRhiItemRenderer](https://doc.qt.io/qt-6.12/qquickrhiitemrenderer.html)、[QRhi](https://doc.qt.io/qt-6.12/qrhi.html)、[QRhiCommandBuffer](https://doc.qt.io/qt-6.12/qrhicommandbuffer.html)，以及本机 Qt 6.12.0 的 `qquickrhiitem.h` 和 `rhi/qrhi.h`。最低版本的生命周期规则参考 [Qt 6.8 文档](https://doc.qt.io/qt-6.8/qquickrhiitemrenderer.html)。具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。
 
 ## 配置预览
 
@@ -129,4 +129,4 @@ cmake --build build/led-consumer
 
 ## 验证与历史数据
 
-当前检查步骤和最近结果见[验证说明](VALIDATION.md)。逐次平台记录见[历史验证记录](VALIDATION_HISTORY.md)，其中的 [2026-10-12 圆片基准](VALIDATION_HISTORY.md#led-圆片版本基准记录2026-10-12) 只适用于当时的 Circle 形状和演示管线，不能用于声明 Cube／Sphere 或其他设备的性能。
+当前检查步骤见[验证说明](VALIDATION.md)。性能结果应注明形状、管线、设备与运行环境，Circle 的测量不能用于声明 Cube／Sphere 或其他设备的性能。

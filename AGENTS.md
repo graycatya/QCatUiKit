@@ -13,8 +13,8 @@ Use [the documentation index](src/uikit/doc/README.md) for current APIs and
 application architecture and user changes; Gallery-only helpers are not library APIs.
 
 For documentation changes, run `python tools/check_docs.py`. Keep repeatable
-validation instructions in `src/uikit/doc/VALIDATION.md` and dated execution
-evidence in `src/uikit/doc/VALIDATION_HISTORY.md`.
+validation instructions in `src/uikit/doc/VALIDATION.md`. Record change-specific
+validation results in the corresponding OpenSpec change and retain them when archiving.
 
 
 For maintenance and new components, use [the maintenance map](src/uikit/doc/MAINTENANCE.md)

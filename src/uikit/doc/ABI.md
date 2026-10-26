@@ -56,12 +56,12 @@ ChartScene3D／ChartSeries3D、统计与扩展适配器、LED 工作流及 TiltC
 
 光照默认值曾从 Phong 改为 BlinnPhong，属于可观察外观变化；显式 Phong 保留相应光照计算，不保证新网格逐像素复现旧图像。ABI 兼容也不能替代 QML 行为、默认值及实际交互审查。
 
-各阶段的符号、安装和历史消费者执行结果见 [兼容性演进记录](VALIDATION_HISTORY.md#abi-兼容性演进记录)。这些结果仅覆盖记录中的工具链与调用范围，不替代候选发布包的检查。
+具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。这些结果仅覆盖记录中的工具链与调用范围，不替代候选发布包的检查。
 
 
 ### 姿态与体感输入
 
-TiltController 是独立 Pimpl 类型，注册同名 QML 类型；安装真实头、TiltController.h 和 TiltController 转发头。CatAttitudeIndicator／CatTiltControlPanel 为公开 QML 组件，四元数沿用既有 QtGui 依赖，不引入 Qt Sensors 或协议库。具体消费者与导出符号检查见[历史记录](VALIDATION_HISTORY.md)。
+TiltController 是独立 Pimpl 类型，注册同名 QML 类型；安装真实头、TiltController.h 和 TiltController 转发头。CatAttitudeIndicator／CatTiltControlPanel 为公开 QML 组件，四元数沿用既有 QtGui 依赖，不引入 Qt Sensors 或协议库。具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。
 
 ### Dock 工作区
 
@@ -71,4 +71,4 @@ DockController 的浮动窗口属性与非虚方法保留既有方法、信号�
 
 布局格式写入 v2，同时读取 v1。v2 的可选字符串 `returnNode` 用于整列／整行回停；旧 v2 不含此字段仍可读，类型错误则拒绝整份恢复请求。新增此可选字段未提高格式版本，未来未知版本仍被拒绝。
 
-各次 Dock 消费者、导出符号与动态库替换结果见[历史记录](VALIDATION_HISTORY.md)。检查候选发行包时应重新验证对应平台和工具链。
+具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。检查候选发行包时应重新验证对应平台和工具链。

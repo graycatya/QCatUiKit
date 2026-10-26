@@ -213,4 +213,4 @@ Wayland 的缩略图在启动拖放前捕获，由合成器随鼠标显示。停
 - 浮动验证：`tests/auto/qml/data/tst_dockfloating.qml` 检查内容／焦点／弹层、关闭拒绝、图表像素、隐藏／销毁和屏幕外恢复；C++ 测试覆盖组回停、缺失目标、v1 兼容及无效 v2 数据。
 - 浮动标签拖回测试：`tst_dockfloating.qml` 覆盖全局坐标命中、五方向提交、取消、宿主遮挡和鼠标／Esc 路径。
 - 跨窗口合并：控制器测试检查失败时布局不变、宿主清理、保存恢复和回停；QML 测试检查两种来源的鼠标／Esc、预览、权限及空主工作区；Gallery 测试覆盖完整 Main 页面嵌套滚动。
-- 运行方法见[验证说明](VALIDATION.md)，各次平台及结果见[历史记录](VALIDATION_HISTORY.md)。
+具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。

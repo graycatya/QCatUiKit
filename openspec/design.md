@@ -181,7 +181,7 @@ Gallery 是内部静态 QML 模块 `QCatUiKit.Gallery` 加可执行程序。关�
 | 安装消费者与 ABI 检查 | 安装头、包发现、导出与已编译消费者 | 不证明全部符号和工具链 |
 | 文档与 OpenSpec 校验 | 链接、文档规则和规约结构 | 不证明业务行为符合规约 |
 
-GPU 套件按选项注册，默认普通 CTest 结果不包含全部图形验收。方法与实际执行证据分别见 [VALIDATION](../src/uikit/doc/VALIDATION.md) 和 [VALIDATION_HISTORY](../src/uikit/doc/VALIDATION_HISTORY.md)。
+GPU 套件按选项注册，默认普通 CTest 结果不包含全部图形验收。方法见 [VALIDATION](../src/uikit/doc/VALIDATION.md)，执行证据记录在对应 OpenSpec change 中并随变更归档。
 
 ## Known Constraints and Technical Debt
 

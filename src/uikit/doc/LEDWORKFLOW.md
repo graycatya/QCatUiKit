@@ -320,9 +320,8 @@ Project 保存其自有仓库和当前工作快照；Gallery 的额外 JSON 工�
 旧 Source API、默认 Circle、屏幕 pointSize 和 previewBrightness 语义保留。旧接口没有项目文件格式；
 不猜测来源不明的 JSON 或把旧 RGBA alpha 迁移为白光。
 
-## 与 MADRIX 的边界
+## 功能边界
 
-参考 [MADRIX Storage Places](https://help.madrix.com/m5/html/madrix/hidd_handling_selection_storage_array.html)
-理解浏览/活动区分，本组件允许 A/B 独立载入同一 Place；点击直接切换，不自动移动 Crossfader。
-布局计数表示灯点，不是完整灯具。自有 JSON 不兼容 `.mstx/.mstz/.mspx/.mspz`，也不包含 MADRIX 的商业算法。
+浏览与活动状态分开，本组件允许 A/B 独立载入同一 Place；点击直接切换，不自动移动 Crossfader。
+布局计数表示灯点，不是完整灯具。项目使用自有 JSON 格式，不提供第三方项目文件兼容或商业算法。
 不实现完整灯具库、图层编辑器、Cue、DMX/Art-Net/sACN/USB/串口；内存接收成功不代表硬件收到数据。

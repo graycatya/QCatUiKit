@@ -6,7 +6,7 @@
 
 第一次使用时，先按[构建与接入](BUILDING.md)运行 Gallery，再从[组件目录](COMPONENTS.md)选择控件。专题页先说明用法与结果，再列接口和限制；示例中的调用片段需要放在标明的 QML 处理器或 C++ 上下文中。
 
-当前能力以专题页和源码为准。[历史验证记录](VALIDATION_HISTORY.md)保留过去的平台与结果，这些结果只适用于当时列出的范围；[截图说明](SCREENSHOTS.md)标明图片采集时间，旧截图不代表最新全部功能。
+当前能力以专题页和源码为准。具体变更的验证结果记录在对应 OpenSpec change 中；[截图说明](SCREENSHOTS.md)标明图片采集时间，旧截图不代表最新全部功能。
 
 ## 按任务阅读
 
@@ -31,7 +31,7 @@
 | 查询版本、设置发布渠道 | [版本管理](VERSIONING.md) |
 | 维护公开接口、验证动态库替换 | [ABI](ABI.md) |
 | 气泡／格网／等高线／OHLC／箱线／雷达增强 | [扩展图表](CHARTEXTENSIONS.md) |
-| 运行检查、了解最近结果与历史平台范围 | [验证方法](VALIDATION.md)、[历史记录](VALIDATION_HISTORY.md) |
+| 运行检查、了解验证范围与限制 | [验证方法](VALIDATION.md) |
 | 提交代码、维护示例与翻译 | [贡献指南](../../../CONTRIBUTING.md) |
 | 使用项目标识 | [品牌资源](images/brand/qcat-uikit/README.md) |
 | 让 agent 使用组件库编写 UI | [Agent UI 技能](AGENT_UI.md) |

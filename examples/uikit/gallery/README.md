@@ -197,7 +197,7 @@ GalleryLanguage 安装翻译、更新默认 QLocale 并刷新翻译绑定。项�
 
 自动测试位于 `tests/auto/gallery`，检查页面、示例创建、语言切换、输入保持、密度、弹出层和数据操作。当前覆盖范围见 [验证说明](../../../src/uikit/doc/VALIDATION.md)。
 
-`gallery_contracts` 的 CTest 配置默认使用 offscreen／software。验证实际 Vulkan 时，应在图形会话中直接运行 `env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 build-release/tests/auto/gallery/tst_gallery -import build-release/qml`，并按本机安装配置 Qt 库路径和 GPU ICD；用 `QT_SCALE_FACTOR=2` 检查高 DPI。须核对日志中的 Vulkan 后端和物理设备，完整目录与交互覆盖见 [Gallery Vulkan 回归](../../../src/uikit/doc/VALIDATION_HISTORY.md#gallery-全量-vulkan-回归2026-10-19)。
+`gallery_contracts` 的 CTest 配置默认使用 offscreen／software。验证实际 Vulkan 时，应在图形会话中直接运行 `env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QSG_INFO=1 build-release/tests/auto/gallery/tst_gallery -import build-release/qml`，并按本机安装配置 Qt 库路径和 GPU ICD；用 `QT_SCALE_FACTOR=2` 检查高 DPI。须核对日志中的 Vulkan 后端和物理设备，目录与交互覆盖及实际执行结果应记录在对应 OpenSpec change 中。
 
 文档图片由实际页面生成，更新整套图片的方法见 [截图指南](../../../src/uikit/doc/SCREENSHOTS.md)。
 
