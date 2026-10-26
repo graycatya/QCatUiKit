@@ -4,6 +4,18 @@
 
 仅保留当前版本依据、安装及跨平台检查和可复现基准。过期的实验版本、目录迁移过程和逐批开发日志已清理。各条结果仅适用于列出的日期、平台和范围，不代表本次全部重新执行。
 
+## OpenSpec 项目设计基线（2026-10-26）
+
+新增 `openspec/design.md`，整理当前模块职责、公开/私有边界、数据流、线程生命周期、构建安装及验证结构，链接现有架构和专题文档；该文件为项目自定义架构上下文，不是 change 的设计产物。不新增 proposal/tasks，不修改业务实现或主规约。
+
+OpenSpec 严格规约校验 12/12、文档检查、差异空白检查和新增设计文档本地链接核对通过。OpenSpec 校验器不跟踪项目根 design.md 的完成状态；本轮未执行构建、功能或 GPU 测试。
+
+## OpenSpec 首轮模块基线（2026-10-26）
+
+按当前源码、现有测试入口和接口文档建立 core、theme、models、motion、docking、led、charts、ui-components、build-install、gallery、validation-infrastructure 基线，保留既有 vector。覆盖范围及未细化行为记录于 `openspec/README.md`。本轮仅整理规约与验证说明，没有修改业务实现，也没有新建功能 change。
+
+`openspec validate --specs --strict --no-interactive` 12/12 通过；`python tools/check_docs.py` 和 `git diff --check` 通过。另核对规约标题顺序及每个场景的 WHEN/THEN 结构。本轮没有重新构建或运行功能、QML、GPU 和安装消费者测试；基线不代表全部公开接口已逐项覆盖。
+
 ## Gallery CatGray 矢量资源（2026-10-26）
 
 Gallery 的 SVG／Lottie 演示替换为用户提供的 `Emotion_Joy.svg`、`CatGray_All_Actions.json`，复制后 SHA-256 与原件一致。JSON 为 60,050,409 字节，无需额外外部图片；VectorItem 的文件及内存数据上限由 16 MiB 调整到 64 MiB。

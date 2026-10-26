@@ -291,3 +291,16 @@ ctest --test-dir build/thorvg-qrhi-check --output-on-failure
 该模式直接链接含自有 QRhi 后端的静态库，检查运行时版本为 1.1.3、创建适配画布，并执行 SVG CPU 像素验证。再运行主项目原生 `tst_vector`，检查 QRhi 像素和播放，避免只修改版本字符串而未验证真实调用。不传该选项时，消费者仍验证 CPU-only 构建。
 
 清理类型注册或适配入口后，运行 `ctest --test-dir <build> -R "^(version|qml_contracts|vector_contracts|gallery_smoke)$" --output-on-failure`，再运行原生矢量测试和两组 lint。重新生成 qmltypes 并核对公开类型；不要用旧安装目录或构建目录中残留的兼容文件判断当前接口。
+
+## OpenSpec 基线检查
+
+能力边界和证据入口见 [OpenSpec 覆盖索引](../../../openspec/README.md)。修改基线时对照所涉源码、现有测试和接口文档，只记录已实现行为；不把现有测试文件或历史记录当作本轮执行结果。
+
+```sh
+openspec list --specs
+openspec validate --specs --strict --no-interactive
+python tools/check_docs.py
+git diff --check
+```
+
+检查 Purpose、Dependencies、Requirements、Data Model、Known Deviations / Technical Debt、Non-Goals、Assumptions 的顺序，及每个 Scenario 的 WHEN / THEN。结构校验不替代行为测试；涉及实现的后续变更仍按本页对应模块执行验证。
