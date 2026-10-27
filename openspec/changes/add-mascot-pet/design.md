@@ -1,0 +1,166 @@
+# Design
+
+## Context
+
+动机与范围见 [proposal.md](proposal.md)。已检查 `src/uikit/qml/CatWindow.qml`、`CatLottieAnimation.qml`、模块 CMake、vector 与 ui-components 主规格，以及 QML/vector 测试入口。
+
+- CatWindow 是带标题栏、最小尺寸和边缘缩放交互的 ApplicationWindow，不直接作为桌宠外壳。
+- CatLottieAnimation 已包装 VectorItem，提供播放、进度、主题 reducedMotion 和错误提示；当前 ThorVG QRhi 为实验后端，无 CPU 回退。
+- 现有 QML 行为测试默认使用 software/offscreen，不能证明 Lottie GPU 或桌面输入穿透可用；vector 已有可选 GPU 检查入口。
+- Dock 存在系统拖动和整窗穿透预览，但不等同于桌宠的区域输入、多屏定位或原生 Wayland 能力。
+- 本轮只创建规划；以下公共名称、字段及未逐项询问的默认值是可审阅的设计建议，不代表既有 API。
+
+## Goals / Non-Goals
+
+**Goals:** 将角色表现、窗口策略、平台协议隔离，使多个独立桌宠共享公共契约；先建立平台能力证据，再完成组件。全部已确认范围由两个 delta specs 约束。
+
+**Non-Goals:** 不公开页面内嵌 View，不建立统一多宠管理器，不改变 vector 的现有行为，不内置第三方服务或新渲染引擎。内部视觉 Item 仅作实现组合。
+
+## Decisions
+
+### 1. 已确认的产品决策
+
+| 项目 | 决策 |
+| --- | --- |
+| 交付形态 | 仅桌面悬浮，完整窗口组件 |
+| 平台 | Windows、macOS、Linux X11、原生 Wayland |
+| Wayland 范围 | KDE Plasma/KWin 与 GNOME/Mutter，允许配套扩展或辅助组件 |
+| 平台目标 | 完整桌宠体验；不把静默降级当作目标完成 |
+| 输入 | 角色与气泡可交互，区域外穿透，提供整窗穿透开关 |
+| 区域 | 包声明矩形、椭圆、多边形命名区域，支持按动作覆盖，无逐帧透明度检测 |
+| 动作 | 替换、排队、忙时忽略；可选拖拽抢占，结束回默认动作 |
+| 包来源 | 本地目录与 qrc，无 ZIP、下载和脚本 |
+| 渲染组织 | 每包一种后端，同时支持精灵图包与 Lottie 包 |
+| 气泡 | 纯文本、增量更新、可选按钮、自动／手动关闭 |
+| 托盘 | 可选、可扩展菜单，关闭默认隐藏，退出交宿主 |
+| 移动 | 拖拽、外部定位、平滑移动，默认约束屏幕可用区域 |
+| 实例 | 多个独立实例，托盘启用与统一管理由宿主选择 |
+| 持久化 | 组件导出／恢复，宿主保存，恢复校正失效屏幕 |
+| 外部表现 | 命名动作与气泡，无连续参数，不接入 Agent/TTS/音频 |
+| 朝向缩放 | 左右朝向、统一缩放，包决定是否允许镜像 |
+| 窗口策略 | 默认置顶，不主动抢焦点，交互按需处理焦点 |
+| 顺序 | 平台窗口能力原型先行 |
+| 验收 | 允许分阶段；未实机通过标待验收，全部通过才宣布完整支持 |
+| 本轮产物 | 提案、设计、规格、任务，不改实现 |
+
+### 2. 公共窗口与内部组合
+
+建议公开 QML `CatMascotPet`，作为 Window 外壳；公开 C++/QML `MascotPetController` 提供状态与请求入口。命名沿用库的 Cat 视觉类型与无 Cat 控制器惯例。
+
+内部组合为：窗口 → 私有角色渲染 Item + 主题气泡；控制器 → 角色包解析、动作队列、状态快照；私有桌面适配 → 输入区域、移动、层级、焦点、屏幕和托盘。平台类型、原生句柄与配套协议不进入公共头。
+
+不继承现有 CatWindow 的标题栏和边缘缩放行为，复用 ThemePalette、CatLabel、CatButton、现有弹出与菜单能力。气泡默认与角色共用宿主窗口，布局改变窗口范围时补偿窗口原点以保持角色脚底锚点不动；原型若证明需要独立气泡窗口，可替换内部组合而保持同一契约。
+
+每实例独立控制器与请求标识。Qt/QObject 所属线程执行状态变更；资源回调携带加载代次，切包和销毁使旧回调失效。
+
+### 3. 公共接口草案
+
+| 范围 | 建议接口 |
+| --- | --- |
+| 资源与状态 | packageSource、status、errorCode、errorString、availableActions、currentAction |
+| 动作 | requestAction(name, policy, options) → requestId；pauseActions()、resumeActions()、resetToDefault() |
+| 动作反馈 | actionStarted(id, name)、actionEnded(id, reason)、requestRejected(id, reason)、queueLength |
+| 外观交互 | facing、petScale、dragEnabled、dragAction、regionActivated(name, logicalPosition)、dragStarted/dragFinished |
+| 气泡 | showBubble(text, options) → bubbleId、updateBubble(id, text)、appendBubbleText(id, text)、closeBubble(id) |
+| 气泡反馈 | bubbleActionTriggered(bubbleId, actionId)、bubbleClosed(id, reason) |
+| 桌面 | alwaysOnTop、inputTransparent、constrainToAvailableGeometry、setPosition(screenId, point)、moveTo(screenId, point, durationMs)、cancelMove() |
+| 平台反馈 | capabilities、platformStatus、moveEnded(id, reason)、platformError(code, detail) |
+| 托盘生命周期 | trayEnabled、trayAvailable、托盘菜单扩展入口、closeHides、exitRequested() |
+| 保存恢复 | exportState() → map、restoreState(map) → result |
+
+请求标识在实例生命周期内唯一。所有请求结果可区分 Completed、Interrupted、Cancelled、Ignored、Rejected、Failed；自然完成只对应 Completed。默认循环不产生宿主请求的重复完成事件。无效动作与不支持能力均保留可用状态并返回原因。
+
+### 4. 角色包 v1 草案
+
+入口建议为 `mascot.json`，`packageSource` 可指向目录或具体清单；qrc 可直接指向清单。所有素材路径相对包根解析，不允许越界，包括经本地符号链接解析后的越界。未知主版本拒绝，扩展元数据放入独立 metadata 对象。
+
+```json
+{
+  "schemaVersion": 1,
+  "id": "sample-cat",
+  "name": "Sample Cat",
+  "renderer": "sprite",
+  "logicalSize": [160, 160],
+  "footAnchor": [80, 150],
+  "bubbleAnchor": [80, 12],
+  "defaultAction": "idle",
+  "defaultFacing": "right",
+  "allowMirror": true,
+  "fallbackImage": "preview.png",
+  "regions": [
+    {"id": "body", "shape": "ellipse", "rect": [24, 30, 112, 120], "clickable": true, "draggable": true}
+  ],
+  "actions": {
+    "idle": {
+      "loops": -1,
+      "right": {"source": "idle.png", "frameSize": [160, 160], "frameCount": 8, "fps": 12}
+    }
+  }
+}
+```
+
+精灵图首期采用等尺寸网格图集，按行从左到右取帧，关闭帧间混合，允许配置平滑缩放；校验帧数与图集尺寸一致。Lottie 包 renderer 为 lottie，朝向条目使用 source 指向每动作独立 JSON，不提供图集字段或按进度驱动口型。共用动作 loops、区域及锚点。
+
+逻辑尺寸、锚点和区域统一使用角色局部逻辑像素；按动作覆盖的 regions 整体替换包级列表，重叠区域后声明者优先。左右镜像同步变换区域与气泡锚点；脚底全局位置保持稳定。
+
+建议清单上限 1 MiB、动作 256 项、每组区域 128 项、精灵帧 4096 帧；图集上限按当前纹理能力校验，Lottie 沿用现有 64 MiB 单文档上限。数值均要求有限，缩放为正，loops 为 -1 或正整数。具体限额属于设计默认值，可在评审时调整。
+
+替代方案为允许任意 QML 包与混合后端；因首期协议、生命周期与渲染边界更复杂而不采用。
+
+### 5. 动作状态与打断建议
+
+- 默认动作是可被排队请求立即替代的底态，不算 Busy。活动请求或拖拽反馈算 Busy。
+- Replace 打断当前请求并取消旧队列；Enqueue 按 FIFO；IgnoreIfBusy 立即报告 Ignored，不入队。队列建议上限 64，超限拒绝新请求。
+- 有限请求结束后先执行队列，再回默认动作。无限外部动作可占用队列执行权，直至替换或 resetToDefault；此行为须在文档明确。
+- 配置拖拽反馈时，拖拽取消当前请求与队列，反馈动作优先；期间新动作请求拒绝为 InteractionBusy，结束回默认动作。不配置时，拖拽仅控制窗口并发事件。
+- pauseActions 冻结当前动作，恢复继续；隐藏和 reducedMotion 同样冻结时钟但保留请求。停止推进不会产生伪完成，宿主可显式替换或重置。
+- 切包取消当前与排队请求并关闭旧气泡，旧动作完成回调按代次丢弃；无效新包进入错误与占位状态，不播放旧包动作。
+
+这些规则使请求有确定终态，避免为首期增加优先级栈和动作恢复机制。
+
+### 6. 渲染与气泡
+
+精灵播放组合 Qt Quick 现有精灵能力，不新建 GPU 渲染器；Lottie 使用 CatLottieAnimation，关闭其独立自动播放，由调度器启动。两后端统一开始、结束、暂停与失败回调。占位使用现有 Image／CatSvgImage 等组件，不掩盖错误状态。
+
+气泡使用 Qt 纯文本显示，不执行 HTML、Markdown 或链接。默认一次显示一个气泡，show 替换旧气泡并通知 Replaced；增量更新携带 bubbleId，拒绝过期写入。自动关闭从 show 起计时、更新不重置；durationMs=0 表示手动关闭。隐藏期间冻结剩余时限。操作按钮仅发事件，不默认关闭；宿主可关闭或替换。尺寸超限使用受限滚动区域，文字字号跟随主题、不随角色缩放。
+
+### 7. 桌面能力适配与原型门槛
+
+每平台实现统一私有接口，按功能报告 Supported、Unavailable、Unknown 与 reason；另行记录平台验收 Pending、Passed、Failed，不能混为一个布尔值。平台入口选择来自实际会话，原生 Wayland 与 XWayland 分列。
+
+前置原型必须验证透明窗口、非矩形输入区域、整窗穿透、拖拽、精确定位／平滑移动、层级与焦点、多屏 DPI、气泡边界、托盘。Windows/macOS/X11 先验证 Qt 能力，不足处封装最小平台实现；KWin 与 Mutter 分别验证桌面配套组件完成缺失窗口操作的路径。配套使用可识别实例的版本化本地协议，只处理窗口操作，不接入业务服务。
+
+原型交付必须明确支持的系统／桌面／Qt 版本、使用的协议、所需权限、配套安装启用卸载步骤，以及扩展失效的恢复行为。原型未能满足契约时记录阻塞并回到设计评审，不把“无法定位但能显示”等同于完整桌宠。具体系统调用和桌面协议在该阶段通过源码与官方资料验证，本文不声称已有可用实现。
+
+不自动安装或启用桌面扩展。配套断开时取消无法继续的移动、更新能力，允许已可用的角色渲染继续，向宿主报告；重新连接后由宿主重新发请求。
+
+### 8. 移动、托盘与状态
+
+定位统一定义为目标屏幕可用区域左上角起算的逻辑坐标，位置指角色逻辑外框左上角；适配转换为原生坐标。屏幕标识使用可用稳定属性组合并带回退，不能假设跨机器唯一。屏幕不存在优先当前屏幕、再主屏；角色大于可用区域时先降低有效缩放以完整显示，并通知校正。
+
+平滑移动按时间插值，不以帧数推算时长；拖拽、重新定位、新移动、切包、窗口隐藏或屏幕移除取消旧移动并通知。移动仅改变位置，不自动切换走路动作或朝向。用户拖动时边界限制不能阻止跨屏，目标屏幕根据拖拽位置更新。
+
+托盘默认禁用，由宿主选择启用实例并提供图标。基础菜单提供显示／隐藏和穿透切换；退出仅发 exitRequested。多个实例没有隐式共享托盘。托盘服务不可用时报告状态，保留宿主恢复方法。GNOME 等环境的托盘配套与窗口配套分别检测。
+
+exportState 仅输出版本化 UI 配置和屏幕相对位置，不包含角色包文件内容、队列、气泡文本、服务数据或应用退出策略；角色源由宿主另存并先行加载。restoreState 先完整校验再应用，校正信息单独返回，不自动持久化。
+
+### 9. 文件与集成方向
+
+新增 C++ 控制器及私有实现置于 `src/uikit/mascot/`，公开头按现有三组安装／转发列表维护；QML 窗口及私有视觉辅助置于 `src/uikit/qml/` 并显式注册内部类型。平台配套独立子目录与构建条件，不令所有平台无条件依赖桌面扩展。
+
+Gallery 增加 mascot-pet 页面，使用真实公共 API 驱动独立悬浮窗口，提供精灵／Lottie 切换、动作队列、气泡、移动、穿透、实例和能力诊断。不得以 Gallery 私有辅助类形成应用依赖。
+
+后续更新 COMPONENTS、README 索引、MAINTENANCE、专门 MASCOTPET 文档、BUILDING 和技能指引；重复验证步骤进入 VALIDATION，执行证据进入本 change。示例角色资源需可分发许可及来源记录。
+
+## Risks / Trade-offs
+
+- [Wayland 环境能力与扩展版本差异] → 原型先行、版本矩阵、配套握手与失效测试；未验证不承诺支持。
+- [跨平台实机暂不可得] → 分阶段记录待验收，提供探针与步骤；可进入后续实现，但完整支持声明必须等待证据。
+- [Lottie GPU／格式限制] → 保留现有错误契约，按样例与后端实机验收，不以软件测试替代。
+- [气泡改变窗口尺寸导致角色跳动或拦截输入] → 以脚底锚点补偿原点，同步更新原生输入范围，并做背后窗口点击验证。
+- [托盘不可用且窗口隐藏] → 明确诊断与宿主恢复入口，退出权始终留给应用。
+- [内存与加载尖峰] → 清单与资源校验、限制图集和队列规模，按动作预加载策略评估峰值；不作未测性能承诺。
+
+## Migration Plan
+
+这是新增能力，无旧数据迁移。按平台探针、核心角色、窗口集成、Gallery／文档、实机验收推进；每阶段保留验证记录。回退时停用新组件与配套扩展，既有控件和 vector API 不变。未验收的平台保持 Pending，不自动归档为完整交付。
