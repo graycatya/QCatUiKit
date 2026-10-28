@@ -17,3 +17,5 @@ add_subdirectory(dock)
 add_subdirectory(docknative)
 
 add_subdirectory(vector)
+
+add_subdirectory(mascot)

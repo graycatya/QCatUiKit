@@ -72,3 +72,8 @@ DockController 的浮动窗口属性与非虚方法保留既有方法、信号�
 布局格式写入 v2，同时读取 v1。v2 的可选字符串 `returnNode` 用于整列／整行回停；旧 v2 不含此字段仍可读，类型错误则拒绝整份恢复请求。新增此可选字段未提高格式版本，未来未知版本仍被拒绝。
 
 具体变更的验证结果记录在对应 OpenSpec change 中；检查方法见[验证说明](VALIDATION.md)。检查候选发行包时应重新验证对应平台和工具链。
+
+
+### 角色播放控制器
+
+新增独立 Pimpl 类型 MascotPetController，安装真实头、MascotPetController.h 与 MascotPetController 转发头。既有类型布局、枚举数值与 SOVERSION 保持不变。MascotSprite QML 与角色包解析结构为内部实现；当前角色接口见 [角色包与动画播放](MASCOTPET.md)。

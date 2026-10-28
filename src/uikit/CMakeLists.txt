@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
+set_source_files_properties(qml/MascotSprite.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/DockFloatingWindow.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
@@ -9,6 +10,7 @@ set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml PRO
 # Generate the build-tree include facade; install the real headers and portable
 # forwarding headers rather than the absolute build-tree forwarding headers.
 set(qcat_public_headers
+    mascot/qcatmascotpetcontroller.h
     docking/qcatdockcontroller.h
     motion/qcattiltcontroller.h
     core/qcatuikitglobal.h
@@ -21,8 +23,8 @@ set(qcat_public_headers
     charts/qcatwaterfall.h charts/qcatchartfit.h charts/qcatcharthistogram.h charts/qcatchartstack.h
     charts/qcatchartseries3d.h charts/qcatchartscene3d.h charts/qcatchartaxis.h charts/qcatchartseries.h charts/qcatchartitem.h led/qcatledsource.h led/qcatledpreview.h led/qcatledlayoutmodel.h led/qcatlightingframe.h led/qcatledeffectregistry.h led/qcatledstorage.h led/qcatleddeck.h led/qcatledmixer.h led/qcatledoutput.h led/qcatledproject.h
     vector/qcatvectoritem.h)
-set(qcat_compat_headers DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h VectorItem.h)
-set(qcat_class_headers DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject VectorItem)
+set(qcat_compat_headers MascotPetController.h DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h VectorItem.h)
+set(qcat_class_headers MascotPetController DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject VectorItem)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -54,6 +56,7 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
+        mascot/qcatmascotpetcontroller.cpp mascot/qcatmascotpackage.cpp mascot/qcatmascotpackage_p.h mascot/qcatmascotrenderadapter_p.h
         vector/qcatvectoritem.cpp vector/qcatvectorshape_p.h
         docking/qcatdockcontroller.cpp
         docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
@@ -69,6 +72,7 @@ qt_add_qml_module(QCatUiKit
         models/qcattreemodel_p.h models/qcattreemodel.cpp
         core/qcatuikitversion.cpp core/qcatuikitinfo_p.h core/qcatuikitinfo.cpp
     QML_FILES
+        qml/MascotSprite.qml
         qml/CatSvgImage.qml qml/CatLottieAnimation.qml qml/CatVectorCanvas.qml
         qml/CatDockWorkspace.qml qml/CatDockPanel.qml qml/DockGeometry.js qml/DockFloatingWindow.qml
         qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml
@@ -195,6 +199,7 @@ target_include_directories(QCatUiKit PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/theme
         ${CMAKE_CURRENT_SOURCE_DIR}/models
         ${CMAKE_CURRENT_SOURCE_DIR}/docking
+        ${CMAKE_CURRENT_SOURCE_DIR}/mascot
         ${CMAKE_CURRENT_SOURCE_DIR}/motion
         ${CMAKE_CURRENT_SOURCE_DIR}/charts
         ${CMAKE_CURRENT_SOURCE_DIR}/led

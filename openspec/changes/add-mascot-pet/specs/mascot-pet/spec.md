@@ -109,3 +109,23 @@
 #### Scenario: 外部说话事件
 - WHEN 宿主收到第三方说话开始和结束事件并调用动作接口
 - THEN 系统 SHALL 仅执行对应表现请求，SHALL NOT 发起服务请求或操作音频设备。
+
+### Requirement: R10 AsynchronousResourceLoading
+
+角色清单与完整资源校验、Lottie 文档读取和 CPU 场景准备 SHALL 在后台执行，GUI 线程 SHALL 能在这些阶段继续处理事件。QRhi 资源创建与绘制 SHALL 保留在所属渲染线程。异步加载 SHALL 保留原有来源边界和资源限制，SHALL NOT 通过跳过动作校验换取响应性。
+
+#### Scenario: LargePackageLoading
+- WHEN 加载大型本地或 qrc 角色包
+- THEN 状态 SHALL 保持 Loading 直至本代资源可用；完整校验期间 GUI 事件 SHALL 可以被处理，Lottie SHALL 在实际首帧绘制后报告 Ready。
+
+#### Scenario: PreserveAvailableVisual
+- WHEN 提供角色视觉且已有可用画面时加载新包或新动作
+- THEN 视觉 SHALL 在 Loading 期间保留先前画面及其逻辑尺寸，新场景可用后再切换；保留画面 SHALL NOT 被当作新包的 Ready 或可交互状态。清空来源或加载失败 SHALL 继续遵循 Null／Error 及占位契约。
+
+#### Scenario: CancelOrDestroyWhileLoading
+- WHEN 加载期间再次换源或销毁 UI 对象
+- THEN 系统 SHALL 取消未开始或可协作中断的工作，忽略旧代次的状态和元数据；单个 UI 对象的销毁 SHALL NOT 等待解析完成。已经进入的单次解析可完成后再丢弃，应用退出阶段可等待任务安全收尾。
+
+#### Scenario: ReloadSameActionPath
+- WHEN 发起新一代包加载或显式资源重载，动作路径相同而内容已经改变
+- THEN 系统 SHALL 加载本代内容，SHALL NOT 把为了保留画面而持有的旧动画误当作新加载结果。

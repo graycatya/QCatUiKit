@@ -101,6 +101,8 @@ def public_api_mentions(cmake, errors):
             topics = ["THEMING.md"]
         elif name in ("qcattablemodel.h", "qcatchatmodel.h"):
             topics = ["MODELS.md"]
+        elif name == "qcatmascotpetcontroller.h":
+            topics = ["MASCOTPET.md"]
         elif name == "qcatvectoritem.h":
             topics = ["VECTOR.md"]
         elif name == "qcattiltcontroller.h":

@@ -23,3 +23,12 @@ Both CPU-only and QRhi builds use official v1.1.3. The QRhi build additionally
 applies our experimental implementation in adapters/qcatthorvgqrhi/overlay.
 Downloaded sources and managed build tools retain their upstream licenses.
 ThorVG is statically linked into QCatUiKit when the vector backend is enabled.
+
+Character samples in tests/manual/mascot-player/catgray and catgray-lottie:
+CatGray Voxel — CatGray character assets, provided by the repository owner.
+Source: CatGrayWiki/logo/ip/model_voxel/desktop_pet.
+The catgray-lottie paths are direct projections of evaluated Blender mesh surfaces
+from CatGrayWiki/logo/ip/model_voxel/desktop_pet/CatGray_DesktopPet.blend.
+Desktop-pet application use and distribution permitted; standalone asset sale prohibited.
+Retain LICENSES/CatGray-Voxel.txt and the sample's LICENSE.txt when distributing.
+This character asset is not covered by the code's Apache-2.0 license.

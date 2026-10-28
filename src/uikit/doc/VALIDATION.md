@@ -296,3 +296,84 @@ QT_QPA_PLATFORM=xcb python3 tools/capture_gallery_docs.py \
 ```
 
 先检查八张图片的实际曲面、仪表、校准状态、面板布局、三路灯点和矢量 Ready 状态，再发布至文档图片目录。场景不会拼接，长页面只捕获当前可视区域；不以图片声明完整交互或物理设备验收。默认 software 模式继续用于原有九张基础截图。
+
+## Mascot 桌面能力探针
+
+探针是独立 Qt Quick 工具，不依赖 Gallery 或尚未交付的 Mascot 公共 API。在仓库根目录执行，使用与库一致的 Qt 6.8+ kit（通过本机 `CMAKE_PREFIX_PATH` 选择）：
+
+```sh
+cmake -S tests/manual/mascot-probe -B /tmp/qcat-mascot-probe -G Ninja
+cmake --build /tmp/qcat-mascot-probe --parallel
+ctest --test-dir /tmp/qcat-mascot-probe --output-on-failure
+/tmp/qcat-mascot-probe/qcat-mascot-probe
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software /tmp/qcat-mascot-probe/qcat-mascot-probe --json
+```
+
+Windows 将可执行文件替换为相应配置目录下的 `.exe`。默认窗口显示诊断 JSON，场景图初始化后更新 `graphicsApi`（QSGRendererInterface::GraphicsApi 枚举值）；`--json` 只采集环境，不初始化场景图，报告 `NotInitialized`。`--self-test` 验证会话分类，由独立 CTest 调用。
+
+分类以实际 QPA 为准：wayland 插件报告 NativeWayland；xcb 配合 Wayland 会话报告 XWayland；xcb 配合 X11 会话报告 X11；会话未知时不猜测是否使用 XWayland。offscreen/minimal/vnc 报告 Headless。能力初始 Unknown 且附原因，验收固定 Pending；环境采集不会证明透明、穿透、定位、焦点或托盘可用。此工具目前没有原生窗口交互测试装置，也未探测桌面配套。完整验收仍按变更中的矩阵执行并保存人工操作证据。
+
+## 角色包与精灵播放
+
+使用当前 CMakeCache 对应的 Qt kit 和构建目录，不使用无关工具链缓存。以下 `<build-dir>` 和 `<qt-prefix>` 为本机路径：
+
+```sh
+cmake -S . -B <build-dir> -DBUILD_TESTING=ON -DQCATUIKIT_BUILD_MANUAL_TESTS=ON
+cmake --build <build-dir> --target tst_mascot qcat-mascot-player --parallel
+ctest --test-dir <build-dir> -R '^mascot_contracts$' --output-on-failure
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build-dir>/tests/manual/mascot-player/qcat-mascot-player --action working --screenshot /tmp/mascot-working.png
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build-dir>/tests/manual/mascot-player/qcat-mascot-player --action thinking --dark --width 420 --height 520 --screenshot /tmp/mascot-thinking.png
+cmake --install <build-dir> --prefix /tmp/qcat-mascot-install
+cmake -S tests/manual/mascot-player -B /tmp/qcat-player-consumer -DCMAKE_PREFIX_PATH="/tmp/qcat-mascot-install;<qt-prefix>"
+cmake --build /tmp/qcat-player-consumer --parallel
+```
+
+安装消费者运行时通过 `--import-path` 指向安装包的 QML 根目录，必要时按 BUILDING 设置平台动态库路径。Windows 使用实际配置子目录及 `.exe`，环境变量语法按 shell 调整。
+
+`mascot_contracts` 检查本地/qrc 清单、CatGray 共享图集兼容、版本／数值／资源／路径／符号链接／帧范围拒绝、加载代次及销毁、FIFO／替换／忽略／队列上限和终态、暂停与隐藏恢复；实际渲染合成测试用可识别颜色验证跨行帧、镜像与缩放，并检查私有视觉在窗口隐藏和 reducedMotion 时停止时钟。离屏软件结果不证明 GPU、真实桌面输入或平台窗口能力。截图需人工检查角色轮廓、文字和窄屏布局；自动脚本成功不等于视觉审阅。
+
+### Lottie 与角色交互
+
+Mascot 的 GPU 测试为显式选项，避免在 software 环境误报可用。可配置 `QCATUIKIT_TEST_MASCOT_GPU=ON` 后运行 `mascot_render`，或在已有有效 QRhi 桌面直接运行测试可执行文件：
+
+```sh
+QCAT_MASCOT_GPU=1 <build-dir>/tests/auto/mascot/tst_mascot lottieRendering
+<build-dir>/tests/manual/mascot-player/qcat-mascot-player --lottie --dark
+```
+
+按环境选择实际 QPA 和 QSG_RHI_BACKEND；不要强迫不支持 Vulkan 的 offscreen 插件创建 Vulkan 窗口。记录 rendererInterface 的实际图形 API、设备和 X11／XWayland／原生 Wayland 会话。该测试验证有效 QRhi 播放与反馈，不认证桌面悬浮能力。
+
+测试覆盖 Lottie 的自然完成、暂停、隐藏恢复、拖拽反馈抢占、切包取消及旧反馈隔离。software 常规 `mascot_contracts` 检查错误和静态占位，不能替代 GPU 检查。另建禁用后端的构建目录，以 `QCATUIKIT_ENABLE_THORVG=OFF`、`QCATUIKIT_BUILD_THORVG=OFF`、`QCATUIKIT_BUILD_EXAMPLES=OFF` 配置并构建 tst_mascot，运行同名测试，验证关闭后端时也保留明确错误。
+
+交互用例还检查反馈期间 InteractionBusy、有限动作作为无限拖拽反馈、无反馈拖拽、禁用／切包结束交互，以及矩形／椭圆／多边形、后声明区域优先、用途筛选、动作覆盖、镜像／缩放坐标、锚点和实际 Qt 点击信号。这里的区域命中不是原生窗口空白穿透证据。
+
+### CatGray IP Lottie 实材验证
+
+直接使用仓库内 CatGray 包，或按 [角色预览工具](../../../tests/manual/mascot-player/README.md) 生成角色包。使用支持 QRhi 的真实窗口环境执行（非 software）：
+
+```sh
+QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=vulkan QCAT_MASCOT_GPU=1 QCAT_CATGRAY_LOTTIE_PACKAGE=<生成包的绝对目录> <build-dir>/tests/auto/mascot/tst_mascot catgrayLottieRendering
+<build-dir>/tests/manual/mascot-player/qcat-mascot-player --lottie --action working
+```
+
+测试验证真实包加载、两倍逻辑尺寸下的非空角色画面、播放进度、暂停恢复、全部十动作加载和播放、working 单次完成与返回 idle。该测试不替代桌面悬浮窗口的平台验收。常规测试未设置实材路径时跳过该项。启用 `QCATUIKIT_TEST_MASCOT_GPU=ON` 时，`mascot_render` 会执行仓库内完整 CatGray 包的播放契约、十动作渲染和异步场景切换测试。
+
+### 大 Lottie 的异步加载与画面保留
+
+常规 `mascot_contracts` 会读取实际大包，并验证校验期间 GUI 心跳仍运行、取消后不覆盖新包、加载期间销毁安全。`vector_contracts` 验证文件错误异步反馈、清空来源和读取期间销毁。
+
+在有效 QRhi 桌面单独执行以下测试，避免同时运行其他图形窗口或耗时基准：
+
+```sh
+QCAT_MASCOT_GPU=1 <build-dir>/tests/auto/mascot/tst_mascot asynchronousLottieHandoff
+```
+
+该测试先显示 Canvas，再切换到实际 CatGray Lottie；采样加载期间的窗口，断言始终有可见内容，并记录 GUI 心跳最大间隔。还覆盖快速换源、解码期间销毁及 Null 清空。`catgrayLottieRendering` 覆盖完整包切换时的视觉保留，以及同一动作路径内容变化后的重新加载。启用 `QCATUIKIT_TEST_MASCOT_GPU` 后，`mascot_render` 包含上述场景。
+
+可用 Qt 日志规则区分包校验、文件读取、Lottie CPU 准备、渲染场景挂接与首帧绘制命令耗时：
+
+```sh
+QT_LOGGING_RULES='qcatuikit.mascot.loading.debug=true;qcatuikit.vector.loading.debug=true' <build-dir>/tests/manual/mascot-player/qcat-mascot-player --lottie
+```
+
+两个类别默认不输出 debug 日志。首帧日志记录 CPU 侧绘制命令耗时，不是完整 GPU 执行时延。GUI 心跳数据用于记录指定环境的响应情况，不推导跨设备的固定帧时间承诺。加载总时长、峰值内存和素材减重仍需分别评估；本轮未加入动画缓存或修改素材。

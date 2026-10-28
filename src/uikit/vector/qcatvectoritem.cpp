@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "qcatvectoritem.h"
 #include "qcatvectorshape_p.h"
+#include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
+#include <QFutureWatcher>
+#include <QLoggingCategory>
 #include <QMutex>
+#include <QPromise>
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QSGNode>
 #include <QSGRendererInterface>
+#include <QThreadPool>
 #include <QTimer>
+#include <atomic>
 #include <rhi/qrhi.h>
 #include <vector>
 #ifdef QCATUIKIT_HAS_THORVG
@@ -18,8 +24,31 @@
 
 namespace QCatUiKit
 {
+Q_LOGGING_CATEGORY(vectorLoading, "qcatuikit.vector.loading", QtWarningMsg)
 namespace
 {
+QThreadPool &loaderPool();
+void drainLoaderPool()
+{
+    loaderPool().waitForDone();
+}
+QThreadPool &loaderPool()
+{
+    struct Pool final : QThreadPool
+    {
+        Pool()
+        {
+            setMaxThreadCount(2);
+            qAddPostRoutine(drainLoaderPool);
+        }
+        ~Pool() override
+        {
+            qRemovePostRoutine(drainLoaderPool);
+        }
+    };
+    static Pool pool;
+    return pool;
+}
 struct Feedback
 {
     QMutex mutex;
@@ -64,6 +93,13 @@ struct VectorItem::Impl
     bool autoPlay = false, animationEnabled = true, playing = false, paused = false,
          wantsPlay = false;
     quint64 generation = 0, renderedFrames = 0;
+    bool resourceReady = false;
+    std::shared_ptr<std::atomic_bool> readingCancelled;
+    ~Impl()
+    {
+        if (readingCancelled)
+            readingCancelled->store(true);
+    }
     QTimer timer;
     QElapsedTimer clock;
     std::shared_ptr<Feedback> feedback = std::make_shared<Feedback>();
@@ -72,6 +108,73 @@ struct VectorItem::Impl
 #ifdef QCATUIKIT_HAS_THORVG
 namespace
 {
+// The renderer's engine reference remains alive until published CPU scenes
+// are consumed or cancelled. The worker pairs its own init/term on one thread.
+struct DecodedLottie
+{
+    std::unique_ptr<tvg::Animation> animation;
+    QSizeF size;
+    QString error;
+};
+struct DecodeJob
+{
+    QMutex mutex;
+    bool cancelled = false, finished = false;
+    std::unique_ptr<DecodedLottie> result;
+};
+void decodeLottie(const std::shared_ptr<DecodeJob> &job, const QByteArray &bytes,
+                  const QByteArray &resourcePath)
+{
+    {
+        QMutexLocker lock(&job->mutex);
+        if (job->cancelled)
+            return;
+    }
+    const bool initialized = tvg::Initializer::init(0) == tvg::Result::Success;
+    auto result = std::make_unique<DecodedLottie>();
+    QElapsedTimer elapsed;
+    elapsed.start();
+    if (initialized)
+    {
+        result->animation.reset(tvg::Animation::gen());
+        auto *picture = result->animation ? result->animation->picture() : nullptr;
+        if (!picture || picture->load(bytes.constData(), uint32_t(bytes.size()), "lottie",
+                                      resourcePath.isEmpty() ? nullptr : resourcePath.constData(),
+                                      true) != tvg::Result::Success)
+            result->error = QStringLiteral("Cannot decode SVG/Lottie data");
+        else
+        {
+            // Materialize/synchronize the CPU scene even if another user of
+            // ThorVG initialized its internal scheduler with worker threads.
+            std::unique_ptr<tvg::Accessor> accessor(tvg::Accessor::gen());
+            if (!accessor || accessor->set(
+                                 picture, [picture](const tvg::Paint *node, void *)
+                                 { return node == picture; }, nullptr) != tvg::Result::Success)
+                result->error = QStringLiteral("Cannot prepare Lottie scene");
+            float w = 0, h = 0;
+            picture->size(&w, &h);
+            if (!std::isfinite(w) || !std::isfinite(h) || w <= 0 || h <= 0)
+                result->error = QStringLiteral("Vector source has invalid dimensions");
+            else
+                result->size = {w, h};
+        }
+    }
+    else
+        result->error = QStringLiteral("ThorVG initialization failed");
+    qCDebug(vectorLoading) << "Lottie CPU decode ms" << elapsed.elapsed();
+    {
+        QMutexLocker lock(&job->mutex);
+        if (!job->cancelled)
+        {
+            job->result = std::move(result);
+            job->finished = true;
+        }
+    }
+    // On cancellation the unpublished scene must die before the worker's term.
+    result.reset();
+    if (initialized)
+        tvg::Initializer::term();
+}
 using VectorPrivate::plain;
 bool applyFill(tvg::Shape *shape, const QVariant &input, bool stroke)
 {
@@ -188,6 +291,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     ~VectorRenderer() override
     {
 #ifdef QCATUIKIT_HAS_THORVG
+        cancelDecode();
         release();
         if (initialized)
             tvg::Initializer::term();
@@ -207,6 +311,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         box = d.viewBox;
         progress = d.progress;
         valid = d.status == VectorItem::Loading || d.status == VectorItem::Ready;
+        resourceReady = d.resourceReady;
     }
     void initialize(QRhiCommandBuffer *) override
     {
@@ -215,6 +320,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
             initialized = tvg::Initializer::init(0) == tvg::Result::Success;
         if (owner != rhi())
         {
+            cancelDecode();
             release();
             owner = rhi();
         }
@@ -230,14 +336,45 @@ class VectorRenderer final : public QQuickRhiItemRenderer
 #ifdef QCATUIKIT_HAS_THORVG
         if (!valid || !initialized)
         {
+            cancelDecode();
             release();
             clear();
             if (valid && !initialized)
                 report(VectorItem::Error, QStringLiteral("ThorVG initialization failed"));
             return;
         }
-        if (!canvas || loadedGeneration != generation)
+        if (pending && pendingGeneration != generation)
+            cancelDecode();
+        std::unique_ptr<DecodedLottie> decoded;
+        bool canReplace = resourceReady;
+        if (resourceReady && format == VectorItem::Lottie && loadedGeneration != generation)
         {
+            if (!pending)
+            {
+                pending = std::make_shared<DecodeJob>();
+                pendingGeneration = generation;
+                loaderPool().start([job = pending, data = bytes, path = resourcePath]
+                                   { decodeLottie(job, data, path); });
+            }
+            {
+                QMutexLocker lock(&pending->mutex);
+                if (pending->finished)
+                    decoded = std::move(pending->result);
+            }
+            canReplace = bool(decoded);
+            if (decoded && !decoded->error.isEmpty())
+            {
+                report(VectorItem::Error, decoded->error);
+                cancelDecode();
+                release();
+                clear();
+                return;
+            }
+        }
+        if (canReplace && (!canvas || loadedGeneration != generation))
+        {
+            QElapsedTimer attachTime;
+            attachTime.start();
             release();
             canvas.reset(ThorvgQrhiCanvas::gen());
             if (!canvas)
@@ -281,35 +418,39 @@ class VectorRenderer final : public QQuickRhiItemRenderer
             {
                 if (format == VectorItem::Lottie)
                 {
-                    animation.reset(tvg::Animation::gen());
-                    picture = animation ? animation->picture() : nullptr;
+                    animation = std::move(decoded->animation);
+                    picture = animation->picture();
+                    nativeSize = decoded->size;
+                    cancelDecode();
                 }
                 else
                     picture = tvg::Picture::gen();
                 std::unique_ptr<tvg::Picture> imageOwner(format == VectorItem::Svg ? picture
                                                                                    : nullptr);
-                if (!picture ||
-                    picture->load(bytes.constData(), uint32_t(bytes.size()),
-                                  format == VectorItem::Svg ? "svg" : "lottie",
-                                  resourcePath.isEmpty() ? nullptr : resourcePath.constData(),
-                                  true) != tvg::Result::Success)
+                if (format == VectorItem::Svg)
                 {
-                    picture = nullptr;
-                    clear();
-                    report(VectorItem::Error, QStringLiteral("Cannot decode SVG/Lottie data"));
-                    return;
+                    if (!picture ||
+                        picture->load(bytes.constData(), uint32_t(bytes.size()), "svg",
+                                      resourcePath.isEmpty() ? nullptr : resourcePath.constData(),
+                                      true) != tvg::Result::Success)
+                    {
+                        picture = nullptr;
+                        clear();
+                        report(VectorItem::Error, QStringLiteral("Cannot decode SVG/Lottie data"));
+                        return;
+                    }
+                    float w = 0, h = 0;
+                    picture->size(&w, &h);
+                    if (!std::isfinite(w) || !std::isfinite(h) || w <= 0 || h <= 0)
+                    {
+                        picture = nullptr;
+                        clear();
+                        report(VectorItem::Error,
+                               QStringLiteral("Vector source has invalid dimensions"));
+                        return;
+                    }
+                    nativeSize = {w, h};
                 }
-                float w = 0, h = 0;
-                picture->size(&w, &h);
-                if (!std::isfinite(w) || !std::isfinite(h) || w <= 0 || h <= 0)
-                {
-                    picture = nullptr;
-                    clear();
-                    report(VectorItem::Error,
-                           QStringLiteral("Vector source has invalid dimensions"));
-                    return;
-                }
-                nativeSize = {w, h};
                 paint = picture;
                 if (canvas->add(paint) != tvg::Result::Success)
                 {
@@ -322,6 +463,10 @@ class VectorRenderer final : public QQuickRhiItemRenderer
                 imageOwner.release();
             }
             loadedGeneration = generation;
+            activeFormat = format;
+            activeBox = box;
+            firstDraw = true;
+            qCDebug(vectorLoading) << "render scene attach ms" << attachTime.elapsed();
         }
         if (!paint)
         {
@@ -331,19 +476,22 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         tvg::Result result = tvg::Result::Success;
         if (animation)
         {
-            const float frame = float(progress * qMax(0.0f, animation->totalFrame() - 1.0f));
+            const float frame = float((loadedGeneration == generation ? progress : lastProgress) *
+                                      qMax(0.0f, animation->totalFrame() - 1.0f));
             if (std::abs(frame - animation->curFrame()) > 0.001f)
                 result = animation->frame(frame);
         }
         const auto viewport = fitted(renderTarget()->pixelSize(), nativeSize, mode);
         const qreal sx = viewport.width() / nativeSize.width(),
                     sy = viewport.height() / nativeSize.height();
-        const QPointF origin = format == VectorItem::Canvas ? box.topLeft() : QPointF();
+        const QPointF origin = activeFormat == VectorItem::Canvas ? activeBox.topLeft() : QPointF();
         const tvg::Matrix matrix{float(sx), 0,         float(viewport.x() - origin.x() * sx),
                                  0,         float(sy), float(viewport.y() - origin.y() * sy),
                                  0,         0,         1};
         if (result == tvg::Result::Success)
             result = paint->transform(matrix);
+        QElapsedTimer drawTime;
+        drawTime.start();
         if (result == tvg::Result::Success)
             result = canvas->target(rhi(), cb, renderTarget());
         if (result == tvg::Result::Success)
@@ -360,7 +508,14 @@ class VectorRenderer final : public QQuickRhiItemRenderer
                    QStringLiteral("ThorVG QRhi render failed (%1)").arg(int(result)));
             return;
         }
-        report(VectorItem::Ready);
+        if (loadedGeneration == generation)
+        {
+            lastProgress = progress;
+            if (firstDraw)
+                qCDebug(vectorLoading) << "first draw ms" << drawTime.elapsed();
+            firstDraw = false;
+            report(VectorItem::Ready);
+        }
 #else
         clear();
 #endif
@@ -375,11 +530,27 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     VectorItem::FillMode mode = VectorItem::PreserveAspectFit;
     QRectF box;
     qreal progress = 0;
-    bool valid = false;
+    bool valid = false, resourceReady = false;
 #ifdef QCATUIKIT_HAS_THORVG
     bool initialized = false;
     QRhi *owner = nullptr;
-    quint64 loadedGeneration = 0;
+    quint64 loadedGeneration = 0, pendingGeneration = 0;
+    std::shared_ptr<DecodeJob> pending;
+    VectorItem::Format activeFormat = VectorItem::Svg;
+    QRectF activeBox;
+    qreal lastProgress = 0;
+    bool firstDraw = false;
+    void cancelDecode()
+    {
+        if (!pending)
+            return;
+        {
+            QMutexLocker lock(&pending->mutex);
+            pending->cancelled = true;
+            pending->result.reset();
+        }
+        pending.reset();
+    }
     std::unique_ptr<ThorvgQrhiCanvas> canvas;
     std::unique_ptr<tvg::Animation> animation;
     tvg::Paint *paint = nullptr;
@@ -412,6 +583,8 @@ class VectorRenderer final : public QQuickRhiItemRenderer
 
 VectorItem::VectorItem(QQuickItem *parent) : QQuickRhiItem(parent), d(std::make_unique<Impl>())
 {
+    // Establish the bounded loader pool and shutdown hook on the GUI thread.
+    loaderPool();
     setAlphaBlending(true);
     setSampleCount(4);
     setClip(true);
@@ -447,6 +620,8 @@ void VectorItem::setState(Status status, const QString &error)
     d->error = error;
     if (status == Error || status == Null)
     {
+        if (d->readingCancelled)
+            d->readingCancelled->store(true);
         d->timer.stop();
         d->playing = d->paused = false;
         emit playbackChanged();
@@ -460,7 +635,10 @@ void VectorItem::prepare()
         d->clock.restart();
         d->timer.start();
     }
-    ++d->generation;
+    if (d->readingCancelled)
+        d->readingCancelled->store(true);
+    const auto epoch = ++d->generation;
+    d->resourceReady = false;
     d->bytes.clear();
     d->resourcePath.clear();
     d->size = {};
@@ -474,6 +652,8 @@ void VectorItem::prepare()
     emit progressChanged();
     emit playbackChanged();
     emit contentRectChanged();
+    if (epoch != d->generation)
+        return;
     update();
     if (d->format == Canvas)
     {
@@ -494,49 +674,106 @@ void VectorItem::prepare()
         setState(Error, QStringLiteral("ThorVG support is disabled in this QCatUiKit build"));
         return;
     }
-    if (d->format != Canvas)
+    if (d->format == Canvas || !d->sourceData.isEmpty())
     {
-        d->bytes = d->sourceData;
-        if (d->bytes.isEmpty())
-        {
-            QUrl url = d->source;
-            if (url.isRelative())
-                url = qmlContext(this)
-                          ? qmlContext(this)->resolvedUrl(url)
-                          : QUrl::fromLocalFile(QFileInfo(url.toString()).absoluteFilePath());
-            if (url.scheme() != "qrc" && !url.isLocalFile())
-            {
-                setState(Error,
-                         QStringLiteral("Vector source supports local files and qrc URLs only"));
-                return;
-            }
-            QFile file(url.scheme() == "qrc" ? ':' + url.path() : url.toLocalFile());
-            if (!file.open(QIODevice::ReadOnly))
-            {
-                setState(Error,
-                         QStringLiteral("Cannot open vector source: %1").arg(file.errorString()));
-                return;
-            }
-            if (file.size() > 64 * 1024 * 1024)
-            {
-                setState(Error, QStringLiteral("Vector source exceeds 64 MiB"));
-                return;
-            }
-            d->bytes = file.readAll();
-            if (url.isLocalFile())
-                d->resourcePath = QFileInfo(url.toLocalFile()).absolutePath().toUtf8();
-        }
-        if (d->bytes.isEmpty() || d->bytes.size() > 64 * 1024 * 1024)
+        if (d->format != Canvas)
+            d->bytes = d->sourceData;
+        if (d->bytes.size() > 64 * 1024 * 1024)
         {
             setState(Error, QStringLiteral("Vector data is empty or exceeds 64 MiB"));
             return;
         }
+        d->resourceReady = true;
+        setState(Loading);
+        return;
     }
+    QUrl url = d->source;
+    if (url.isRelative())
+        url = qmlContext(this) ? qmlContext(this)->resolvedUrl(url)
+                               : QUrl::fromLocalFile(QFileInfo(url.toString()).absoluteFilePath());
+    if (url.scheme() != "qrc" && !url.isLocalFile())
+    {
+        setState(Error, QStringLiteral("Vector source supports local files and qrc URLs only"));
+        return;
+    }
+    struct ReadResult
+    {
+        QByteArray bytes;
+        QString error;
+        qint64 elapsedMs = 0;
+    };
+    auto cancelled = std::make_shared<std::atomic_bool>(false);
+    d->readingCancelled = cancelled;
+    auto promise = std::make_shared<QPromise<ReadResult>>();
+    auto *watcher = new QFutureWatcher<ReadResult>(this);
+    connect(watcher, &QFutureWatcher<ReadResult>::finished, this,
+            [this, watcher, epoch, cancelled, url]
+            {
+                watcher->deleteLater();
+                if (epoch != d->generation || cancelled->load() || d->status == Error)
+                    return;
+                const auto result = watcher->result();
+                qCDebug(vectorLoading) << "file read ms" << result.elapsedMs << url;
+                if (!result.error.isEmpty())
+                {
+                    setState(Error, result.error);
+                    update();
+                    return;
+                }
+                d->bytes = result.bytes;
+                if (url.isLocalFile())
+                    d->resourcePath = QFileInfo(url.toLocalFile()).absolutePath().toUtf8();
+                d->resourceReady = true;
+                update();
+            });
+    watcher->setFuture(promise->future());
     setState(Loading);
+    loaderPool().start(
+        [promise, url, cancelled]
+        {
+            promise->start();
+            QElapsedTimer elapsed;
+            elapsed.start();
+            ReadResult result;
+            QFile file(url.scheme() == "qrc" ? ':' + url.path() : url.toLocalFile());
+            if (!cancelled->load())
+            {
+                if (!file.open(QIODevice::ReadOnly))
+                    result.error =
+                        QStringLiteral("Cannot open vector source: %1").arg(file.errorString());
+                else if (file.size() > 64 * 1024 * 1024)
+                    result.error = QStringLiteral("Vector source exceeds 64 MiB");
+                else
+                {
+                    while (!file.atEnd() && !cancelled->load())
+                    {
+                        const auto chunk = file.read(1024 * 1024);
+                        if (chunk.isEmpty() && file.error() != QFileDevice::NoError)
+                        {
+                            result.error = file.errorString();
+                            break;
+                        }
+                        result.bytes += chunk;
+                        if (result.bytes.size() > 64 * 1024 * 1024)
+                        {
+                            result.error = QStringLiteral("Vector data is empty or exceeds 64 MiB");
+                            break;
+                        }
+                    }
+                    if (result.bytes.isEmpty() && result.error.isEmpty())
+                        result.error = QStringLiteral("Vector data is empty or exceeds 64 MiB");
+                }
+            }
+            result.elapsedMs = elapsed.elapsed();
+            promise->addResult(std::move(result));
+            promise->finish();
+        });
 }
 void VectorItem::tick()
 {
     const qreal elapsed = d->clock.restart() / 1000.0;
+    if (d->status == Loading)
+        update();
     if (window() &&
         window()->rendererInterface()->graphicsApi() == QSGRendererInterface::Software &&
         d->status == Loading)

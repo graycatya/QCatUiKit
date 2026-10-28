@@ -1,0 +1,83 @@
+{
+  "source": "desktop_pet/CatGray_DesktopPet.blend",
+  "sourceSHA256": "324968b5e0361a8245dbbcb7a08520bdbdf3b00432a61d364de5deabb207468f",
+  "blender": "5.2.2 LTS",
+  "size": [
+    768,
+    832
+  ],
+  "fps": 24,
+  "actions": {
+    "idle": {
+      "frames": 96,
+      "bytes": 17992970,
+      "sha256": "4ea8a83aa2856f1f64edcc7b5701d48e95ac10c1258c5b12edfd2810f5462028",
+      "uniqueFrames": 96
+    },
+    "thinking": {
+      "frames": 72,
+      "bytes": 16562579,
+      "sha256": "871789685cbc7babe47af82a6952a1d3eaf75a79dcb63480b3700d10e249f43e",
+      "uniqueFrames": 72
+    },
+    "working": {
+      "frames": 48,
+      "bytes": 12544782,
+      "sha256": "877610c66ba9b12e520e289aaa77896d205a21a3cf8260a3a7654111274bbbe8",
+      "uniqueFrames": 48
+    },
+    "waiting": {
+      "frames": 96,
+      "bytes": 22277752,
+      "sha256": "3d146fa3bcd72ab243a1ea24514912e7a2251897c5083a2579aa2087ce796d3c",
+      "uniqueFrames": 96
+    },
+    "speaking": {
+      "frames": 72,
+      "bytes": 16493675,
+      "sha256": "51be33231c4995c397c3181f77fc49aa69a5e81d8230360ddf75704d2b08de41",
+      "uniqueFrames": 72
+    },
+    "success": {
+      "frames": 72,
+      "bytes": 12381099,
+      "sha256": "b3c4a0f2eb79092b36a0e5401456c4a6ac0e0b1364ea9ccbcaed75164f25f776",
+      "uniqueFrames": 72
+    },
+    "error": {
+      "frames": 72,
+      "bytes": 15384437,
+      "sha256": "05a1bb295ec5826654fd82099b12357b858e9384ab46d10f73f691b81c5c7c25",
+      "uniqueFrames": 72
+    },
+    "walk": {
+      "frames": 96,
+      "bytes": 7565973,
+      "sha256": "bd4e379b9bec0c256a9498efd8e6cafa241cc6f8f560071eb8b69d7b2ab2e762",
+      "uniqueFrames": 32
+    },
+    "run": {
+      "frames": 48,
+      "bytes": 3606757,
+      "sha256": "e604a4a37df72447f602f4a0b35bdb006d55537ee252e1e946d0366d6b857213",
+      "uniqueFrames": 16
+    },
+    "jump": {
+      "frames": 48,
+      "bytes": 10672860,
+      "sha256": "2d98808c7eb678a4b732ad602d9ded57b209d5b988ed3dc154ed9968b1eed7e2",
+      "uniqueFrames": 45
+    }
+  },
+  "camera": "DesktopPetCamera",
+  "method": "evaluated Blender mesh planes, orthographic projection, exact affine-depth occlusion; no raster tracing",
+  "poseHelpersSHA256": {
+    "export_desktop_pet.py": "c9e5c53b0fff0b9df526349122e8b4e46c9a851b2f3bbab73366d601f15e84c1",
+    "desktop_pet_actions.py": "af32370ad7e521bd1af4d81ad903d5d0c80adad9928521f541bf80db8815e081",
+    "desktop_pet_speech.py": "7c05b74dc31b12ca04968fd66634b1ff19a0d8b286246a424071685366a69aeb",
+    "rig_voxel.py": "215f9fce61a460284f2add3a41c00fff98b47cebff71c40a168ced65d34eb13a",
+    "facial_voxel.py": "eaf6bae0e6e2bce53d1afd0e094467589c71cf88316758635ccec264bafedfd4",
+    "voxel_model.py": "e69de8c1016d593f930e6573c97a6e28136ad2d49fb64fad63d926c30ced6bba"
+  },
+  "generatorSHA256": "7c774caac2c99aa1d944b6a24bc6ff1c49fd8bcaf66ab3e59f11c89b24c06842"
+}

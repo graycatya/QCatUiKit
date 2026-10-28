@@ -264,3 +264,8 @@
 | CatDockWorkspace | `controller`、`panels`、`theme`、`layoutLocked`、`dragging`、最低尺寸和 `sizeConstrained`；标题栏／扁平标签、随动缩略窗、方向指示与预览、跨窗口拖拽、浮动／回停 |
 | CatDockPanel | `dockId`、`title`、`content`、最小尺寸、`closable`、`movable`、`floatable`、`closeRequested()`；内容实例保持 |
 | DockController | 面板注册、组内／工作区外边缘停靠、浮动／回停、关闭／打开、激活、排序和版本化 JSON 布局；见 [Dock 工作区](DOCKING.md) |
+
+
+## 角色包播放
+
+`MascotPetController` 加载本地／qrc 精灵与 Lottie 角色包，提供命名动作请求、队列、暂停恢复、拖拽反馈和区域命中。当前提供独立开发预览工具；桌面悬浮窗口、穿透、气泡和托盘尚未交付。内部 `MascotSprite` 不作为页面内嵌公共组件。接口及包格式见 [角色包与动画播放](MASCOTPET.md)。

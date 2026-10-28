@@ -76,6 +76,26 @@ class VectorTest : public QObject
         item->setSourceData({});
         QCOMPARE(item->status(), VectorItem::Null);
     }
+    void asynchronousFileLifetime()
+    {
+        VectorItem item;
+        if (!item.backendAvailable())
+            QSKIP("File loading requires the vector backend");
+        item.setSource(QUrl::fromLocalFile("/missing/vector-source.svg"));
+        QCOMPARE(item.status(), VectorItem::Loading);
+        QTRY_COMPARE(item.status(), VectorItem::Error);
+        QVERIFY(item.errorString().contains("Cannot open"));
+        item.setSource(QUrl::fromLocalFile("/missing/other-vector.svg"));
+        item.setSource({});
+        QCOMPARE(item.status(), VectorItem::Null);
+        QTest::qWait(30);
+        QCOMPARE(item.status(), VectorItem::Null);
+        auto *temporary = new VectorItem;
+        temporary->setSource(
+            QUrl::fromLocalFile(QStringLiteral(QCAT_VECTOR_DATA_DIR "/vector-demo.json")));
+        delete temporary;
+        QTest::qWait(30);
+    }
     void qrhiQmlCanvas()
     {
         if (!qEnvironmentVariableIsSet("QCAT_VECTOR_GPU"))
@@ -162,6 +182,12 @@ CatVectorCanvas {
         QCOMPARE(item->progress(), 1.0);
         item->stop();
         QCOMPARE(item->progress(), 0.0);
+        QFile memoryAnimation(QStringLiteral(QCAT_VECTOR_DATA_DIR "/vector-demo.json"));
+        QVERIFY(memoryAnimation.open(QIODevice::ReadOnly));
+        item->setSource({});
+        item->setSourceData(memoryAnimation.readAll());
+        QTRY_COMPARE_WITH_TIMEOUT(item->status(), VectorItem::Ready, 10000);
+        QCOMPARE(item->frameCount(), 60);
         item->setFormat(VectorItem::Canvas);
         item->setViewBox({0, 0, 100, 100});
         item->setShapes({QVariantMap{

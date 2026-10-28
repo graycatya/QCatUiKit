@@ -1,0 +1,15 @@
+{
+  "actions": 10,
+  "frames": 720,
+  "totalAnimationBytes": 135482884,
+  "checks": [
+    "source blend SHA-256 matched",
+    "all action SHA-256 matched",
+    "24 FPS / 768x832",
+    "720 composition frames; all sampled frames nonempty and inside canvas",
+    "all assets are vector precompositions with shape layers",
+    "no image assets, external paths or embedded raster data",
+    "standalone fallback is 768x832"
+  ],
+  "sourceBlendSHA256": "324968b5e0361a8245dbbcb7a08520bdbdf3b00432a61d364de5deabb207468f"
+}

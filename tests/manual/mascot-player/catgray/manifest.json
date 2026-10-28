@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "catgray-voxel",
+  "name": "CatGray Voxel",
+  "type": "sprite",
+  "asset": "spritesheet.png",
+  "frameSize": [
+    192,
+    208
+  ],
+  "anchor": [
+    0.5,
+    0.92
+  ],
+  "animations": {
+    "idle": {
+      "startFrame": 0,
+      "frameCount": 32,
+      "fps": 8,
+      "loop": true
+    },
+    "thinking": {
+      "startFrame": 32,
+      "frameCount": 24,
+      "fps": 8,
+      "loop": true
+    },
+    "working": {
+      "startFrame": 56,
+      "frameCount": 16,
+      "fps": 8,
+      "loop": true
+    },
+    "waiting": {
+      "startFrame": 72,
+      "frameCount": 32,
+      "fps": 8,
+      "loop": true
+    },
+    "speaking": {
+      "startFrame": 104,
+      "frameCount": 24,
+      "fps": 8,
+      "loop": true
+    },
+    "success": {
+      "startFrame": 128,
+      "frameCount": 24,
+      "fps": 8,
+      "loop": true
+    },
+    "error": {
+      "startFrame": 152,
+      "frameCount": 24,
+      "fps": 8,
+      "loop": true
+    },
+    "walk": {
+      "startFrame": 176,
+      "frameCount": 32,
+      "fps": 8,
+      "loop": true
+    },
+    "run": {
+      "startFrame": 208,
+      "frameCount": 16,
+      "fps": 8,
+      "loop": true
+    },
+    "jump": {
+      "startFrame": 224,
+      "frameCount": 16,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "stateMap": {
+    "Idle": "idle",
+    "Thinking": "thinking",
+    "Working": "working",
+    "Waiting": "waiting",
+    "Speaking": "speaking",
+    "Success": "success",
+    "Error": "error"
+  },
+  "licenseFile": "LICENSE.txt"
+}

@@ -15,6 +15,7 @@ Linux 原生 Wayland Dock 的顶层拖动协议探测可选使用 `pkg-config` �
 | `QCATUIKIT_THORVG_SOURCE_DIR` | 空 | 开发用源码覆盖；默认自动下载固定源码并应用仓库内 QRhi 实现 |
 | `QCATUIKIT_BUILD_THORVG` | 跟随 ENABLE_THORVG | 通过 Meson 构建静态库；仅 CPU 模式使用 v1.1.3 |
 | `BUILD_TESTING` | `ON` | 构建自动测试并注册 CTest 测试组 |
+| `QCATUIKIT_BUILD_MANUAL_TESTS` | `OFF` | 构建 tests/manual 下的交互验证程序，需开启测试 |
 | `QCATUIKIT_TEST_CHART_GPU` | `OFF` | 注册二维／三维及导出的真实图形窗口测试，需开启测试 |
 | `QCATUIKIT_TEST_LED_GPU` | `OFF` | 注册 LED 真实 GPU 测试，需开启测试 |
 | `QCATUIKIT_RELEASE_CHANNEL` | `experimental` | `experimental` 或 `stable`，独立于编译模式 |
@@ -239,3 +240,7 @@ LD_LIBRARY_PATH="$PWD/stage/lib:/path/to/Qt/6.x/gcc_64/lib" \
 ```
 
 其他安装消费者、离屏测试及验证范围见 [验证说明](VALIDATION.md)。公开接口替换检查见 [ABI](ABI.md)。
+
+## 角色播放开发工具
+
+启用 `BUILD_TESTING=ON` 和 `QCATUIKIT_BUILD_MANUAL_TESTS=ON` 时构建 `qcat-mascot-player`，用于查看角色清单、动作与精灵／Lottie 播放。它是普通预览窗口，桌面悬浮集成仍待实现。当前接口和独立安装消费者用法见 [角色包与动画播放](MASCOTPET.md) 与 [工具说明](../../../tests/manual/mascot-player/README.md)。

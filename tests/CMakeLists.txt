@@ -48,3 +48,8 @@ function(qcat_add_test)
 endfunction()
 
 add_subdirectory(auto)
+
+option(QCATUIKIT_BUILD_MANUAL_TESTS "Build interactive manual test applications" OFF)
+if(QCATUIKIT_BUILD_MANUAL_TESTS)
+    add_subdirectory(manual)
+endif()

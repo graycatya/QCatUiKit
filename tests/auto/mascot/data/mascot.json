@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "test",
+  "renderer": "sprite",
+  "logicalSize": [
+    8,
+    8
+  ],
+  "footAnchor": [
+    4,
+    8
+  ],
+  "bubbleAnchor": [
+    4,
+    0
+  ],
+  "defaultAction": "idle",
+  "allowMirror": true,
+  "actions": {
+    "idle": {
+      "loops": -1,
+      "right": {
+        "source": "atlas.png",
+        "frameSize": [
+          8,
+          8
+        ],
+        "frameCount": 1,
+        "fps": 10
+      }
+    },
+    "jump": {
+      "loops": 1,
+      "right": {
+        "source": "atlas.png",
+        "frameSize": [
+          8,
+          8
+        ],
+        "frameCount": 2,
+        "fps": 10,
+        "startFrame": 1
+      }
+    }
+  }
+}
