@@ -1,4 +1,5 @@
 /build*/
+/tests/manual/build/
 /stage*/
 /graphify-out/
 /.qt/
