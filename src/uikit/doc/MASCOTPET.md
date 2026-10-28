@@ -4,6 +4,8 @@
 
 `MascotPetController` 已提供本地与 qrc 角色包加载、精灵与 Lottie 播放、命名动作请求和角色区域交互。开发预览工具可播放自带的 CatGray Voxel 十个动作，切换动作、暂停、缩放并验证减少动效。`--lottie` 选择从 CatGray 桌宠 Blender 模型直接生成的十动作矢量包，窗口按钮可切换两种角色包。当前尚无公共 `CatMascotPet` 桌面窗口；透明区域穿透、定位、气泡和托盘仍待实现，不能据此宣布平台支持。
 
+Windows 桌面原型及跨进程输入检查见 [平台原型与验收边界](MASCOTPLATFORMS.md)。它是独立手动验证程序，不是已交付的公共桌宠窗口。
+
 ## 运行预览
 
 启用 `BUILD_TESTING=ON` 和 `QCATUIKIT_BUILD_MANUAL_TESTS=ON` 构建 `qcat-mascot-player`。在当前构建目录查找该可执行文件；Linux 通常位于 `tests/manual/mascot-player/`。不传参数时读取内置 qrc 包。可传 `--package /absolute/path/to/package` 或具体清单路径，`--action working` 选择起始动作。`--screenshot /tmp/catgray.png` 在启动后保存窗口截图并退出，适用于渲染检查。`--dark` 与 `--width 420 --height 520` 可检查深色和窄屏布局；独立安装时通过 `--import-path` 指定安装包的 QML 根目录。
@@ -16,7 +18,7 @@
 
 手动预览的私有视觉在换包校验时保留先前的画面及逻辑尺寸；换动作时冻结旧 Lottie 场景，新场景准备完成后切换。保留画面不提供旧包的可交互状态，失败或清空来源仍显示错误占位或清空。快速换源和对象销毁会使旧任务失效；已经开始的单次 JSON/ThorVG 解析会完成后再丢弃，不阻塞销毁方。
 
-这项优化减少界面等待，不能消除复杂素材的 CPU 解码、首帧路径三角化和 GPU 上传成本。当前没有全动作预加载或解码缓存，也不改变素材质量。耗时诊断方式见 [验证说明](VALIDATION.md)。
+这项优化减少界面等待，不能消除复杂素材的 CPU 解码、首帧路径三角化和 GPU 上传成本。私有角色视觉还提供容量可配的动作缓存和后台预热，详见下文；不改变素材质量。耗时诊断方式见 [验证说明](VALIDATION.md)。
 
 ## 控制器接入
 
@@ -42,13 +44,14 @@ MascotPetController {
 }
 ```
 
-C++ 包含 `<QCatUiKit/MascotPetController>` 并链接 `QCatUiKit::QCatUiKit`。所有操作在对象所属线程执行。加载在下一次事件循环处理，切包使旧加载代次失效；解析和图片校验在该线程同步完成，不宣称后台解码。Lottie 的 ThorVG 解析和 QRhi 绘制沿用 VectorItem 的渲染线程实现。
+C++ 包含 `<QCatUiKit/MascotPetController>` 并链接 `QCatUiKit::QCatUiKit`。所有操作在对象所属线程执行。清单和完整资源校验、Lottie 读取及 CPU 解析在后台执行；切包使旧代次失效，QRhi 绘制在渲染线程执行。
 
 | 接口 | 当前行为 |
 | --- | --- |
 | packageSource | file URL 指向目录或清单；qrc URL 指向清单或资源目录。目录优先 mascot.json，再 manifest.json。相同 URL 不重新加载；如需重载，先置空再设置 |
 | status、errorCode、errorString | Null / Loading / Ready / Error；解析失败为 InvalidPackage，渲染失败为 RenderFailed；错误保留定位字段。精灵通过资源校验后 Ready，Lottie 在私有视觉收到有效 QRhi 绘制反馈后 Ready；切换动作时可重新进入 Loading；没有视觉窗口时可保持 Loading |
 | availableActions、currentAction | 有效包动作名列表与当前动作；切包立即清空旧包，错误时不继续旧动画 |
+| actionCacheLimitMiB | 每实例 Lottie 动作源文档总预算，默认 150 MiB，1 MiB = 1048576 字节；无固定动作数限制。0 关闭缓存和预热，负值拒绝并发出 configurationRejected("InvalidActionCacheLimit")；有效变更通知 actionCacheLimitMiBChanged。不是实际内存／显存上限 |
 | requestAction(name, policy, options) | 返回实例内唯一字符串标识；下一事件循环处理。policy 为 Replace、Enqueue、IgnoreIfBusy；options 仅支持 loops，值为 -1 或正整数 |
 | queueLength | 等待请求数，最多 64 个；默认底态不算忙碌，排队请求可立即替代默认动作 |
 | pauseActions()、resumeActions()、paused | 冻结和继续当前帧时钟；保留有限循环的剩余时长与队列 |
@@ -144,3 +147,17 @@ Lottie 由 CatLottieAnimation 关闭 autoPlay 后受调度器控制，通过 fin
 ```
 
 通过预览工具 `--package /absolute/path/to/new-package --action talk` 载入，包内路径仍按根目录校验。窗口中的错误文本和控制器 errorString 是实际后端错误，不能以占位图可见判断动画播放成功。
+
+## 动作缓存、预热与切换延迟
+
+私有角色视觉为每实例启用 Lottie 场景缓存。已播放的动作保留动画与渲染画布，再次切换可以跳过 CPU 解析及画布重建；预热完成的动作复用 CPU 场景，首次使用仍需挂接及绘制。动作文件仍通过后台读取检查，缓存不等于所有切换零开销。普通 CatLottieAnimation / VectorItem 不自动开启此缓存。
+
+先显示默认动作，再优先预热配置的 dragAction、可选 working、jump，随后逐个准备其余动作和方向，相同来源只计一次。包无需包含这些固定名称；播放暂停时预热仍可推进，可见性为 false 时不保证预热进度。
+
+actionCacheLimitMiB 默认 150，没有固定动作数量限制；预算按当前活动动作和非活动缓存的不同来源文档字节合计。预算足够时可保留全部动作；超出时按最近使用淘汰，预热本身不淘汰现有场景。当前动作即使单独超限仍可播放，此时不保留其他场景，切走后也不缓存它。动态减小预算在下一次渲染同步淘汰超额缓存；增大预算会重新尝试预热。设为 0 关闭缓存和预热，不停止当前动作。源文档成本不能代表解码内存或显存上限；复杂矢量素材仍会增加实际资源占用，切换期间旧画面、解码任务可暂时并存。
+
+例如在 QML 对象声明中设置 `MascotPetController { actionCacheLimitMiB: 300 }`，或在 C++ 中调用 `controller.setActionCacheLimitMiB(300)`；不设置时使用 150。容量足够仍需等待首次预热完成，提前请求未就绪的动作仍会加载；GPU 首帧绘制不因 CPU 预热而消失。
+
+切包、显式 VectorItem.reload()、渲染器销毁或 QRhi 更换会使缓存失效；不同实例不共享可变动画。切包期间保留的旧画面不会写入新包缓存。隐藏或暂停仍遵守原有播放冻结规则。
+
+启用 `qcatuikit.vector.loading.debug` 可查看 `mascot cache hit resident`、`mascot cache hit prewarm`、`mascot cache miss`、`mascot cache evict` 与 `mascot prewarm finished`。启用 `qcatuikit.mascot.loading.debug` 可查看 `action first rendered feedback ms`，包含动作名和请求标识。该时间从动作开始执行算起，包含读取和渲染反馈经过 GUI 事件循环的时间，不含 Enqueue 等待，不是显示器扫描输出时刻。缓存命中和预热仍需实际绘制才能报告 Ready；测试方法见 [验证说明](VALIDATION.md)。

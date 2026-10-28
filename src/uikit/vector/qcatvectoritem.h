@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
-#include <QCatUiKit/qcatuikitglobal.h>
 #include <QByteArray>
+#include <QCatUiKit/qcatuikitglobal.h>
+#include <QList>
 #include <QQuickRhiItem>
 #include <QRectF>
 #include <QUrl>
@@ -126,6 +127,9 @@ class QCATUIKIT_EXPORT VectorItem : public QQuickRhiItem
     QSGNode *updatePaintNode(QSGNode *node, UpdatePaintNodeData *data) override;
 
   private:
+    // Private mascot integration: validated sources only, scoped to a package generation.
+    friend class MascotPetController;
+    void configureMascotCache(const QList<QUrl> &sources, qint64 limitBytes, bool invalidate);
     void prepare();
     void tick();
     void setState(Status status, const QString &error = {});

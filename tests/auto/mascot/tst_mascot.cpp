@@ -8,6 +8,8 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLoggingCategory>
+#include <QMutex>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QQuickItem>
@@ -16,8 +18,54 @@
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QtTest>
+#include <algorithm>
 using namespace QCatUiKit;
 using Controller = MascotPetController;
+namespace
+{
+// Scoped capture also observes render/worker threads; restore QtTest's handler on every exit.
+class LoadingLog
+{
+    inline static QMutex mutex;
+    inline static LoadingLog *active = nullptr;
+    inline static QtMessageHandler previous = nullptr;
+    QStringList messages;
+    static void handler(QtMsgType type, const QMessageLogContext &context, const QString &message)
+    {
+        {
+            QMutexLocker lock(&mutex);
+            if (active && QByteArray(context.category).startsWith("qcatuikit."))
+                active->messages.append(message);
+        }
+        if (previous)
+            previous(type, context, message);
+    }
+
+  public:
+    LoadingLog()
+    {
+        active = this;
+        previous = qInstallMessageHandler(handler);
+        QLoggingCategory::setFilterRules("qcatuikit.vector.loading.debug=true\n"
+                                         "qcatuikit.mascot.loading.debug=true");
+    }
+    ~LoadingLog()
+    {
+        QLoggingCategory::setFilterRules(qEnvironmentVariable("QT_LOGGING_RULES"));
+        {
+            QMutexLocker lock(&mutex);
+            active = nullptr;
+        }
+        qInstallMessageHandler(previous);
+    }
+    int count(const QString &text)
+    {
+        QMutexLocker lock(&mutex);
+        return int(std::count_if(messages.begin(), messages.end(), [&text](const QString &message)
+                                 { return message.contains(text); }));
+    }
+};
+} // namespace
 class TestMascot : public QObject
 {
     Q_OBJECT
@@ -43,6 +91,36 @@ class TestMascot : public QObject
         return QUrl("qrc:/mascot-test/data/mascot.json");
     }
   private slots:
+    void cacheLimitConfiguration()
+    {
+        Controller first, second;
+        QCOMPARE(first.actionCacheLimitMiB(), 150);
+        QSignalSpy changed(&first, &Controller::actionCacheLimitMiBChanged);
+        QSignalSpy rejected(&first, &Controller::configurationRejected);
+        first.setActionCacheLimitMiB(300);
+        QCOMPARE(first.actionCacheLimitMiB(), 300);
+        QCOMPARE(second.actionCacheLimitMiB(), 150);
+        QCOMPARE(changed.size(), 1);
+        first.setActionCacheLimitMiB(300);
+        QCOMPARE(changed.size(), 1);
+        first.setActionCacheLimitMiB(-1);
+        QCOMPARE(first.actionCacheLimitMiB(), 300);
+        QCOMPARE(rejected.size(), 1);
+        QCOMPARE(rejected[0][0].toString(), "InvalidActionCacheLimit");
+        first.setActionCacheLimitMiB(0);
+        QCOMPARE(first.actionCacheLimitMiB(), 0);
+        first.setPackageSource(fixtureUrl());
+        QTRY_COMPARE(first.status(), Controller::Ready);
+        QCOMPARE(first.actionCacheLimitMiB(), 0);
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData("import QCatUiKit\nMascotPetController { actionCacheLimitMiB: 75 }",
+                          QUrl());
+        QTRY_VERIFY(!component.isLoading());
+        std::unique_ptr<QObject> object(component.create());
+        QVERIFY2(object, qPrintable(component.errorString()));
+        QCOMPARE(object->property("actionCacheLimitMiB").toInt(), 75);
+    }
     void packages()
     {
         MascotPrivate::Package p;
@@ -194,9 +272,15 @@ class TestMascot : public QObject
         auto *vector = item->findChild<VectorItem *>();
         QVERIFY(vector);
         QSignalSpy ended(&c, &Controller::actionEnded);
-        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_GPU"))
+        const bool canRender =
+            vector->backendAvailable() &&
+            window.rendererInterface()->graphicsApi() != QSGRendererInterface::Software;
+        if (qEnvironmentVariableIsSet("QCAT_MASCOT_GPU"))
+            QVERIFY2(canRender, "QCAT_MASCOT_GPU requires the ThorVG backend and native QRhi");
+        if (!canRender)
         {
-            QTRY_COMPARE(c.status(), Controller::Error);
+            // The complete real package is validated before renderer failure is reported.
+            QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Error, 30000);
             QCOMPARE(c.errorCode(), "RenderFailed");
             QVERIFY(!c.errorString().isEmpty());
             QCOMPARE(ended.size(), 0);
@@ -209,7 +293,7 @@ class TestMascot : public QObject
             return;
         }
         QVERIFY(window.rendererInterface()->graphicsApi() != QSGRendererInterface::Software);
-        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 10000);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
         QVERIFY(!vector->autoPlay());
         QTRY_VERIFY(vector->progress() > 0.05);
         const auto rendered = window.grabWindow();
@@ -257,6 +341,158 @@ class TestMascot : public QObject
         QTest::qWait(100);
         QCOMPARE(c.status(), Controller::Ready);
         QCOMPARE(ended.size(), 3);
+    }
+    void actionCacheAndLatency()
+    {
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_GPU"))
+            QSKIP("Set QCAT_MASCOT_GPU=1 to enable optional native QRhi action cache checks");
+        LoadingLog log;
+        Controller c;
+        c.setActionCacheLimitMiB(40);
+        QQuickWindow window;
+        window.setColor(Qt::white);
+        window.resize(192, 208);
+        QQmlEngine engine;
+        QQmlComponent visual(&engine, QUrl("qrc:/qt/qml/QCatUiKit/qml/MascotSprite.qml"));
+        QTRY_VERIFY(!visual.isLoading());
+        std::unique_ptr<QObject> object(
+            visual.createWithInitialProperties({{"controller", QVariant::fromValue(&c)}}));
+        QVERIFY2(object, qPrintable(visual.errorString()));
+        auto *item = qobject_cast<QQuickItem *>(object.get());
+        item->setParentItem(window.contentItem());
+        item->setSize({192, 208});
+        window.show();
+        auto *vector = item->findChild<VectorItem *>();
+        QVERIFY(vector);
+        const auto package = QUrl::fromLocalFile(QStringLiteral(QCAT_MASCOT_LOTTIE_SAMPLE));
+        QElapsedTimer timer;
+        timer.start();
+        c.setPackageSource(package);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        const auto coldMs = timer.elapsed();
+        QTRY_VERIFY_WITH_TIMEOUT(log.count("mascot prewarm finished") >= 2, 30000);
+        const auto switchTo = [&](const QString &name) -> qint64
+        {
+            timer.restart();
+            c.requestAction(name, Controller::Replace, {{"loops", -1}});
+            do
+                QTest::qWait(1);
+            while ((c.currentAction() != name || c.status() == Controller::Loading) &&
+                   timer.elapsed() < 30000);
+            return timer.elapsed();
+        };
+        const auto prewarmMs = switchTo("working");
+        QCOMPARE(c.status(), Controller::Ready);
+        QVERIFY(log.count("mascot cache hit prewarm") >= 1);
+        const int decodes = log.count("Lottie CPU decode ms");
+        QList<qint64> samples;
+        for (int i = 0; i < 20; ++i)
+        {
+            if (i == 10)
+            {
+                window.resize(384, 416);
+                item->setSize({384, 416});
+            }
+            samples.append(switchTo(i % 2 ? "working" : "idle"));
+            QCOMPARE(c.status(), Controller::Ready);
+            QVERIFY(vector->progress() < 0.1);
+            const auto frame = window.grabWindow();
+            QVERIFY(!frame.isNull());
+            int occupied = 0;
+            for (int y = 0; y < frame.height(); ++y)
+                for (int x = 0; x < frame.width(); ++x)
+                    occupied += frame.pixelColor(x, y) != QColor(Qt::white);
+            QVERIFY(occupied > 1000);
+            if (i == 19 && qEnvironmentVariableIsSet("QCAT_MASCOT_SCREENSHOT"))
+                QVERIFY(frame.save(qEnvironmentVariable("QCAT_MASCOT_SCREENSHOT")));
+        }
+        QCOMPARE(log.count("Lottie CPU decode ms"), decodes);
+        QVERIFY(log.count("mascot cache hit resident") >= 20);
+        std::sort(samples.begin(), samples.end());
+        qInfo() << "action cache latency ms: cold package" << coldMs << "prewarm" << prewarmMs
+                << "resident n" << samples.size() << "P50" << samples[9] << "P95" << samples[18];
+        switchTo("thinking"); // the total source-byte budget forces an eviction
+        QCOMPARE(c.status(), Controller::Ready);
+        QVERIFY(log.count("mascot cache evict") >= 1);
+        const auto beforeReload = log.count("Lottie CPU decode ms");
+        vector->reload();
+        QCOMPARE(vector->status(), VectorItem::Loading);
+        QTRY_COMPARE_WITH_TIMEOUT(vector->status(), VectorItem::Ready, 30000);
+        QVERIFY(log.count("Lottie CPU decode ms") > beforeReload);
+        const auto priorDecodes = log.count("Lottie CPU decode ms");
+        c.setPackageSource({});
+        QCOMPARE(c.status(), Controller::Null);
+        c.setPackageSource(package);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        QVERIFY(log.count("Lottie CPU decode ms") > priorDecodes);
+        // Destroy the visual while speculative preparation may still be running.
+        object.reset();
+        QTest::qWait(100);
+    }
+    void configurableActionCache()
+    {
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_GPU"))
+            QSKIP("Set QCAT_MASCOT_GPU=1 to enable optional native QRhi cache budget checks");
+        LoadingLog log;
+        Controller c;
+        QCOMPARE(c.actionCacheLimitMiB(), 150);
+        QQuickWindow window;
+        window.setColor(Qt::white);
+        window.resize(192, 208);
+        QQmlEngine engine;
+        QQmlComponent visual(&engine, QUrl("qrc:/qt/qml/QCatUiKit/qml/MascotSprite.qml"));
+        QTRY_VERIFY(!visual.isLoading());
+        std::unique_ptr<QObject> object(
+            visual.createWithInitialProperties({{"controller", QVariant::fromValue(&c)}}));
+        QVERIFY2(object, qPrintable(visual.errorString()));
+        auto *item = qobject_cast<QQuickItem *>(object.get());
+        item->setParentItem(window.contentItem());
+        item->setSize({192, 208});
+        window.show();
+        c.setPackageSource(QUrl::fromLocalFile(QStringLiteral(QCAT_MASCOT_LOTTIE_SAMPLE)));
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        c.pauseActions(); // background preparation must continue with a frozen playback clock
+        const auto actions = c.availableActions();
+        QCOMPARE(actions.size(), 10);
+        QTRY_COMPARE_WITH_TIMEOUT(log.count("mascot prewarm finished"), 9, 60000);
+        const auto decodes = log.count("Lottie CPU decode ms");
+        const auto switchTo = [&](const QString &name)
+        { c.requestAction(name, Controller::Replace, {{"loops", -1}}); };
+        for (int i = 1; i <= 20; ++i)
+        {
+            // A reproducible permutation crosses all ten actions twice.
+            const auto name = actions[(i * 7) % actions.size()];
+            switchTo(name);
+            QTRY_COMPARE_WITH_TIMEOUT(c.currentAction(), name, 30000);
+            QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        }
+        QCOMPARE(log.count("Lottie CPU decode ms"), decodes);
+        QCOMPARE(log.count("mascot cache evict"), 0);
+        QVERIFY(log.count("mascot cache hit resident") >= 10);
+        qInfo() << "150 MiB cache: all ten actions reused, no repeated CPU decoding";
+        const auto hits = log.count("mascot cache hit");
+        c.setActionCacheLimitMiB(1);
+        QTRY_VERIFY(log.count("mascot cache evict") > 0);
+        switchTo(actions[1]);
+        QTRY_COMPARE(c.currentAction(), actions[1]);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        QVERIFY(log.count("Lottie CPU decode ms") > decodes);
+        QCOMPARE(log.count("mascot cache hit"), hits);
+        c.setActionCacheLimitMiB(0);
+        const auto disabledDecodes = log.count("Lottie CPU decode ms");
+        switchTo(actions[2]);
+        QTRY_COMPARE(c.currentAction(), actions[2]);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        QVERIFY(log.count("Lottie CPU decode ms") > disabledDecodes);
+        QCOMPARE(log.count("mascot cache hit"), hits);
+        const auto warmedBeforeIncrease = log.count("mascot prewarm finished");
+        c.setActionCacheLimitMiB(150);
+        QTRY_COMPARE_WITH_TIMEOUT(log.count("mascot prewarm finished"), warmedBeforeIncrease + 9,
+                                  60000);
+        switchTo(actions[0]);
+        QTRY_COMPARE(c.currentAction(), actions[0]);
+        QTRY_COMPARE_WITH_TIMEOUT(c.status(), Controller::Ready, 30000);
+        QVERIFY(log.count("mascot cache hit") > hits);
     }
     void catgrayLottieRendering()
     {
@@ -414,7 +650,7 @@ class TestMascot : public QObject
     void asynchronousLottieHandoff()
     {
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_GPU"))
-            QSKIP("Native QRhi window required");
+            QSKIP("Set QCAT_MASCOT_GPU=1 to enable optional native QRhi handoff checks");
         QQuickWindow window;
         window.setColor(Qt::black);
         window.resize(192, 208);

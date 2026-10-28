@@ -13,6 +13,7 @@
 | 任务 | 文档 |
 | --- | --- |
 | 加载角色包、播放精灵／Lottie、区域交互 | [角色包与动画播放](MASCOTPET.md) |
+| 检查桌宠透明窗口、穿透、焦点与托盘原型 | [平台原型与验收边界](MASCOTPLATFORMS.md) |
 | 显示 SVG、播放 Lottie、绘制路径与渐变画布 | [矢量图形与动画](VECTOR.md) |
 | 构建库、运行 Gallery、安装到应用 | [构建与接入](BUILDING.md) |
 | Dock 分割／标签、浮动回停和布局保存恢复 | [Dock 工作区](DOCKING.md) |

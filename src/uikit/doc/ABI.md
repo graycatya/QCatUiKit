@@ -21,6 +21,7 @@ QML 维护属性、信号、方法与可观察行为的兼容性。内部视觉�
 - 保留已发布枚举、模型角色的数值和名称，以及属性和信号语义。
 - ChartSeries::Sample 是公开值类型，其字段布局也属于兼容边界。
 - 内部容器、算法和缓存可修改；新增非虚函数或 QML 属性仍须检查源码与行为兼容性。
+- MascotPetController 的 actionCacheLimitMiB 为新增非虚访问方法、QML 属性和通知信号，状态保存在既有 Pimpl 中，不新增公开对象数据成员或虚函数；默认 150 MiB 改变预热和资源占用策略，旧应用可设为 0 禁用。
 - 打破兼容时提升主版本与 QCATUIKIT_ABI_VERSION；CMake 的 SameMajorVersion 规则本身不检查 ABI。
 
 发布渠道从 experimental 改为 stable 不改变 SONAME。渠道只是运行时身份的一部分，不能替代兼容性检查。

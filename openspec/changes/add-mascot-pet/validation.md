@@ -183,3 +183,83 @@ VectorItem 新源加载时保留并冻结旧场景；私有角色视觉在换包
 - 文档检查通过：36 Markdown / 501 本地链接。OpenSpec 严格验证及差异空白检查通过。
 
 本轮减少的是 GUI/渲染线程上的长时间读取与 Lottie CPU 准备阻塞；加载总时长仍受素材结构影响，GPU 首帧路径处理与上传仍可能产生开销。没有增加全动作预加载、动画缓存或素材减重。场景内部单次解码不强制抢占；已开始的取消任务可短暂继续计算后回收。原平台能力和平台验收矩阵继续待办，不以普通预览窗口结果声明原生 Wayland 或其他平台完整支持。
+
+## 2026-10-28 动作场景缓存、常用预热与切换测量
+
+用户授权后新增任务 2.8 和 R11。私有 mascot 集成为每实例启用独占场景缓存，最多两个非活动场景，源文档准入成本合计 48 MiB，活动场景另计。已播放动作保留 Animation 及 QRhi canvas；预热动作后台读取和准备 CPU 场景，首次使用仍实际挂接、绘制。默认动作、配置的拖拽动作及可选 working / jump 选择至多三个来源，预热逐个执行且不主动淘汰已有缓存。普通 VectorItem 默认加载语义不变，没有新增公共 QML 属性或改变公开对象布局。
+
+切包、清空、显式 reload、QRhi 更换及销毁会取消或失效缓存；旧包保留画面不能进入新包缓存。冷动作准备期间继续显示旧画面。源文件仍后台读取检查，命中主要省去 CPU 解析，resident 同时省去画布重建；未声称命中零 I/O 或首帧 GPU 零成本。日志区分命中、淘汰、预热完成和执行开始到首帧渲染反馈。
+
+环境：Windows 11，Qt 6.12.0 msvc2022_64，MSVC 14.39，Release/Ninja。读取现有 CMakeCache，使用 `build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release`。`QSG_INFO=1` 确认 D3D11、NVIDIA GeForce RTX 5060 Ti。只验证普通 Qt Quick 测试窗口，桌面窗口及全部平台矩阵保持 Pending。
+
+独立 `tst_mascot.exe actionCacheAndLatency`（`QCAT_MASCOT_GPU=1`）最终结果：3 passed / 0 failed / 0 skipped，10.955 秒。覆盖预热命中、20 次 idle / working 往返无重复 CPU 解析、非空画面、从 192×208 调整到 384×416 后复用画布、第四动作触发淘汰、显式 reload 重解码、清空及同包重载失效、预热期间销毁。
+
+| 指标 | 本机本次结果 | 边界 |
+| --- | --- | --- |
+| 冷包加载到 Ready | 4210 ms | 包含完整包及资源校验，不与冷动作直接比较 |
+| 首次 idle 动作首帧反馈 | 269 ms | 从动作执行开始，包含读取、解码、绘制及 GUI 反馈 |
+| 预热 working 请求到 Ready | 38 ms | 同次动作首帧反馈日志为 36 ms |
+| 缓存往返请求到 Ready，20 次 | P50 38 ms，P95 41 ms | 后半段使用两倍窗口尺寸，无重复 CPU 解析 |
+| 未缓存 thinking 首帧反馈 | 281 ms | CPU 解码 235 ms；低频冷动作仍有等待 |
+| 整段缓存测试进程峰值工作集 | 558.6 MiB | PowerShell 每 100 ms 读取进程 PeakWorkingSet64；含包校验及临时解析，不是缓存常驻内存 |
+
+截图 `build/mascot-cache-resident.png` 为本机临时产物，已查看并确认两倍尺寸的 working 角色和键盘正确显示。日志 `build/mascot-cache-final-latency.txt` 为本机临时证据。未做屏幕扫描时刻或 GPU fence 测量，Ready / 渲染反馈不能等同于显示器输出；执行日志不含 Enqueue 等待。样本来自单机热文件缓存和当前素材，不作为跨设备 50 ms 保证，也未完成缓存开关同条件的常驻内存对照。
+
+最终源码的完整构建、库及 Gallery qmllint 通过。独立既有 GPU 回归 `lottieRendering catgrayLottieRendering asynchronousLottieHandoff`：5 passed / 0 failed / 0 skipped，28.207 秒，覆盖十动作、暂停、隐藏、自然完成、包切换和读取期间销毁。加载时 GUI 心跳 24 次，最大间隔 17 ms，24 次窗口采样均非空；该次进程曾观测到约 613 MiB 峰值工作集，不与上述不同测试作内存优劣对照。
+
+验证环境修正：直接调用 cl.exe 的首轮构建缺少 MSVC 标准库 INCLUDE；改为通过现有 vcvars64.bat 初始化工具链后构建通过。首次以 Hidden 启动 GPU 测试未产生可曝光窗口，停留 Loading 并超时；改为普通可见测试窗口通过。测试程序同时修正等待动作异步调度的测量边界，避免 requestAction 返回时误把旧 Ready 当成目标动作已显示。
+
+最终 `ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --output-on-failure -j 4`：21/21 通过，115.08 秒，包含 software/offscreen 契约和可选 GPU `mascot_render`。`python tools/check_docs.py`：36 Markdown、503 本地链接通过；OpenSpec 严格验证、clang-format 检查及差异空白检查通过。任务 2.8 完成，总进度 13/40；本轮未重复独立关闭 ThorVG 的构建，未验证其他平台，不同步主规格、不归档。
+
+## 2026-10-28 修正直接运行时的后端预期
+
+用户在 Qt Creator／普通桌面直接运行 tst_mascot 时，未设置 QCAT_MASCOT_GPU，但实际 D3D11 播放成功。此前 lottieRendering 把环境变量缺省误判为后端不可用，因而期待 Error 却得到 Ready。现改为依据实际 backendAvailable 和 graphicsApi 选择成功／失败契约；显式 QCAT_MASCOT_GPU 仍要求原生 QRhi 和 ThorVG，不能以 software 错误分支充当 GPU 通过。可选测试 SKIP 文本说明需显式启用，避免被理解为本机后端不可用。
+
+同一 Windows / Qt kit 下：清除 GPU 和 software/offscreen 变量后直接运行完整 tst_mascot，28 passed / 0 failed / 3 skipped，21.611 秒；跳过项为未启用的可选 GPU 检查。CTest mascot_contracts 的 offscreen/software 契约 1/1 通过，14.21 秒。显式 QCAT_MASCOT_GPU=1 的 lottieRendering 3 passed / 0 failed / 0 skipped（含 init/cleanup）。受影响目标构建、文档检查、clang-format 和差异空白检查通过。
+
+## 2026-10-28 可配置动作容量预算
+
+按用户要求新增任务 2.9，将原固定两个非活动场景／48 MiB 规则替换为公开 `MascotPetController.actionCacheLimitMiB`，默认 150，0 禁用缓存和预热，负值拒绝。配置按实例独立保存，切包不重置宿主配置，可运行中增减；无固定动作数限制。预算按不同来源的动作源文档字节合计，包含活动动作和非活动缓存；活动动作超限仍可播放，但不保留其他场景。保留单文档 64 MiB 校验，不把缓存容量放宽当成单文件限制放宽。
+
+预热优先默认／拖拽／working／jump，然后按来源去重覆盖剩余动作和方向；每实例一次一个推测任务，预算不够则跳过，不为推测预热淘汰现有场景。预热期间通过反馈标志驱动渲染轮询，暂停时钟仍能推进全部预热，完成后停止额外轮询。已尝试的来源避免每帧重复文件检查；预算增大可重试。动态缩小预算在下一次渲染同步淘汰，0 会取消非活动预热，不打断当前播放。已开始的内部解析仍遵守协作取消边界，旧画面和后台任务可暂时并存。
+
+同一 Windows 11 / Qt 6.12.0 MSVC Release kit 下，独立 `tst_mascot configurableActionCache actionCacheAndLatency` 首轮 4 passed / 0 failed / 0 skipped（含 init/cleanup），21.680 秒。默认 150 MiB 时实际 CatGray 十动作全部预热，暂停状态下等待九个后台场景完成，跨十动作固定乱序切换二十次，断言没有淘汰且 CPU 解码计数不变。降为 1 MiB 后缓存淘汰，超限动作仍 Ready 且重新解码；0 禁用后不再命中。整段测试进程观测峰值工作集 571.6 MiB，包含完整校验与临时解析，不是缓存常驻占用，不能把源文档预算理解为实际 RAM／显存上限。临时证据 `build/mascot-budget-gpu.txt`。
+
+最终测试另补充了从 0 恢复到 150 后重新完成九动作预热并命中，以及 QML 属性设置；这些由最终 CTest mascot_render / mascot_contracts 覆盖。公开配置契约验证默认值、实例隔离、重复值不通知、负值原子拒绝、0 和切包保留配置。40 MiB 显式小预算仍运行既有往返延迟及淘汰／reload／销毁测试，不能把不同容量和调度条件下的延迟直接与历史单次测量作提升比较。
+
+完整构建、库及 Gallery qmllint 通过。安装至仓库内临时 `build/mascot-budget-install`，独立消费者仅包含安装公开头并链接安装导出目标，验证默认 150、C++ setter 和 QObject property 写入／读取，构建及运行退出码 0；未使用源码或 Gallery 私有头。公开类新增非虚访问方法、属性与通知信号，配置存于原 Pimpl，不改变公开对象数据布局或虚函数列表；未声称已经完成旧二进制替换矩阵。
+
+首轮全量并行 CTest 为 20/21：mascot_render 61.05 秒通过，mascot_contracts 的 software 分支因完整大包校验超过旧 5 秒上限失败，QtTest 明确报告 5200 ms 即可达到预期 Error；不是取得错误状态或渲染失败。将该实际大包的首次 Ready／Error 等待统一为 30 秒，与其他大包加载检查一致，不改变任何播放逻辑或断言结果。该时限只用于契约测试等待异步完整校验，不是切换性能验收门槛。
+
+最终重新执行完整 `ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --output-on-failure -j 4`：21/21 通过，142.49 秒；mascot_contracts 29 passed / 0 failed / 4 skipped（可选 GPU 检查未启用），mascot_render 7 passed / 0 failed / 0 skipped（含 init/cleanup），61.44 秒。文档检查通过：36 Markdown、503 本地链接、403 个公开 C++ 属性名称覆盖；OpenSpec 严格验证、clang-format、差异空白检查通过。任务 2.9 完成，总进度 14/41。未扩大平台支持声明，未同步主规格或归档。
+
+## 2026-10-29 Windows 桌面窗口前置原型
+
+完成任务 1.2。`tests/manual/mascot-probe` 增加 Windows 交互模式、独立原生背后窗口进程、原生输入检查与 JSON 证据输出。Qt Widgets 仅用于探针的 QApplication、托盘和菜单；没有改库接口或引入库的 Widgets 依赖，没有交付公共 CatMascotPet。
+
+环境：Windows 11 Version 26H2，内核 10.0.26300，Qt 6.12.0 msvc2022_64，MSVC `_MSC_FULL_VER=193933522`，Release/Ninja，实际图形 API Direct3D11。两块屏幕均 DPR 1.0，本次操作限主屏，未测试跨屏及混合 DPI。最终报告时间为 `2026-10-28T16:10:13Z`（客户端北京时间 2026-10-29 00:10:13）。探针 PID 36088、独立背后窗口 PID 32900，进程归属断言通过。
+
+根构建实测命令：`build/mascot-probe-root-check/bin/qcat-mascot-probe.exe --windows-check build/windows-mascot-prototype-final.json`。退出码 0，23 项原型检查全部 Passed。完整平台 acceptance 仍为 Pending；只有已测原型能力标记 Supported，并在原因中注明单主屏原型范围。
+
+| 场景 | 实际结果 |
+| --- | --- |
+| 被动显示、不抢焦点 | 显示前后前台 HWND 均为独立目标；角色点击和画面计数更新后仍保持目标焦点 |
+| 空白与角色区域 | 初始背后点击 1 次，透明空白点击后为 2；角色点击只增加 bodyClicks 到 1，不增加目标点击 |
+| 原应用继续输入 | 真实 A 键只增加背后原生 WM_KEYDOWN 计数到 1 |
+| 透明合成 | 浮层空白和同帧窗口外背景参考像素一致，角色像素不同；合成截图已查看 |
+| 整窗穿透 | 点角色和气泡分别令目标点击增至 3、4，角色／气泡回调不增加 |
+| 动态气泡输入区域 | 隐藏气泡后原气泡区域点击令目标增至 5；显示后仍可主动交互 |
+| 拖动、外部定位 | 真实按下／移动／释放得到逻辑位移 30×20；读取原生窗口矩形，复位原生坐标为主屏 160×150 |
+| 置顶开关 | 原生 WS_EX_TOPMOST 的关闭／开启状态符合请求；本次不覆盖独占全屏 |
+| 主动气泡焦点与键盘 | 鼠标点击后获得前台，Tab 到确认按钮、空格激活，bubbleClicks 从 1 到 2 |
+| 隐藏与宿主恢复 | 隐藏和恢复可见状态分别通过，不依赖托盘恢复 |
+| 托盘与菜单 | 注册及 geometry 非空；展开隐藏区后取得实际橙色图标，收到原生 Context（1），实际 Home／Enter 菜单操作隐藏浮层 |
+| 菜单回调语义 | 穿透及退出回调以 QAction 派发验证；退出仅计数请求为 1，宿主仍运行，不称为所有菜单项鼠标实测 |
+
+最终计数：目标鼠标 5、键盘 1；角色按下 2（含拖动）、气泡激活 2；菜单动作 4、退出请求 1。`build/windows-mascot-prototype-final.json`、相邻合成及托盘 PNG 为本机临时证据，不加入源码资源。已查看最终合成图和展开后图标，确认无裁切、气泡按钮和角色区域可辨识。computer-use 另检查交互控制窗口的实际控件，并通过 Close probe 清理测试窗口。
+
+发现并解决的验证问题：沙箱拒绝 SendInput（错误 5），不能作为真实穿透证据；改在获准的交互桌面运行，最终检查使用原生输入。Windows 隐藏托盘图标时 Qt 返回展开箭头位置，原检查右键命中箭头而非图标；现先展开再查询 geometry。混合 Qt Quick／QMenu 原型需在主动托盘交互时明确取得菜单焦点。透明比较改为同帧背景参考，避免色彩管理／桌面过渡影响固定 RGB 断言。气泡使用标准 Tab／空格行为，未把普通 Button 的 Enter 当作必然激活语义。
+
+独立构建 `build/mascot-windows-probe` 通过；根项目另建 `build/mascot-probe-root-check`，仅该临时构建启用手动测试、关闭 ThorVG／Gallery，探针目标构建通过，未改用户原有 kit 缓存。两种构建的分类及 headless 拒绝 CTest 各 2/2 通过，最终分别 0.13 秒和 0.29 秒。headless 检查特意预写旧 Passed 文件，验证 offscreen 检查返回 2 并将旧结果替换为 Pending、能力 Unknown，不制造或沿用实机通过。
+
+新增 Windows QML 的直接 qmllint、C++ clang-format、文档检查和差异空白检查通过；文档检查 37 Markdown / 509 本地链接。仅改手动探针与文档，本轮未重复此前库／Gallery 21 项全套回归。原平台完整矩阵及任务 7.2 继续 Pending；其他系统原型任务不勾选，不同步主规格、不归档。

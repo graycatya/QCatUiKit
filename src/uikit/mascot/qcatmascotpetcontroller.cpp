@@ -66,7 +66,38 @@ class MascotPetController::Impl
     std::shared_ptr<std::atomic_bool> loadingCancelled;
     QTimer timer;
     QPointer<VectorItem> vectorItem;
-    QElapsedTimer clock;
+    QElapsedTimer clock, switchClock;
+    bool awaitingFrame = false;
+    int cacheLimitMiB = 150;
+    QString measuredAction, measuredRequest;
+    quint64 measuredGeneration = 0;
+    void configureCache(bool invalidate = false)
+    {
+        if (!vectorItem)
+            return;
+        QList<QUrl> sources;
+        if (package.renderer == "lottie")
+        {
+            // Defaults are package-defined. Other names are optional hints, never requirements.
+            const QStringList names{package.defaultAction, dragAction, "working", "jump"};
+            for (const auto &name : names)
+            {
+                const auto directions = package.actions.value(name).directions;
+                if (directions.isEmpty())
+                    continue;
+                const auto url = directions.contains(facing) ? directions.value(facing).source
+                                                             : directions.first().source;
+                if (!sources.contains(url))
+                    sources.append(url);
+            }
+            // Prewarm all remaining actions/directions when the byte budget permits.
+            for (const auto &a : package.actions)
+                for (const auto &direction : a.directions)
+                    if (!sources.contains(direction.source))
+                        sources.append(direction.source);
+        }
+        vectorItem->configureMascotCache(sources, qint64(cacheLimitMiB) * 1024 * 1024, invalidate);
+    }
     double elapsedMs = 0;
     quint64 generation = 0, nextId = 0;
     bool paused = false, enabled = true;
@@ -124,6 +155,11 @@ class MascotPetController::Impl
         elapsedMs = 0;
         if (package.renderer == "lottie")
         {
+            switchClock.start();
+            awaitingFrame = true;
+            measuredAction = action;
+            measuredRequest = request.id;
+            measuredGeneration = generation;
             status = Loading;
             if (vectorItem)
             {
@@ -305,6 +341,24 @@ QPointF MascotPetController::bubbleAnchor() const
     return d->mirrored() ? QPointF(d->package.logicalSize.width() - p.x(), p.y()) : p;
 }
 
+int MascotPetController::actionCacheLimitMiB() const
+{
+    return d->cacheLimitMiB;
+}
+void MascotPetController::setActionCacheLimitMiB(int limit)
+{
+    if (limit < 0)
+    {
+        emit configurationRejected("InvalidActionCacheLimit");
+        return;
+    }
+    if (limit == d->cacheLimitMiB)
+        return;
+    d->cacheLimitMiB = limit;
+    d->configureCache();
+    emit actionCacheLimitMiBChanged();
+}
+
 void MascotPetController::setPackageSource(const QUrl &source)
 {
     if (source == d->source)
@@ -325,6 +379,8 @@ void MascotPetController::setPackageSource(const QUrl &source)
         return;
     if (d->vectorItem)
     {
+        d->awaitingFrame = false;
+        d->configureCache(true);
         if (source.isEmpty())
         {
             d->vectorItem->stop();
@@ -398,6 +454,7 @@ void MascotPetController::setPackageSource(const QUrl &source)
                         return;
                 }
                 d->facing = d->package.defaultFacing;
+                d->configureCache(true);
                 d->status = d->package.renderer == "sprite" ? Ready : Loading;
                 emit packageChanged();
                 if (epoch != d->generation)
@@ -485,6 +542,7 @@ void MascotPetController::setFacing(const QString &value)
         return;
     }
     d->facing = value;
+    d->configureCache();
     if ((d->status == Ready || d->status == Loading) && !d->action.isEmpty())
     {
         const auto sprite = d->sprite();
@@ -670,6 +728,7 @@ void MascotPetController::setDragAction(const QString &action)
         return;
     }
     d->dragAction = action;
+    d->configureCache();
     emit dragActionChanged();
 }
 bool MascotPetController::dragging() const
@@ -836,6 +895,18 @@ void MascotPetController::attachVectorItem(VectorItem *item)
         return;
     }
     item->setAutoPlay(false);
+    d->configureCache(true);
+    connect(item, &VectorItem::renderedFramesChanged, this,
+            [this]
+            {
+                if (!d->awaitingFrame || d->measuredGeneration != d->generation || !d->vectorItem ||
+                    d->vectorItem->status() != VectorItem::Ready)
+                    return;
+                d->awaitingFrame = false;
+                qCDebug(mascotLoading)
+                    << "action first rendered feedback ms" << d->switchClock.elapsed() << "action"
+                    << d->measuredAction << "request" << d->measuredRequest;
+            });
     connect(item, &VectorItem::statusChanged, this, [this] { d->vectorStatus(); });
     connect(item, &VectorItem::finished, this,
             [this]

@@ -13,9 +13,12 @@
 #include <QQuickWindow>
 #include <QSGNode>
 #include <QSGRendererInterface>
+#include <QSet>
 #include <QThreadPool>
 #include <QTimer>
+#include <algorithm>
 #include <atomic>
+#include <list>
 #include <rhi/qrhi.h>
 #include <vector>
 #ifdef QCATUIKIT_HAS_THORVG
@@ -58,6 +61,7 @@ struct Feedback
     QSizeF size;
     qreal duration = 0;
     int frameCount = 0;
+    bool warming = false;
 };
 bool validRect(const QRectF &r)
 {
@@ -94,6 +98,10 @@ struct VectorItem::Impl
          wantsPlay = false;
     quint64 generation = 0, renderedFrames = 0;
     bool resourceReady = false;
+    QList<QUrl> warmSources;
+    quint64 cacheEpoch = 0;
+    bool mascotCache = false;
+    qint64 cacheLimitBytes = 0;
     std::shared_ptr<std::atomic_bool> readingCancelled;
     ~Impl()
     {
@@ -122,6 +130,17 @@ struct DecodeJob
     bool cancelled = false, finished = false;
     std::unique_ptr<DecodedLottie> result;
 };
+void cancelJob(std::shared_ptr<DecodeJob> &job)
+{
+    if (!job)
+        return;
+    {
+        QMutexLocker lock(&job->mutex);
+        job->cancelled = true;
+        job->result.reset();
+    }
+    job.reset();
+}
 void decodeLottie(const std::shared_ptr<DecodeJob> &job, const QByteArray &bytes,
                   const QByteArray &resourcePath)
 {
@@ -292,6 +311,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     {
 #ifdef QCATUIKIT_HAS_THORVG
         cancelDecode();
+        clearCache();
         release();
         if (initialized)
             tvg::Initializer::term();
@@ -303,6 +323,26 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     {
         const auto &d = *static_cast<VectorItem *>(item)->d;
         generation = d.generation;
+#ifdef QCATUIKIT_HAS_THORVG
+        if (cacheEpoch != d.cacheEpoch)
+        {
+            cancelDecode();
+            clearCache();
+            // Keep the old visual, but never cache it into the new package.
+            activeSource = {};
+            cacheEpoch = d.cacheEpoch;
+        }
+        cacheEnabled = d.mascotCache && d.cacheLimitBytes > 0;
+        if (cacheBudget != d.cacheLimitBytes || warmSources != d.warmSources)
+            warmAttempted.clear();
+        cacheBudget = d.cacheLimitBytes;
+        warmSources = d.warmSources;
+        if (!cacheEnabled)
+            clearCache();
+        else
+            trimCache(qMax<qint64>(0, cacheBudget - activeCost));
+        source = d.source;
+#endif
         bytes = d.bytes;
         resourcePath = d.resourcePath;
         shapes = d.shapes;
@@ -321,6 +361,8 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         if (owner != rhi())
         {
             cancelDecode();
+            clearCache();
+            activeSource = {};
             release();
             owner = rhi();
         }
@@ -337,6 +379,8 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         if (!valid || !initialized)
         {
             cancelDecode();
+            clearCache();
+            activeSource = {};
             release();
             clear();
             if (valid && !initialized)
@@ -349,19 +393,56 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         bool canReplace = resourceReady;
         if (resourceReady && format == VectorItem::Lottie && loadedGeneration != generation)
         {
-            if (!pending)
+            if (!pending && cacheEnabled)
             {
-                pending = std::make_shared<DecodeJob>();
-                pendingGeneration = generation;
-                loaderPool().start([job = pending, data = bytes, path = resourcePath]
-                                   { decodeLottie(job, data, path); });
+                auto cached = std::find_if(cache.begin(), cache.end(),
+                                           [this](const Entry &e) { return e.source == source; });
+                if (cached != cache.end())
+                {
+                    Entry entry = std::move(*cached);
+                    cache.erase(cached);
+                    if (entry.canvas)
+                    {
+                        retainActive(entry.cost);
+                        release();
+                        canvas = std::move(entry.canvas);
+                        animation = std::move(entry.animation);
+                        picture = animation->picture();
+                        paint = picture;
+                        nativeSize = entry.size;
+                        loadedGeneration = generation;
+                        activeFormat = VectorItem::Lottie;
+                        activeSource = source;
+                        activeCost = entry.cost;
+                        firstDraw = true;
+                        qCDebug(vectorLoading) << "mascot cache hit resident" << source;
+                    }
+                    else
+                    {
+                        pending = std::move(entry.job);
+                        pendingGeneration = generation;
+                        qCDebug(vectorLoading) << "mascot cache hit prewarm" << source;
+                    }
+                }
             }
+            if (loadedGeneration != generation)
             {
-                QMutexLocker lock(&pending->mutex);
-                if (pending->finished)
-                    decoded = std::move(pending->result);
+                if (!pending)
+                {
+                    if (cacheEnabled)
+                        qCDebug(vectorLoading) << "mascot cache miss" << source;
+                    pending = std::make_shared<DecodeJob>();
+                    pendingGeneration = generation;
+                    loaderPool().start([job = pending, data = bytes, path = resourcePath]
+                                       { decodeLottie(job, data, path); });
+                }
+                {
+                    QMutexLocker lock(&pending->mutex);
+                    if (pending->finished)
+                        decoded = std::move(pending->result);
+                }
             }
-            canReplace = bool(decoded);
+            canReplace = loadedGeneration == generation || bool(decoded);
             if (decoded && !decoded->error.isEmpty())
             {
                 report(VectorItem::Error, decoded->error);
@@ -375,6 +456,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         {
             QElapsedTimer attachTime;
             attachTime.start();
+            retainActive(bytes.size());
             release();
             canvas.reset(ThorvgQrhiCanvas::gen());
             if (!canvas)
@@ -421,6 +503,8 @@ class VectorRenderer final : public QQuickRhiItemRenderer
                     animation = std::move(decoded->animation);
                     picture = animation->picture();
                     nativeSize = decoded->size;
+                    activeSource = source;
+                    activeCost = bytes.size();
                     cancelDecode();
                 }
                 else
@@ -515,6 +599,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
                 qCDebug(vectorLoading) << "first draw ms" << drawTime.elapsed();
             firstDraw = false;
             report(VectorItem::Ready);
+            prewarm();
         }
 #else
         clear();
@@ -532,6 +617,152 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     qreal progress = 0;
     bool valid = false, resourceReady = false;
 #ifdef QCATUIKIT_HAS_THORVG
+    struct Entry
+    {
+        QUrl source;
+        qint64 cost = 0;
+        QSizeF size;
+        // Destruction order: canvas before animation, while the engine is alive.
+        std::unique_ptr<tvg::Animation> animation;
+        std::unique_ptr<ThorvgQrhiCanvas> canvas;
+        std::shared_ptr<DecodeJob> job;
+    };
+    std::list<Entry> cache; // oldest first; byte budget, no fixed action count
+    QList<QUrl> warmSources;
+    QUrl source, activeSource;
+    quint64 cacheEpoch = 0;
+    qint64 activeCost = 0;
+    bool cacheEnabled = false;
+    qint64 cacheBudget = 0;
+    QSet<QUrl> warmAttempted;
+    void clearCache()
+    {
+        for (auto &entry : cache)
+            cancelJob(entry.job);
+        cache.clear();
+        warmAttempted.clear();
+        setWarming(false);
+    }
+    void setWarming(bool warming)
+    {
+        QMutexLocker lock(&feedback->mutex);
+        feedback->warming = warming;
+    }
+    qint64 cacheCost() const
+    {
+        qint64 cost = 0;
+        for (const auto &entry : cache)
+            cost += entry.cost;
+        return cost;
+    }
+    void trimCache(qint64 limit)
+    {
+        while (!cache.empty() && cacheCost() > limit)
+        {
+            qCDebug(vectorLoading) << "mascot cache evict" << cache.front().source;
+            cancelJob(cache.front().job);
+            cache.pop_front();
+        }
+    }
+    void retainActive(qint64 targetCost)
+    {
+        const qint64 remaining = qMax<qint64>(0, cacheBudget - targetCost);
+        const bool retain = cacheEnabled && animation && canvas && !activeSource.isEmpty() &&
+                            activeCost > 0 && activeCost <= remaining;
+        trimCache(retain ? remaining - activeCost : remaining);
+        if (!retain)
+            return;
+        Entry entry;
+        entry.source = activeSource;
+        entry.cost = activeCost;
+        entry.size = nativeSize;
+        entry.canvas = std::move(canvas);
+        entry.animation = std::move(animation);
+        cache.push_back(std::move(entry));
+        activeSource = {};
+    }
+    void prewarm()
+    {
+        setWarming(false);
+        if (!cacheEnabled || pending)
+            return;
+        // One speculative job at a time; never evict useful entries just to prewarm.
+        for (const auto &entry : cache)
+            if (entry.job)
+            {
+                QMutexLocker lock(&entry.job->mutex);
+                if (!entry.job->finished)
+                {
+                    setWarming(true);
+                    return;
+                }
+            }
+        for (const auto &url : warmSources)
+        {
+            if (url == activeSource || warmAttempted.contains(url) ||
+                std::any_of(cache.begin(), cache.end(),
+                            [&url](const Entry &entry) { return entry.source == url; }))
+                continue;
+            warmAttempted.insert(url);
+            const QString path = url.scheme() == "qrc" ? ':' + url.path() : url.toLocalFile();
+            const qint64 cost = QFileInfo(path).size();
+            if (cost <= 0 || cost > 64 * 1024 * 1024 || cost > cacheBudget ||
+                cacheCost() + cost > qMax<qint64>(0, cacheBudget - activeCost))
+                continue;
+            Entry entry;
+            entry.source = url;
+            entry.cost = cost;
+            entry.job = std::make_shared<DecodeJob>();
+            loaderPool().start(
+                [job = entry.job, path, cost, url]
+                {
+                    QFile file(path);
+                    QByteArray data;
+                    if (file.open(QIODevice::ReadOnly) && file.size() == cost)
+                    {
+                        while (!file.atEnd() && data.size() <= cost)
+                        {
+                            {
+                                QMutexLocker lock(&job->mutex);
+                                if (job->cancelled)
+                                    return;
+                            }
+                            const auto chunk =
+                                file.read(qMin<qint64>(1024 * 1024, cost + 1 - data.size()));
+                            if (chunk.isEmpty())
+                                break;
+                            data += chunk;
+                        }
+                    }
+                    if (data.size() != cost)
+                    {
+                        QMutexLocker lock(&job->mutex);
+                        if (!job->cancelled)
+                        {
+                            job->result = std::make_unique<DecodedLottie>();
+                            job->result->error =
+                                QStringLiteral("Cannot read prewarmed Lottie document");
+                            job->finished = true;
+                        }
+                        return;
+                    }
+                    decodeLottie(job, data,
+                                 url.isLocalFile() ? QFileInfo(path).absolutePath().toUtf8()
+                                                   : QByteArray());
+                    bool ready = false;
+                    {
+                        QMutexLocker lock(&job->mutex);
+                        ready = !job->cancelled && job->finished && job->result &&
+                                job->result->error.isEmpty();
+                    }
+                    if (ready)
+                        qCDebug(vectorLoading) << "mascot prewarm finished" << url;
+                });
+            cache.push_back(std::move(entry));
+            setWarming(true);
+            return;
+        }
+    }
     bool initialized = false;
     QRhi *owner = nullptr;
     quint64 loadedGeneration = 0, pendingGeneration = 0;
@@ -542,14 +773,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
     bool firstDraw = false;
     void cancelDecode()
     {
-        if (!pending)
-            return;
-        {
-            QMutexLocker lock(&pending->mutex);
-            pending->cancelled = true;
-            pending->result.reset();
-        }
-        pending.reset();
+        cancelJob(pending);
     }
     std::unique_ptr<ThorvgQrhiCanvas> canvas;
     std::unique_ptr<tvg::Animation> animation;
@@ -564,6 +788,8 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         paint = nullptr;
         picture = nullptr;
         loadedGeneration = 0;
+        activeSource = {};
+        activeCost = 0;
         nativeSize = {};
     }
     void report(VectorItem::Status status, const QString &error = {})
@@ -772,7 +998,12 @@ void VectorItem::prepare()
 void VectorItem::tick()
 {
     const qreal elapsed = d->clock.restart() / 1000.0;
-    if (d->status == Loading)
+    bool warming = false;
+    {
+        QMutexLocker lock(&d->feedback->mutex);
+        warming = d->feedback->warming;
+    }
+    if (d->status == Loading || warming)
         update();
     if (window() &&
         window()->rendererInterface()->graphicsApi() == QSGRendererInterface::Software &&
@@ -972,8 +1203,19 @@ void VectorItem::setPlaybackRate(qreal value)
     d->rate = value;
     emit playbackChanged();
 }
+void VectorItem::configureMascotCache(const QList<QUrl> &sources, qint64 limitBytes,
+                                      bool invalidate)
+{
+    d->mascotCache = !sources.isEmpty();
+    d->cacheLimitBytes = qMax<qint64>(0, limitBytes);
+    d->warmSources = sources;
+    if (invalidate)
+        ++d->cacheEpoch;
+    update();
+}
 void VectorItem::reload()
 {
+    ++d->cacheEpoch;
     prepare();
 }
 void VectorItem::play()

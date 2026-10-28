@@ -25,6 +25,8 @@ class QCATUIKIT_EXPORT MascotPetController : public QObject
     Q_PROPERTY(QString errorString READ errorString NOTIFY statusChanged)
     Q_PROPERTY(QStringList availableActions READ availableActions NOTIFY packageChanged)
     Q_PROPERTY(QString currentAction READ currentAction NOTIFY currentActionChanged)
+    Q_PROPERTY(int actionCacheLimitMiB READ actionCacheLimitMiB WRITE setActionCacheLimitMiB NOTIFY
+                   actionCacheLimitMiBChanged)
     Q_PROPERTY(int queueLength READ queueLength NOTIFY queueLengthChanged)
     Q_PROPERTY(bool paused READ paused NOTIFY pausedChanged)
     Q_PROPERTY(bool playbackEnabled READ playbackEnabled WRITE setPlaybackEnabled NOTIFY
@@ -65,6 +67,8 @@ class QCATUIKIT_EXPORT MascotPetController : public QObject
     QString errorString() const;
     QStringList availableActions() const;
     QString currentAction() const;
+    int actionCacheLimitMiB() const;
+    void setActionCacheLimitMiB(int limit);
     int queueLength() const;
     bool paused() const;
     bool playbackEnabled() const;
@@ -98,6 +102,7 @@ class QCATUIKIT_EXPORT MascotPetController : public QObject
     void statusChanged();
     void packageChanged();
     void currentActionChanged();
+    void actionCacheLimitMiBChanged();
     void queueLengthChanged();
     void pausedChanged();
     void playbackEnabledChanged();

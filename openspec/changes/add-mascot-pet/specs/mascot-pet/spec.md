@@ -129,3 +129,29 @@
 #### Scenario: ReloadSameActionPath
 - WHEN 发起新一代包加载或显式资源重载，动作路径相同而内容已经改变
 - THEN 系统 SHALL 加载本代内容，SHALL NOT 把为了保留画面而持有的旧动画误当作新加载结果。
+
+### Requirement: R11 ActionSceneCache
+
+桌宠 Lottie 渲染 SHALL 提供每实例有界的动作场景缓存及常用动作后台预热。系统 SHALL 区分缓存准入的源文档成本和实际内存，SHALL NOT 把文件大小声明为解码内存上限。普通 VectorItem SHALL 保持默认按源加载语义。
+
+预算 SHALL 通过 actionCacheLimitMiB 配置，默认 150 MiB（每 MiB 为 1048576 字节），SHALL NOT 固定限制动作条目数。预算 SHALL 计入当前动作及非活动缓存的不同来源文档成本；当前动作超出预算时 SHALL 仍可播放，但 SHALL NOT 保留额外场景。
+
+#### Scenario: ConfigurableCapacity
+- WHEN 宿主配置预算为 0、负值或运行中缩小预算
+- THEN 0 SHALL 关闭缓存与预热，负值 SHALL 被原子拒绝；缩小预算 SHALL 在后续渲染同步中按最近使用淘汰且不打断当前播放。
+
+#### Scenario: AllActionsFit
+- WHEN 全部动作来源文档成本之和不超过预算，且可见视觉保持有效
+- THEN 系统 SHALL 在优先常用动作后逐个后台预热其余动作；暂停播放时钟 SHALL NOT 阻止预热推进。完成后跨动作切换 SHALL 复用场景而不重复 CPU 解析。
+
+#### Scenario: ReuseAndPrewarm
+- WHEN 请求已缓存或已完成预热的动作
+- THEN 系统 SHALL 复用该实例已有的独占场景，跳过重复 CPU 解析；首次渲染仍 SHALL 经实际绘制后反馈 Ready。
+
+#### Scenario: CacheLifetime
+- WHEN 超出缓存预算、切包、显式重载、销毁或 QRhi 更换
+- THEN 系统 SHALL 淘汰或失效相应缓存并安全释放资源，旧代任务 SHALL NOT 发布到当前包。
+
+#### Scenario: SwitchLatency
+- WHEN 诊断日志启用并执行动作切换
+- THEN 系统 SHALL 报告缓存命中类型和动作执行开始到目标首帧渲染反馈的延迟，并说明测量边界；SHALL NOT 把解码完成等同于画面已显示。

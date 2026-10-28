@@ -13,7 +13,7 @@ set_tests_properties(mascot_contracts PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=of
 
 option(QCATUIKIT_TEST_MASCOT_GPU "Register mascot Lottie QRhi checks" OFF)
 if(QCATUIKIT_TEST_MASCOT_GPU AND QCATUIKIT_ENABLE_THORVG)
-    qcat_add_test(NAME mascot_render COMMAND tst_mascot lottieRendering catgrayLottieRendering asynchronousLottieHandoff)
+    qcat_add_test(NAME mascot_render COMMAND tst_mascot lottieRendering catgrayLottieRendering asynchronousLottieHandoff actionCacheAndLatency configurableActionCache)
     set_tests_properties(mascot_render PROPERTIES ENVIRONMENT
         "QCAT_MASCOT_GPU=1;QCAT_CATGRAY_LOTTIE_PACKAGE=${PROJECT_SOURCE_DIR}/tests/manual/mascot-player/catgray-lottie")
 endif()

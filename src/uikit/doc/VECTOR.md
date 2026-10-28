@@ -103,3 +103,5 @@ Gallery 提供 svg-image、lottie-animation、vector-canvas 三个页面，包�
 渲染使用宿主的 QRhi、命令缓冲及目标，不自行提交帧，也不在 active render pass 内调用 ThorVG。设备迁移时重建 canvas，先释放 canvas 对 paint 的引用，再销毁 Animation，最后释放同线程初始化引用。GPU 和平台覆盖见验证记录，加载成功不等于特性、性能或稳定性已全面验收。
 
 CPU 负责格式解析、动画求值及路径／描边三角化；当前适配使用 QPainterPath、QPainterPathStroker 和 qTriangulate。QRhi GPU 负责最终绘制、着色、混合及效果；选择 GPU 后端不会把前述 CPU 工作自动迁移到 GPU。
+
+普通 VectorItem 换源仍按上述流程加载；[角色视觉](MASCOTPET.md) 通过私有集成启用每实例有限的动作场景缓存与后台预热，缓存不共享可变动画。显式 `reload()` 同时使该实例的角色场景缓存失效，确保重新读取并解析当前来源。

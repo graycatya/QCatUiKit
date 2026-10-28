@@ -311,6 +311,29 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software /tmp/qcat-mascot-probe/qcat-
 
 Windows 将可执行文件替换为相应配置目录下的 `.exe`。默认窗口显示诊断 JSON，场景图初始化后更新 `graphicsApi`（QSGRendererInterface::GraphicsApi 枚举值）；`--json` 只采集环境，不初始化场景图，报告 `NotInitialized`。`--self-test` 验证会话分类，由独立 CTest 调用。
 
+### Windows 桌面窗口原型
+
+范围及平台状态见 [平台原型说明](MASCOTPLATFORMS.md)。Windows 手动探针额外依赖同 kit 的 Qt Widgets（仅用于 QApplication、QSystemTrayIcon 和 QMenu，不为库新增依赖）。从已有 MSVC x64 开发环境和 Qt 运行环境执行：
+
+```powershell
+cmake -S tests/manual/mascot-probe -B build/mascot-probe -G Ninja -DCMAKE_PREFIX_PATH="<qt-prefix>"
+cmake --build build/mascot-probe --parallel
+ctest --test-dir build/mascot-probe --output-on-failure
+& ./build/mascot-probe/qcat-mascot-probe.exe --windows-prototype
+```
+
+关闭交互原型，再在可交互且未锁定的桌面执行自动检查，期间不要操作鼠标或切换应用：
+
+```powershell
+& ./build/mascot-probe/qcat-mascot-probe.exe --windows-check ./build/windows-mascot-report.json
+```
+
+检查使用普通 Windows QPA 和原生 SendInput，退出码 0 表示本次原型检查全部通过；1 表示未通过或无法取得输入证据；2 表示当前平台／参数不支持。报告保存 prototypeAcceptance、始终 Pending 的完整 acceptance、系统／Qt／图形后端／屏幕、两个进程标识、逐项输入计数和前台 HWND。相邻 PNG 保存测试窗口合成及本程序托盘图标区域；需查看透明空白、角色区域、气泡按钮及图标。颜色比较使用同帧背后背景参考，不假定桌面色彩管理后的 RGB 固定不变。
+
+真实输入检查覆盖空白到独立进程、角色接收且不激活、原应用继续键入、整窗穿透、气泡区域变化、拖动与原生位置读取、置顶开关、主动气泡焦点及 Tab／空格、隐藏／宿主恢复、托盘注册与隐藏区展开、原生 Context 和菜单键盘隐藏。穿透切换及退出请求的菜单回调另以 QAction 派发验证，不能将其称为所有菜单动作的鼠标实测。退出请求不结束宿主。多屏／混合 DPI／完整气泡等仍按完整矩阵另行验证。
+
+常规 CTest 只运行会话分类和 headless 拒绝检查。后者先写入旧 Passed 证据，再以 offscreen/software 发起 Windows 检查，验证退出码 2、报告被替换为 Pending、能力仍 Unknown；不对正常 CTest 注入桌面输入。若沙箱拒绝 SendInput（例如错误 5），应在允许的交互桌面运行，不能改用 PostMessage 或 QtTest 合成点击后宣称真实穿透已通过。
+
 分类以实际 QPA 为准：wayland 插件报告 NativeWayland；xcb 配合 Wayland 会话报告 XWayland；xcb 配合 X11 会话报告 X11；会话未知时不猜测是否使用 XWayland。offscreen/minimal/vnc 报告 Headless。能力初始 Unknown 且附原因，验收固定 Pending；环境采集不会证明透明、穿透、定位、焦点或托盘可用。此工具目前没有原生窗口交互测试装置，也未探测桌面配套。完整验收仍按变更中的矩阵执行并保存人工操作证据。
 
 ## 角色包与精灵播放
@@ -376,4 +399,21 @@ QCAT_MASCOT_GPU=1 <build-dir>/tests/auto/mascot/tst_mascot asynchronousLottieHan
 QT_LOGGING_RULES='qcatuikit.mascot.loading.debug=true;qcatuikit.vector.loading.debug=true' <build-dir>/tests/manual/mascot-player/qcat-mascot-player --lottie
 ```
 
-两个类别默认不输出 debug 日志。首帧日志记录 CPU 侧绘制命令耗时，不是完整 GPU 执行时延。GUI 心跳数据用于记录指定环境的响应情况，不推导跨设备的固定帧时间承诺。加载总时长、峰值内存和素材减重仍需分别评估；本轮未加入动画缓存或修改素材。
+两个类别默认不输出 debug 日志。首帧日志记录 CPU 侧绘制命令耗时，不是完整 GPU 执行时延。GUI 心跳数据用于记录指定环境的响应情况，不推导跨设备的固定帧时间承诺。加载总时长、峰值内存和素材减重仍需分别评估。
+
+### 动作缓存与预热
+
+在有效 QRhi 桌面执行 `tst_mascot actionCacheAndLatency`，设置 `QCAT_MASCOT_GPU=1`；该测试也注册在可选 `mascot_render` 中。Windows 可在 Qt kit 的运行环境中执行：
+
+```powershell
+$env:QCAT_MASCOT_GPU = '1'
+& <build-dir>/bin/tst_mascot.exe actionCacheAndLatency
+```
+
+测试等待常用动作预热完成，验证预热命中、20 次往返切换复用场景且无重复 CPU 解析、非空画面、条目淘汰、清空切包失效及预热期间销毁，并输出冷包加载、预热动作和重复切换 P50/P95。冷包值包含完整包校验，不能直接当成相同边界的冷动作延迟；比较冷动作时查看 `action first rendered feedback ms`。不以固定 50 ms 断言作为跨设备测试门槛。
+
+直接运行 `tst_mascot` 时，`lottieRendering` 根据实际 ThorVG 可用性和 Qt Quick 图形后端选择播放或错误契约；未设置 `QCAT_MASCOT_GPU` 不代表渲染不可用。该变量用于显式要求 GPU，并启用可选缓存及异步渲染测试；十动作实材检查另需 `QCAT_CATGRAY_LOTTIE_PACKAGE`。未启用时这些可选测试显示 SKIP 属于预期。CTest 的 `mascot_contracts` 显式使用 offscreen/software 验证错误反馈，`mascot_render` 则要求有效 QRhi 桌面。
+
+诊断中 `resident` 表示复用已播放场景及画布，`prewarm` 表示接管预热任务（可能仍在运行），后者不能单凭命中日志认定预热已完成；应结合 `mascot prewarm finished` 和首帧反馈。内存测试应记录相同素材、分辨率、后端下冷启动及缓存稳定后的进程工作集／私有提交和峰值，不能把默认 150 MiB 文档准入预算当作实际内存上限。完整十动作、快速换源和同路径内容更新继续运行既有 `catgrayLottieRendering`、`asynchronousLottieHandoff`。
+
+`cacheLimitConfiguration` 覆盖默认 150、实例隔离、重复设置、负值拒绝和 0 禁用。可选 GPU 测试 `configurableActionCache` 在默认预算下暂停播放并等待其余九动作预热，按固定排列跨十动作切换二十次，断言不淘汰且不重复 CPU 解码；随后降到 1 MiB 验证淘汰和超限动作按需加载，再设 0 验证禁用。`actionCacheAndLatency` 显式使用 40 MiB 总预算，保留预算不足时的淘汰测试；两个 GPU 测试均包含于 `mascot_render`。
