@@ -30,3 +30,22 @@ if(BUILD_TESTING)
             ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
     endif()
 endif()
+
+if(APPLE)
+    set_target_properties(qcat-mascot-probe PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER org.qcat.mascotprobe)
+    enable_language(OBJCXX)
+    target_sources(qcat-mascot-probe PRIVATE macosprobe.h macosprobe.mm)
+    target_link_libraries(qcat-mascot-probe PRIVATE "-framework AppKit" "-framework ApplicationServices")
+    qt_add_resources(qcat-mascot-probe macos_probe PREFIX "/" FILES MacosProbe.qml)
+    if(BUILD_TESTING)
+        add_test(NAME mascot_probe_reject_headless_macos COMMAND ${CMAKE_COMMAND}
+            "-DPROBE=$<TARGET_FILE:qcat-mascot-probe>"
+            "-DREPORT=${CMAKE_CURRENT_BINARY_DIR}/headless-macos-report.json"
+            "-DCHECK_FLAG=--macos-check"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_headless.cmake")
+        set_tests_properties(mascot_probe_reject_headless_macos PROPERTIES
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+    endif()
+endif()

@@ -10,6 +10,10 @@
 #include <QScreen>
 #include <QSysInfo>
 #include <cstdio>
+#ifdef Q_OS_MACOS
+#include "macosprobe.h"
+#include <QTimer>
+#endif
 #ifdef Q_OS_WIN
 #include "windowsprobe.h"
 #include <QApplication>
@@ -43,6 +47,10 @@ int main(int argc, char **argv)
     const auto targetArgument = app.arguments().indexOf("--windows-target");
     if (targetArgument >= 0 && targetArgument + 1 < app.arguments().size())
         return WindowsProbe::runTarget(app.arguments()[targetArgument + 1]);
+#endif
+#ifdef Q_OS_MACOS
+    if (app.arguments().contains("--macos-target"))
+        return QGuiApplication::platformName() == "cocoa" ? MacosProbe::runTarget() : 2;
 #endif
     if (app.arguments().contains("--self-test"))
     {
@@ -102,13 +110,52 @@ int main(int argc, char **argv)
                        {"capabilities", capabilities},
                        {"screens", screens}};
     if (app.arguments().contains("--json") && !app.arguments().contains("--windows-check") &&
-        !app.arguments().contains("--windows-prototype"))
+        !app.arguments().contains("--windows-prototype") &&
+        !app.arguments().contains("--macos-check") &&
+        !app.arguments().contains("--macos-prototype"))
     {
         const QByteArray json = QJsonDocument(report).toJson();
         std::fwrite(json.constData(), 1, size_t(json.size()), stdout);
         return 0;
     }
     QQmlApplicationEngine engine;
+    const int macosCheck = app.arguments().indexOf("--macos-check");
+    if (macosCheck >= 0 || app.arguments().contains("--macos-prototype"))
+    {
+        if (platform != "cocoa" || (macosCheck >= 0 && macosCheck + 1 >= app.arguments().size()))
+        {
+            report.insert("prototypeAcceptance", "Pending");
+            report.insert("prototypeReason", "macOS Cocoa interactive desktop is required");
+            if (macosCheck >= 0 && macosCheck + 1 < app.arguments().size())
+            {
+                QSaveFile file(app.arguments()[macosCheck + 1]);
+                if (!file.open(QIODevice::WriteOnly))
+                    return 1;
+                file.write(QJsonDocument(report).toJson());
+                if (!file.commit())
+                    return 1;
+            }
+            return 2;
+        }
+#ifdef Q_OS_MACOS
+        MacosProbe probe(report);
+        engine.setInitialProperties({{"probe", QVariant::fromValue(&probe)}});
+        engine.load(QUrl("qrc:/MacosProbe.qml"));
+        if (engine.rootObjects().isEmpty())
+            return 1;
+        if (macosCheck >= 0)
+            engine.rootObjects().first()->setProperty("visible", false);
+        const QString output = macosCheck >= 0 ? app.arguments()[macosCheck + 1] : QString();
+        QObject::connect(&probe, &MacosProbe::finished, &app, [&app](int code) { app.exit(code); });
+        QTimer::singleShot(0, &probe, [&probe, output] { probe.start(output); });
+        const int result = app.exec();
+        for (auto *root : engine.rootObjects())
+            delete root;
+        return result;
+#else
+        return 2;
+#endif
+    }
 #ifdef Q_OS_WIN
     const bool windowsPrototype = app.arguments().contains("--windows-prototype");
     const int windowsCheck = app.arguments().indexOf("--windows-check");

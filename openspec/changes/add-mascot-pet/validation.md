@@ -263,3 +263,56 @@ VectorItem 新源加载时保留并冻结旧场景；私有角色视觉在换包
 独立构建 `build/mascot-windows-probe` 通过；根项目另建 `build/mascot-probe-root-check`，仅该临时构建启用手动测试、关闭 ThorVG／Gallery，探针目标构建通过，未改用户原有 kit 缓存。两种构建的分类及 headless 拒绝 CTest 各 2/2 通过，最终分别 0.13 秒和 0.29 秒。headless 检查特意预写旧 Passed 文件，验证 offscreen 检查返回 2 并将旧结果替换为 Pending、能力 Unknown，不制造或沿用实机通过。
 
 新增 Windows QML 的直接 qmllint、C++ clang-format、文档检查和差异空白检查通过；文档检查 37 Markdown / 509 本地链接。仅改手动探针与文档，本轮未重复此前库／Gallery 21 项全套回归。原平台完整矩阵及任务 7.2 继续 Pending；其他系统原型任务不勾选，不同步主规格、不归档。
+
+## 2026-10-29 macOS 桌面窗口原型实施与部分验证
+
+本轮开始任务 1.3，交付 `tests/manual/mascot-probe/macosprobe.h`、`macosprobe.mm`、`MacosProbe.qml` 及 Apple 条件构建。未新增公共库 API，未修改角色渲染／调度实现。任务 1.3 保持未完成，整体仍为 15/41，不同步主规格、不归档。
+
+环境：macOS Tahoe 26.6.2（25G83），Apple arm64，Qt 6.10.2，AppleClang 21.0.0.21000101，Release/Ninja。起点提交 `69dcdf0` 加本轮工作区改动。单屏报告逻辑可用区域 1920×974 左上角 (0,30)，DPR 1；未测试跨屏或混合 DPI。角色／气泡为 AppKit 原生矩形面板，Qt Quick 仅用于诊断界面；没有 Metal／Lottie 像素验收。
+
+实现采用两个 nonactivating NSPanel 分别承载声明的角色与气泡矩形区域，中间空白无窗口；没有实现任意多边形／椭圆区域。角色拒绝成为 key window，气泡提供原生按钮，拖动同步气泡位置；置顶映射到 NSFloatingWindowLevel／NSNormalWindowLevel，整窗穿透同时设置两面板 ignoresMouseEvents。菜单栏 QCat 提供 show、hide、passthrough、exit，退出仅记录宿主请求。独立目标进程通过 stdout JSON 输出鼠标、键盘和焦点状态。菜单栏项目显式持有并在退出时移除，修复首轮清理中的 EXC_BAD_ACCESS，随后检查正常返回 2，交互界面关闭返回 0。
+
+工具：当前 PATH 无 Node/OpenSpec，在 `/tmp` 下载官方 Node 22.23.4（SHA-256 校验一致），从 npm 安装临时 @fission-ai/openspec。执行 list、status、instructions apply，确认 repo-local 根和 ready 状态，未更改系统安装或项目配置。
+
+命令与结果：
+
+- `cmake -S tests/manual/mascot-probe -B build/mascot-macos-probe -G Ninja`，附当前 kit 的 Qt prefix、Ninja 路径和 Release：独立配置／构建通过，生成 qcat-mascot-probe.app。
+- `ctest --test-dir build/mascot-macos-probe --output-on-failure`：2/2 通过；最终一次 0.05 秒。覆盖平台分类与离屏拒绝检查，后者覆盖预写旧 Passed 的报告，不发送系统输入。
+- Qt 6.10.2 `qmllint tests/manual/mascot-probe/MacosProbe.qml`：通过。使用 Bound 组件行为修复委托中的非限定访问。
+- 沙箱内 Cocoa 启动报告 no screens available，不能用于实机验收；获准在真实桌面执行 `--macos-check build/macos-mascot-prototype-final.json` 后能取得屏幕和目标进程记录。
+- 最终 Cocoa 记录：8 项 Passed（独立目标进程归属、非激活角色窗口属性、原生置顶、关闭置顶、原生定位、两区域隐藏、宿主恢复、两窗口忽略鼠标属性）；被动显示焦点检查 Pending，因为打包运行中的目标进程没有取得初始 key window。检查先建立基线，未建立时不声称显示导致抢焦点或已验证焦点保持。
+- `CGPreflightPostEventAccess()` 为 false；检查在发送事件前保存报告并返回 2。最终鼠标／键盘／角色／气泡计数均为 0；没有把窗口属性检查计为真实点击穿透。整体 prototypeAcceptance 和 acceptance 都为 Pending。
+- computer-use 查看诊断窗口及截图，确认操作按钮、说明和滚动 JSON 可读；关闭诊断窗口后主探针退出 0。工具选择应用额外启动的诊断进程及早期未打包交互进程另行清理。未通过 computer-use 验证原生面板输入、菜单栏操作或透明合成。
+- OpenSpec strict validate 通过，文档检查与 git diff --check 通过；最终计数见文档验证历史。本轮只改独立手动探针与文档，未重复库／Gallery 全套构建和 CTest。
+
+未覆盖／阻塞：系统事件发送权限不可用；焦点基线未建立。真实区域和整窗点击穿透、实际拖动、原应用继续输入、气泡 Tab／空格、菜单栏实际交互、透明合成像素仍待验证。菜单注册不等于菜单操作实测。未修改辅助功能／录屏权限或自动申请新权限。运行命令和人工检查方法已补入 VALIDATION，当前限制补入 MASCOTPLATFORMS。任务 1.3 及完整 macOS 任务 7.3 均保持未勾选。
+
+## 2026-10-29 macOS 原型真实输入及人工菜单验收完成
+
+继续任务 1.3。用户明确允许仅本次验收启用探针辅助功能权限，并亲自在系统密码框完成验证；通过系统设置选择当前构建。终端直接启动二进制时 postEventAccess 仍为 false，改用 `open -n -W build/mascot-macos-probe/qcat-mascot-probe.app --args --macos-check <absolute-report-path>` 后为 true。开发构建重新链接会使旧授权身份失效，期间在同一已授权范围重新选择当前 app；最终验收后已观察 qcat-mascot-probe 辅助功能开关为 off。未更改其他应用权限，未申请录屏权限。
+
+修正发现的两个问题：穿透／气泡状态变更与真实点击不能在同一回调内立即连续执行，现分为独立检查步骤，等待 WindowServer 生效；主动气泡操作显式激活应用、设置原生按钮响应者，按钮明确支持 Tab／Shift+Tab 和空格，不依赖用户修改系统键盘导航设置。被动角色仍拒绝 key window。报告逐项保存独立进程输入、角色／气泡计数、气泡 keyWindow 与响应者类，并记录两个气泡真实键盘事件。
+
+最终构建仍为 macOS 26.6.2（25G83）arm64 / Qt 6.10.2 / AppleClang 21 Release。角色／气泡以 AppKit 绘制，诊断窗口使用 Qt Quick；图形会话为 Cocoa，未作 Metal／Lottie 渲染测试。最终屏幕布局以原始报告为准，单屏 DPR 1。本轮 Qt GUI 会话无额外平台配套组件。
+
+最终输入证据 `build/macos-mascot-final-acceptance-input-repeat.json`（临时本机产物）：19/19 Passed，postEventAccess=true，focusBaselineEstablished=true，检查覆盖独立进程归属、被动显示焦点、角色非激活属性、置顶开关、原生定位、隐藏／恢复、原生穿透属性、透明空白点击、角色点击与焦点、背后键盘、角色／气泡整窗穿透、气泡点击及 Tab／空格、气泡隐藏后的原区域点击、真实拖动及气泡同步。
+
+| 真实输入场景 | 实际结果 |
+| --- | --- |
+| 空白点击 | 背后 mouse 从 0 到 1 |
+| 角色点击 | bodyClicks 到 1，背后 mouse 保持 1，背后 keyWindow 保持 true |
+| 背后键盘 | A 键使背后 keys 到 1 |
+| 整窗穿透 | 角色及气泡点击分别使背后 mouse 到 2、3，角色／气泡计数不增加 |
+| 主动气泡 | 鼠标触发一次；Tab／空格再触发一次，bubbleClicks=2，bubbleKeyEvents=2，末次 keyCode=49 |
+| 隐藏气泡 | 原气泡区域使背后 mouse 到 4 |
+| 拖动 | 1 次 dragEvents；角色原点由 (200,220) 到 (230,240)，气泡同步到 (170,440)，均为 AppKit 逻辑坐标 |
+
+较早一次最终复跑为 18/19：原生拖动出现 5 个移动事件，角色到 (230,120)，与预期轨迹不符。不能仅凭日志确定来源；告知用户暂勿操作鼠标／键盘并保持代码不变后复验，最终 19/19 且只有预期的 1 个拖动事件。保留初次报告 `build/macos-mascot-final-acceptance-input.json`，不删除失败记录，也不把它解释成已经证明的产品缺陷或用户干扰。
+
+人工菜单证据 `build/macos-mascot-menu-evidence.json`：电脑工具仅绑定应用窗口，无法直接读取系统菜单栏，向窗口发送按键还会收起系统菜单。用户从真实 QCat 菜单栏执行 hide、show、passthrough 切换及 exit，明确确认隐藏／恢复正确、exit 后宿主仍运行，角色与气泡之间可以看到背后窗口且没有实色大矩形。探针记录 menuActions=9、exitRequests=2、lastMenuAction=hide、末态 panelsVisible=false、passthrough=false；操作次数超过请求的最小五步，按实际计数记录，不推断每一次动作的顺序。诊断窗口 save 成功写入系统临时目录后复制保存此原始记录。视觉结论来自用户实机确认，不称为工具像素对比或录屏证据。
+
+诊断窗口补充 menu 调试入口，展开与菜单栏共用的 NSMenu；异步展开避免阻塞当前 Qt 事件。该入口不替代菜单栏点击证据。菜单回调记录计数与最后动作。交互 save 默认写入 outputPath 显示的系统临时目录，避免 LaunchServices 工作目录不可写。
+
+汇总证据 `build/macos-mascot-prototype-accepted.json` 合并上述自动检查及人工确认，prototypeAcceptance=Passed，顶层 acceptance 继续 Pending；仅在上述系统／Qt 的单屏矩形原型范围将已测能力记录为 Supported。自动输入入口本身仍返回 2 / Pending，等待人工菜单及视觉证据，不自动沿用本次人工结论。任意形状输入区域、角色动作联动、跨屏／混合 DPI、平滑移动、气泡避让、屏幕移除、Spaces／全屏及完整平台矩阵不在本轮通过范围。
+
+最终独立构建通过；CTest 2/2，0.08 秒；MacosProbe qmllint、C++ clang-format 检查通过。探针与独立目标进程已全部退出，系统进程检查未发现残留。文档、OpenSpec 严格验证及差异空白检查结果见本轮最终记录；未重复库／Gallery 全套回归。任务 1.3 勾选完成，进度 16/41；任务 7.3 保持未完成，不同步主规格、不归档。

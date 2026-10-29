@@ -417,3 +417,23 @@ $env:QCAT_MASCOT_GPU = '1'
 诊断中 `resident` 表示复用已播放场景及画布，`prewarm` 表示接管预热任务（可能仍在运行），后者不能单凭命中日志认定预热已完成；应结合 `mascot prewarm finished` 和首帧反馈。内存测试应记录相同素材、分辨率、后端下冷启动及缓存稳定后的进程工作集／私有提交和峰值，不能把默认 150 MiB 文档准入预算当作实际内存上限。完整十动作、快速换源和同路径内容更新继续运行既有 `catgrayLottieRendering`、`asynchronousLottieHandoff`。
 
 `cacheLimitConfiguration` 覆盖默认 150、实例隔离、重复设置、负值拒绝和 0 禁用。可选 GPU 测试 `configurableActionCache` 在默认预算下暂停播放并等待其余九动作预热，按固定排列跨十动作切换二十次，断言不淘汰且不重复 CPU 解码；随后降到 1 MiB 验证淘汰和超限动作按需加载，再设 0 验证禁用。`actionCacheAndLatency` 显式使用 40 MiB 总预算，保留预算不足时的淘汰测试；两个 GPU 测试均包含于 `mascot_render`。
+
+## macOS 桌宠窗口探针
+
+从现有 CMakeCache 取得 Qt prefix 和 Ninja 路径，独立配置以避免改变用户 kit：
+
+```sh
+cmake -S tests/manual/mascot-probe -B build/mascot-macos-probe -G Ninja -DCMAKE_PREFIX_PATH="<qt-prefix>" -DCMAKE_MAKE_PROGRAM="<ninja-path>" -DCMAKE_BUILD_TYPE=Release
+cmake --build build/mascot-macos-probe --parallel
+ctest --test-dir build/mascot-macos-probe --output-on-failure
+build/mascot-macos-probe/qcat-mascot-probe.app/Contents/MacOS/qcat-mascot-probe --macos-prototype
+open -n -W build/mascot-macos-probe/qcat-mascot-probe.app --args --macos-check "<absolute-report-path>"
+```
+
+先确认 Cocoa 会话存在真实屏幕。沙箱中的 no screens available 不算平台失败或验收通过。自动 CTest 验证会话分类和离屏拒绝实机检查，后者预写旧 Passed 再确认被 Pending 覆盖。检查返回 2 表示仍需实机证据，不能按成功处理。不要为运行测试自动修改隐私权限；系统事件权限缺失时，按平台说明手动操作并保留实际观察。
+
+交互时先点击独立背后窗口，再显示角色，记录背后进程 keyWindow 和输入计数。分别点击角色矩形、两个区域之间的空白、气泡按钮；启用整窗穿透后重复角色和气泡点击，背后 mouse 增加而角色／气泡计数不增加。隐藏气泡后原区域点击也应抵达背后窗口。主动点击气泡后用 Tab／空格验证按钮，再拖动角色检查气泡同步。用菜单栏 QCat 项目检查隐藏、穿透、show 恢复和 exit 仅发宿主请求。save 保存当前计数，但不会自动把人工操作判定为通过；将步骤、前后计数、焦点和观察结果写入变更证据。关闭诊断窗口检查独立进程和菜单栏项目已清理。完整范围及未覆盖场景见 MASCOTPLATFORMS.md。
+
+自动输入验收需用户明确授权的辅助功能权限。通过 LaunchServices（上述 open 命令）启动 app，使权限归属该探针；直接从终端启动二进制可能仍归属启动者。开发构建重新链接后，旧的临时权限身份可能失效；在用户已批准的验收范围内重新选择当前 app，并以报告 postEventAccess 为准，不以设置开关外观推断。验收结束恢复本次临时授权，普通窗口展示无需此权限。窗口穿透或显示状态变更后应等待 WindowServer 处理，再发送真实输入。
+
+气泡按钮的主动操作允许激活探针应用；检查应先证明角色被动点击保持背后焦点、键盘仍到背后窗口，再证明主动气泡按钮可以接收 Tab 和空格。报告为每步保留角色／气泡及独立目标计数、气泡 keyWindow 和响应者类，不能用一次末态推断全部中间步骤。人工菜单验收还需保存 menuActions、lastMenuAction、exitRequests，并明确菜单栏真实操作与诊断窗口展开菜单的区别。
