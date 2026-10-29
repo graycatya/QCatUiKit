@@ -10,6 +10,11 @@
 #include <QScreen>
 #include <QSysInfo>
 #include <cstdio>
+#if defined(Q_OS_LINUX)
+#include "linuxprobe.h"
+#include <QApplication>
+#include <QTimer>
+#endif
 #ifdef Q_OS_MACOS
 #include "macosprobe.h"
 #include <QTimer>
@@ -18,6 +23,8 @@
 #include "windowsprobe.h"
 #include <QApplication>
 #include <QTimer>
+using ProbeApplication = QApplication;
+#elif defined(Q_OS_LINUX)
 using ProbeApplication = QApplication;
 #else
 using ProbeApplication = QGuiApplication;
@@ -43,6 +50,13 @@ static QString session(const QString &platform, const QString &desktopSession)
 int main(int argc, char **argv)
 {
     ProbeApplication app(argc, argv);
+#ifdef Q_OS_LINUX
+    const int linuxTarget = app.arguments().indexOf("--linux-target");
+    if (linuxTarget >= 0)
+        return linuxTarget + 1 < app.arguments().size()
+                   ? LinuxProbe::runTarget(app.arguments()[linuxTarget + 1])
+                   : 2;
+#endif
 #ifdef Q_OS_WIN
     const auto targetArgument = app.arguments().indexOf("--windows-target");
     if (targetArgument >= 0 && targetArgument + 1 < app.arguments().size())
@@ -112,13 +126,51 @@ int main(int argc, char **argv)
     if (app.arguments().contains("--json") && !app.arguments().contains("--windows-check") &&
         !app.arguments().contains("--windows-prototype") &&
         !app.arguments().contains("--macos-check") &&
-        !app.arguments().contains("--macos-prototype"))
+        !app.arguments().contains("--macos-prototype") &&
+        !app.arguments().contains("--linux-check") &&
+        !app.arguments().contains("--linux-prototype"))
     {
         const QByteArray json = QJsonDocument(report).toJson();
         std::fwrite(json.constData(), 1, size_t(json.size()), stdout);
         return 0;
     }
     QQmlApplicationEngine engine;
+#ifdef Q_OS_LINUX
+    const int linuxCheck = app.arguments().indexOf("--linux-check");
+    if (linuxCheck >= 0 || app.arguments().contains("--linux-prototype"))
+    {
+        app.setQuitOnLastWindowClosed(false);
+        if ((platform != "xcb" && !platform.startsWith("wayland")) ||
+            (linuxCheck >= 0 && linuxCheck + 1 >= app.arguments().size()))
+        {
+            report.insert("prototypeAcceptance", "Pending");
+            report.insert("prototypeReason",
+                          "Linux xcb or Wayland desktop and report path required");
+            if (linuxCheck >= 0 && linuxCheck + 1 < app.arguments().size())
+            {
+                QSaveFile file(app.arguments()[linuxCheck + 1]);
+                if (!file.open(QIODevice::WriteOnly) ||
+                    file.write(QJsonDocument(report).toJson()) < 0 || !file.commit())
+                    return 1;
+            }
+            return 2;
+        }
+        LinuxProbe probe(&engine, report);
+        engine.setInitialProperties({{"probe", QVariant::fromValue(&probe)}});
+        engine.load(QUrl("qrc:/LinuxProbe.qml"));
+        if (engine.rootObjects().isEmpty())
+            return 1;
+        if (linuxCheck >= 0)
+            qobject_cast<QQuickWindow *>(engine.rootObjects().first())->showMinimized();
+        const QString output = linuxCheck >= 0 ? app.arguments()[linuxCheck + 1] : QString();
+        QObject::connect(&probe, &LinuxProbe::finished, &app, [&app](int code) { app.exit(code); });
+        QTimer::singleShot(0, &probe, [&probe, output] { probe.start(output); });
+        const int result = app.exec();
+        for (auto *root : engine.rootObjects())
+            delete root;
+        return result;
+    }
+#endif
     const int macosCheck = app.arguments().indexOf("--macos-check");
     if (macosCheck >= 0 || app.arguments().contains("--macos-prototype"))
     {

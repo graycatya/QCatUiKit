@@ -311,6 +311,64 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software /tmp/qcat-mascot-probe/qcat-
 
 Windows 将可执行文件替换为相应配置目录下的 `.exe`。默认窗口显示诊断 JSON，场景图初始化后更新 `graphicsApi`（QSGRendererInterface::GraphicsApi 枚举值）；`--json` 只采集环境，不初始化场景图，报告 `NotInitialized`。`--self-test` 验证会话分类，由独立 CTest 调用。
 
+### Linux 桌面窗口原型
+
+使用本机 Qt prefix 独立构建，不修改既有 kit 缓存。需要 Qt Quick 和 Widgets；可选 Xlib 开发包启用 xcb 原生读回，运行时的 libXtst 启用自动输入。没有 Xlib 时仍可构建和运行原生 Wayland 窗口，xcb 输入检查保持 Pending。
+
+```sh
+cmake -S tests/manual/mascot-probe -B build/mascot-linux-probe -G Ninja -DCMAKE_PREFIX_PATH="<qt-prefix>" -DCMAKE_BUILD_TYPE=Release
+cmake --build build/mascot-linux-probe --parallel
+ctest --test-dir build/mascot-linux-probe --output-on-failure
+QT_QPA_PLATFORM=xcb build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-xcb-report.json
+QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-report.json
+QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-prototype
+```
+
+两个后端必须串行运行，等待前一进程退出再启动后一进程；自动输入期间勿操作鼠标／键盘。自动报告：1 为失败或保存失败，2 为仍有 Pending；当前不自动宣告完整通过。报告和相邻 PNG 为本机临时证据，不提交进源码。QPA=xcb 且 declaredSession=wayland 时结果是 XWayland，不能填入原生 X11 平台验收。
+
+xcb 自动检查覆盖背后独立进程归属、渲染 alpha、空白和椭圆外角点击去向、角色不抢焦点、背后键盘、角色／气泡整窗穿透、隐藏气泡后输入区域、气泡 Tab／空格、真实拖动及原生位置读回、置顶开关、隐藏和宿主恢复。自动检查启动时将诊断窗口最小化，并额外发送 40 个连续拖动点，核对最终原生位置和隐藏期间诊断报告刷新次数；事件间隔指标不等于画面帧率或屏幕呈现延迟。人工复测应比较诊断窗口正常显示与最小化后的拖动手感。XWayland 不一定允许桌面抓图；只有截图尺寸及独立蓝色背景参考有效时才比较透明空白与角色像素，否则桌面合成项 Pending。窗口自身 PNG 不代替桌面合成。
+
+原生 Wayland 自动检查不发送 XTest；没有合成器配套时验证独立进程、渲染 alpha、服务诊断及隐藏恢复，定位和置顶明确不可用。兼容 GNOME 配套连接后额外检查定位、置顶关闭／恢复及原生快照。人工运行控制界面后，分别点击角色、椭圆外角、空白、气泡及开启穿透后的相同位置，保存独立进程计数；真实拖动、被动显示焦点、原应用继续输入和气泡键盘操作均须记录。观察角色／气泡间实际显示背后蓝色窗口而非实色矩形，独立记录透明视觉结论。
+
+托盘人工验收：从真实托盘图标打开菜单，依次执行 hide、show、passthrough、exit request，并在控制界面 Save evidence。核对菜单计数、最后动作、窗口显示及穿透状态；exit 只增加 exitRequests，宿主继续运行。没有托盘服务时记录不可用，通过控制界面恢复显示，不能把服务查询或直接按钮调用计为菜单实测。Close probe 后确认独立目标、角色、控制窗口及托盘已清理。平台范围见 [平台原型说明](MASCOTPLATFORMS.md)。
+
+### GNOME/Mutter 配套安装及验收
+
+GNOME 配套及 Qt 原型仅面向 Shell 50 原生 Wayland 候选环境。手动探针增加同 kit 的 Qt DBus 依赖，不改变公共库依赖。以下构建／测试／打包均不安装或启用扩展：
+
+```sh
+cmake --build build/mascot-linux-probe --parallel
+ctest --test-dir build/mascot-linux-probe --output-on-failure
+cmake --build build/mascot-linux-probe --target mascot_probe_gnome_package
+```
+
+打包目标需要本机 gnome-extensions，输出 `build/mascot-linux-probe/gnome/mascot-probe@qcatuikit.local.shell-extension.zip`，只包含 metadata、extension、service 和 protocol 四份文件。GJS 与 dbus-run-session 可用时注册私有会话总线集成测试，Node 可用时注册纯协议测试；检查 CTest 列表，缺少工具时不能宣称对应测试已运行。受限沙箱若禁止创建本地总线套接字，需在允许本地套接字的环境运行测试，不把该失败解释成扩展失败。
+
+仅在用户明确选择后，在当前用户会话安装和启用：
+
+```sh
+gnome-extensions install build/mascot-linux-probe/gnome/mascot-probe@qcatuikit.local.shell-extension.zip
+gnome-extensions enable mascot-probe@qcatuikit.local
+gnome-extensions info mascot-probe@qcatuikit.local
+QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-companion.json
+QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-prototype
+```
+
+扩展安装在用户的 GNOME extensions 目录，不需要 root。不自动覆盖已有同 UUID 安装；已有版本先核对来源、文件和当前验收证据。新装扩展如果当前 Shell 未发现，或更新 JS 后需重新载入，先保存工作，由用户自行注销并重新登录；Wayland 不能用重启 Shell 命令替代。不要自动注销或终止 Shell。具体重载约束见 [GNOME 调试文档](https://gjs.guide/extensions/development/debugging.html)。
+
+诊断中检查 companion.state=Ready、protocol=1、version=0.1.0、shellVersion 为本机 50.x，服务 unique owner 与 org.gnome.Shell 相同；这只证明握手。使用 Reset position、Always on top 关闭／开启、Native snapshot，核对 lastCompanionRequest.applied 和 nativeWindow.rect／above，保存原生读回。自动入口仍保持整体 Pending，不把 Qt x/y 或窗口 flags 当成定位成功。原型坐标是全局逻辑坐标，当前不验收公共组件的多屏相对坐标及平滑移动。
+
+保持原型运行时，执行 `gnome-extensions disable mascot-probe@qcatuikit.local`：检查状态变为 Disconnected、旧原生快照被移除、定位／置顶能力不可用，新请求明确失败；扩展应恢复其改变前的置顶状态。再执行 enable：状态重新 Ready，旧请求不得重放，用户重新点击定位或置顶后才执行。分别记录禁用、重新启用、操作结果、托盘服务状态及独立背后进程输入计数。无扩展时亦运行一次自动检查，保存 Missing 及不可用原因。版本不兼容和非 Shell 服务拒绝由私有总线测试覆盖；真实 Shell 升级后的不兼容仍需在对应系统验收，不通过修改真实扩展版本或关闭全局版本检查伪造通过。
+
+结束后可禁用并卸载本次扩展：
+
+```sh
+gnome-extensions disable mascot-probe@qcatuikit.local
+gnome-extensions uninstall mascot-probe@qcatuikit.local
+```
+
+卸载后再次确认客户端不可用，关闭原型清理测试进程与托盘。此配套不提供托盘服务，不能因窗口配套 Ready 就填托盘通过。权限、协议及恢复行为见 [平台说明](MASCOTPLATFORMS.md#gnomemutter-配套原型)。
+
 ### Windows 桌面窗口原型
 
 范围及平台状态见 [平台原型说明](MASCOTPLATFORMS.md)。Windows 手动探针额外依赖同 kit 的 Qt Widgets（仅用于 QApplication、QSystemTrayIcon 和 QMenu，不为库新增依赖）。从已有 MSVC x64 开发环境和 Qt 运行环境执行：
@@ -437,3 +495,27 @@ open -n -W build/mascot-macos-probe/qcat-mascot-probe.app --args --macos-check "
 自动输入验收需用户明确授权的辅助功能权限。通过 LaunchServices（上述 open 命令）启动 app，使权限归属该探针；直接从终端启动二进制可能仍归属启动者。开发构建重新链接后，旧的临时权限身份可能失效；在用户已批准的验收范围内重新选择当前 app，并以报告 postEventAccess 为准，不以设置开关外观推断。验收结束恢复本次临时授权，普通窗口展示无需此权限。窗口穿透或显示状态变更后应等待 WindowServer 处理，再发送真实输入。
 
 气泡按钮的主动操作允许激活探针应用；检查应先证明角色被动点击保持背后焦点、键盘仍到背后窗口，再证明主动气泡按钮可以接收 Tab 和空格。报告为每步保留角色／气泡及独立目标计数、气泡 keyWindow 和响应者类，不能用一次末态推断全部中间步骤。人工菜单验收还需保存 menuActions、lastMenuAction、exitRequests，并明确菜单栏真实操作与诊断窗口展开菜单的区别。
+
+
+## 宿主桌宠窗口契约
+
+使用当前配置的构建目录运行 `ctest --test-dir <build-dir> -R '^mascot_contracts$' --output-on-failure`。publicWindowLifecycle 检查公共 QML 类型加载、默认隐藏、关闭隐藏后角色状态保留及离屏定位明确失败；publicBubbleLifecycle 检查纯文本内容、隐藏冻结时限、超时、替换和过期标识拒绝。这些不验证原生点击穿透、桌面透明合成或焦点策略。
+
+Gallery 的 mascot-pet 页面仅使用公共 CatMascotPet，提供两包、多个窗口、动作、气泡、移动和穿透操作；退出页面必须清理窗口。分别在原生 Wayland、xcb 及其他实际平台记录窗口、输入、焦点及宿主生命周期，不安装扩展。原生 Wayland 定位与置顶须返回受限原因，不能借助已安装的研究配套把公共组件标为支持。已有研究原型的扩展安装／禁用步骤仅适用于其独立手动程序。
+
+安装公共窗口消费者：将库安装到独立临时前缀，然后以该前缀和同一 Qt kit 配置 `tests/auto/cmake/mascot-consumer`，构建并离屏运行 mascot-consumer。它只包含公开头、导入已安装模块，检查默认隐藏、控制器归属和关闭隐藏，不访问 Gallery 或私有视觉 URL。当前组件不提供托盘，托盘相关历史探针步骤仅适用于独立研究程序。
+
+在真实桌面显式设置 `QCAT_MASCOT_DESKTOP=1` 并分别用 `QT_QPA_PLATFORM=wayland`／`xcb` 运行 `tst_mascot desktopWindowIntegration`。可设置 `QCAT_MASCOT_CAPTURE` 为 PNG 目标路径。检查定位限制、移动终态、无效状态拒绝、气泡尺寸持续有效，以及可定位环境中气泡前后角色原点相同、状态恢复与取消后无重复终态。PNG 只证明窗口渲染，不证明桌面透明合成或真实输入去向；原生 Wayland 必须保持精确定位不可用。
+
+
+## 桌宠独立窗口与采样回归
+
+mascot_contracts 的 publicWindowLifecycle 检查默认置顶、inputTransparent=false、inputRegionsEnabled=false、无托盘接口和无 transient parent。spriteSamplingStability 在 0.35、0.5、1 与 1.25 倍尺寸检查四个不透明帧的完整内部像素，验证无邻帧混入或透明裂缝；framesRendered 继续检查图集顺序、镜像、暂停和隐藏恢复。真实桌面需同时运行这两个像素测试，不能只以软件后端代替 GPU。
+
+真实 xcb 下运行 desktopWindowIntegration，若安装 xprop 则读回 _NET_WM_STATE，检查 SKIP_TASKBAR 与 ABOVE；主动尝试绑定 transient parent 后应仍为空，最小化独立宿主窗口后桌宠应保持显示且非最小化，连续精灵帧期间窗口位置与尺寸保持不变。原生 Wayland 无法保证通用任务栏／置顶控制，记录限制；Gallery 的默认 xcb 选择不修改系统设置，并尊重显式 QPA。桌面面板中是否隐藏图标及播放主观流畅度还需实际观察。
+
+Lottie 修改后运行既有原生 QRhi 的 lottieRendering、actionCacheAndLatency 等相关 GPU 检查，验证缓存命中、保留画面与动作终态；桌宠视觉树不应创建 CatBusyIndicator，普通 CatLottieAnimation 仍保留原有提示。
+
+PNG 旧版包拖动回归：运行 `tst_mascot legacySpriteMouseDrag packages regionsAndAnchors`；在真实 xcb 桌面另运行 `QT_QPA_PLATFORM=xcb tst_mascot legacySpriteMouseDrag desktopWindowIntegration`。legacySpriteMouseDrag 使用 Gallery 同源旧版 PNG 包，通过合成鼠标按下、移动、松开事件验证默认 body 区域、拖动信号与 xcb 窗口位移；它不证明系统级真实鼠标输入路由。旧版包未声明 regions 时兼容生成全角色 body 区域，显式 regions（包括空数组）保持原义。
+
+公共桌宠原生输入与移动回归：在 DPR=1 的真实 xcb 桌面设置 `QT_QPA_PLATFORM=xcb QCAT_MASCOT_DESKTOP=1`，运行 `tst_mascot desktopInputRouting desktopMovementInterruptions desktopBubbleEdges`。需要 X11 与 XTest 运行库；测试会暂时移动鼠标，结束恢复原位置。desktopInputRouting 用背后原生窗口计数验证默认阻挡、区域外穿透、镜像／缩放／动作覆盖、整窗穿透与恢复、气泡按钮及气泡关闭后的输入范围。desktopMovementInterruptions 验证新请求、定位、取消、隐藏、切包和真实拖动打断移动，拖动期间宿主位置请求被拒绝且无延迟重放，终态唯一；屏幕变化仅注入通知，不代表实际拔屏验收。desktopBubbleEdges 在明暗主题和四角显示长文字，检查窗口在可用区域内、显示／关闭气泡前后角色原点一致及原生画面可捕获；不代替窄屏、多屏和其他平台验收。

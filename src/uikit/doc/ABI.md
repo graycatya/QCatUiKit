@@ -78,3 +78,5 @@ DockController 的浮动窗口属性与非虚方法保留既有方法、信号�
 ### 角色播放控制器
 
 新增独立 Pimpl 类型 MascotPetController，安装真实头、MascotPetController.h 与 MascotPetController 转发头。既有类型布局、枚举数值与 SOVERSION 保持不变。MascotSprite QML 与角色包解析结构为内部实现；当前角色接口见 [角色包与动画播放](MASCOTPET.md)。
+
+CatMascotPet 为新增公共 QML Window，复用已有 MascotPetController，既有 C++ 类布局与 SOVERSION 不变。MascotDesktop／MascotWindowAdapter 私有适配不安装公开头；应用仅使用 CatMascotPet 属性、方法和信号。

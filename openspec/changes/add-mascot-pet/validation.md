@@ -1,5 +1,19 @@
 # Validation Record
 
+## 2026-10-29 Ubuntu Wayland 与 xcb 环境及渲染启动检查
+
+用户同意在当前 Ubuntu 会话分别通过 Wayland 和 xcb 验证。本轮为现有诊断探针的环境及真实图形启动检查，不是 Linux 窗口交互原型验收。任务 1.4、1.6 和完整平台矩阵保持 Pending，进度仍为 16/41。
+
+环境：Ubuntu 26.04 LTS、GNOME Shell 50.1、Qt 6.12.0 gcc_64、GCC 15.2.0、Release/Ninja，宿主会话为 Wayland。单屏 HDMI-1、1920×1080、DPR 1。Wayland 报告可用区域 (0,0,1920,1080)，xcb 报告 (67,32,1853,1048)，按各 QPA 的实际报告记录，不推断其为统一的桌面可用区契约。
+
+- 使用当前 Release CMakeCache 中的 Qt prefix，独立配置及构建 `build/mascot-linux-probe`：通过，未修改原有 kit 缓存。
+- `ctest --test-dir build/mascot-linux-probe --output-on-failure`：1/1 通过（会话分类），0.04 秒。
+- `QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --json`：退出 0，qpaPlatform=wayland、session=NativeWayland。
+- `QT_QPA_PLATFORM=xcb build/mascot-linux-probe/qcat-mascot-probe --json`：退出 0，qpaPlatform=xcb、session=XWayland；不能代替原生 X11 验收。两份 JSON 的全部能力为 Unknown，acceptance=Pending；该命令不初始化图形后端。
+- 分别以 `QT_QPA_PLATFORM=wayland` 和 `QT_QPA_PLATFORM=xcb`、`QSG_INFO=1` 启动默认诊断窗口，通过 `timeout 5s` 自动结束。两者均建立 threaded render loop 和 OpenGL QRhi，日志报告 AMD Radeon 780M / Mesa 26.1.6 / OpenGL 4.6，未出现 QML 加载错误。退出 124 为预期的超时终止，不作为正常退出或完整验收通过。Wayland 另有 textinput disableSurface 焦点警告，未验证其交互影响。
+
+沙箱内首次连接 Wayland 被拒绝、xcb 无法连接显示；通过执行审批访问真实桌面后两者成功，不能将首次启动失败解释为平台插件或产品不支持。未安装或启用 GNOME 扩展、未改系统设置。未取得透明合成、区域／整窗穿透、真实输入去向、拖动、定位、置顶、焦点、托盘及配套故障恢复证据；这些仍需后续 Linux 交互原型。没有公共 CatMascotPet 支持声明。
+
 ## Planning Checks
 
 本轮仅创建规划文件。实现、构建、性能和任何平台实机验证均未执行。
@@ -25,12 +39,12 @@
 | 拖拽、定位、平滑移动及取消 | Pending | Pending | Pending | Pending | Pending |
 | 跨屏、混合 DPI、移除屏幕及状态恢复 | Pending | Pending | Pending | Pending | Pending |
 | 气泡边缘避让、长文本、输入区域同步 | Pending | Pending | Pending | Pending | Pending |
-| 托盘可用或不可用诊断及宿主恢复路径 | Pending | Pending | Pending | Pending | Pending |
+| 跳过任务栏、宿主最小化独立与恢复显示 | Pending | Pending | Pending | Pending | Pending |
 | 精灵／Lottie 播放、隐藏及减少动效 | Pending | Pending | Pending | Pending | Pending |
 | 多实例隔离、关闭隐藏、不退出宿主 | Pending | Pending | Pending | Pending | Pending |
-| 配套缺失、禁用、版本错误、断开恢复 | Pending | Pending | Pending | Pending | Pending |
+| 平台受限能力失败与宿主恢复 | Pending | Pending | Pending | Pending | Pending |
 
-配套故障场景在不依赖配套的环境记录“不适用及原因”；Wayland 两环境必须实测。完整支持仅针对矩阵通过的明确版本组合，不外推到所有系统版本或所有 Wayland 合成器。
+当前修订以无系统配套依赖的宿主集成为准，平台受限能力须验证明确失败与宿主恢复；历史配套研究不作为交付门槛。完整支持仅针对矩阵通过的明确版本组合，不外推到所有系统版本或所有 Wayland 合成器。
 
 ## Evidence Template
 
@@ -316,3 +330,213 @@ VectorItem 新源加载时保留并冻结旧场景；私有角色视觉在换包
 汇总证据 `build/macos-mascot-prototype-accepted.json` 合并上述自动检查及人工确认，prototypeAcceptance=Passed，顶层 acceptance 继续 Pending；仅在上述系统／Qt 的单屏矩形原型范围将已测能力记录为 Supported。自动输入入口本身仍返回 2 / Pending，等待人工菜单及视觉证据，不自动沿用本次人工结论。任意形状输入区域、角色动作联动、跨屏／混合 DPI、平滑移动、气泡避让、屏幕移除、Spaces／全屏及完整平台矩阵不在本轮通过范围。
 
 最终独立构建通过；CTest 2/2，0.08 秒；MacosProbe qmllint、C++ clang-format 检查通过。探针与独立目标进程已全部退出，系统进程检查未发现残留。文档、OpenSpec 严格验证及差异空白检查结果见本轮最终记录；未重复库／Gallery 全套回归。任务 1.3 勾选完成，进度 16/41；任务 7.3 保持未完成，不同步主规格、不归档。
+
+## 2026-10-29 Linux 椭圆窗口交互原型与两后端检查
+
+继续任务 1.4 的 Linux 原型，在 `tests/manual/mascot-probe` 增加 linuxprobe、LinuxProbe／LinuxOverlay／LinuxTarget 及 Linux 条件构建。没有修改公共库、Gallery 或角色包播放接口。原型通过 QWindow.setMask 声明椭圆角色与矩形气泡区域的并集，整窗穿透使用 WindowTransparentForInput；xcb 用 Xlib 原生读回位置、焦点和 `_NET_WM_STATE_ABOVE`，通过运行时可选 XTest 发送鼠标／键盘输入。独立 Qt Quick 子进程通过 stdout 上报真实窗口事件计数，父进程检查随机 token、PID、QPA，并在 xcb 下核对窗口 `_NET_WM_PID` 与子进程 PID 一致。
+
+环境沿用本文件 Ubuntu 记录：Ubuntu 26.04 / GNOME Shell 50.1 / Qt 6.12.0 gcc_64 / GCC 15.2.0 / Release/Ninja；宿主 Wayland，单屏 HDMI-1、DPR 1。两个后端的角色实际 graphicsApi=3（OpenGL）。本轮目标是单屏窗口原型，不包括角色动画、完整气泡、多实例或平台完整矩阵。
+
+### 最终自动证据
+
+- `QT_QPA_PLATFORM=xcb build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-xcb-prototype-ellipse-final.json`：35 Passed、2 Pending、0 Failed，退出 2（待人工验收）。透明合成和真实托盘菜单保持 Pending。
+- `QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-prototype-ellipse-final.json`：5 Passed、4 Pending、0 Failed，退出 2。通过项为独立进程、渲染 alpha、托盘服务查询诊断、隐藏与宿主恢复；待验收项为原生输入、定位／置顶、桌面合成、托盘菜单。托盘查询只证明可以读取服务可用状态，不证明实际菜单操作。
+- 两个自动命令串行执行并正常清理退出。Wayland 仍有 Qt textinput disableSurface 焦点警告，不把它作为输入已通过或失败的结论。
+
+xcb 最终独立目标 PID 753755，目标鼠标计数 5、键盘计数 1；角色按下 2（含拖动）、气泡激活 2、拖动事件 1。原生位置初始为 (227,192)，真实拖动后 (257,212)，复位后恢复初始值。实际目标坐标和输入均按原始 JSON 保存，不把这一单屏位置当作跨屏坐标契约。
+
+| xcb 场景 | 实际结果 |
+| --- | --- |
+| 独立进程及原生窗口归属 | 随机 token、PID、QPA 与原生 `_NET_WM_PID` 一致 |
+| 被动显示及角色点击 | 背后保持输入焦点，角色按下只增加角色计数 |
+| 空白及椭圆外角 | 目标 mouse 分别增加至 1、2；角色计数保持 0 |
+| 背后继续输入 | A 键使目标 keys 增至 1 |
+| 整窗穿透 | 角色及气泡点击使目标 mouse 增至 3、4，角色／气泡计数不增加 |
+| 隐藏气泡区域 | 原气泡位置点击使目标 mouse 增至 5 |
+| 气泡焦点及键盘 | 主动点击后取得焦点，Tab／空格使 bubbleClicks 增至 2 |
+| 拖动、定位和置顶 | 真实拖动位移 (30,20)，原生位置读回、复位、置顶关闭／开启符合请求 |
+| 隐藏与宿主恢复 | 两项通过，恢复不依赖托盘 |
+
+查看了最终角色 PNG：椭圆形体、两按钮及文字可辨识，无裁切；PNG 空白具有 alpha。该 PNG 来自窗口渲染目标，不是桌面合成截图。xcb 的桌面抓图未取得有效独立蓝色背景参考，因此不作透明合成像素通过声明。服务查询报告托盘可用，实际菜单仍需人工检查。两个最终 JSON 的 prototypeAcceptance 和顶层 acceptance 都保留 Pending；仅对取得全部关联证据的 xcb 单屏能力记录 Supported。
+
+原生 Wayland 未实现 Mutter 配套：position、smoothMovement、alwaysOnTop 明确报告 Unavailable，companionConnection=NotImplemented；不以 Qt 内部坐标或请求 flags 宣称成功。输入区域、整窗穿透、焦点及系统拖动保持未实测，未用 XTest 在原生 Wayland 下伪造输入证据。未安装／启用任何桌面扩展，没有修改系统配置。原生 X11 和 KWin 环境本轮未取得；任务 1.4、1.6、7.4、7.6 继续未完成，总进度仍为 16/41，不同步主规格、不归档。
+
+### 发现并修复的问题
+
+首轮 `build/linux-xcb-prototype-initial.json` 有输入检查失败，退出清理还发生崩溃；没有删除失败记录。XWayland 指针移动需在后续事件轮次检查实际位置与命中归属，修正后才派发按下／释放；不向其他窗口补发事件。调试过程中两个后端曾重叠运行，相关 `linux-xcb-prototype-debug.json` 不用作验收，后续全部串行复测。测试基线在本程序的独立目标窗口建立焦点，再显示非激活角色；不声称已验证任意其他应用的激活策略。
+
+Wayland 的 GDB 栈定位退出崩溃为：角色窗口销毁后，QProcess 结束信号触发 update 并访问已释放窗口。现析构先断开子进程信号，销毁角色后清空指针，再回收子进程；最终两个后端均正常返回 2，没有再次崩溃。探针会在结束时释放拖拽按下状态、恢复光标及此前 X11 焦点，并回收目标进程和托盘。
+
+### 构建及静态验证
+
+- 独立 `build/mascot-linux-probe` 配置／构建通过；最终 CTest 2/2 通过（0.06 秒）。新增 headless 检查预写旧 Passed 文件，再验证离屏调用返回 2 并覆盖为 Pending、能力 Unknown。
+- 用 `-DCMAKE_DISABLE_FIND_PACKAGE_X11=ON` 配置 `/tmp/qcat-mascot-probe-no-x11`：最终构建及 CTest 2/2 通过（0.07 秒），验证不安装 Xlib 开发包时仍能构建原型。该配置的真实 xcb 输入不视为已验证。
+- Qt 6.12.0 qmllint 检查三个新 QML：通过。C++ clang-format、文档检查（38 Markdown / 514 本地链接）、OpenSpec 严格验证及差异空白检查通过。
+- 只改独立手动探针及文档，本轮未重复库／Gallery 全套构建、qmllint 和 CTest；不把手动探针检查等同于全库回归。
+
+人工验收准备：以 `QT_QPA_PLATFORM=xcb build/mascot-linux-probe/qcat-mascot-probe --linux-prototype` 打开交互窗口，请用户确认透明空白及真实托盘菜单，并通过控制窗口 Save evidence 保存记录。未收到确认及对应证据前维持 Pending。
+
+## 2026-10-29 人工菜单记录及隐藏诊断窗口后的拖动修复
+
+用户回复已尝试所请求的透明背景和真实托盘菜单操作，报告唯一具体异常为诊断控制窗口隐藏后拖动角色卡顿。保留用户保存的原始记录为 `build/linux-xcb-user-menu-evidence.json`：menuActions=7、exitRequests=2、lastMenuAction=Show、passthroughRequested=false、petVisible=true、bodyClicks=12、dragEvents=1159，记录时间 `2026-10-29T03:42:41Z`。这些是实际计数，不据此推断每次菜单操作顺序，也不把用户仅表示“都试了”扩写成逐项性能验收。完整平台仍 Pending。
+
+源码核查发现，原拖动路径在每次 QML 局部位置变化时查询 QCursor::pos，再刷新诊断数据；位置变化回调与窗口移动耦合，report 属性和控件状态共用 changed 信号，隐藏文本控件也可能重新序列化和布局。未做独立 CPU profiler 归因，不宣称已量化每项开销。修复改为在角色窗口事件过滤器中读取 QMouseEvent.globalPosition，取消 QML onPositionChanged 驱动拖动及逐次系统光标查询；诊断 report 使用单独通知与缓存，显示时最多每 100 ms 更新，隐藏／最小化时停止，重新显示时刷新。保存证据仍采集当前状态，不依赖界面报告缓存。
+
+补充真实输入回归：自动入口从启动时将诊断窗口最小化，在已有输入检查后保持角色按下，按 16 ms 定时请求 40 个连续移动点，再检查原生窗口位移和诊断刷新数。修复版最终 `QT_QPA_PLATFORM=xcb build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-xcb-minimized-drag-verified.json`：37 Passed、2 Pending、0 Failed，退出 2。连续拖动检查收到 40/40 个移动事件，最终原生坐标 (267,212)，相对起点位移 (40,20)；拖动期间诊断刷新 0 次，连续移动事件最大间隔 17 ms。该数字是本轮 GUI 输入处理间隔，不是呈现帧率、扫描输出延迟或所有设备的流畅性保证；用户实际手感仍需复验。
+
+保留调试记录：`linux-xcb-drag-fix.json` 首轮多项输入失败；`linux-xcb-minimized-drag-final.json` 有额外目标点击及新回归基线失败，无法仅凭记录确定额外输入来源。后续 `linux-xcb-minimized-drag-repeat.json` 原有 35 项均通过，新回归因复位后 XWayland 实际指针仍在上个拖动终点而拒绝派发按下。改为从已验证的上轮终点开始下一段连续拖动，沿鼠标事件中保存的按下全局位置生成轨迹；未删除实际指针或窗口归属检查，未将拒绝事件记作成功。最终 verified 报告取得完整 40 点与最终原生位移证据。
+
+同一最终源码原生 Wayland `--linux-check build/linux-wayland-drag-fix.json`：5 Passed、4 Pending、0 Failed，退出 2，正常清理；原有 textinput 警告仍存在，真实 Wayland 拖动未验证。独立构建通过，正常配置 CTest 2/2（0.07 秒）、关闭 X11 查找配置最终构建及 CTest 2/2（0.06 秒）通过；三个新 QML 的 qmllint、C++ clang-format 通过。文档及 OpenSpec 最终检查见本轮结果。不改变全库验证范围、平台支持声明或任务完成数。
+
+已重新打开修复版 xcb 交互窗口，请用户比较控制窗口显示和隐藏时的实际拖动并保存证据；收到复验前，不以自动回归代替用户报告问题的最终验收。
+
+### 拖动修复人工复验通过
+
+用户随后明确回复“两种情况下均流畅，已保存”，确认控制窗口正常显示和最小化／隐藏时拖动均流畅。读取对应原始记录并复制为 `build/linux-xcb-drag-user-accepted.json`：探针 PID 857546、记录时间 `2026-10-29T03:54:47Z`、bodyClicks=34、dragEvents=2844、diagnosticsRefreshes=195、menuActions=1、exitRequests=1、lastMenuAction=Exit request、petVisible=true。diagnosticsRefreshes 是整个交互会话的累计值，不代表隐藏期间刷新；隐藏期间为 0 的证据来自前述连续拖动自动回归。
+
+本次隐藏后拖动卡顿修复的人工验收通过，自动证据与用户确认分别保留。该确认不扩大到原生 Wayland 拖动、原生 X11、多屏、完整气泡或平台完整矩阵；任务完成数继续 16/41。最终文档检查、OpenSpec 严格验证及差异空白检查通过。
+
+## 2026-10-29 Ubuntu GCC QUrl 清空赋值编译修复
+
+用户在 Qt 6.12.0 / GCC 15 的 Release 构建中报告 `qcatvectoritem.cpp` 五处 `activeSource = {}` 赋值重载歧义。将这五处改为 `activeSource.clear()`，明确清空 QUrl；不改变缓存失效、保留画面或资源释放的既有行为，不新增公共接口。
+
+验证使用用户现有 `build/Desktop_Qt_6_12_0-Release` CMakeCache，未修改配置：
+
+- `cmake --build build/Desktop_Qt_6_12_0-Release --parallel 4`：完整构建通过，包含库、Gallery、示例及已配置的自动测试目标。沙箱首轮因默认 ccache 目录只读失败，随后仅为命令设置 `CCACHE_DIR=/tmp/qcat-ccache-build-fix` 完成构建；没有修改系统缓存配置。
+- 同目录 `QCatUiKit_qmllint`、`qcat-gallery_qmllint`：通过。
+- `ctest --test-dir build/Desktop_Qt_6_12_0-Release --output-on-failure -R '^(vector_contracts|mascot_contracts)$'`：2/2 通过，vector 0.23 秒、mascot 12.82 秒，总计 13.05 秒。此次为 software/offscreen 契约测试，不包含 GPU 像素／动作缓存性能或其他平台验证。
+- C++ clang-format、文档检查、OpenSpec 严格验证及差异空白检查通过。未重复全部 CTest，不将此修复计为完整任务 7.1 或平台验收完成。
+
+## 2026-10-29 GNOME/Mutter 配套源码、客户端和安装包
+
+继续任务 1.6。交付 `tests/manual/mascot-probe/gnome` 的 Shell 扩展及共享 GJS 服务、协议核心，`mascotcompanion` 私有 Qt DBus 客户端、集成测试及打包目标。所有代码仅进入独立手动探针，没有改公共库依赖／接口或 Gallery。候选范围为 GNOME Shell 50 原生 Wayland，扩展版本 0.1.0、metadata 包版本 1、协议 1；尚未安装／启用到当前桌面，不能据此声明 Mutter 实机操作通过。
+
+协议使用会话总线 `org.qcat.MascotProbe1`。客户端核对服务与 `org.gnome.Shell` 的唯一连接归属，再进行版本握手；服务端从 D-Bus 查询调用者 PID，按 PID、原生 Wayland 类型与精确 UUID 窗口标题选择目标。只允许 snapshot、move、above，不接受请求提供的 PID，不注入输入或修改托盘服务。操作返回原生矩形／置顶读回，客户端验证字段及 PID；已发出请求不等于执行成功。禁用／调用者断开恢复原置顶状态，断开取消未完成请求且重连不重放。平滑移动仍未实现。
+
+环境：Ubuntu 26.04、GNOME Shell 50.1、Qt 6.12.0 gcc_64、GCC 15.2.0、GJS 1.88.0、Node 24.19.0，单屏 DPR 1。参考 GNOME 官方 GJS 扩展／D-Bus 指南与 Mutter Window API；在线 API 页面可能对应更新主版本，真实 Shell 50 兼容性仍须启用扩展验证。
+
+- 独立 `build/mascot-linux-probe` 配置与构建通过，增加同 kit Qt DBus，仅用于手动原型。
+- 最终 `ctest --test-dir build/mascot-linux-probe --output-on-failure`：4/4 通过，1.62 秒。包括会话分类、纯协议、私有总线和 headless 旧结果覆盖。私有总线 QtTest 为 9 passed / 0 failed / 0 skipped（含 init/cleanup），1.404 秒；覆盖配套缺失后连接、错误主协议、非 Shell 服务拒绝、无效原生证据拒绝、两实例状态隔离、其他真实 PID 借用 token 被拒绝、断开终态唯一且重连不重放、禁用恢复置顶并重新启用。
+- 私有总线运行实际共享 GJS 服务，只有 Meta.Window 替换为模拟对象；调用者 PID 来自真实 D-Bus。它不验证实际 Mutter 窗口方法。协议 Node 测试含 3 项，通过；涉及参数、PID／窗口类型／token 选择、原生读回不符合请求时 applied=false。
+- 沙箱初次私有总线测试因禁止绑定 `/tmp` 本地套接字失败；获准运行临时私有 D-Bus 后上述测试通过。没有连接或模拟替换当前桌面的 Shell 服务，没有安装扩展。
+- `QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-companion-missing.json`：5 Passed、4 Pending、0 Failed，退出 2，正常清理。companion.state=Missing，定位／置顶为 Unavailable，原因指出服务名不存在；渲染和隐藏恢复仍通过。原有 Qt textinput disableSurface 焦点警告保留，真实 Wayland 输入未通过。没有以 xcb 结果替代原生 Wayland。
+- 关闭 X11 查找的 `/tmp/qcat-mascot-probe-no-x11` 最终构建通过，分类／headless CTest 2/2 通过。该配置不增加真实图形或 X11 支持结论。
+- 三个 Linux QML 的 qmllint、相关 C++ clang-format、JS 语法检查通过。未重复公共库／Gallery 全套构建和 CTest；本轮只改手动原型。
+- `cmake --build build/mascot-linux-probe --target mascot_probe_gnome_package` 通过。安装包位于 `build/mascot-linux-probe/gnome/mascot-probe@qcatuikit.local.shell-extension.zip`，检查只含 metadata.json、extension.js、service.mjs、protocol.mjs，且逐字节匹配当前源码。安装包为本机构建产物，不加入源码。
+
+已将协议、版本范围、权限边界、安装／禁用／卸载步骤及故障验收方法写入 MASCOTPLATFORMS 和 VALIDATION。遵循 design.md 的“不自动安装或启用桌面扩展”，本轮停在安装包可审查阶段，待用户选择是否安装／启用再做实机验收；不会自动注销或重启 Shell。未覆盖真实 Meta.Window 操作、原生输入、真实禁用重连、Shell 升级、多屏及完整矩阵。任务 1.6 保持未完成，进度 16/41，不同步主规格、不归档。最终文档检查、OpenSpec 严格校验及差异空白检查通过。
+
+## 2026-10-29 用户授权 GNOME 配套安装，等待新会话发现
+
+用户授权将 GNOME 配套安装到当前用户并启用以继续实机验证；此前明确暂缓 KWin 配套，保留其未完成状态，不作为本轮 GNOME 及后续公共窗口工作的前置阻塞。
+
+安装前 `gnome-extensions info mascot-probe@qcatuikit.local` 返回扩展不存在，用户扩展目录也无该 UUID，未覆盖其他版本。安装包 SHA-256 为 `a36c926682b8bdb66d626c56a09c7fc6e1f86503d82a71206c874ec5f2dee7aa`。执行 `gnome-extensions install build/mascot-linux-probe/gnome/mascot-probe@qcatuikit.local.shell-extension.zip` 退出 0；安装在当前用户 GNOME extensions 目录，metadata.json、extension.js、protocol.mjs、service.mjs 四份文件与仓库源码逐字节一致。
+
+随后执行 `gnome-extensions enable mascot-probe@qcatuikit.local` 返回 2，提示当前 Shell 未发现该扩展。安装成功不等于启用成功，不将这一结果计为 Mutter 窗口操作通过。等待用户保存工作并自行注销、重新登录后继续启用和验证；未自动注销、终止或重启 Shell，未更改其他扩展。此前安装及启用授权对后续步骤继续有效。任务 1.6、平台矩阵均保持 Pending。
+
+### 安装后的再次发现检查
+
+用户请求再次验证后，`gnome-extensions info mascot-probe@qcatuikit.local` 仍返回 2（不存在）。核对当前用户 HOME、Shell 的扩展搜索环境及四份安装文件正常，metadata UUID 与目录一致。Shell 进程 PID 17349 的启动早于本次安装，尚无新的 Shell 会话发现该目录；定向检索日志未发现该扩展的加载错误。没有重复覆盖安装、修改全局扩展设置或强制重启 Shell。继续等待用户保存工作、注销并重新登录后验证，不能以锁屏或重启开发工具代替 Shell 新会话。安装和启用授权保持有效。
+
+## 2026-10-29 重启后 GNOME 扩展加载检查与修复
+
+用户重启后继续 Ubuntu 验证。当前仍为 Ubuntu 26.04 / GNOME Shell 50.1 / 原生 Wayland / Qt 6.12.0，单屏 1920×1080、DPR 1。新 Shell 已发现扩展，初始为 INITIALIZED、Enabled=No；沿用此前授权启用后为 ERROR。会话日志明确报 `Meta.is_wayland_compositor is not a function`，发生在 extension.js 的 enable；此前私有总线测试未加载 Shell 入口，因此未覆盖此问题。
+
+已修复 Shell 入口：保留严格 Shell 50 主版本检查，移除 Shell 50 已删除的 X11/Wayland compositor 检测函数；窗口筛选仍严格要求原生 WAYLAND 类型与调用 PID。Shell 50 已移除 X11 compositor，参考上游 [Mutter 源码 README](https://gitlab.gnome.org/GNOME/mutter/-/blob/50.1/README.md)。
+
+- GNOME 打包目标与 `node --check tests/manual/mascot-probe/gnome/extension.js` 通过。
+- `ctest --test-dir build/mascot-linux-probe --output-on-failure`：4/4 通过，1.58 秒；私有总线不代表实际 Shell 加载通过。
+- 在原安装启用授权范围内禁用本扩展、更新已安装 extension.js 并重新启用；仍为 ERROR。当前 Shell 已加载旧 JS 模块，磁盘更新及 disable/enable 没有完成重载，需新登录会话验证修复。不自动注销或重启 Shell。
+- `QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-after-reboot.json`：5 Passed、4 Pending、0 Failed，退出 2。companion=Missing，定位与置顶正确降级 Unavailable，托盘服务可用；Qt textinput disableSurface 警告仍在。该报告证明失败降级，不证明修复后 Mutter 操作通过。
+
+任务 1.6 和完整平台矩阵仍 Pending。下一步由用户保存工作并注销／重新登录（无需重启整机），再检查扩展状态、原生定位／置顶与禁用重连。
+
+
+## 2026-10-29 重新登录后 GNOME 扩展加载与原生窗口操作
+
+用户确认已登出并指定本 change 继续。沿用此前安装及启用授权，查询当前会话扩展状态：`gnome-extensions info mascot-probe@qcatuikit.local` 返回 Enabled=Yes、State=ACTIVE、Version=1。修复后的入口已在新会话加载；未再次安装、注销或重启 Shell。
+
+运行 `QT_QPA_PLATFORM=wayland build/mascot-linux-probe/qcat-mascot-probe --linux-check build/linux-wayland-after-relogin.json`：10 Passed、3 Pending、0 Failed，退出 2（存在待验收项）。GNOME Shell 50.1，配套 0.1.0、协议 1，连接 Ready。原生 snapshot 返回 nativeWayland=true、调用者 PID 228705；move 实际读回矩形 (160,160,420,320)，置顶关闭／开启分别读回 above=false／true，后续 snapshot 保持同一矩形及 above=true。证据限于本次单屏原型操作，不外推跨屏或公共窗口支持。
+
+真实 Wayland 输入、桌面透明合成和托盘菜单仍为 Pending，Qt textinput disableSurface 警告仍存在。未验证真实扩展禁用／重连、版本不兼容及完整矩阵；任务 1.6 保持未勾选，总进度 16/41。本轮未修改实现，未重复构建或契约测试。
+
+
+## 2026-10-29 宿主直接集成与公共 CatMascotPet
+
+用户明确桌宠由 Gallery 这类宿主应用直接集成，开机自启、应用启停、系统集成和存储由宿主自行实现，并授权修正规划及实施。已同步 proposal、design、两个 delta specs 和 tasks：不再要求部署或管理 GNOME/KWin 配套。保留已有研究代码及历史证据，本轮未调用扩展安装、启用、禁用或卸载命令；公共库不连接研究配套，不增加 Qt DBus 或 Qt Widgets 依赖。
+
+交付：
+
+- 公共 QML Window CatMascotPet，实例持有 MascotPetController，转发角色、动作、朝向、缩放与交互；默认隐藏，关闭默认隐藏，不主动退出宿主。隐藏冻结角色与气泡时限，销毁回收窗口。
+- 私有窗口适配提供逐项能力、屏幕信息、输入范围、整窗穿透、拖拽、定位／可取消移动、按需焦点及状态导出／恢复。原生 Wayland 的精确定位、平滑定位与置顶为 Unavailable；即使研究扩展已启用也不借用它。offscreen/minimal 不假报桌面支持。
+- Linux xcb 可选使用 X11，动态检查 Xext 运行库及 Shape 1.1，仅设置 ShapeInput，不用 bounding mask 裁切画面。初次构建未具备 Xext 开发头而正确报告 inputRegions=Unavailable；随后改为不需要 Xext 开发头的可选运行库检测，最终该分支已编译并在 xcb 启动验证。原生 Wayland 使用 Qt surface 输入区域。Windows/macOS 公共区域输入适配仍未完成，明确报告不可用；不把既有原型证据搬作公共组件支持证明。
+- 纯文本气泡支持唯一标识、替换／追加／更新／关闭、按钮仅发事件、隐藏冻结和有界滚动。提供边缘方位与窗口原点补偿；原生 Wayland 不能承诺全局锚点补偿，完整气泡矩阵仍 Pending。
+- 可选原生托盘默认禁用，由宿主提供图标和附加动作；显示／隐藏／穿透及退出请求不结束宿主。没有原生托盘／菜单或缺少图标时明确诊断。真实菜单及服务消失／恢复仍 Pending。
+- Gallery 新增 mascot-pet 页面，复用两份已许可角色包，支持独立实例、动作、气泡、移动、穿透和托盘。新增中英文文案、专题／索引／维护／构建／ABI／技能说明、已安装模块的独立消费者。
+
+验证环境沿用 Ubuntu 26.04、GNOME Shell 50.1、Qt 6.12.0 gcc_64、GCC 15、Release/Ninja，单屏 DPR 1；源码基于 e6f1676 加当前工作区改动。实际构建目录来自当前 CMakeCache：build/Desktop_Qt_6_12_0-Release，未替换 Qt kit。构建命令使用 CCACHE_DIR=/tmp/qcat-ccache-build-fix，避免默认缓存只读；首次未带此变量的 lint 触发重编译失败不算代码检查通过，最终已带变量完成。
+
+最终结果：
+
+- `cmake --build build/Desktop_Qt_6_12_0-Release --parallel 4`：完整构建通过。`QCatUiKit_qmllint`、`qcat-gallery_qmllint` 最终通过。
+- `ctest --test-dir build/Desktop_Qt_6_12_0-Release --output-on-failure --timeout 300`：20/20，通过，190.85 秒。Gallery 为 852 passed / 0 failed；mascot 为 31 passed / 0 failed / 5 skipped，跳过项为显式桌面检查和既有可选 GPU 检查，不把 software/offscreen 当作 GPU 或真实输入证据。
+- 最后输入适配与布局补偿的小幅修订后，受影响 `mascot_contracts|vector_contracts` 再次 2/2 通过（12.53 秒），最终构建及两项 qmllint 通过。没有重复无关测试。
+- 显式 `QCAT_MASCOT_DESKTOP=1`，分别以 wayland 与 xcb 执行 `tst_mascot desktopWindowIntegration`：各 3 passed / 0 failed（含 init/cleanup）。Wayland 正确拒绝定位／移动；xcb 完成移动、无效状态原子拒绝、有效状态恢复、取消终态唯一。气泡窗口保持 320×161；xcb 显示气泡前后导出角色原点均为 (340,320)。截图为窗口渲染，不能证明桌面透明合成、输入去向或屏幕扫描时序。
+- `cmake --install ... --prefix /tmp/qcat-mascot-install` 通过；以该独立前缀和同一 Qt 配置／构建 tests/auto/cmake/mascot-consumer，离屏运行通过。消费者仅使用公开头和已安装模块；最终重新安装后同一消费者再次通过。
+- Gallery 中文浅色 1200 宽、中文深色 mobile 密度 440 宽截图已查看，文本和按钮可辨、换行正常，窄屏使用页面滚动，没有绑定循环。Gallery 测试覆盖公共窗口控制、独立气泡、按钮只发事件且不自动关闭；窗口契约覆盖关闭隐藏、缺少托盘诊断及销毁后无遗留窗口。
+- 文档检查、OpenSpec 严格验证、clang-format 与差异空白检查通过，最终再次运行结果见交付记录。
+
+发现的问题与修复：Qt 6.12 Flow 的 implicitHeight 只读导致初版无法加载，已移除写入；气泡布局与共享通知引发高度绑定循环，已拆分通知并消除布局闭环。qmllint 曾因私有 controller 属性未使用完整命名空间而以 255 退出，补齐类型后通过。Wayland 初版窗口在延迟 configure 后缩回 32×32，已加固定内容尺寸与事件轮次同步，最终真实窗口保持完整尺寸。xcb 气泡多轮布局与原生几何回报导致角色原点偏移，现合并布局期间的角色原点并在 50 ms 收尾时重新补偿，最终原点断言通过；该收尾时间不是无跳动或帧率保证，完整视觉矩阵继续 Pending。首轮全量测试 19/20，失败仅为离屏插件不支持 propagateSizeHints；离屏分支跳过原生尺寸提示后最终 20/20。保留失败日志，不以早期截图证明最终通过。
+
+证据目录：build/mascot-host-integration-20261029，含完整 CTest、最终受影响测试／lint／构建、两个 QPA 的桌面日志、窗口 PNG、Gallery PNG、安装消费者结果与尺寸／锚点修复前日志。
+
+完成任务 4.1、4.6、5.1、5.5、6.1、6.3、7.1，总进度 23/41。4.2–4.5、5.2–5.4、6.2 仍需补齐其完整契约或实机证据；未取得真实点击穿透、焦点／键盘、托盘菜单、混合 DPI／多屏移除与其他系统证据，不勾选相应平台任务。Windows/macOS 的公共输入区域私有适配和托盘运行中故障恢复仍待实现／验证。不自动同步主规格、不归档，也不宣称完整跨平台支持。
+
+最终收尾检查：python tools/check_docs.py 通过（38 Markdown、517 本地链接、123 公开 Cat 类型）；OpenSpec 严格验证通过；clang-format dry-run、git diff --check 及格式化后完整构建通过。已打开原生 Wayland Gallery 的 mascot-pet 页面供用户试用；没有把打开页面计作人工验收。
+
+
+## 2026-10-29 移除托盘、独立工具窗与播放反馈修正
+
+用户进一步明确组件不应提供托盘，要求默认置顶、默认鼠标不穿透、桌宠不单独进入任务栏且不随主程序最小化；并报告 Lottie 切换加载圈，以及 PNG 正常播放抖动（已澄清不是只在缩放或拖动时出现）。本轮修订取代此前公共组件的托盘接口和验收要求；独立研究探针及历史结果保留。
+
+- 删除 CatMascotPet、私有窗口适配和 Gallery 的全部托盘属性、菜单、图标、退出请求与按钮。托盘、开机自启、应用启停仍完全由宿主实现。无新增系统依赖或扩展操作。
+- 默认 alwaysOnTop=true、inputTransparent=false。新增 inputRegionsEnabled=false，默认整个窗口接收鼠标；声明区域外穿透须显式启用。整窗穿透仍可由宿主开启并恢复。状态 v1 增加可选 inputRegionsEnabled，旧快照按 false 恢复。
+- QML 显式 transientParent=null，私有适配防止原生 transient 关系重新绑定，保留 QObject 所有权供宿主销毁。xcb 为自身窗口设置 EWMH SKIP_TASKBAR／SKIP_PAGER；默认请求置顶。原生 GNOME Wayland 仍明确反馈置顶／任务栏策略限制，不依赖系统扩展。Gallery 仅在 Linux Wayland 会话、有 DISPLAY 且未显式选择 QPA 时默认用 xcb；显式 QT_QPA_PLATFORM 或 -platform 仍由用户控制。库本身不替宿主选择 QPA。
+- 加载圈来自 CatLottieAnimation 的通用 Loading 提示，不是缓存失效的证明。桌宠私有视觉改用相同 VectorItem 渲染／缓存入口，保留旧画面至首帧接管，不再创建 CatBusyIndicator；Loading／错误反馈、取消和缓存预算保持有效。普通 CatLottieAnimation 不改。
+- PNG 使用 Qt AnimatedSprite 的单帧采样，暂停其自身动画，由控制器唯一时钟设置当前帧；不再移动整张图集并依靠裁切选择帧。帧间混合关闭，公共桌宠默认 smooth=true，像素画仍可设 false。未改源图集或包内帧率，CatGray PNG 样例仍为 8 fps。空间采样与窗口位置稳定性已验证，原素材低帧率及主观播放观感仍需用户复验，不把测试通过扩写为所有动画和设备流畅。
+
+环境仍为 Ubuntu 26.04 / GNOME Shell 50.1 / Qt 6.12.0 / GCC 15 / Release/Ninja，当前真实桌面检查为 Wayland 会话中的 xcb/XWayland，不代替原生 X11。使用当前 build/Desktop_Qt_6_12_0-Release 配置，构建时保留临时 ccache 路径。
+
+验证：
+
+- 完整构建、QCatUiKit_qmllint 和 qcat-gallery_qmllint 通过。
+- 完整 CTest 20/20，通过，193.77 秒；Gallery 为 852 passed / 0 failed；mascot 为 32 passed / 0 failed / 5 skipped。跳过项仍是独立显式桌面入口及既有可选 GPU 场景。
+- `QT_QPA_PLATFORM=xcb QSG_RHI_BACKEND=opengl QCAT_MASCOT_GPU=1 tst_mascot framesRendered spriteSamplingStability lottieRendering actionCacheAndLatency`：6 passed / 0 failed / 0 skipped（含 init/cleanup），20.486 秒。缓存 resident 20 次反馈 P50=34 ms、P95=50 ms，prewarm=38 ms，冷包=3237 ms；这些是本机首帧反馈测量，不是屏幕输出延迟或通用保证。缓存命中、淘汰与限额关闭仍通过。
+- 显式 `QCAT_MASCOT_DESKTOP=1`，同一 xcb/OpenGL 下执行 desktopWindowIntegration、framesRendered、spriteSamplingStability：5 passed / 0 failed / 0 skipped，3.614 秒。xprop 实际读回 SKIP_TASKBAR、SKIP_PAGER、ABOVE。故意设置 transient parent 后应仍为空；最小化独立宿主后桌宠保持显示、非最小化。连续 PNG 帧期间窗口位置与尺寸不变，气泡前后角色原点均为 (340,320)，状态恢复和移动取消仍通过。测试同时观察到 DEMANDS_ATTENTION 标志，不将此结果写成完整焦点验收；任务 4.5 继续 Pending。
+- 新像素回归在 0.35、0.5、1、1.25 倍下遍历四帧内部像素，软件和真实 GPU 均通过，覆盖邻帧混入与透明接缝。首版测试在 resize 尚未呈现时立即离屏抓取，取得透明旧帧；现等待 frameSwapped 再抓取，保留完整像素断言，没有把该测试时序问题称作产品修复证据。原有图集顺序、镜像、暂停、隐藏、减少动效检查继续通过。
+- 重新安装到 /tmp/qcat-mascot-install，原独立公开头／模块消费者运行通过；无需 Gallery 或平台私有头。文档、OpenSpec 严格验证、差异空白与新增／变更代码格式检查通过。Gallery main.cpp 只保留平台选择块的实际改动，没有整文件格式化噪声。
+
+证据位于 build/mascot-ui-feedback-20261029。已打开修复后的 Gallery mascot-pet 页面供用户复验，启动日志未见 QML 错误。实际桌面面板图标表现与 PNG 播放手感尚未收到用户确认，不以打开页面代替人工验收。完成修订后的任务 5.3，当前 24/41；真实输入去向、完整焦点／键盘、多屏、其他平台与整体矩阵仍保留待办，不同步主规格、不归档。
+
+### 2026-10-29 PNG 旧版包无法拖动修复
+
+根因：Gallery 旧版 sprite manifest 未声明 regions，兼容转换后没有 draggable 命中区域，窗口按下事件未进入拖动。兼容转换现在仅在旧版包缺少 regions 时生成全角色 body；保留显式区域语义。新增 legacySpriteMouseDrag，直接加载 Gallery 同源 PNG 包并发送按下、移动、松开事件。离屏定向测试 5/5 通过；真实 xcb 定向测试 4/4 通过，窗口位移 (40, 30)，含宿主最小化独立性及任务栏策略回归。桌面证据：`/tmp/qcat-mascot-drag-desktop.log`。该自动测试使用合成 Qt 鼠标事件，真实手动拖动仍需复测。
+
+补充验证：mascot_contracts 整组通过（13.96 秒，`/tmp/qcat-mascot-drag-contracts.log`）；文档检查与 OpenSpec strict 校验通过。已重新启动修复版 Gallery。
+
+### 2026-10-29 公共组件输入、移动打断与边缘气泡
+
+用户确认旧版 PNG 包鼠标拖动人工复测通过。本轮完成任务 4.3；4.2 的 Windows/macOS 输入区域适配和 5.2 的窄屏完整矩阵仍待完成。
+
+修正两项行为：拖动期间拒绝宿主 setPosition/moveTo（InteractionBusy，分别返回 false／Failed），松开后不重放；从自动移动进入拖动时以当前窗口位置接续，避免跳回按下位置。先建立拖动状态再取消轨迹，取消回调重入也不能启动竞争轨迹。气泡按角色两侧的真实剩余空间选择方位并限制高度；私有适配提供布局期间稳定的角色原点，异步通知位置，消除水平／垂直绑定循环。
+
+真实桌面命令：设置 QT_QPA_PLATFORM=xcb、QSG_RHI_BACKEND=opengl、QCAT_MASCOT_DESKTOP=1，运行 tst_mascot desktopInputRouting desktopMovementInterruptions desktopBubbleEdges legacySpriteMouseDrag desktopWindowIntegration。Qt 6.12.0，Ubuntu 26.04，当前 GNOME Wayland 会话的 xcb/XWayland 路径；结果 7 Passed、0 Failed、0 Skipped，15.266 秒。
+
+- desktopInputRouting：XTest 真实输入，背后原生窗口计数验证默认全窗阻挡、区域外穿透、镜像、缩放、动作矩形／椭圆区域、整窗穿透恢复、气泡操作按钮和关闭后的范围。
+- desktopMovementInterruptions：新移动、定位、重复取消、隐藏、切包、真实拖动取消旧移动；每个请求终态唯一。拖动期间位置请求被拒绝，松开后位置保持；隐藏结束拖动。屏幕变化仅注入 screenChanged 通知，不证明实际拔屏。测试保留背后宿主窗口并核对原生鼠标归属，避免 XWayland 根窗口上的合成鼠标投放失败；早期无宿主测试失败保留在 /tmp 诊断日志，不计作产品验收通过。
+- desktopBubbleEdges：明暗主题、四个屏幕角、长文字与操作按钮，气泡显示／关闭前后角色原点一致，完整窗口在可用区内，无绑定循环。八张原生截图保存，人工查看浅色顶部与深色底部截图，文字换行、按钮与角色显示正确。
+- 现有桌面回归：任务栏跳过、置顶、宿主最小化独立、气泡窗口补偿及旧版 PNG 鼠标事件回归通过。
+
+构建与库／Gallery qmllint 通过；全量 CTest 20/20 通过（200.88 秒），最终测试源码修改后 mascot_contracts 再次通过。文档与 OpenSpec 严格检查另随记录执行。构建期间最后修正位置通知与水平绑定后，真实桌面全部场景已在最终库重跑；全量测试不替代原生输入证据。
+
+证据目录：build/mascot-input-movement-20261029，含 desktop.log、ctest.log、mascot-contracts.log、qmllint.log、build.log、test-build.log 和八张明暗主题截图。不外推原生 X11、原生 Wayland、Windows/macOS、多屏／混合 DPI、窄屏或焦点键盘矩阵；对应任务保持未完成。

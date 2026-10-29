@@ -17,7 +17,7 @@ qt_add_qml_module(qcat-gallery-ui
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
         GalleryChartExport.qml GalleryChartRangeControls.qml GalleryChartAxisRange.qml
         GalleryAttitudePreview.qml GalleryTiltPreview.qml GalleryDockPreview.qml
-        GalleryVectorPreview.qml
+        GalleryVectorPreview.qml GalleryMascotPreview.qml
         GallerySliderPreview.qml
         GalleryWaterfallPreview.qml GalleryChartM4Preview.qml GalleryChartFitPreview.qml
         GalleryChartStackPreview.qml GalleryHistogramPreview.qml
@@ -25,6 +25,18 @@ qt_add_qml_module(qcat-gallery-ui
         GalleryDataPreview.qml GalleryDataStressPanel.qml GalleryChartAdvancedPreview.qml GalleryChartAxesPreview.qml GalleryChart3DPreview.qml GalleryChartRadialPreview.qml GalleryChartAreaOptions.qml GalleryChartStrokeOptions.qml GalleryChartInteractionOptions.qml GalleryChartDelegateOptions.qml GalleryChartMotionOptions.qml
         GalleryLedPreview.qml
     RESOURCES assets/Emotion_Joy.svg assets/CatGray_All_Actions.json assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png)
+# Reuse the licensed sample packages without copying assets or exposing Gallery helpers.
+set(qcat_mascot_sample_dir "${PROJECT_SOURCE_DIR}/tests/manual/mascot-player")
+set(qcat_mascot_sample_files)
+foreach(qcat_mascot_file IN ITEMS catgray/manifest.json catgray/spritesheet.png catgray/LICENSE.txt
+    catgray-lottie/mascot.json catgray-lottie/idle.json catgray-lottie/thinking.json
+    catgray-lottie/working.json catgray-lottie/waiting.json catgray-lottie/speaking.json
+    catgray-lottie/success.json catgray-lottie/error.json catgray-lottie/walk.json
+    catgray-lottie/run.json catgray-lottie/jump.json catgray-lottie/fallback.png catgray-lottie/LICENSE.txt)
+    list(APPEND qcat_mascot_sample_files "${qcat_mascot_sample_dir}/${qcat_mascot_file}")
+endforeach()
+qt_add_resources(qcat-gallery-ui qcat_gallery_mascot PREFIX "/gallery-mascot"
+    BASE "${qcat_mascot_sample_dir}" FILES ${qcat_mascot_sample_files})
 set(qcat_gallery_brand_dir "${QCatUiKit_SOURCE_DIR}/src/uikit/doc/images/brand/qcat-uikit")
 set(qcat_gallery_brand_files)
 foreach(qcat_gallery_icon_size IN ITEMS 16 24 32 48 64 128 256 512)

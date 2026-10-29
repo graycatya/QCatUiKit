@@ -88,6 +88,12 @@ QtObject {
     ]
     readonly property var components: GalleryChartCatalog.entries.concat([
         {
+            id: "mascot-pet", name: "CatMascotPet", category: "windowing",
+            title: qsTr("Desktop character"),
+            description: qsTr("Host-controlled character windows, actions, messages and platform capabilities."), icon: "media",
+            code: 'CatMascotPet { packageSource: "qrc:/characters/cat/mascot.json"; visible: true }'
+        },
+        {
             id: "svg-image", name: "CatSvgImage", category: "media",
             title: qsTr("SVG image"),
             description: qsTr("Display scalable vector images with loading status and aspect controls."), icon: "media",

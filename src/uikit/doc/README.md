@@ -12,7 +12,7 @@
 
 | 任务 | 文档 |
 | --- | --- |
-| 加载角色包、播放精灵／Lottie、区域交互 | [角色包与动画播放](MASCOTPET.md) |
+| 集成宿主控制的桌宠窗口、角色动作与文本气泡 | [角色包与动画播放](MASCOTPET.md) |
 | 检查桌宠透明窗口、穿透、焦点与托盘原型 | [平台原型与验收边界](MASCOTPLATFORMS.md) |
 | 显示 SVG、播放 Lottie、绘制路径与渐变画布 | [矢量图形与动画](VECTOR.md) |
 | 构建库、运行 Gallery、安装到应用 | [构建与接入](BUILDING.md) |
@@ -43,7 +43,7 @@
 
 GPU 渲染和兼容 RGBA8 接口见 [LED 预览](LEDPREVIEW.md)；共享布局、Deck/Storage、多通道混合及设备内存输出见 [LED 工作流](LEDWORKFLOW.md)。
 
-- **QML**：122 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController、MascotPetController、VectorItem 和版本信息单例。
+- **QML**：123 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController、MascotPetController、VectorItem 和版本信息单例。
 - **C++**：主题、表格、消息、图表、坐标轴、序列、LED 工作流、TiltController、DockController、VectorItem 和版本查询接口；公开头安装到 `include/QCatUiKit`。
 - **Gallery**：独立示例应用，数据生成器、压力测试控制器、导航和翻译管理属于示例实现，不是安装库 API。
 

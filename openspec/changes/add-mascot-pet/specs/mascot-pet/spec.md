@@ -26,6 +26,10 @@
 - WHEN Lottie 包无法在当前图形环境渲染
 - THEN 系统 SHALL 报告 Error 并显示包内可用静态占位或组件默认占位，SHALL NOT 假报动作完成。
 
+#### Scenario: 动作切换不叠加通用加载圈
+- WHEN 桌宠已有可用画面并切换到缓存或后台准备的 Lottie 动作
+- THEN 系统 SHALL 保留旧画面至新场景可用，SHALL NOT 叠加通用 Loading 指示圈；错误和加载状态 SHALL 继续向宿主报告。
+
 #### Scenario: 隐藏恢复
 - WHEN 正在播放的实例隐藏后再次显示
 - THEN 动画 SHALL 从冻结位置继续，SHALL NOT 因隐藏时间跳到末尾。
@@ -66,6 +70,10 @@
 - WHEN 用户点击当前动作中声明的交互区域
 - THEN 系统 SHALL 向宿主发送区域标识及角色逻辑坐标；重叠区域 SHALL 按清单后声明者优先命中。
 
+#### Scenario: 精灵连续播放稳定
+- WHEN PNG 图集按声明帧率播放，包含非整数缩放或镜像
+- THEN 系统 SHALL 只采样当前帧，SHALL NOT 混入相邻帧或因帧切换改变窗口位置与尺寸；缩放采样 SHALL 可配置。
+
 #### Scenario: 朝向素材缺失
 - WHEN 请求的朝向没有独立素材且包不允许镜像
 - THEN 系统 SHALL 保留原朝向并报告该请求不可用。
@@ -104,7 +112,7 @@
 
 ### Requirement: R09 HostServiceBoundary
 
-系统 SHALL 通过动作、气泡及交互事件与宿主协作，SHALL NOT 实现 Agent 接入、TTS、音频采集、分析或播放。
+系统 SHALL 通过动作、气泡及交互事件与宿主协作，SHALL NOT 实现 Agent 接入、TTS、音频采集、分析或播放。宿主 SHALL 决定实例创建与销毁、开机自启、应用启停、系统集成和持久化；组件 SHALL NOT 管理桌面扩展。
 
 #### Scenario: 外部说话事件
 - WHEN 宿主收到第三方说话开始和结束事件并调用动作接口

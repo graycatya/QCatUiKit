@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-当前包含 122 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
+当前包含 123 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
 
 所有带主题的组件默认 `theme: Theme`，`tokens` 为解析后的只读视图。继承 Qt 控件的类型支持相应基类的标准属性、信号、方法及可访问性语义；表格列出本库的主要入口。内部 id、子对象树与 SurfaceImpl 不属于公开接口。
 
@@ -268,4 +268,6 @@
 
 ## 角色包播放
 
-`MascotPetController` 加载本地／qrc 精灵与 Lottie 角色包，提供命名动作请求、队列、暂停恢复、拖拽反馈和区域命中。当前提供独立开发预览工具；桌面悬浮窗口、穿透、气泡和托盘尚未交付。内部 `MascotSprite` 不作为页面内嵌公共组件。接口及包格式见 [角色包与动画播放](MASCOTPET.md)。
+`MascotPetController` 加载本地／qrc 精灵与 Lottie 角色包，提供命名动作请求、队列、暂停恢复、拖拽反馈和区域命中。公共 `CatMascotPet` 提供宿主控制的透明窗口、纯文本气泡、移动请求与平台能力反馈；托盘完全由宿主实现，组件提供气泡避让接口，桌面输入和完整多屏仍待实机验收。内部 `MascotSprite` 不作为页面内嵌公共组件。接口及包格式见 [角色包与动画播放](MASCOTPET.md)。
+
+| [CatMascotPet](MASCOTPET.md) | 宿主直接持有的角色窗口；`controller`、`packageSource`、动作、气泡、显示／隐藏和平台能力反馈；系统集成由宿主决定。 |

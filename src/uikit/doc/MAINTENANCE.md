@@ -33,6 +33,7 @@
 | 新公开 C++ 类 | 相近公开头、ABI.md 的接口约定 | CMake 三组头列表／sources、专题 API、C++ 测试、安装消费者 |
 | Gallery 演示 | `examples/uikit/gallery/GalleryCatalog.qml` 中组件 ID，再定位 Preview | 演示页面、可复制示例、两种语言 TS、Gallery 测试 |
 | Dock | DOCKING.md 的实现与验证入口 | 控制器／QML／Gallery 分别按实际改动读取 |
+| 桌宠公共窗口 | MASCOTPET.md、`qml/CatMascotPet.qml`、`mascot/qcatmascotwindowadapter_p.h` 与实现 | mascot/Gallery 契约、安装消费者、真实会话能力反馈；不接入系统扩展 |
 | 桌宠平台窗口原型 | MASCOTPLATFORMS.md、`tests/manual/mascot-probe/` | 独立构建、分类与 headless 检查、对应平台真实输入证据；不外推完整支持 |
 | 构建／安装 | BUILDING.md、模块 CMake、`cmake/QCatUiKitBuildTools.cmake`、`ExecuteDownloadProjects.cmake`、`QCatUiKitMsvcDependencies.cmake`、`adapters/qcatthorvgqrhi/` | 安装消费者；公开 ABI 变更检查历史消费者 |
 

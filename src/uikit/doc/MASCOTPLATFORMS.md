@@ -1,5 +1,7 @@
 # 桌宠平台原型与验收边界
 
+公共 `CatMascotPet` 不依赖或管理系统扩展，也不提供托盘；本文托盘步骤仅用于独立研究探针。以下 GNOME 配套安装、启停和协议均为独立研究原型，不是应用集成步骤或公共组件验收前置。开机自启、应用启停、系统集成由宿主决定；原生 Wayland 的受限能力明确报告不可用。
+
 [文档索引](README.md) · [角色包与播放](MASCOTPET.md) · [验证步骤](VALIDATION.md)
 
 库尚未提供公共 CatMascotPet 桌面窗口。`tests/manual/mascot-probe` 用于验证平台窗口能力，不是应用接入 API，不依赖 Gallery、角色素材或私有库组件。
@@ -8,8 +10,36 @@
 | --- | --- | --- |
 | Windows | 交互原型和跨进程输入检查；实测版本及结果保存在 OpenSpec change | Pending |
 | macOS | 单屏矩形原型：真实输入检查通过，菜单与区域显示由实机人工确认 | Pending |
-| X11 | 只有环境诊断；窗口原型待实现 | Pending |
-| 原生 Wayland KWin / Mutter | 只有环境诊断；合成器配套、协议及窗口原型待实现 | Pending |
+| X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
+| 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 配套源码与安装包已交付，安装启用及真实合成器操作待验收；KWin 配套待实现 | Pending |
+
+## Linux 原型
+
+`--linux-prototype` 打开控制窗口、独立背后输入进程、透明角色／气泡窗口和可选托盘服务探测。角色区域为椭圆，气泡区域为矩形，二者并集通过 QWindow.setMask 声明；空白不根据逐帧像素透明度命中。控制窗口和托盘菜单提供显示、隐藏及穿透切换；退出菜单只记录请求，Close probe 才结束探针。原生 Wayland 拖动尝试 startSystemMove，结果保存在报告中，未取得实际拖动证据前不标为支持。
+
+`--linux-check <report.json>` 自动运行并保存逐项结果，附独立进程 PID、随机实例 token、QPA、输入计数和窗口状态。xcb 下可选 Xlib 读取窗口位置、焦点及置顶状态，运行时加载 XTest 发送输入；检查只覆盖单屏 DPR 1，输入点限制在独立测试窗口内，并检查指针命中属于本次目标或角色窗口。执行期间勿操作鼠标／键盘或启动其他窗口测试。结束时回收子进程及托盘，恢复此前光标和 X11 焦点。
+
+Xlib 是手动探针的可选构建依赖，XTest 是可选运行依赖；缺失时保留 Pending。Qt Widgets 仅用于探针应用、托盘和菜单，不新增库依赖。自动检查成功的项可记录 Supported，但不外推到完整桌宠、多屏或原生 X11。XWayland 的通过只适用于该会话，不替代原生 X11 或原生 Wayland。
+
+原生 Wayland 分支不使用 XTest 结果作为输入证据。GNOME 窗口配套缺失、禁用或握手失败时，定位和置顶报告 Unavailable；Qt 内部位置或 flags 不构成原生执行成功。配套连接成功只表示握手通过，操作须取得原生读回后才记录该项 Supported。平滑移动仍未实现。区域输入、整窗穿透、焦点及系统拖动需独立真实输入证据。托盘服务检测与窗口能力分开记录；服务可用不等于托盘菜单已经实操通过。渲染目标 alpha 和裁剪截图仅证明窗口自身渲染，不证明桌面合成透明。桌面截图没有有效的独立背景参考时，该项保留 Pending。
+
+自动入口当前始终保留完整平台 acceptance=Pending；若检查失败返回 1，否则在仍有待验收项时返回 2。JSON 中的 checks 是本次证据，交互界面的按钮操作不会自动勾选平台验收。离屏调用覆盖旧的成功报告并返回 2，所有桌面能力仍为 Unknown。可重复命令和人工验收步骤见 [验证说明](VALIDATION.md#linux-桌面窗口原型)。
+
+### GNOME/Mutter 配套原型
+
+源码位于 `tests/manual/mascot-probe/gnome`，仅面向 GNOME Shell 50 的原生 Wayland 会话，扩展版本 0.1.0、协议 1。这是待实机验收的候选范围，不能据此声明所有 GNOME 50 系统受支持；其他 Shell 主版本在 metadata 和运行时均拒绝。KWin 使用独立配套，不能安装本扩展替代。
+
+配套只提供窗口快照、逻辑坐标定位和置顶开关，不提供输入注入、自动激活、屏幕捕获、网络、业务服务或托盘。Qt 客户端先确认服务与当前 `org.gnome.Shell` 属于同一 D-Bus 连接，再验证协议及 Shell 版本；失败区分 Missing、Disconnected、Untrusted、Incompatible。托盘继续由 QSystemTrayIcon 单独诊断，不依赖本扩展注册。
+
+接口固定为会话总线 `org.qcat.MascotProbe1`、路径 `/org/qcat/MascotProbe1`、同名 interface。`Hello(u)` 返回协议、扩展版本和 Shell 版本；`Call(u,s,s,s)` 接收协议、UUID 实例标识、操作和 JSON 参数，返回 JSON 原生状态。操作为 `snapshot`（空对象）、`move`（整数 x/y）和 `above`（布尔 enabled）；坐标为 Mutter stage 全局逻辑坐标，不是未来公共桌宠接口的屏幕相对坐标。参数不得携带 PID，未知字段、超限值和旧主协议被拒绝。
+
+服务端通过 D-Bus 查询调用连接的真实 PID，只查找同 PID、原生 Wayland 类型且标题精确等于 `QCat mascot probe:<UUID>` 的单个窗口；跨 PID 借用 token、XWayland 窗口、重名歧义窗口均不能操作。客户端同时检查返回的 PID、窗口类型和矩形字段。UUID 用于实例选择，权限边界是调用连接的进程身份，不将 token 当作替代系统权限的秘密凭证。此机制只覆盖同一用户会话中的普通本地进程；未验证容器 PID 命名空间或远程应用。
+
+窗口操作使用 Mutter 的 move_frame、make_above／unmake_above 并读回 frame rect／is_above；请求已发送不等于 applied=true。配套失联时客户端取消待完成请求，移除旧能力和原生快照；重连后只重新握手／读取快照，旧移动及置顶请求不重放。扩展禁用或调用进程断开时恢复配套改动前的置顶状态，已完成的位置变更保留；关闭窗口会移除记录。请求有超时和并发上限，迟到回调按连接代次丢弃。当前原型没有持续移动任务，公共组件的移动取消仍待后续实现。
+
+独立测试在临时私有 D-Bus 上运行同一 GJS 服务，只替换 Meta.Window 对象，覆盖真实调用 PID、拒绝错误协议、跨实例、断开、禁用恢复与重连；不算 Mutter 实机验收。安装包生成、安装启用、禁用卸载和现场诊断见 [验证说明](VALIDATION.md#gnomemutter-配套安装及验收)。不自动安装、启用扩展或注销当前会话。
+
+实现参考 [GJS D-Bus 服务指南](https://gjs.guide/guides/gio/dbus.html)、[GNOME 扩展结构](https://gjs.guide/extensions/overview/anatomy.html) 和 [Mutter Window API](https://mutter.gnome.org/meta/class.Window.html)；这些在线文档可能展示更新版本，实际兼容性须按上述候选 Shell 版本验证。
 
 ## Windows 原型
 
@@ -42,3 +72,10 @@ Qt 6.10.2 Cocoa 的 setMask 实现裁剪视图图层，不能仅凭该调用认�
 本轮 macOS 实测版本和结果见 OpenSpec change 的 validation.md。跨屏、混合 DPI、任意命名区域、平滑移动、屏幕移除、气泡避让、Spaces／全屏及完整平台矩阵继续 Pending；不依赖合成器配套扩展，也不要求为正常窗口展示授予辅助功能或录屏权限。
 
 诊断窗口的 menu 按钮可展开同一份原生 NSMenu，用于局部调试，不等于菜单栏图标被真实点击。菜单回调记录 menuActions、lastMenuAction 和 exitRequests；save 写入 outputPath 所示的系统临时目录。2026-10-29 在 macOS 26.6.2 / Qt 6.10.2 的单屏矩形原型完成自动输入及人工菜单验收；自动检查和人工证据分列记录。自动命令本身仍保留 Pending，最终原型结论需合并人工证据；完整平台矩阵继续 Pending。
+
+
+## 公共窗口直接集成的当前边界
+
+CatMascotPet 不连接本文的研究配套。Linux xcb 可选链接 X11 并检测 Xext 运行库，使用 ShapeInput 单独设置输入区域；不调用 Qt xcb 的 bounding mask 裁切画面。原生 Wayland 通过 Qt 的 surface 输入区域请求，定位和置顶报告 Unavailable。Windows/macOS 的公共输入区域私有适配仍待完成；既有手动原型的通过不代表公共组件已通过。
+
+实现核对参考 Qt 6.12 官方源码：[xcb setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/xcb/qxcbwindow.cpp)、[Wayland setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/wayland/qwaylandwindow.cpp)。真实输入、焦点和混合 DPI 结果继续按具体版本记录，不外推支持。

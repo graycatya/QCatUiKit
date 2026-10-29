@@ -1,0 +1,7 @@
+{
+  "uuid": "mascot-probe@qcatuikit.local",
+  "name": "QCat Mascot Window Probe",
+  "description": "Local prototype: only the caller's tagged native Wayland window can be moved or kept above. Not full desktop-pet support.",
+  "shell-version": ["50"],
+  "version": 1
+}

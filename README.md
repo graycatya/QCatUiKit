@@ -6,7 +6,7 @@
 
 QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触摸／移动交互密度、C++ 数据模型和原生图表。配套 Gallery 可交互体验组件、复制 QML 示例，并运行可配置的数据压力测试。
 
-- **122 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
+- **123 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
 - **矢量 UI（实验 QRhi 后端）**：CatSvgImage、CatLottieAnimation、CatVectorCanvas，支持 SVG、动画播放、形状、路径及渐变；默认自动下载并构建固定的 ThorVG 源码及仓库内 QRhi 实现。
 - **[LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)**：QRhi 实例化二维/三维灯点、四种点形状；公共 Deck/Storage/Mixer 支持 RGB、RGBW、冷暖双白和设备内存输出，保留旧 RGBA8 API。
 - **主题系统**：亮暗模式、品牌色、语义 Token、局部主题和减少动效。

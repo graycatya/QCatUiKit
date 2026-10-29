@@ -6,7 +6,7 @@
 
 QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/touch/mobile interaction densities, C++ data models, and native charts. Its Gallery provides interactive examples, copyable QML snippets, and configurable data stress tests.
 
-- **122 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
+- **123 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
 - **Vector UI (experimental QRhi backend)**: CatSvgImage, CatLottieAnimation and CatVectorCanvas provide SVG display, playback, shapes, paths and gradients, using automatically prepared, pinned ThorVG sources and the bundled experimental QRhi implementation.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
 - **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.

@@ -24,6 +24,15 @@ Q_IMPORT_QML_PLUGIN(QCatUiKit_GalleryPlugin)
 
 int main(int argc, char **argv)
 {
+#ifdef Q_OS_LINUX
+    // The desktop mascot needs EWMH stacking/taskbar control; GNOME's native
+    // Wayland shell does not expose these through xdg_toplevel. Respect an
+    // explicit platform selection (including offscreen in automated tests).
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM") &&
+        qEnvironmentVariable("XDG_SESSION_TYPE") == "wayland" &&
+        !qEnvironmentVariableIsEmpty("DISPLAY"))
+        qputenv("QT_QPA_PLATFORM", "xcb");
+#endif
     QGuiApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("QCatUiKit Gallery"));
     QIcon applicationIcon;

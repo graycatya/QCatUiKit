@@ -44,42 +44,46 @@ Item {
         controller: root.controller
         vectorItem: lottie
     }
-    Item {
+    AnimatedSprite {
+        id: sprite
+        anchors.fill: parent
         visible: root.frame.renderer === "sprite"
         z: root.controller.status === MascotPetController.Loading ? 1 : 0
-        width: root.frame.frameSize ? root.frame.frameSize.width : 1
-        height: root.frame.frameSize ? root.frame.frameSize.height : 1
-        transform: [
-            Scale {
-                origin.x: root.frame.mirrored ? (root.frame.frameSize ? root.frame.frameSize.width / 2 : 0) : 0
-                xScale: root.frame.mirrored ? -1 : 1
-            },
-            Scale {
-                xScale: root.width / (root.frame.frameSize ? root.frame.frameSize.width : 1)
-                yScale: root.height / (root.frame.frameSize ? root.frame.frameSize.height : 1)
-            }
-        ]
-        Image {
-            x: -(root.frame.x || 0)
-            y: -(root.frame.y || 0)
-            width: root.frame.atlasSize ? root.frame.atlasSize.width : 0
-            height: root.frame.atlasSize ? root.frame.atlasSize.height : 0
-            source: root.frame.renderer === "sprite" ? root.frame.source : ""
-            smooth: root.smooth
-            asynchronous: false
-            cache: true
-            onStatusChanged: {
-                if (status === Image.Error)
-                    adapter.spriteError(source, qsTr("Cannot load sprite atlas: %1").arg(source))
-            }
-            visible: root.controller.status === MascotPetController.Ready
-                     || root.controller.status === MascotPetController.Loading
+        source: root.frame.renderer === "sprite" ? root.frame.source : ""
+        frameWidth: root.frame.frameSize ? root.frame.frameSize.width : 1
+        frameHeight: root.frame.frameSize ? root.frame.frameSize.height : 1
+        frameCount: root.frame.atlasSize && root.frame.frameSize
+                    ? Math.max(1, Math.floor(root.frame.atlasSize.width / frameWidth)
+                                  * Math.floor(root.frame.atlasSize.height / frameHeight)) : 1
+        // Only the controller advances time. The renderer samples one atlas
+        // frame directly instead of moving a full-size image behind a clip.
+        paused: true
+        interpolate: false
+        currentFrame: root.frame.renderer === "sprite"
+                      ? Math.floor((root.frame.y || 0) / frameHeight)
+                        * Math.floor(root.frame.atlasSize.width / frameWidth)
+                        + Math.floor((root.frame.x || 0) / frameWidth) : 0
+        smooth: root.smooth
+        transform: Scale {
+            origin.x: root.width / 2
+            xScale: root.frame.mirrored ? -1 : 1
         }
     }
-    CatLottieAnimation {
+    // Preserve explicit image errors while the sprite renderer shares the
+    // decoded source through Qt Quick's pixmap cache.
+    Image {
+        visible: false
+        source: root.frame.renderer === "sprite" ? root.frame.source : ""
+        cache: true
+        onStatusChanged: {
+            if (status === Image.Error)
+                adapter.spriteError(source, qsTr("Cannot load sprite atlas: %1").arg(source))
+        }
+    }
+    VectorItem {
         id: lottie
         anchors.fill: parent
-        theme: root.theme
+        format: VectorItem.Lottie
         autoPlay: false
         animationEnabled: root.controller.playbackEnabled && !root.controller.paused
         fillMode: VectorItem.Stretch

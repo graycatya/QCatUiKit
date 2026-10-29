@@ -243,4 +243,4 @@ LD_LIBRARY_PATH="$PWD/stage/lib:/path/to/Qt/6.x/gcc_64/lib" \
 
 ## 角色播放开发工具
 
-启用 `BUILD_TESTING=ON` 和 `QCATUIKIT_BUILD_MANUAL_TESTS=ON` 时构建 `qcat-mascot-player`，用于查看角色清单、动作与精灵／Lottie 播放。它是普通预览窗口，桌面悬浮集成仍待实现。当前接口和独立安装消费者用法见 [角色包与动画播放](MASCOTPET.md) 与 [工具说明](../../../tests/manual/mascot-player/README.md)。
+启用 `BUILD_TESTING=ON` 和 `QCATUIKIT_BUILD_MANUAL_TESTS=ON` 时构建 `qcat-mascot-player`，用于查看角色清单、动作与精灵／Lottie 播放。它是普通开发预览窗口；应用的桌面悬浮使用公共 CatMascotPet，不依赖这个工具或 Gallery。当前接口和独立安装消费者用法见 [角色包与动画播放](MASCOTPET.md) 与 [工具说明](../../../tests/manual/mascot-player/README.md)。

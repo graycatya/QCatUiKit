@@ -12,7 +12,8 @@ Item {
     readonly property int chartMode: (exampleLoader.item as GalleryChartPreview)?.mode ?? -1
     readonly property string exampleCode: (exampleLoader.item as GalleryChartPreview)?.exampleCode
         || (exampleLoader.item as GallerySliderPreview)?.exampleCode
-        || (exampleLoader.item as GalleryVectorPreview)?.exampleCode || ""
+        || (exampleLoader.item as GalleryVectorPreview)?.exampleCode
+        || (exampleLoader.item as GalleryMascotPreview)?.exampleCode || ""
     function selectChartMode(mode: int): void {
         const preview = exampleLoader.item as GalleryChartPreview;
         if (preview && preview.allowedModes.includes(mode)) preview.mode = mode;
@@ -27,6 +28,7 @@ Item {
             if (GalleryChartCatalog.entryForId(control.componentId)) return chartScene;
             switch (control.componentId) {
             case "svg-image": case "lottie-animation": case "vector-canvas": return vectorScene;
+            case "mascot-pet": return mascotScene;
             case "dock-workspace": return dockScene;
             case "attitude-indicator": return attitudeScene;
             case "tilt-control": return tiltScene;
@@ -97,6 +99,7 @@ Item {
             }
         }
     }
+    Component { id: mascotScene; GalleryMascotPreview {} }
     Component { id: vectorScene; GalleryVectorPreview { componentId: control.componentId } }
     Component { id: dockScene; GalleryDockPreview {} }
     Component { id: attitudeScene; GalleryAttitudePreview {} }

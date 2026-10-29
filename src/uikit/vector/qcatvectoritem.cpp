@@ -329,7 +329,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
             cancelDecode();
             clearCache();
             // Keep the old visual, but never cache it into the new package.
-            activeSource = {};
+            activeSource.clear();
             cacheEpoch = d.cacheEpoch;
         }
         cacheEnabled = d.mascotCache && d.cacheLimitBytes > 0;
@@ -362,7 +362,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         {
             cancelDecode();
             clearCache();
-            activeSource = {};
+            activeSource.clear();
             release();
             owner = rhi();
         }
@@ -380,7 +380,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         {
             cancelDecode();
             clearCache();
-            activeSource = {};
+            activeSource.clear();
             release();
             clear();
             if (valid && !initialized)
@@ -679,7 +679,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         entry.canvas = std::move(canvas);
         entry.animation = std::move(animation);
         cache.push_back(std::move(entry));
-        activeSource = {};
+        activeSource.clear();
     }
     void prewarm()
     {
@@ -788,7 +788,7 @@ class VectorRenderer final : public QQuickRhiItemRenderer
         paint = nullptr;
         picture = nullptr;
         loadedGeneration = 0;
-        activeSource = {};
+        activeSource.clear();
         activeCost = 0;
         nativeSize = {};
     }

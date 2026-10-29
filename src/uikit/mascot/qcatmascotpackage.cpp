@@ -148,6 +148,15 @@ QJsonObject adaptSprite(const QJsonObject &old)
     result.insert("renderer", "sprite");
     result.insert("logicalSize", old.value("frameSize"));
     const auto size = old.value("frameSize").toArray();
+    // Legacy sprite manifests predate interaction regions. Preserve explicit
+    // regions (including an empty list), otherwise make the character draggable.
+    if (!old.contains("regions") && size.size() == 2)
+        result.insert("regions",
+                      QJsonArray{QJsonObject{{"id", "body"},
+                                             {"shape", "rect"},
+                                             {"rect", QJsonArray{0, 0, size[0], size[1]}},
+                                             {"clickable", true},
+                                             {"draggable", true}}});
     const auto anchor = old.value("anchor").toArray();
     if (size.size() == 2 && anchor.size() == 2 && anchor[0].isDouble() && anchor[1].isDouble())
         result.insert("footAnchor", QJsonArray{size[0].toDouble() * anchor[0].toDouble(),

@@ -56,7 +56,7 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
-        mascot/qcatmascotpetcontroller.cpp mascot/qcatmascotpackage.cpp mascot/qcatmascotpackage_p.h mascot/qcatmascotrenderadapter_p.h
+        mascot/qcatmascotwindowadapter.cpp mascot/qcatmascotwindowadapter_p.h mascot/qcatmascotpetcontroller.cpp mascot/qcatmascotpackage.cpp mascot/qcatmascotpackage_p.h mascot/qcatmascotrenderadapter_p.h
         vector/qcatvectoritem.cpp vector/qcatvectorshape_p.h
         docking/qcatdockcontroller.cpp
         docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
@@ -73,6 +73,7 @@ qt_add_qml_module(QCatUiKit
         core/qcatuikitversion.cpp core/qcatuikitinfo_p.h core/qcatuikitinfo.cpp
     QML_FILES
         qml/MascotSprite.qml
+        qml/CatMascotPet.qml
         qml/CatSvgImage.qml qml/CatLottieAnimation.qml qml/CatVectorCanvas.qml
         qml/CatDockWorkspace.qml qml/CatDockPanel.qml qml/DockGeometry.js qml/DockFloatingWindow.qml
         qml/DockTabButton.qml qml/DockDropOverlay.qml qml/DockDragArea.qml qml/DockDragPreview.qml
@@ -210,6 +211,11 @@ if(QCATUIKIT_ENABLE_THORVG)
 endif()
 target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PRIVATE Qt6::QuickControls2 Qt6::GuiPrivate)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(X11 QUIET)
+    if(TARGET X11::X11)
+        target_link_libraries(QCatUiKit PRIVATE X11::X11)
+        set_source_files_properties(mascot/qcatmascotwindowadapter.cpp PROPERTIES COMPILE_DEFINITIONS QCATUIKIT_HAS_XSHAPE)
+    endif()
     find_package(PkgConfig QUIET)
     if(PkgConfig_FOUND)
         pkg_check_modules(QCAT_WAYLAND_CLIENT QUIET IMPORTED_TARGET wayland-client)
