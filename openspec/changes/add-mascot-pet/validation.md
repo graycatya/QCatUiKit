@@ -540,3 +540,25 @@ Wayland 的 GDB 栈定位退出崩溃为：角色窗口销毁后，QProcess 结�
 构建与库／Gallery qmllint 通过；全量 CTest 20/20 通过（200.88 秒），最终测试源码修改后 mascot_contracts 再次通过。文档与 OpenSpec 严格检查另随记录执行。构建期间最后修正位置通知与水平绑定后，真实桌面全部场景已在最终库重跑；全量测试不替代原生输入证据。
 
 证据目录：build/mascot-input-movement-20261029，含 desktop.log、ctest.log、mascot-contracts.log、qmllint.log、build.log、test-build.log 和八张明暗主题截图。不外推原生 X11、原生 Wayland、Windows/macOS、多屏／混合 DPI、窄屏或焦点键盘矩阵；对应任务保持未完成。
+
+### 2026-10-29 Windows 多实例状态与平台文档收尾
+
+完成任务 5.4、1.7，当前 27/41；不归档、不同步主规格。沿用已有业务实现，本轮新增契约测试并整理文档，未新增平台支持声明。
+
+环境：Windows 11，Qt 6.12.0 MSVC2022 64-bit Release；构建目录来自当前 CMakeCache：build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release。状态定向检查使用 windows QPA 与 software Quick 后端，不代表 D3D 渲染、桌面合成、真实输入或多屏验收。
+
+- 新增 independentWindowState：两个公共 CatMascotPet 的控制器、无限动作、排队请求与气泡隔离；其中一个切包及销毁，另一个保持动作、队列、气泡不变。
+- 校验导出 v1 的八个配置字段；无效类型、版本、非有限坐标／缩放、缺失必填字段及包不支持的朝向被拒绝，配置快照不变；拒绝不清空现有队列或气泡。
+- windows QPA 下实际执行失效 screenId 回退、恢复缩放与整窗穿透，旧 v1 缺少 inputRegionsEnabled 时恢复 false。3 Passed、0 Failed、0 Skipped（含 init/cleanup），470 ms。此项验证不存在的标识，不代替真实拔屏。
+- 源码检查 mascot 模块及 CatMascotPet 未使用 QSettings、QSaveFile、WriteOnly 或 Settings，未引入自动持久化；角色源、动作队列和气泡不在快照中。
+- MASCOTPLATFORMS 修正公共窗口尚未交付等过时说明，汇总 Windows/Cocoa、xcb、原生 Wayland 的公共机制、协议、依赖、能力状态与限制。研究配套与公共组件边界保持明确。可重复测试步骤写入 VALIDATION。
+
+执行及结果：
+
+1. cmake --build build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --target tst_mascot QCatUiKit_qmllint qcat-gallery_qmllint --parallel 4：通过；最终测试增补后再次构建 tst_mascot 通过。
+2. windows QPA 运行 bin/tst_mascot.exe independentWindowState：通过，证据 build/mascot-state-test.txt。
+3. ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release -R '^mascot_contracts$' --output-on-failure：整组通过，16.76 秒，证据 build/mascot-state-contracts.log。
+4. Gallery 的 gallery_smoke、gallery_contracts、gallery_chart_data、gallery_data_demo 四项通过，证据 build/mascot-state-ctest.log。组合运行中的 mascot_contracts 因另一个同名测试同时写同一结果文件而失败，属于本轮重复启动导致的文件锁冲突；以上第 3 项串行重跑通过，不将该次组合报告称作全绿。
+5. python tools/check_docs.py：通过，38 Markdown、517 本地链接、123 公共 Cat 类型。openspec.cmd validate add-mascot-pet --strict 与 git diff --check：通过。
+
+剩余 14 项继续按任务跟踪：Windows/macOS 公共区域适配、焦点键盘、窄屏气泡、多屏／混合 DPI 及各平台完整矩阵未在本轮验收；1.7 的文档汇总完成不表示这些平台已通过。没有使用研究配套绕过公共组件限制。

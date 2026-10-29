@@ -4,14 +4,14 @@
 
 [文档索引](README.md) · [角色包与播放](MASCOTPET.md) · [验证步骤](VALIDATION.md)
 
-库尚未提供公共 CatMascotPet 桌面窗口。`tests/manual/mascot-probe` 用于验证平台窗口能力，不是应用接入 API，不依赖 Gallery、角色素材或私有库组件。
+库已提供公共 CatMascotPet 桌面窗口，接入方式见角色包与播放专题。`tests/manual/mascot-probe` 用于独立验证平台窗口能力，不是应用接入 API，不依赖 Gallery、角色素材或私有库组件。
 
 | 环境 | 当前原型 | 完整桌宠平台验收 |
 | --- | --- | --- |
 | Windows | 交互原型和跨进程输入检查；实测版本及结果保存在 OpenSpec change | Pending |
 | macOS | 单屏矩形原型：真实输入检查通过，菜单与区域显示由实机人工确认 | Pending |
 | X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
-| 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 配套源码与安装包已交付，安装启用及真实合成器操作待验收；KWin 配套待实现 | Pending |
+| 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 研究配套已有握手及原生操作读回证据，不作为公共组件依赖；KWin 配套研究暂缓 | Pending |
 
 ## Linux 原型
 
@@ -57,7 +57,7 @@ Qt Quick 透明无边框窗口显示测试角色区域和两个气泡按钮。�
 
 原型检查全部通过时 prototypeAcceptance 为 Passed，顶层 acceptance 仍为 Pending；按项 Supported 附带单主屏原型范围。常规 offscreen 分类测试和拒绝 Windows 实机检查测试不发送系统输入，不构成桌面验收。
 
-这不等于生产适配：公共桌宠窗口、角色动作区域／镜像／缩放联动、完整气泡、平滑移动、多实例及平台托盘生命周期仍待实现。跨屏、混合 DPI、屏幕移除、独占全屏和系统安全桌面不在原型通过范围内。完整验收仍须执行 OpenSpec 平台矩阵，不外推到 Windows 所有版本或其他操作系统。
+这不等于公共组件验收：公共窗口已有动作、气泡、移动与多实例接口，但 Windows 声明区域输入适配及完整实机矩阵仍待完成；托盘由宿主实现。跨屏、混合 DPI、屏幕移除、独占全屏和系统安全桌面不在原型通过范围内。完整验收仍须执行 OpenSpec 平台矩阵，不外推到 Windows 所有版本或其他操作系统。
 
 ## macOS 原型
 
@@ -75,6 +75,14 @@ Qt 6.10.2 Cocoa 的 setMask 实现裁剪视图图层，不能仅凭该调用认�
 
 
 ## 公共窗口直接集成的当前边界
+
+| 会话 | 公共组件使用的机制与依赖 | 当前限制 |
+| --- | --- | --- |
+| Windows / Cocoa | Qt Quick Window、Qt 窗口位置及标志；不引入探针的 Widgets／托盘依赖 | 声明区域外穿透尚未接入公共适配；完整焦点、多屏与桌面输入待验收 |
+| xcb（原生 X11 或 XWayland） | Qt 定位及窗口标志；可选 X11 构建依赖、Xext 运行库及 ShapeInput 1.1；EWMH 任务栏提示 | 缺少 ShapeInput 时区域输入明确不可用；窗口管理器可限制层级；已有 XWayland 证据不能替代原生 X11 |
+| 原生 Wayland | Qt surface 输入区域与系统拖动请求；不连接 D-Bus 配套 | 精确定位、平滑定位、通用置顶及跳过任务栏不可用；真实输入与合成器行为需逐会话验收 |
+
+能力接口中的 Unknown 表示存在可请求路径但尚需桌面验收；Unavailable 附原因并使受限请求失败。它们不等同于平台验收 Passed。宿主须保留显示／隐藏及关闭穿透的入口，并按能力选择移动和窗口策略；重复验证步骤统一维护在 VALIDATION，具体系统、Qt、图形后端和逐项结果保存在对应 OpenSpec change。
 
 CatMascotPet 不连接本文的研究配套。Linux xcb 可选链接 X11 并检测 Xext 运行库，使用 ShapeInput 单独设置输入区域；不调用 Qt xcb 的 bounding mask 裁切画面。原生 Wayland 通过 Qt 的 surface 输入区域请求，定位和置顶报告 Unavailable。Windows/macOS 的公共输入区域私有适配仍待完成；既有手动原型的通过不代表公共组件已通过。
 

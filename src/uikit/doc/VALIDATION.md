@@ -499,6 +499,8 @@ open -n -W build/mascot-macos-probe/qcat-mascot-probe.app --args --macos-check "
 
 ## 宿主桌宠窗口契约
 
+`tst_mascot independentWindowState` 验证两个公共窗口的控制器、动作队列及气泡隔离，切包与销毁不影响另一实例；检查导出快照字段、无效／缺失字段和不支持朝向的原子拒绝。离屏运行覆盖拒绝与隔离；使用 windows、cocoa 或 xcb QPA 再运行同一测试，覆盖失效屏幕标识回退及旧 v1 快照兼容。该测试不自动写入持久化存储，不代替真实拔屏或混合 DPI 验收。
+
 使用当前配置的构建目录运行 `ctest --test-dir <build-dir> -R '^mascot_contracts$' --output-on-failure`。publicWindowLifecycle 检查公共 QML 类型加载、默认隐藏、关闭隐藏后角色状态保留及离屏定位明确失败；publicBubbleLifecycle 检查纯文本内容、隐藏冻结时限、超时、替换和过期标识拒绝。这些不验证原生点击穿透、桌面透明合成或焦点策略。
 
 Gallery 的 mascot-pet 页面仅使用公共 CatMascotPet，提供两包、多个窗口、动作、气泡、移动和穿透操作；退出页面必须清理窗口。分别在原生 Wayland、xcb 及其他实际平台记录窗口、输入、焦点及宿主生命周期，不安装扩展。原生 Wayland 定位与置顶须返回受限原因，不能借助已安装的研究配套把公共组件标为支持。已有研究原型的扩展安装／禁用步骤仅适用于其独立手动程序。

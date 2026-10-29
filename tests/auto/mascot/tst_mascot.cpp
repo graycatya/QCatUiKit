@@ -26,6 +26,7 @@
 #include <QtTest>
 #include <algorithm>
 #include <functional>
+#include <limits>
 using namespace QCatUiKit;
 using Controller = MascotPetController;
 namespace
@@ -707,6 +708,120 @@ CatMascotPet {
                          before.toMap().value("position").toPoint());
             }
         }
+    }
+
+    void independentWindowState()
+    {
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    packageSource: "qrc:/mascot-test/data/mascot.json"
+    function snapshot() { return exportState() }
+    function restore(snapshot: var): var { return restoreState(snapshot) }
+    function message() { return showBubble("Independent message") }
+})", QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> first(component.create()), second(component.create());
+        QVERIFY(first && second);
+        auto *a = qvariant_cast<Controller *>(first->property("controller"));
+        auto *b = qvariant_cast<Controller *>(second->property("controller"));
+        QVERIFY(a && b && a != b);
+        QTRY_COMPARE(a->status(), Controller::Ready);
+        QTRY_COMPARE(b->status(), Controller::Ready);
+        a->requestAction("jump", Controller::Replace, {{"loops", -1}});
+        a->requestAction("jump", Controller::Enqueue);
+        b->requestAction("jump", Controller::Replace, {{"loops", -1}});
+        b->requestAction("jump", Controller::Enqueue);
+        QTRY_COMPARE(a->queueLength(), 1);
+        QTRY_COMPARE(b->queueLength(), 1);
+        QVariant bubble;
+        QVERIFY(QMetaObject::invokeMethod(second.get(), "message", Q_RETURN_ARG(QVariant, bubble)));
+        QVERIFY(!bubble.toString().isEmpty());
+        const auto snapshot = [](QObject *pet)
+        {
+            QVariant value;
+            QMetaObject::invokeMethod(pet, "snapshot", Q_RETURN_ARG(QVariant, value));
+            return value.toMap();
+        };
+        const auto restore = [](QObject *pet, const QVariantMap &state)
+        {
+            QVariant result;
+            QMetaObject::invokeMethod(pet, "restore", Q_RETURN_ARG(QVariant, result),
+                                      Q_ARG(QVariant, QVariant(state)));
+            return result.toMap();
+        };
+        const auto original = snapshot(second.get());
+        QCOMPARE(original.size(), 8);
+        QVERIFY(!original.contains("packageSource"));
+        QVERIFY(!original.contains("bubbleText"));
+        const QList<QPair<QString, QVariant>> invalid{
+            {"version", 2}, {"version", "1"}, {"petScale", -1.},
+            {"petScale", std::numeric_limits<double>::quiet_NaN()},
+            {"position", QPointF(std::numeric_limits<double>::infinity(), 0)},
+            {"facing", "up"}, {"screenId", 7}, {"alwaysOnTop", 1},
+            {"inputTransparent", "false"}, {"inputRegionsEnabled", 0}};
+        for (const auto &field : invalid)
+        {
+            auto state = original;
+            state["petScale"] = 2.;
+            state["alwaysOnTop"] = false;
+            state[field.first] = field.second;
+            QVERIFY2(!restore(second.get(), state).value("ok").toBool(), qPrintable(field.first));
+            QCOMPARE(snapshot(second.get()), original);
+            QCOMPARE(b->queueLength(), 1);
+            QCOMPARE(second->property("bubbleId").toString(), bubble.toString());
+        }
+        for (const auto &key : original.keys())
+        {
+            if (key == "inputRegionsEnabled")
+                continue; // Optional in older v1 snapshots.
+            auto state = original;
+            state.remove(key);
+            QVERIFY2(!restore(second.get(), state).value("ok").toBool(), qPrintable(key));
+            QCOMPARE(snapshot(second.get()), original);
+        }
+        // A missing screen is recoverable on position-capable QPA backends.
+        const auto position = second->property("capabilities").toMap().value("position").toMap();
+        if (position.value("status") != "Unavailable")
+        {
+            auto state = original;
+            state["screenId"] = "removed-screen";
+            state["position"] = QPointF(24, 32);
+            state["petScale"] = 2.;
+            state["inputTransparent"] = true;
+            const auto result = restore(second.get(), state);
+            QVERIFY(result.value("ok").toBool());
+            QVERIFY(result.value("corrected").toBool());
+            QCOMPARE(b->petScale(), 2.);
+            QCOMPARE(second->property("inputTransparent").toBool(), true);
+            QVERIFY(snapshot(second.get()).value("screenId") != "removed-screen");
+            state = snapshot(second.get());
+            state.remove("inputRegionsEnabled");
+            QVERIFY(restore(second.get(), state).value("ok").toBool());
+            QCOMPARE(second->property("inputRegionsEnabled").toBool(), false);
+        }
+        // A syntactically valid but unsupported facing must also reject atomically.
+        a->setPackageSource(QUrl::fromLocalFile(QStringLiteral(QCAT_MASCOT_SAMPLE)));
+        QTRY_COMPARE(a->status(), Controller::Ready);
+        const auto legacy = snapshot(first.get());
+        auto unsupported = legacy;
+        unsupported["facing"] = "left";
+        unsupported["petScale"] = 3.;
+        unsupported["alwaysOnTop"] = false;
+        QVERIFY(!restore(first.get(), unsupported).value("ok").toBool());
+        QCOMPARE(snapshot(first.get()), legacy);
+        a->setPackageSource(QUrl());
+        QCOMPARE(b->status(), Controller::Ready);
+        QCOMPARE(b->currentAction(), QString("jump"));
+        QCOMPARE(b->queueLength(), 1);
+        first.reset();
+        QCoreApplication::processEvents();
+        QCOMPARE(b->status(), Controller::Ready);
+        QCOMPARE(b->queueLength(), 1);
+        QCOMPARE(second->property("bubbleId").toString(), bubble.toString());
     }
 
     void desktopWindowIntegration()
