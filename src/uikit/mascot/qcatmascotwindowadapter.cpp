@@ -398,11 +398,16 @@ void MascotWindowAdapter::cancelMove()
 }
 bool MascotWindowAdapter::requestKeyboardFocus()
 {
-    if (!m_window || m_transparent)
+    if (!m_window || !m_window->isVisible() || m_transparent || m_bubbleRect.isEmpty())
         return false;
     m_window->setFlag(Qt::WindowDoesNotAcceptFocus, false);
     m_window->requestActivate();
     return true;
+}
+void MascotWindowAdapter::releaseKeyboardFocus()
+{
+    if (m_window)
+        m_window->setFlag(Qt::WindowDoesNotAcceptFocus, true);
 }
 void MascotWindowAdapter::applyWindowPolicy()
 {
@@ -458,6 +463,8 @@ void MascotWindowAdapter::refresh()
 {
     if (!m_window)
         return;
+    if (m_transparent || m_bubbleRect.isEmpty() || !m_window->isVisible())
+        releaseKeyboardFocus();
     m_window->setFlag(Qt::WindowTransparentForInput, m_transparent);
     m_window->setFlag(Qt::WindowStaysOnTopHint, m_above);
     applyWindowPolicy();
@@ -575,6 +582,8 @@ bool MascotWindowAdapter::eventFilter(QObject *object, QEvent *event)
 {
     if (object != m_window || !m_controller)
         return false;
+    if (event->type() == QEvent::Hide || event->type() == QEvent::WindowDeactivate)
+        releaseKeyboardFocus();
     if (event->type() == QEvent::Expose)
     {
         applyWindowPolicy();

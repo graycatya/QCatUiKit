@@ -197,10 +197,17 @@ Window {
                 theme: root.theme
                 text: qsTr("Close")
                 Accessible.name: qsTr("Close character message")
-                onPressed: desktop.requestKeyboardFocus()
+                KeyNavigation.priority: KeyNavigation.BeforeItem
+                KeyNavigation.tab: bubbleScroll
+                KeyNavigation.backtab: bubbleActionRepeater.count > 0 ? bubbleActionRepeater.itemAt(bubbleActionRepeater.count - 1) : bubbleScroll
                 onClicked: root.closeBubble(root.bubbleId)
             }
             B.ScrollView {
+                id: bubbleScroll
+                focusPolicy: Qt.StrongFocus
+                KeyNavigation.priority: KeyNavigation.BeforeItem
+                KeyNavigation.tab: bubbleActionRepeater.count > 0 ? bubbleActionRepeater.itemAt(0) : closeMessage
+                KeyNavigation.backtab: closeMessage
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredHeight: Math.min(message.implicitHeight, 240)
@@ -211,6 +218,8 @@ Window {
                     width: bubble.width - 40
                     theme: root.theme
                     text: root.bubbleText
+                    Accessible.name: root.bubbleText
+                    Accessible.role: Accessible.StaticText
                     textFormat: Text.PlainText
                     wrapMode: Text.Wrap
                 }
@@ -220,14 +229,23 @@ Window {
                 Layout.fillWidth: true
                 spacing: 4
                 Repeater {
+                    id: bubbleActionRepeater
                     model: bubbleState.actions
                     CatButton {
+                        id: actionButton
                         required property var modelData
+                        required property int index
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
+                        KeyNavigation.tab: index + 1 < bubbleActionRepeater.count ? bubbleActionRepeater.itemAt(index + 1) : closeMessage
+                        KeyNavigation.backtab: index > 0 ? bubbleActionRepeater.itemAt(index - 1) : bubbleScroll
                         objectName: "mascotBubbleAction_" + modelData.id
                         theme: root.theme
                         text: modelData.text
-                        onPressed: desktop.requestKeyboardFocus()
-                        onClicked: root.bubbleActionTriggered(root.bubbleId, modelData.id)
+                        onClicked: {
+                            desktop.requestKeyboardFocus()
+                            actionButton.forceActiveFocus(Qt.MouseFocusReason)
+                            root.bubbleActionTriggered(root.bubbleId, modelData.id)
+                        }
                     }
                 }
             }

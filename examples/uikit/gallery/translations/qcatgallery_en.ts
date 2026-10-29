@@ -6563,6 +6563,86 @@ Keep notes, drafts and everyday details together.</translation>
         <source>Status: %1; action: %2; passthrough: %3</source>
         <translation>Status: %1; action: %2; passthrough: %3</translation>
     </message>
+    <message>
+        <source>No character</source>
+        <translation>No character</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Loading</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>Ready</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Unknown</translation>
+    </message>
+    <message>
+        <source>Play action %1</source>
+        <translation>Play action %1</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>On</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Off</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>Position</translation>
+    </message>
+    <message>
+        <source>Smooth movement</source>
+        <translation>Smooth movement</translation>
+    </message>
+    <message>
+        <source>Always on top</source>
+        <translation>Always on top</translation>
+    </message>
+    <message>
+        <source>Region input</source>
+        <translation>Region input</translation>
+    </message>
+    <message>
+        <source>Whole-window passthrough</source>
+        <translation>Whole-window passthrough</translation>
+    </message>
+    <message>
+        <source>System dragging</source>
+        <translation>System dragging</translation>
+    </message>
+    <message>
+        <source>Skip taskbar</source>
+        <translation>Skip taskbar</translation>
+    </message>
+    <message>
+        <source>Supported</source>
+        <translation>Supported</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>Unavailable</translation>
+    </message>
+    <message>
+        <source>Unavailable in the current desktop session</source>
+        <translation>Unavailable in the current desktop session</translation>
+    </message>
+    <message>
+        <source>Requires desktop verification</source>
+        <translation>Requires desktop verification</translation>
+    </message>
+    <message>
+        <source>%1: %2 — %3</source>
+        <translation>%1: %2 — %3</translation>
+    </message>
 </context>
 <context>
     <name>GalleryNavigation</name>

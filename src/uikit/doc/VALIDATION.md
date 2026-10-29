@@ -521,3 +521,17 @@ Lottie 修改后运行既有原生 QRhi 的 lottieRendering、actionCacheAndLate
 PNG 旧版包拖动回归：运行 `tst_mascot legacySpriteMouseDrag packages regionsAndAnchors`；在真实 xcb 桌面另运行 `QT_QPA_PLATFORM=xcb tst_mascot legacySpriteMouseDrag desktopWindowIntegration`。legacySpriteMouseDrag 使用 Gallery 同源旧版 PNG 包，通过合成鼠标按下、移动、松开事件验证默认 body 区域、拖动信号与 xcb 窗口位移；它不证明系统级真实鼠标输入路由。旧版包未声明 regions 时兼容生成全角色 body 区域，显式 regions（包括空数组）保持原义。
 
 公共桌宠原生输入与移动回归：在 DPR=1 的真实 xcb 桌面设置 `QT_QPA_PLATFORM=xcb QCAT_MASCOT_DESKTOP=1`，运行 `tst_mascot desktopInputRouting desktopMovementInterruptions desktopBubbleEdges`。需要 X11 与 XTest 运行库；测试会暂时移动鼠标，结束恢复原位置。desktopInputRouting 用背后原生窗口计数验证默认阻挡、区域外穿透、镜像／缩放／动作覆盖、整窗穿透与恢复、气泡按钮及气泡关闭后的输入范围。desktopMovementInterruptions 验证新请求、定位、取消、隐藏、切包和真实拖动打断移动，拖动期间宿主位置请求被拒绝且无延迟重放，终态唯一；屏幕变化仅注入通知，不代表实际拔屏验收。desktopBubbleEdges 在明暗主题和四角显示长文字，检查窗口在可用区域内、显示／关闭气泡前后角色原点一致及原生画面可捕获；不代替窄屏、多屏和其他平台验收。
+
+## 公共桌宠气泡键盘与 Gallery 可访问性
+
+使用当前 CMakeCache 对应的构建。下列 QtTest 检查向本测试窗口投递事件，不申请辅助功能权限，不代表背后其他应用的真实系统输入验收：
+
+```sh
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build>/tests/auto/mascot/tst_mascot publicBubbleKeyboardLifecycle
+env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=cocoa <build>/tests/auto/mascot/tst_mascot publicBubbleKeyboardLifecycle
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build>/tests/auto/gallery/tst_gallery -import <build>/qml GalleryMascot::test_accessibleStatusAndKeyboard GalleryMascot::test_hostControlsIndependentWindows
+```
+
+Cocoa 行需真实可用的 macOS 图形会话；离屏通过不能替代该行。用小型内置包验证操作按钮点击、空格触发、Shift+Tab 返回关闭按钮及空格关闭，确认关闭气泡／隐藏／整窗穿透后恢复不接受焦点标志。新气泡布局在原生渲染线程异步更新，测试应等待布局稳定再取按钮坐标。Gallery 数据行覆盖明暗主题、Desktop／Touch／Mobile 密度、680／400 逻辑像素宽度、中英运行时切换、键盘显示桌宠、状态和动作可访问名称；能力诊断应显示本地化标签并保留未知诊断原因。
+
+视觉检查从 Gallery 生成桌宠页的桌面亮色及窄屏深色截图，检查按钮换行、页面滚动、文字裁切和绑定循环。角色动画软件后端纹理上限产生的警告须独立记录，不能将 Gallery 控件截图作为 GPU 角色播放证据。完整原生焦点验收另需独立背后应用验证显示／更新不抢输入以及主动气泡交互。

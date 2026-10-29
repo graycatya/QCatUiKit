@@ -6563,6 +6563,86 @@ Keep notes, drafts and everyday details together.</source>
         <source>Status: %1; action: %2; passthrough: %3</source>
         <translation>状态：%1；动作：%2；穿透：%3</translation>
     </message>
+    <message>
+        <source>No character</source>
+        <translation>未加载角色</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>加载中</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>就绪</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>Play action %1</source>
+        <translation>播放动作 %1</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>定位</translation>
+    </message>
+    <message>
+        <source>Smooth movement</source>
+        <translation>平滑移动</translation>
+    </message>
+    <message>
+        <source>Always on top</source>
+        <translation>置顶</translation>
+    </message>
+    <message>
+        <source>Region input</source>
+        <translation>区域输入</translation>
+    </message>
+    <message>
+        <source>Whole-window passthrough</source>
+        <translation>整窗穿透</translation>
+    </message>
+    <message>
+        <source>System dragging</source>
+        <translation>系统拖动</translation>
+    </message>
+    <message>
+        <source>Skip taskbar</source>
+        <translation>跳过任务栏</translation>
+    </message>
+    <message>
+        <source>Supported</source>
+        <translation>支持</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>不可用</translation>
+    </message>
+    <message>
+        <source>Unavailable in the current desktop session</source>
+        <translation>当前桌面会话不提供此能力</translation>
+    </message>
+    <message>
+        <source>Requires desktop verification</source>
+        <translation>需要桌面实机验证</translation>
+    </message>
+    <message>
+        <source>%1: %2 — %3</source>
+        <translation>%1：%2 — %3</translation>
+    </message>
 </context>
 <context>
     <name>GalleryNavigation</name>

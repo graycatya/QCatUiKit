@@ -302,6 +302,81 @@ CatMascotPet {
         QVERIFY(!updated.toBool());
         QCOMPARE(pet->property("bubbleText").toString(), QString("replacement"));
     }
+    void publicBubbleKeyboardLifecycle()
+    {
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    function openMessage() { showBubble("Keyboard message", {actions: [{id: "reply", text: "Reply"}]}) }
+    function closeMessage() { closeBubble(bubbleId) }
+})",
+                          QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        QVERIFY(pet);
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        actor->setPackageSource(fixtureUrl());
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        window->setPosition(QPoint(300, 300));
+        QVERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+        QSignalSpy action(pet.get(), SIGNAL(bubbleActionTriggered(QString, QString)));
+        const auto activate = [&]
+        {
+            if (!QMetaObject::invokeMethod(pet.get(), "openMessage"))
+                return false;
+            // Cocoa's threaded renderer polishes the new bubble asynchronously;
+            // its initial implicit button geometry is not a valid input target.
+            QTest::qWait(100);
+            std::function<QQuickItem *(QQuickItem *)> findReply =
+                [&](QQuickItem *item) -> QQuickItem *
+            {
+                if (item->objectName() == "mascotBubbleAction_reply")
+                    return item;
+                for (auto *child : item->childItems())
+                    if (auto *found = findReply(child))
+                        return found;
+                return nullptr;
+            };
+            auto *reply = findReply(window->contentItem());
+            if (!reply)
+                return false;
+            QTest::mouseClick(
+                window, Qt::LeftButton, Qt::NoModifier,
+                reply->mapToScene(QPointF(reply->width() / 2, reply->height() / 2)).toPoint());
+            return true;
+        };
+        QVERIFY(activate());
+        QTRY_COMPARE(action.count(), 1);
+        QVERIFY(!window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+        QTest::keyClick(window, Qt::Key_Space);
+        QTRY_COMPARE(action.count(), 2);
+        QCOMPARE(action.at(1).at(1).toString(), QString("reply"));
+        for (int i = 0; i < 8 && window->activeFocusItem() &&
+                        window->activeFocusItem()->objectName() != "mascotBubbleClose";
+             ++i)
+            QTest::keyClick(window, Qt::Key_Tab, Qt::ShiftModifier);
+        QVERIFY(window->activeFocusItem());
+        QCOMPARE(window->activeFocusItem()->objectName(), QString("mascotBubbleClose"));
+        QTest::keyClick(window, Qt::Key_Space);
+        QTRY_VERIFY(pet->property("bubbleId").toString().isEmpty());
+        QTRY_VERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+        QVERIFY(activate());
+        pet->setProperty("inputTransparent", true);
+        QTRY_VERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+        pet->setProperty("inputTransparent", false);
+        QVERIFY(activate());
+        window->hide();
+        QTRY_VERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        QVERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
+    }
     void legacySpriteMouseDrag()
     {
         QQmlEngine engine;

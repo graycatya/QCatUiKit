@@ -562,3 +562,27 @@ Wayland 的 GDB 栈定位退出崩溃为：角色窗口销毁后，QProcess 结�
 5. python tools/check_docs.py：通过，38 Markdown、517 本地链接、123 公共 Cat 类型。openspec.cmd validate add-mascot-pet --strict 与 git diff --check：通过。
 
 剩余 14 项继续按任务跟踪：Windows/macOS 公共区域适配、焦点键盘、窄屏气泡、多屏／混合 DPI 及各平台完整矩阵未在本轮验收；1.7 的文档汇总完成不表示这些平台已通过。没有使用研究配套绕过公共组件限制。
+
+## 2026-10-29 macOS 公共气泡键盘生命周期与 Gallery 可访问性
+
+从当前最新提交 `802a165` 继续实施，起始 27/41。仓库已采用宿主直接集成及宿主自有托盘契约，本轮未恢复旧配套／托盘实现。当前平台为 macOS Tahoe 26.6.2（25G83）arm64，Qt 6.10.2、AppleClang、Release/Ninja；从已有 CMakeCache 选择 `build/Qt_6_10_2_for_macOS-Release`，保留 Qt kit 和既有架构。公共 macOS 区域外穿透仍缺少不裁切画面的适配；不以旧矩形探针或 Qt layer mask 代替其完整实现，4.2 不勾选。
+
+本轮完成 6.2，并修复 4.5 的公共气泡焦点生命周期：
+
+- 操作按钮点击完成后按需申请窗口焦点并定位按钮焦点，避免在鼠标按下与释放之间改变窗口标志。关闭按钮直接关闭气泡。窗口失活、隐藏、气泡消失或整窗穿透时恢复 WindowDoesNotAcceptFocus；隐藏／无气泡／整窗穿透时拒绝内部焦点申请。未新增公开头、属性或 ABI 接口。
+- 气泡关闭按钮、文本滚动区及动作按钮建立明确 Tab／Shift+Tab 顺序，动作可用空格触发，不依赖 macOS 系统键盘导航偏好，也不更改用户系统设置；消息文本提供可访问名称。
+- Gallery 将数字状态、布尔穿透值、能力标签及能力状态改为中英可读文案；动作按钮提供本地化的“播放动作”可访问名称，保留包动作 ID。已知能力原因本地化，未知原因保留原始文本。两份 TS 同步新增 20 条文案。
+- 新回归覆盖关闭气泡、隐藏／恢复、整窗穿透后的被动策略；Gallery 六组数据覆盖明暗主题、Desktop／Touch／Mobile、680／400 逻辑像素宽度、中英运行时切换、键盘显示窗口、状态／能力／动作可访问文本和独立实例生命周期。
+
+验证：
+
+- 完整构建通过；最终库 `QCatUiKit_qmllint` 与 Gallery `qcat-gallery_qmllint` 通过。未更换 Qt／构建目录。
+- 最终 `ctest --test-dir build/Qt_6_10_2_for_macOS-Release --output-on-failure -j 2`：20/20，通过，88.72 秒。早期完整检查亦为 20/20（86.38 秒）；后续 QML 焦点修订后执行了上述最终全量检查。
+- `QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software .../tst_mascot publicBubbleKeyboardLifecycle` 通过；该测试使用内置小包，验证鼠标动作、空格、Shift+Tab 至关闭及空格关闭，再验证隐藏／穿透后的被动标志。
+- `env -u QT_QUICK_BACKEND QT_QPA_PLATFORM=cocoa .../tst_mascot publicBubbleKeyboardLifecycle`：最终 3 passed / 0 failed（含 init/cleanup），525 ms。该行在真实 Cocoa 图形会话运行，QtTest 向本测试窗口投递事件，不注入其他应用，不申请辅助功能权限；未将其当作独立背后应用的焦点保持或 Metal／Lottie GPU 证据。
+- 初期 Cocoa 检查动作计数为 0：测试在新气泡布局尚未稳定时立即取按钮坐标；加入布局稳定等待并放在屏幕内部后，点击和空格路径通过。不能仅凭该失败断言真实用户首击必然丢失。随后复现 macOS 默认 Tab 导航不能到达关闭按钮；明确 KeyNavigation 焦点链后最终通过，没有改变系统偏好。测试按稳定 objectName 及可观察信号／窗口标志验证，不依赖私有对象层级。
+- Gallery 专项 `.../tst_gallery -import <build>/qml GalleryMascot::test_accessibleStatusAndKeyboard GalleryMascot::test_hostControlsIndependentWindows`：9 passed / 0 failed（含 init/cleanup），1.264 秒，最终全量检查再次覆盖。software 对 Gallery 大图集显示既有 2048 纹理尺寸警告，该路径不作为角色 PNG/GPU 视觉验收；控件、文案、布局及键盘断言通过。
+- 已查看 Gallery 桌宠页英文亮色桌面 1200 宽、中文深色 Mobile 440 宽截图，按钮正常换行，窄屏页面可滚动；最终英文截图能力诊断使用可读标签，状态显示 Ready / Off。临时图 `/tmp/qcat-mascot-final-light.png`、`/tmp/qcat-mascot-dark-mobile.png` 不作为源码资源。未以控件页截图推导桌面透明合成或角色动画正确性。
+- 文档检查通过：38 Markdown／518 本地链接；OpenSpec 严格验证和差异空白检查在最终执行。可重复步骤已写入 VALIDATION，焦点用法写入 MASCOTPET；本轮无需安装消费者验证，未改变公共 C++ API 或安装规则。
+
+任务 6.2 完成，总进度 28/41。4.5 仍需背后原生应用验证显示／更新不抢输入及其他平台实机结果；4.2 的 Windows/macOS 区域输入、4.4 多屏、5.2 完整气泡矩阵和全部平台矩阵保留待办。当前没有 Linux／Wayland 实机会话，不以本机结果代替它们；不宣告完整平台支持，不同步主规格、不归档。本轮未自动提交。

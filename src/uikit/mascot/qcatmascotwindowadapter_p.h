@@ -84,6 +84,7 @@ class MascotWindowAdapter : public QObject
 
   private:
     void refresh();
+    void releaseKeyboardFocus();
     void applyWindowPolicy();
     void applyMask();
     void syncGeometry();
