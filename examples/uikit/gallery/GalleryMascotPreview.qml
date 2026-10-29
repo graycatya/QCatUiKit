@@ -101,6 +101,13 @@ Item {
             }
             CatButton { text: qsTr("Append text"); onClicked: pet.appendBubbleText(pet.bubbleId, qsTr(" More text.")) }
             CatButton { text: qsTr("Toggle input passthrough"); onClicked: pet.inputTransparent = !pet.inputTransparent }
+            CatSwitch {
+                objectName: "mascotRegions"
+                text: qsTr("Region input")
+                checked: pet.inputRegionsEnabled
+                enabled: pet.capabilities.inputRegions.status !== "Unavailable"
+                onToggled: pet.inputRegionsEnabled = checked
+            }
             CatButton { text: qsTr("Move character"); onClicked: pet.moveTo("", Qt.point(120, 120), 500) }
             CatButton { text: qsTr("Cancel move"); onClicked: pet.cancelMove() }
         }

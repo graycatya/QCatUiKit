@@ -56,7 +56,7 @@ qt_add_qml_module(QCatUiKit
     RESOURCE_PREFIX /qt/qml
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit
     SOURCES ${qcat_public_headers}
-        mascot/qcatmascotwindowadapter.cpp mascot/qcatmascotwindowadapter_p.h mascot/qcatmascotpetcontroller.cpp mascot/qcatmascotpackage.cpp mascot/qcatmascotpackage_p.h mascot/qcatmascotrenderadapter_p.h
+        mascot/qcatmascotwindowadapter.cpp mascot/qcatmascotwindowadapter_p.h mascot/qcatmascotgeometry_p.h mascot/qcatmascotpetcontroller.cpp mascot/qcatmascotpackage.cpp mascot/qcatmascotpackage_p.h mascot/qcatmascotrenderadapter_p.h
         vector/qcatvectoritem.cpp vector/qcatvectorshape_p.h
         docking/qcatdockcontroller.cpp
         docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
@@ -210,6 +210,10 @@ if(QCATUIKIT_ENABLE_THORVG)
     target_link_libraries(QCatUiKit PRIVATE ThorVG::ThorVG)
 endif()
 target_link_libraries(QCatUiKit PUBLIC Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick PRIVATE Qt6::QuickControls2 Qt6::GuiPrivate)
+if(WIN32)
+    target_sources(QCatUiKit PRIVATE mascot/qcatmascotwindowsinput.cpp mascot/qcatmascotwindowsinput_p.h)
+    target_link_libraries(QCatUiKit PRIVATE user32 gdi32)
+endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(X11 QUIET)
     if(TARGET X11::X11)

@@ -499,6 +499,12 @@ open -n -W build/mascot-macos-probe/qcat-mascot-probe.app --args --macos-check "
 
 ## 宿主桌宠窗口契约
 
+Windows 公共区域输入：构建 tst_mascot 时会同时构建独立原生背后程序 mascot-input-target；两者须位于同一运行目录。在可交互 Windows 会话设置 QT_QPA_PLATFORM=windows、QCAT_MASCOT_DESKTOP=1，运行 `tst_mascot.exe windowsInputRouting`。默认离屏 CTest 会跳过该真实输入用例；沙箱无法访问桌面时不能把它记为通过。分别使用 QT_QUICK_BACKEND=software 和移除该变量、设置 QSG_RHI_BACKEND=d3d11 的路径检查，日志报告实际 graphics API。可用 QT_SCALE_FACTOR=1.25 验证分数 DPR 转换，但这不替代混合 DPI 硬件验收。
+
+该测试使用 SendInput，只向本轮公共桌宠与独立背后进程注入输入；测试期间勿操作鼠标／键盘或切换窗口。背后测试窗口会临时置顶，随后将本轮桌宠放在其上，避免其他应用遮挡造成误投；每次鼠标按下前检查原生归属，不修改其他应用层级。结束回收子进程、输入窗口，恢复光标和此前前台窗口。检查默认阻挡、矩形／椭圆／多边形、镜像、缩放、动作覆盖、整窗穿透恢复、气泡及空格操作、被动焦点、真实拖动与隐藏／销毁。屏幕像素须与 Qt 画面参考一致，区域切换后继续保持；Qt 自身截图不代替屏幕采样。当前用例不覆盖系统触摸／笔、独占全屏或全部 Windows 平台矩阵。
+
+`ctest --test-dir <build-dir> -R '^gallery_mascot_shutdown$' --output-on-failure` 运行独立 Gallery 进程，打开桌宠页并显示两个实例，再关闭主窗口；进程须在超时前正常退出。该回归通过 `--smoke-test --page mascot-pet` 触发实际主窗口关闭路径，检查辅助窗口不会阻止 Gallery 退出。桌宠自身关闭隐藏及宿主最小化独立性继续由 mascot_contracts 覆盖。
+
 `tst_mascot independentWindowState` 验证两个公共窗口的控制器、动作队列及气泡隔离，切包与销毁不影响另一实例；检查导出快照字段、无效／缺失字段和不支持朝向的原子拒绝。离屏运行覆盖拒绝与隔离；使用 windows、cocoa 或 xcb QPA 再运行同一测试，覆盖失效屏幕标识回退及旧 v1 快照兼容。该测试不自动写入持久化存储，不代替真实拔屏或混合 DPI 验收。
 
 使用当前配置的构建目录运行 `ctest --test-dir <build-dir> -R '^mascot_contracts$' --output-on-failure`。publicWindowLifecycle 检查公共 QML 类型加载、默认隐藏、关闭隐藏后角色状态保留及离屏定位明确失败；publicBubbleLifecycle 检查纯文本内容、隐藏冻结时限、超时、替换和过期标识拒绝。这些不验证原生点击穿透、桌面透明合成或焦点策略。
@@ -535,3 +541,11 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build>/tests/auto/gallery/t
 Cocoa 行需真实可用的 macOS 图形会话；离屏通过不能替代该行。用小型内置包验证操作按钮点击、空格触发、Shift+Tab 返回关闭按钮及空格关闭，确认关闭气泡／隐藏／整窗穿透后恢复不接受焦点标志。新气泡布局在原生渲染线程异步更新，测试应等待布局稳定再取按钮坐标。Gallery 数据行覆盖明暗主题、Desktop／Touch／Mobile 密度、680／400 逻辑像素宽度、中英运行时切换、键盘显示桌宠、状态和动作可访问名称；能力诊断应显示本地化标签并保留未知诊断原因。
 
 视觉检查从 Gallery 生成桌宠页的桌面亮色及窄屏深色截图，检查按钮换行、页面滚动、文字裁切和绑定循环。角色动画软件后端纹理上限产生的警告须独立记录，不能将 Gallery 控件截图作为 GPU 角色播放证据。完整原生焦点验收另需独立背后应用验证显示／更新不抢输入以及主动气泡交互。
+
+### 桌宠屏幕坐标与边界回归
+
+`screenCoordinateRules` 随 mascot_contracts 离屏运行，使用负原点屏幕、窄可用区、非整数角色尺寸及气泡偏移验证逻辑坐标边界与缩放计算。坐标计算不乘屏幕 DPR；原生输入适配独立处理物理像素。
+
+在 windows、cocoa 或 xcb 图形会话运行 `tst_mascot screenCoordinateRules desktopScreenCoordinates`。Windows 可执行文件通常位于 `<build>/bin/tst_mascot.exe`；其他布局以实际构建输出为准。desktopScreenCoordinates 检查带气泡定位到可用区两端、关闭气泡后角色位置稳定、重新开启约束时超大缩放被校正，以及注入 DPR 变化通知取消旧移动。可用 QCAT_MASCOT_GEOMETRY_CAPTURE 指定气泡窗口 PNG。该测试不改变系统显示配置，不注入其他应用输入；DPR 事件注入不是实际 DPI 切换，合成坐标不是多屏硬件验收。
+
+实机仍需在混合 DPI 的多个屏幕间拖动、移动到负原点屏幕，并拔除当前屏幕，确认角色和输入区域对齐、有效缩放被校正且剩余屏幕内可恢复交互。分别记录各屏可用区、DPR、Qt／系统／图形后端和原生点击去向；未完成时保持对应平台及任务待验收。

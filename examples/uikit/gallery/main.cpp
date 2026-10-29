@@ -95,6 +95,14 @@ int main(int argc, char **argv)
         return 1;
     if (engine.rootObjects().first()->property("invalidInitialPage").toBool())
         parser.showHelp(2);
+    auto *mainWindow = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
+    if (!mainWindow)
+        return 1;
+    // Mascot closeHides can veto QGuiApplication::quit()'s close-all-windows
+    // request. End the host event loop, then let the engine destroy its windows.
+    // Minimizing the main window keeps it visible and does not exit.
+    QObject::connect(mainWindow, &QWindow::visibleChanged, &app,
+                     [](bool visible) { if (!visible) QCoreApplication::exit(0); });
     if (parser.isSet("chart-demo"))
     {
         bool valid = false;
@@ -193,7 +201,32 @@ int main(int argc, char **argv)
                     return;
                 }
             }
-            app.quit();
+            if (parser.isSet("smoke-test") && !parser.isSet("screenshot"))
+            {
+                if (parser.value("page") == "mascot-pet")
+                {
+                    for (const auto *name : {"galleryMascotPet", "galleryMascotSecond"})
+                    {
+                        auto *pet = mainWindow->findChild<QQuickWindow *>(QString::fromLatin1(name));
+                        if (!pet) { QCoreApplication::exit(3); return; }
+                        pet->show();
+                        if (!pet->isVisible()) { QCoreApplication::exit(3); return; }
+                    }
+                    mainWindow->showMinimized();
+                    if (!mainWindow->isVisible()) { QCoreApplication::exit(3); return; }
+                }
+                QTimer::singleShot(100, mainWindow, [&, mainWindow] {
+                    if (parser.value("page") == "mascot-pet")
+                        for (const auto *name : {"galleryMascotPet", "galleryMascotSecond"})
+                        {
+                            auto *pet = mainWindow->findChild<QQuickWindow *>(QString::fromLatin1(name));
+                            if (!pet || !pet->isVisible()) { QCoreApplication::exit(3); return; }
+                        }
+                    mainWindow->close();
+                });
+            }
+            else
+                app.quit();
         });
     }
     return app.exec();

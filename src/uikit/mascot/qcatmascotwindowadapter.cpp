@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
+#include "qcatmascotgeometry_p.h"
 #include "qcatmascotwindowadapter_p.h"
+#ifdef Q_OS_WIN
+#include "qcatmascotwindowsinput_p.h"
+#endif
 #include <QGuiApplication>
 #include <QLibrary>
 #include <QMouseEvent>
@@ -118,31 +122,31 @@ MascotWindowAdapter::MascotWindowAdapter(QObject *parent) : QObject(parent)
                     finishMove(m_window->position() == m_to ? "Completed" : "Failed");
             });
     connect(this, &MascotWindowAdapter::changed, this, &MascotWindowAdapter::refresh);
-    const auto screenChanged = [this]
-    {
-        cancelMove();
-        syncGeometry();
-        if (m_window && canPosition() && m_constrain)
-            m_window->setPosition(bounded(findScreen({}), m_window->position()));
-        emit screenGeometryChanged();
-        emit changed();
-    };
-    connect(qGuiApp, &QGuiApplication::screenRemoved, this, screenChanged);
+    connect(qGuiApp, &QGuiApplication::screenRemoved, this,
+            &MascotWindowAdapter::updateScreenGeometry);
     connect(qGuiApp, &QGuiApplication::screenAdded, this,
             [this](QScreen *screen)
             {
-                connect(screen, &QScreen::availableGeometryChanged, this,
-                        [this]
-                        {
-                            cancelMove();
-                            syncGeometry();
-                            emit screenGeometryChanged();
-                        });
-                emit screenGeometryChanged();
-                emit changed();
+                observeScreen(screen);
+                updateScreenGeometry();
             });
     for (auto *screen : QGuiApplication::screens())
-        connect(screen, &QScreen::availableGeometryChanged, this, screenChanged);
+        observeScreen(screen);
+}
+void MascotWindowAdapter::observeScreen(QScreen *screen)
+{
+    connect(screen, &QScreen::availableGeometryChanged, this,
+            &MascotWindowAdapter::updateScreenGeometry);
+    connect(screen, &QScreen::geometryChanged, this, &MascotWindowAdapter::updateScreenGeometry);
+    connect(screen, &QScreen::logicalDotsPerInchChanged, this,
+            &MascotWindowAdapter::updateScreenGeometry);
+}
+void MascotWindowAdapter::updateScreenGeometry()
+{
+    cancelMove();
+    syncGeometry();
+    emit screenGeometryChanged();
+    emit changed();
 }
 MascotWindowAdapter::~MascotWindowAdapter()
 {
@@ -154,6 +158,10 @@ void MascotWindowAdapter::setWindow(QQuickWindow *w)
     if (m_window == w)
         return;
     cancelMove();
+#ifdef Q_OS_WIN
+    m_windowsInput.reset();
+    m_windowsInputFailed = false;
+#endif
     if (m_window)
     {
         m_window->removeEventFilter(this);
@@ -176,6 +184,10 @@ void MascotWindowAdapter::setWindow(QQuickWindow *w)
                 Qt::QueuedConnection);
         connect(w, &QWindow::widthChanged, this, &MascotWindowAdapter::applyMask);
         connect(w, &QWindow::heightChanged, this, &MascotWindowAdapter::applyMask);
+#ifdef Q_OS_WIN
+        connect(w, &QWindow::xChanged, this, &MascotWindowAdapter::applyMask);
+        connect(w, &QWindow::yChanged, this, &MascotWindowAdapter::applyMask);
+#endif
         connect(w, &QWindow::screenChanged, this,
                 [this]
                 {
@@ -195,6 +207,7 @@ void MascotWindowAdapter::setWindow(QQuickWindow *w)
                             m_controller->endDrag();
                         m_dragging = false;
                     }
+                    applyMask();
                 });
     }
     emit screenGeometryChanged();
@@ -271,6 +284,10 @@ QVariantMap MascotWindowAdapter::capabilities() const
         {
             const auto qpa = QGuiApplication::platformName();
             unavailable = !qpa.startsWith("wayland");
+#ifdef Q_OS_WIN
+            if (qpa == "windows")
+                unavailable = m_windowsInputFailed;
+#endif
 #if defined(QCATUIKIT_HAS_XSHAPE) && QT_CONFIG(xcb)
             if (qpa == "xcb")
             {
@@ -302,7 +319,7 @@ QScreen *MascotWindowAdapter::findScreen(const QString &id) const
     for (auto *s : QGuiApplication::screens())
         if (screenKey(s) == id)
             return s;
-    if (m_window && m_window->screen())
+    if (m_window && QGuiApplication::screens().contains(m_window->screen()))
         return m_window->screen();
     return QGuiApplication::primaryScreen();
 }
@@ -310,10 +327,11 @@ QPoint MascotWindowAdapter::bounded(QScreen *s, const QPointF &point) const
 {
     if (!s || !m_window || !m_constrain)
         return point.toPoint();
-    const auto a = s->availableGeometry();
-    return QPoint(
-        qBound(a.left(), qRound(point.x()), qMax(a.left(), a.right() + 1 - m_window->width())),
-        qBound(a.top(), qRound(point.y()), qMax(a.top(), a.bottom() + 1 - m_window->height())));
+    const QSizeF size = m_controller && !m_controller->logicalSize().isEmpty()
+                            ? m_controller->logicalSize() * m_controller->petScale()
+                            : QSizeF(m_window->size());
+    return MascotPrivate::boundedCharacterOrigin(s->availableGeometry(), size, m_characterOffset,
+                                                 point);
 }
 bool MascotWindowAdapter::setPosition(const QString &screenId, const QPointF &point)
 {
@@ -463,9 +481,15 @@ void MascotWindowAdapter::refresh()
 {
     if (!m_window)
         return;
+    syncGeometry();
     if (m_transparent || m_bubbleRect.isEmpty() || !m_window->isVisible())
         releaseKeyboardFocus();
-    m_window->setFlag(Qt::WindowTransparentForInput, m_transparent);
+    bool nativeTransparent = m_transparent;
+#ifdef Q_OS_WIN
+    if (QGuiApplication::platformName() == "windows" && !m_windowsInputFailed)
+        nativeTransparent = true;
+#endif
+    m_window->setFlag(Qt::WindowTransparentForInput, nativeTransparent);
     m_window->setFlag(Qt::WindowStaysOnTopHint, m_above);
     applyWindowPolicy();
     if (m_transparent && m_dragging && m_controller)
@@ -493,8 +517,8 @@ void MascotWindowAdapter::syncGeometry()
             const auto available = availableGeometry();
             if (m_constrain && size.width() > 0 && size.height() > 0)
             {
-                const qreal maximum = qMin(qreal(available.width()) / size.width(),
-                                           qreal(available.height()) / size.height());
+                const qreal maximum =
+                    MascotPrivate::fittedScale(size, available, m_controller->petScale());
                 if (maximum > 0 && m_controller->petScale() > maximum)
                 {
                     m_controller->setPetScale(maximum);
@@ -503,8 +527,17 @@ void MascotWindowAdapter::syncGeometry()
                 }
             }
             const auto foot = m_controller->footAnchor() * m_controller->petScale();
-            if (m_haveFoot && canPosition())
-                m_window->setPosition(m_window->position() + (m_previousFoot - foot).toPoint());
+            if (canPosition())
+            {
+                QPoint position = m_layoutTimer.isActive() ? m_layoutAnchor - m_characterOffset
+                                                           : m_window->position();
+                if (m_haveFoot)
+                    position += (m_previousFoot - foot).toPoint();
+                position = bounded(findScreen({}), position);
+                if (m_layoutTimer.isActive())
+                    m_layoutAnchor = position + m_characterOffset;
+                m_window->setPosition(position);
+            }
             m_previousFoot = foot;
             m_haveFoot = true;
             applyMask();
@@ -546,6 +579,23 @@ void MascotWindowAdapter::applyMask()
     if (m_regionsEnabled)
         input.translate(m_characterOffset);
     input += QRegion(m_bubbleRect);
+#ifdef Q_OS_WIN
+    if (QGuiApplication::platformName() == "windows" && !m_windowsInputFailed)
+    {
+        if (!m_windowsInput)
+            m_windowsInput = std::make_unique<MascotWindowsInput>(m_window);
+        if (!m_windowsInput->sync(input, !m_transparent))
+        {
+            m_windowsInputFailed = true;
+            const auto error = m_windowsInput->errorString();
+            m_windowsInput.reset();
+            m_window->setFlag(Qt::WindowTransparentForInput, m_transparent);
+            emit platformError("InputRegionUnavailable", error);
+            QMetaObject::invokeMethod(this, [this] { emit changed(); }, Qt::QueuedConnection);
+        }
+        return;
+    }
+#endif
     if (QGuiApplication::platformName() == "xcb")
     {
 #if defined(QCATUIKIT_HAS_XSHAPE) && QT_CONFIG(xcb)
@@ -582,6 +632,8 @@ bool MascotWindowAdapter::eventFilter(QObject *object, QEvent *event)
 {
     if (object != m_window || !m_controller)
         return false;
+    if (event->type() == QEvent::DevicePixelRatioChange)
+        updateScreenGeometry();
     if (event->type() == QEvent::Hide || event->type() == QEvent::WindowDeactivate)
         releaseKeyboardFocus();
     if (event->type() == QEvent::Expose)

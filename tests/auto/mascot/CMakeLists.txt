@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 qt_add_executable(tst_mascot tst_mascot.cpp ${PROJECT_SOURCE_DIR}/src/uikit/mascot/qcatmascotpackage.cpp)
 target_link_libraries(tst_mascot PRIVATE QCatUiKit::QCatUiKit Qt6::Quick Qt6::Test)
+if(WIN32)
+    add_executable(mascot-input-target windowsinputtarget.cpp)
+    target_link_libraries(mascot-input-target PRIVATE user32 gdi32)
+    target_link_libraries(tst_mascot PRIVATE user32 gdi32)
+    add_dependencies(tst_mascot mascot-input-target)
+endif()
 target_include_directories(tst_mascot PRIVATE ${PROJECT_SOURCE_DIR}/src/uikit/mascot)
 qt_add_resources(tst_mascot fixtures PREFIX "/mascot-test" FILES data/mascot.json data/atlas.png)
 qt_add_resources(tst_mascot root_fixtures PREFIX "/" BASE "${CMAKE_CURRENT_SOURCE_DIR}/data"

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "qcatmascotpackage_p.h"
+#include "qcatmascotgeometry_p.h"
 #include <QCatUiKit/MascotPetController>
 #include <QCatUiKit/VectorItem>
 #include <QCursor>
@@ -27,10 +28,158 @@
 #include <algorithm>
 #include <functional>
 #include <limits>
+#ifdef Q_OS_WIN
+#include <qt_windows.h>
+#include <QUuid>
+#endif
 using namespace QCatUiKit;
 using Controller = MascotPetController;
 namespace
 {
+#ifdef Q_OS_WIN
+class WindowsPointer
+{
+    QProcess target;
+    HWND behind = nullptr;
+    HWND foreground = GetForegroundWindow();
+    POINT original{};
+    bool pressed = false;
+
+  public:
+    WindowsPointer()
+    {
+        GetCursorPos(&original);
+        const auto token = QUuid::createUuid().toString();
+        target.start(QCoreApplication::applicationDirPath() + "/mascot-input-target.exe", {token});
+        if (target.waitForStarted(2000))
+            for (int i = 0; i < 100 && !behind; ++i)
+            {
+                QTest::qWait(20);
+                behind =
+                    FindWindowW(L"QCatMascotInputTarget", reinterpret_cast<LPCWSTR>(token.utf16()));
+            }
+    }
+    ~WindowsPointer()
+    {
+        INPUT release{};
+        release.type = INPUT_MOUSE;
+        release.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+        if (pressed)
+            SendInput(1, &release, sizeof(INPUT));
+        if (behind)
+            PostMessageW(behind, WM_CLOSE, 0, 0);
+        if (!target.waitForFinished(2000))
+        {
+            target.kill();
+            target.waitForFinished(2000);
+        }
+        SetCursorPos(original.x, original.y);
+        if (foreground)
+            SetForegroundWindow(foreground);
+    }
+    bool available() const
+    {
+        return behind && IsWindow(behind);
+    }
+    bool backgroundActive() const
+    {
+        return GetForegroundWindow() == behind;
+    }
+    static int surfaces()
+    {
+        int count = 0;
+        EnumThreadWindows(
+            GetCurrentThreadId(),
+            [](HWND window, LPARAM data) -> BOOL
+            {
+                wchar_t name[128]{};
+                GetClassNameW(window, name, 128);
+                if (QString::fromWCharArray(name) == "QCatUiKitMascotInput")
+                    ++*reinterpret_cast<int *>(data);
+                return TRUE;
+            },
+            reinterpret_cast<LPARAM>(&count));
+        return count;
+    }
+    void prepare(QWindow *overlay = nullptr)
+    {
+        // Keep the controlled backdrop above unrelated always-on-top apps during
+        // injection, then restore this test's own visual above that backdrop.
+        SetWindowPos(behind, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        if (overlay)
+            raise(overlay);
+        QTest::qWait(80);
+    }
+    void raise(QWindow *overlay)
+    {
+        SetWindowPos(reinterpret_cast<HWND>(overlay->winId()), HWND_TOPMOST, 0, 0, 0, 0,
+                       SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+    int clicks() const
+    {
+        return int(reinterpret_cast<UINT_PTR>(GetPropW(behind, L"QCatClicks")));
+    }
+    QPoint point(QWindow *window, QPoint local) const
+    {
+        POINT origin{};
+        ClientToScreen(reinterpret_cast<HWND>(window->winId()), &origin);
+        const auto dpr = window->devicePixelRatio();
+        return {origin.x + qRound(local.x() * dpr), origin.y + qRound(local.y() * dpr)};
+    }
+    bool move(QPoint point)
+    {
+        DWORD pid = 0;
+        const auto hit = WindowFromPoint({point.x(), point.y()});
+        GetWindowThreadProcessId(hit, &pid);
+        if (pid != GetCurrentProcessId() && pid != DWORD(target.processId()))
+            return false; // Never inject input into unrelated applications.
+        if (!SetCursorPos(point.x(), point.y()))
+            return false;
+        QTest::qWait(60);
+        return true;
+    }
+    bool button(bool down)
+    {
+        POINT cursor{};
+        GetCursorPos(&cursor);
+        DWORD pid = 0;
+        GetWindowThreadProcessId(WindowFromPoint(cursor), &pid);
+        if (down && pid != GetCurrentProcessId() && pid != DWORD(target.processId()))
+            return false;
+        INPUT input{};
+        input.type = INPUT_MOUSE;
+        input.mi.dwFlags = down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP;
+        const bool sent = SendInput(1, &input, sizeof(INPUT)) == 1;
+        if (sent)
+            pressed = down;
+        QTest::qWait(80);
+        return sent;
+    }
+    bool click(QPoint p)
+    {
+        return move(p) && button(true) && button(false);
+    }
+    bool key(QWindow *window, WORD key)
+    {
+        if (GetForegroundWindow() != reinterpret_cast<HWND>(window->winId()))
+            return false;
+        INPUT input[2]{};
+        input[0].type = input[1].type = INPUT_KEYBOARD;
+        input[0].ki.wVk = input[1].ki.wVk = key;
+        input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+        const bool result = SendInput(2, input, sizeof(INPUT)) == 2;
+        QTest::qWait(100);
+        return result;
+    }
+    COLORREF pixel(QPoint p) const
+    {
+        const auto dc = GetDC(nullptr);
+        const auto result = GetPixel(dc, p.x(), p.y());
+        ReleaseDC(nullptr, dc);
+        return result;
+    }
+};
+#endif
 // Optional X11 input injector: no build dependency on XTest development headers.
 class DesktopPointer
 {
@@ -420,6 +569,197 @@ CatMascotPet {
         QVERIFY(!actor->dragging());
     }
 
+    void windowsInputRouting()
+    {
+#ifndef Q_OS_WIN
+        QSKIP("Windows input surface test");
+#else
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
+            QGuiApplication::platformName() != "windows")
+            QSKIP("Requires an explicitly selected real Windows desktop");
+        WindowsPointer pointer;
+        QVERIFY(pointer.available());
+        const int initialSurfaces = WindowsPointer::surfaces();
+        QTemporaryDir dir;
+        auto definition = fixture();
+        definition["regions"] = QJsonArray{QJsonObject{{"id", "body"},
+                                                       {"shape", "rect"},
+                                                       {"rect", QJsonArray{1, 1, 2, 3}},
+                                                       {"clickable", true},
+                                                       {"draggable", true}}};
+        auto actions = definition["actions"].toObject();
+        auto jump = actions["jump"].toObject();
+        jump["regions"] = QJsonArray{QJsonObject{{"id", "jump"},
+                                                 {"shape", "ellipse"},
+                                                 {"rect", QJsonArray{4, 4, 4, 4}},
+                                                 {"clickable", true},
+                                                 {"draggable", true}}};
+        actions["jump"] = jump;
+        auto polygon = jump;
+        polygon["regions"] = QJsonArray{QJsonObject{
+            {"id", "triangle"},
+            {"shape", "polygon"},
+            {"points", QJsonArray{QJsonArray{0, 0}, QJsonArray{8, 0}, QJsonArray{0, 8}}},
+            {"clickable", true},
+            {"draggable", true}}};
+        actions["polygon"] = polygon;
+        definition["actions"] = actions;
+        write(dir.path(), definition);
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 20
+    function message() { showBubble("Native Windows message", {actions: [{id: "ok", text: "OK"}]}) }
+    function clearMessage() { closeBubble(bubbleId) }
+})",
+                          QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        QVERIFY(window);
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        actor->setPackageSource(QUrl::fromLocalFile(dir.path()));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        actor->pauseActions();
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        window->setPosition(200, 300);
+        QTest::qWait(200);
+        QSignalSpy activated(actor, &Controller::regionActivated);
+        const auto click = [&](QPoint local)
+        {
+            pointer.prepare(window);
+            const auto point = pointer.point(window, local);
+            if (!pointer.move(point))
+                return false;
+            pointer.raise(window);
+            QTest::qWait(20);
+            return pointer.button(true) && pointer.button(false);
+        };
+        QVERIFY(click({5, 5}));
+        QCOMPARE(pointer.clicks(), 0);
+        const auto outsidePixel = pointer.pixel(pointer.point(window, {100, 80}));
+        QVERIFY(outsidePixel != CLR_INVALID);
+        const auto rendered = window->grabWindow();
+        QVERIFY(!rendered.isNull());
+        const auto color = rendered.pixelColor(qRound(100 * window->devicePixelRatio()),
+                                               qRound(80 * window->devicePixelRatio()));
+        QCOMPARE(outsidePixel, RGB(color.red(), color.green(), color.blue()));
+        pet->setProperty("inputRegionsEnabled", true);
+        QTest::qWait(150);
+        QCOMPARE(pointer.pixel(pointer.point(window, {100, 80})), outsidePixel);
+        QVERIFY(click({5, 5}));
+        QCOMPARE(pointer.clicks(), 1);
+        QVERIFY(pointer.backgroundActive());
+        QVERIFY(click({40, 40}));
+        QCOMPARE(activated.count(), 1);
+        QCOMPARE(pointer.clicks(), 1);
+        QVERIFY(pointer.backgroundActive());
+        actor->setFacing("left");
+        QTest::qWait(100);
+        QVERIFY(click({40, 40}));
+        QCOMPARE(pointer.clicks(), 2);
+        QVERIFY(click({120, 40}));
+        QCOMPARE(activated.count(), 2);
+        actor->setFacing("right");
+        actor->setPetScale(10);
+        QTest::qWait(150);
+        QVERIFY(click({20, 20}));
+        QCOMPARE(activated.count(), 3);
+        QVERIFY(click({40, 40}));
+        QCOMPARE(pointer.clicks(), 3);
+        actor->requestAction("jump", Controller::Replace, {{"loops", -1}});
+        QTRY_COMPARE(actor->currentAction(), QString("jump"));
+        QTest::qWait(100);
+        QVERIFY(pointer.backgroundActive());
+        QVERIFY(click({20, 20}));
+        QCOMPARE(pointer.clicks(), 4);
+        QVERIFY(click({60, 60}));
+        QCOMPARE(activated.count(), 4);
+        pet->setProperty("inputTransparent", true);
+        QTest::qWait(100);
+        QVERIFY(click({60, 60}));
+        QCOMPARE(pointer.clicks(), 5);
+        pet->setProperty("inputTransparent", false);
+        QTest::qWait(100);
+        QVERIFY(click({60, 60}));
+        QCOMPARE(activated.count(), 5);
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+        QTest::qWait(250);
+        std::function<QQuickItem *(QQuickItem *)> findButton = [&](QQuickItem *item) -> QQuickItem *
+        {
+            if (item->objectName() == "mascotBubbleAction_ok")
+                return item;
+            for (auto *child : item->childItems())
+                if (auto *found = findButton(child))
+                    return found;
+            return nullptr;
+        };
+        auto *button = findButton(window->contentItem());
+        QVERIFY(button);
+        QSignalSpy bubbleAction(pet.get(), SIGNAL(bubbleActionTriggered(QString, QString)));
+        const auto buttonPoint = [&]
+        {
+            return button->mapToScene(QPointF(button->width() / 2, button->height() / 2)).toPoint();
+        };
+        QVERIFY(click(buttonPoint()));
+        QCOMPARE(bubbleAction.count(), 1);
+        QVERIFY(pointer.key(window, VK_SPACE));
+        QCOMPARE(bubbleAction.count(), 2);
+        pet->setProperty("inputTransparent", true);
+        QTest::qWait(150);
+        QVERIFY(click(buttonPoint()));
+        QCOMPARE(pointer.clicks(), 6);
+        QCOMPARE(bubbleAction.count(), 2);
+        pet->setProperty("inputTransparent", false);
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "clearMessage"));
+        QTest::qWait(150);
+        QVERIFY(click({5, 5}));
+        QCOMPARE(pointer.clicks(), 7);
+        actor->requestAction("polygon", Controller::Replace, {{"loops", -1}});
+        QTRY_COMPARE(actor->currentAction(), QString("polygon"));
+        QTest::qWait(100);
+        QVERIFY(click({20, 20}));
+        QCOMPARE(activated.count(), 6);
+        QCOMPARE(activated.last().at(0).toString(), QString("triangle"));
+        QVERIFY(click({60, 60}));
+        QCOMPARE(pointer.clicks(), 8);
+        pointer.prepare(window);
+        const QPoint before = window->position();
+        const auto start = pointer.point(window, {20, 20});
+        QVERIFY(pointer.move(start));
+        window->raise();
+        QVERIFY(pointer.button(true));
+        for (int step = 1; step <= 6; ++step)
+            QVERIFY(pointer.move(start + QPoint(5 * step, qRound(20. * step / 6))));
+        QTRY_VERIFY(actor->dragging());
+        QVERIFY(pointer.button(false));
+        QTRY_VERIFY(!actor->dragging());
+        QCOMPARE(window->position() - before, QPoint(qRound(30 / window->devicePixelRatio()),
+                                                     qRound(20 / window->devicePixelRatio())));
+        pet->setProperty("inputRegionsEnabled", false);
+        QTest::qWait(100);
+        QVERIFY(click({70, 70}));
+        QCOMPARE(pointer.clicks(), 8);
+        pet->setProperty("inputRegionsEnabled", true);
+        QTest::qWait(100);
+        QVERIFY(click({70, 70}));
+        QCOMPARE(pointer.clicks(), 9);
+        window->hide();
+        QTest::qWait(100);
+        pointer.prepare();
+        QVERIFY(pointer.click(pointer.point(window, {60, 60})));
+        QCOMPARE(pointer.clicks(), 10);
+        qInfo() << "Windows independent target routing passed; DPR" << window->devicePixelRatio()
+                << "graphics API" << window->rendererInterface()->graphicsApi();
+        pet.reset();
+        QCOMPARE(WindowsPointer::surfaces(), initialSurfaces);
+#endif
+    }
+
     void desktopInputRouting()
     {
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
@@ -783,6 +1123,126 @@ CatMascotPet {
                          before.toMap().value("position").toPoint());
             }
         }
+    }
+
+    void screenCoordinateRules()
+    {
+        using namespace MascotPrivate;
+        const QRect leftScreen(-1920, -120, 1920, 1080);
+        const QSizeF character(160, 200);
+        const QPoint bubbleOffset(80, 60);
+        QCOMPARE(boundedCharacterOrigin(leftScreen, character, bubbleOffset, {-3000, -3000}),
+                 QPoint(-2000, -180));
+        QCOMPARE(boundedCharacterOrigin(leftScreen, character, bubbleOffset, {3000, 3000}),
+                 QPoint(-240, 700));
+        QCOMPARE(boundedCharacterOrigin(leftScreen, {160.5, 200.25}, bubbleOffset, {3000, 3000}),
+                 QPoint(-241, 699));
+        // An above/left bubble changes window origin, never the character's logical bounds.
+        const QPoint target(-700, 400);
+        QCOMPARE(
+            boundedCharacterOrigin(leftScreen, character, {}, target),
+            boundedCharacterOrigin(leftScreen, character, bubbleOffset, target - bubbleOffset) +
+                bubbleOffset);
+        const QRect narrowScreen(1920, 40, 300, 600);
+        QCOMPARE(fittedScale({600, 1200}, narrowScreen, 2.), 0.5);
+        QCOMPARE(fittedScale({100, 200}, narrowScreen, 0.75), 0.75);
+        QCOMPARE(boundedCharacterOrigin(narrowScreen, {300, 600}, bubbleOffset, {9999, 9999}),
+                 narrowScreen.topLeft() - bubbleOffset);
+        // Oversize bounds remain ordered until asynchronous scale correction completes.
+        QCOMPARE(boundedCharacterOrigin(narrowScreen, {600, 1200}, {}, {-9999, -9999}),
+                 narrowScreen.topLeft());
+        // Qt screen geometry is already logical: DPR is not multiplied into these rules.
+        for (qreal scale : {1., 1.25, 1.5, 2.})
+        {
+            const QSizeF size = character * scale;
+            const auto origin =
+                boundedCharacterOrigin(leftScreen, size, bubbleOffset, {9999, 9999});
+            QVERIFY(QRectF(leftScreen).contains(QRectF(origin + bubbleOffset, size)));
+        }
+    }
+
+    void desktopScreenCoordinates()
+    {
+        const auto qpa = QGuiApplication::platformName();
+        if (qpa != "windows" && qpa != "cocoa" && qpa != "xcb")
+            QSKIP("Requires a position-capable QPA; pure coordinate rules run headless");
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    packageSource: "qrc:/mascot-test/data/mascot.json"
+    function snapshot(): var { return exportState() }
+    function message() { showBubble("Coordinate test ".repeat(30)) }
+    function clearMessage() { closeBubble(bubbleId) }
+})",
+                          QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        QVERIFY(pet);
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        QVERIFY(window && actor);
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        const auto snapshot = [&]
+        {
+            QVariant result;
+            QMetaObject::invokeMethod(pet.get(), "snapshot", Q_RETURN_ARG(QVariant, result));
+            return result.toMap();
+        };
+        const auto position = [&](QPointF point)
+        {
+            bool accepted = false;
+            const auto id = snapshot().value("screenId").toString();
+            return QMetaObject::invokeMethod(pet.get(), "setPosition", Q_RETURN_ARG(bool, accepted),
+                                             Q_ARG(QString, id), Q_ARG(QPointF, point)) &&
+                   accepted;
+        };
+        QTest::qWait(100);
+        QVERIFY(position({-1000, -1000}));
+        QTRY_COMPARE(snapshot().value("position").toPointF(), QPointF(0, 0));
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+        QTest::qWait(150);
+        QVERIFY(position({-1000, -1000}));
+        QTest::qWait(100);
+        QCOMPARE(snapshot().value("position").toPointF(), QPointF(0, 0));
+        QVERIFY(position({1e6, 1e6}));
+        QTest::qWait(150);
+        const auto available = window->screen()->availableGeometry();
+        const auto size = actor->logicalSize() * actor->petScale();
+        const QPointF expected(available.width() - qCeil(size.width()),
+                               available.height() - qCeil(size.height()));
+        QCOMPARE(snapshot().value("position").toPointF(), expected);
+        const auto capture = qEnvironmentVariable("QCAT_MASCOT_GEOMETRY_CAPTURE");
+        if (!capture.isEmpty())
+            QVERIFY(window->grabWindow().save(capture));
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "clearMessage"));
+        QTest::qWait(150);
+        QCOMPARE(snapshot().value("position").toPointF(), expected);
+        QSignalSpy moved(pet.get(), SIGNAL(moveEnded(QString, QString)));
+        QString move;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "moveTo", Q_RETURN_ARG(QString, move),
+                                          Q_ARG(QString, QString()), Q_ARG(QPointF, QPointF(40, 40)),
+                                          Q_ARG(int, 3000)));
+        QEvent dprChanged(QEvent::DevicePixelRatioChange);
+        QCoreApplication::sendEvent(window, &dprChanged);
+        QCOMPARE(moved.count(), 1);
+        QCOMPARE(moved.at(0).at(0).toString(), move);
+        QCOMPARE(moved.at(0).at(1).toString(), QString("Cancelled"));
+        pet->setProperty("constrainToAvailableGeometry", false);
+        const qreal oversized = qMax(available.width(), available.height()) / 8. + 10;
+        actor->setPetScale(oversized);
+        QTest::qWait(100);
+        QCOMPARE(actor->petScale(), oversized);
+        pet->setProperty("constrainToAvailableGeometry", true);
+        QTRY_VERIFY(actor->petScale() < oversized);
+        QTest::qWait(100);
+        const auto origin = snapshot().value("position").toPointF() + available.topLeft();
+        QVERIFY(
+            QRectF(available).contains(QRectF(origin, actor->logicalSize() * actor->petScale())));
     }
 
     void independentWindowState()

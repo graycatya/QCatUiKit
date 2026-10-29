@@ -5,9 +5,13 @@
 #include <QPointer>
 #include <QQuickWindow>
 #include <QTimer>
+#include <memory>
 
 namespace QCatUiKit
 {
+#ifdef Q_OS_WIN
+class MascotWindowsInput;
+#endif
 // Private window integration. No desktop service or extension connection.
 class MascotWindowAdapter : public QObject
 {
@@ -88,6 +92,8 @@ class MascotWindowAdapter : public QObject
     void applyWindowPolicy();
     void applyMask();
     void syncGeometry();
+    void observeScreen(QScreen *screen);
+    void updateScreenGeometry();
     QPointF m_previousFoot;
     bool m_haveFoot = false;
     bool m_geometryPending = false;
@@ -111,6 +117,10 @@ class MascotWindowAdapter : public QObject
     int m_duration = 0;
     quint64 m_serial = 0;
     QString m_move;
+#ifdef Q_OS_WIN
+    std::unique_ptr<MascotWindowsInput> m_windowsInput;
+    bool m_windowsInputFailed = false;
+#endif
 };
 // Creatable internal QML name; not installed as a public C++ API.
 class MascotDesktop : public MascotWindowAdapter

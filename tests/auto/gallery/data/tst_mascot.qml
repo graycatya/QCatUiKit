@@ -47,6 +47,12 @@ TestCase {
         verify(status.text.indexOf("关闭") >= 0)
         compare(show.Accessible.name, "显示桌宠")
         verify(findChild(preview, "mascotCapability_inputRegions").text.indexOf("区域输入") >= 0)
+        const regions = findChild(preview, "mascotRegions")
+        compare(regions.Accessible.name, "区域输入")
+        compare(regions.enabled, pet.capabilities.inputRegions.status !== "Unavailable")
+        compare(regions.checked, false)
+        pet.inputRegionsEnabled = true
+        tryCompare(regions, "checked", true)
         const play = findChild(preview, "mascotPlay_" + pet.availableActions[0])
         verify(play.Accessible.name.indexOf("播放动作") >= 0)
         verify(show.width >= show.implicitWidth)

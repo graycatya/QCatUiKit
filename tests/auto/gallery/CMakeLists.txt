@@ -6,6 +6,10 @@ qcat_add_test(NAME gallery_contracts COMMAND tst_gallery -import ${QT_QML_OUTPUT
 set_tests_properties(gallery_contracts PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
 
+qcat_add_test(NAME gallery_mascot_shutdown COMMAND qcat-gallery --smoke-test --page mascot-pet)
+set_tests_properties(gallery_mascot_shutdown PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software" TIMEOUT 30)
+
 qt_add_executable(tst_gallerychartdata tst_gallerychartdata.cpp)
 target_link_libraries(tst_gallerychartdata PRIVATE qcat-gallery-ui QCatUiKit::QCatUiKit Qt6::Test)
 qcat_add_test(NAME gallery_chart_data COMMAND tst_gallerychartdata)

@@ -586,3 +586,74 @@ Wayland 的 GDB 栈定位退出崩溃为：角色窗口销毁后，QProcess 结�
 - 文档检查通过：38 Markdown／518 本地链接；OpenSpec 严格验证和差异空白检查在最终执行。可重复步骤已写入 VALIDATION，焦点用法写入 MASCOTPET；本轮无需安装消费者验证，未改变公共 C++ API 或安装规则。
 
 任务 6.2 完成，总进度 28/41。4.5 仍需背后原生应用验证显示／更新不抢输入及其他平台实机结果；4.2 的 Windows/macOS 区域输入、4.4 多屏、5.2 完整气泡矩阵和全部平台矩阵保留待办。当前没有 Linux／Wayland 实机会话，不以本机结果代替它们；不宣告完整平台支持，不同步主规格、不归档。本轮未自动提交。
+
+## 2026-10-29 Windows 屏幕坐标与边界续作（任务 4.4）
+
+起始及当前进度 28/41，继续保留已有 macOS 的 6.2 与焦点生命周期改动。本轮完成 4.4 的代码修正与自动回归，真实多屏／混合 DPI／拔屏矩阵未完成，因此 4.4 不勾选；其他平台支持状态不变，不同步主规格、不归档。
+
+修正：边界基于角色逻辑尺寸与 characterOffset 计算，而非包含气泡的整个窗口。窗口原点减去气泡偏移后仍可到达角色可用区四边，显示／关闭气泡不缩小定位范围。提取私有逻辑坐标函数，非整数尺寸向上取整，超大尺寸先限于可用区再转换整数；不把 DPR 乘入 Qt 已提供的逻辑坐标。该头仅为私有源码，不增加公开 API 或 ABI。
+
+已有及新接入屏幕统一连接可用区、几何和逻辑 DPI 变化，窗口 DPR 变化亦会取消旧移动并触发校正；屏幕回退不再选择已不在当前屏幕列表中的旧对象。重新开启 constrainToAvailableGeometry 时重新计算缩放及边界。异步布局补偿保留更新后的角色锚点，避免旧布局计时器撤销边界／缩放校正。
+
+环境：Windows 11、Qt 6.12.0 MSVC2022 64-bit Release，构建目录取自当前 CMakeCache：build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release。定向窗口检查使用 windows QPA、software Quick 后端；不视作 D3D／Lottie GPU 或真实输入路由验收。
+
+验证与证据：
+
+- 完整 cmake --build <build> --parallel 4 通过；库 QCatUiKit_qmllint、Gallery qcat-gallery_qmllint 通过。最终测试格式整理后再次构建 tst_mascot 通过。日志 build/mascot-geometry-full-build.log、mascot-geometry-build-final.log、mascot-geometry-test-build.log。
+- windows QPA：tst_mascot screenCoordinateRules desktopScreenCoordinates independentWindowState publicBubbleKeyboardLifecycle，6 Passed、0 Failed、0 Skipped（含 init/cleanup），2.501 秒。日志 build/mascot-geometry-native.txt。
+- screenCoordinateRules：负原点、窄屏、非整数角色尺寸、气泡偏移、超大角色及多个角色缩放值；这些是合成逻辑几何，不是多屏硬件证据。
+- desktopScreenCoordinates：公共窗口带气泡定位至可用区两端、关闭气泡后角色位置不变、注入 DPR 变化事件取消旧移动、重新开启约束后缩放与位置校正。未修改系统显示配置，未注入其他应用输入。事件注入不能代替实际 DPI 切换或拔屏。
+- 查看 build/mascot-geometry-bubble.png：右下角长文本气泡换行与关闭按钮完整，角色小型测试帧位于气泡下方。PNG 仅是窗口自身渲染，不是桌面透明合成或原生点击去向证据。
+- 离屏 mascot_contracts 整组通过，19.57 秒，日志 build/mascot-geometry-contracts.log。
+- 文档与 OpenSpec 严格验证通过；可重复命令和未覆盖内容写入 VALIDATION，坐标规则同步 MASCOTPET。完整 CTest 结果见下方补充。
+
+Windows/macOS 公共区域外穿透仍缺少保持完整画面的私有适配；本轮没有用裁切窗口形状替代该契约。其余平台原型、真实跨屏拖动、混合 DPI、拔屏、窄屏完整输入矩阵与跨应用焦点保持仍为待验收。
+
+完整检查补充：最终 `ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --output-on-failure` 为 20/20 通过，197.71 秒；含 Gallery 合约及最终 mascot_contracts（16.40 秒）。证据 build/mascot-geometry-ctest.log。最终文档检查、OpenSpec 严格验证及差异空白检查通过。完整自动检查不替代前述多屏实机缺口，任务进度保持 28/41。
+
+### 2026-10-29 任务 4.4 用户人工验收确认
+
+在对话中明确列出剩余人工项目（真实跨屏拖动及目标屏幕定位、不同 DPI 屏幕间显示与输入区域对齐、移除当前屏幕后的位置回退和缩放校正）后，用户反馈：“我测试了，没问题！”。据此记录任务 4.4 人工验收通过，结合本节既有坐标自动测试、Windows 定向窗口检查及全量 CTest，勾选 4.4，总进度 29/41。
+
+证据类型为用户人工测试确认，不将其表述为本代理执行的系统输入测试。用户未另附显示器型号、逐屏 DPI、操作录像或新增系统／图形后端版本，故不补造这些细节；已有自动检查环境仍为前述 Windows 11／Qt 6.12.0。该确认用于本轮 4.4 验收，不扩展为其他平台或 Windows 全部功能矩阵通过；4.2、4.5、5.2 及 7.2—7.6 等未完成任务保持原状态。前文“4.4 尚未验收”的记录保留为本次确认前的历史状态。
+
+### 2026-10-29 Gallery 关闭后桌宠残留修复
+
+用户报告打开桌宠后关闭 qcat-gallery，桌宠没有退出。根因是 Gallery 未明确绑定主窗口与进程退出策略：独立桌宠窗口可阻止最后窗口自动退出；直接调用 QGuiApplication::quit() 也会尝试关闭所有窗口，而桌宠 closeHides=true 会拒绝关闭事件并隐藏，从而取消退出。预览的 Component.onDestruction 尚未执行，因为事件循环仍在运行；该现象本身不作为堆内存泄漏结论。
+
+修复仅在 Gallery 宿主：主窗口变为不可见时调用 QCoreApplication::exit(0) 结束事件循环，随后已有栈上 QQmlApplicationEngine 析构销毁所属窗口和控制器；最小化仍保持 visible，不触发退出。不改变公共 CatMascotPet 的关闭隐藏或宿主最小化独立性，也不让库负责退出进程。
+
+新增 gallery_mascot_shutdown 进程级 CTest，复用 --smoke-test --page mascot-pet：必须找到并显示两个真实公共桌宠，最小化主窗口后确认两个实例仍可见，再关闭主窗口。超时 30 秒；实例缺失或提前消失返回 3。普通 gallery_smoke 同样改为走主窗口关闭路径，截图模式保留原有行为。
+
+Windows 11／Qt 6.12.0 MSVC2022 64-bit Release，在当前 build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release 构建 qcat-gallery、Gallery qmllint 通过。首版仅调用 app.quit 的新回归超时，证实退出被桌宠关闭策略阻挡；Windows 原生试运行同样残留，该本轮测试进程已清理。改为事件循环退出后最终结果：
+
+- ctest --test-dir <build> -R '^(gallery_smoke|gallery_mascot_shutdown)$' --output-on-failure：2/2 通过，2.14 秒，日志 build/mascot-shutdown-tests-final.log。
+- windows QPA、software Quick 后端运行 qcat-gallery.exe --smoke-test --page mascot-pet：退出码 0；包含最小化独立性检查，日志 build/mascot-shutdown-native-final.log。
+- mascot_contracts 整组通过，16.52 秒，见 build/mascot-shutdown-tests.log；该组合中的首版退出测试超时保留为修复前证据，不称为全绿。后续仅修改 Gallery main.cpp 的退出／测试路径，未再次更改库。
+- python tools/check_docs.py、OpenSpec strict 与 git diff --check 最终通过；重复执行入口写入 VALIDATION，Gallery README 说明主窗口关闭与最小化的差异。
+
+本修复补强既有 Gallery／宿主生命周期交付，任务进度保持 29/41，不将本次退出测试代替平台完整矩阵，不归档。
+
+### 2026-10-29 Windows 公共区域输入（任务 4.2 部分）
+
+本轮接入 Windows 私有输入窗口，完成 4.2 的 Windows 实现及独立进程真实输入回归。macOS 的非裁切区域输入适配与实机证据仍缺失，因此 4.2 不勾选，当前仍为 29/41；不把本轮结果扩展为完整跨平台或 Windows 全矩阵支持。
+
+实现：QCatUiKit 视觉窗口在 Windows 整窗穿透，另以 WS_EX_NOREDIRECTIONBITMAP／NOACTIVATE／TOOLWINDOW 创建同实例 owned 原生窗口。它不绘制、不进入任务栏，形状来自声明区域及气泡矩形；默认关闭区域模式时承接整个窗口。只对输入窗口设置区域，视觉窗口不裁切；没有透明度扫描、全局钩子或光标轮询。区域外点击由系统直接交给背后应用。输入窗口将自己收到的真实 Win32 鼠标／滚轮消息转换为同实例 Qt 事件，按当前 DPR 转换坐标；捕获支持连续拖动，捕获丢失／隐藏时释放交互，销毁实例回收原生窗口。原生请求失败报告 InputRegionUnavailable 并将能力设为不可用。不新增公开头、公开 API、第三方库或系统服务；user32／gdi32 为系统依赖。
+
+Gallery 新增“区域输入”开关，按会话能力启用；复用已有中英文翻译，离屏不可用时禁用。Gallery 回归覆盖开关可访问名称、能力反馈和 checked 绑定；已查看英文亮色桌面与 440 宽深色 Mobile 截图，控件正常排列、窄屏可滚动。首轮离屏截图没有指定字体目录而出现缺字方块，设置 QT_QPA_FONTDIR=C:/Windows/Fonts 后重新生成并查看；未将缺字体截图作为视觉验收。截图为 build/mascot-regions-gallery-light.png、mascot-regions-gallery-narrow.png，仅为控件布局，不作为桌面输入证据。
+
+原生环境：Windows 11、Qt 6.12.0 MSVC2022 64-bit Release；当前构建目录 build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release，取自已有 CMakeCache。以 QCAT_MASCOT_DESKTOP=1、QT_QPA_PLATFORM=windows 运行 tst_mascot windowsInputRouting：
+
+- QT_QUICK_BACKEND=software、QT_SCALE_FACTOR=1：3 Passed／0 Failed／0 Skipped（含 init/cleanup），9.219 秒，实际 graphics API=1（Software）。证据 build/mascot-windows-input-native.txt。
+- software、QT_SCALE_FACTOR=1.25：3 Passed／0 Failed／0 Skipped，9.245 秒，DPR=1.25、API=1。证据 build/mascot-windows-input-scaled.txt。Qt 缩放模拟不代替混合 DPI 硬件。
+- 移除 QT_QUICK_BACKEND、QSG_RHI_BACKEND=d3d11、缩放 1：3 Passed／0 Failed／0 Skipped，9.429 秒，实际 API=4（Direct3D11）。证据 build/mascot-windows-input-d3d11.txt；不据此声明其他 GPU／驱动或 Lottie 动作缓存全部验收。
+
+该回归启动独立 Win32 背后进程，使用窗口属性记录真实点击计数，与桌宠区域及气泡信号交叉核对。覆盖默认全窗阻挡、矩形／椭圆／多边形、镜像、缩放、动作覆盖、整窗穿透恢复、区域模式关闭恢复全窗阻挡、气泡点击及真实空格、角色点击及动作更新保持背后焦点、六点连续拖动与最终原生位置、隐藏后点击透过、销毁后本线程原生输入窗口数量恢复。屏幕抽样颜色与 Qt 画面参考一致，区域切换后颜色不变，证明测试点的视觉不被裁切或遮盖。
+
+测试只向本轮桌宠和独立目标进程 SendInput，按下前核对窗口进程归属；结束恢复光标与此前前台窗口、清理子进程。当前桌面有其他置顶应用，受控背后窗口需临时置顶再把本轮桌宠置于其上，并在鼠标定位后使用原生 SetWindowPos 同步层级；没有修改其他应用层级。开发期曾因置顶目标激活后覆盖桌宠而出现计数失败，不能作为区域实现已通过的证据；修正测试层级后最终三条路径均通过。直接向透明视觉 HWND SendMessage 的早期版本不能稳定产生 Qt 控件事件，已改为原生输入窗口持有捕获并转换同实例 Qt 事件，最终操作信号、键盘和拖动均经过上述真实输入验证。
+
+构建及接入：完整构建与库／Gallery qmllint 通过，日志 build/mascot-windows-input-full-build-final.log、mascot-windows-input-qmllint.log。安装到 build/mascot-input-install，再从该前缀配置／构建 tests/auto/cmake/mascot-consumer（QCatUiKit_DIR 明确指向该安装），离屏运行退出码 0；只包含公开头与安装模块。安装／消费者证据 build/mascot-windows-input-install.log、mascot-windows-input-consumer.log、mascot-windows-input-consumer-run.log。新增输入实现的私有头不作为消费者接口。
+
+已有全量 CTest 为 21/21（207.11 秒）；加入 Gallery 区域开关和连续拖动／模式恢复断言后，又执行最终全量 CTest，结果在下方补充。重复验证步骤写入 VALIDATION，平台机制及边界同步 MASCOTPET、MASCOTPLATFORMS、MAINTENANCE 和 design；最终文档检查与 OpenSpec strict 随补充执行。
+
+最终补充：最终代码及 Gallery 区域开关下，`ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --output-on-failure -j 2` 为 21/21 通过，135.69 秒，证据 build/mascot-windows-input-ctest-final.log。Windows 原生 D3D11 路径运行 `qcat-gallery --smoke-test --page mascot-pet` 退出码 0，验证两个桌宠可见、主窗口最小化保持实例可见、关闭主窗口退出的既有修复未被新输入窗口破坏；日志 build/mascot-windows-input-gallery-exit.log。文档检查、OpenSpec 严格验证、私有实现与新增原生辅助程序的代码格式及差异空白检查通过。任务进度仍为 29/41，4.2 的 macOS 部分、其他待验收项及各平台完整矩阵继续保留。

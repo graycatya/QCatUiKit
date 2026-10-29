@@ -57,7 +57,7 @@ Qt Quick 透明无边框窗口显示测试角色区域和两个气泡按钮。�
 
 原型检查全部通过时 prototypeAcceptance 为 Passed，顶层 acceptance 仍为 Pending；按项 Supported 附带单主屏原型范围。常规 offscreen 分类测试和拒绝 Windows 实机检查测试不发送系统输入，不构成桌面验收。
 
-这不等于公共组件验收：公共窗口已有动作、气泡、移动与多实例接口，但 Windows 声明区域输入适配及完整实机矩阵仍待完成；托盘由宿主实现。跨屏、混合 DPI、屏幕移除、独占全屏和系统安全桌面不在原型通过范围内。完整验收仍须执行 OpenSpec 平台矩阵，不外推到 Windows 所有版本或其他操作系统。
+这不等于公共组件验收：公共窗口已有动作、气泡、移动与多实例接口，Windows 声明区域输入已有独立进程回归，但完整实机矩阵仍待完成；托盘由宿主实现。跨屏、混合 DPI、屏幕移除、独占全屏和系统安全桌面不在原型通过范围内。完整验收仍须执行 OpenSpec 平台矩阵，不外推到 Windows 所有版本或其他操作系统。
 
 ## macOS 原型
 
@@ -78,12 +78,15 @@ Qt 6.10.2 Cocoa 的 setMask 实现裁剪视图图层，不能仅凭该调用认�
 
 | 会话 | 公共组件使用的机制与依赖 | 当前限制 |
 | --- | --- | --- |
-| Windows / Cocoa | Qt Quick Window、Qt 窗口位置及标志；不引入探针的 Widgets／托盘依赖 | 声明区域外穿透尚未接入公共适配；完整焦点、多屏与桌面输入待验收 |
+| Windows | Qt Quick 视觉窗口整窗穿透；私有 Win32 无绘制输入窗口使用声明区域并转换同实例鼠标消息；依赖系统 user32／gdi32 | 已有独立进程真实输入回归；完整平台矩阵仍 Pending |
+| Cocoa | Qt Quick Window、Qt 窗口位置及标志；不引入探针的 Widgets／托盘依赖 | 声明区域外穿透尚未接入公共适配；完整焦点、多屏与桌面输入待验收 |
 | xcb（原生 X11 或 XWayland） | Qt 定位及窗口标志；可选 X11 构建依赖、Xext 运行库及 ShapeInput 1.1；EWMH 任务栏提示 | 缺少 ShapeInput 时区域输入明确不可用；窗口管理器可限制层级；已有 XWayland 证据不能替代原生 X11 |
 | 原生 Wayland | Qt surface 输入区域与系统拖动请求；不连接 D-Bus 配套 | 精确定位、平滑定位、通用置顶及跳过任务栏不可用；真实输入与合成器行为需逐会话验收 |
 
 能力接口中的 Unknown 表示存在可请求路径但尚需桌面验收；Unavailable 附原因并使受限请求失败。它们不等同于平台验收 Passed。宿主须保留显示／隐藏及关闭穿透的入口，并按能力选择移动和窗口策略；重复验证步骤统一维护在 VALIDATION，具体系统、Qt、图形后端和逐项结果保存在对应 OpenSpec change。
 
-CatMascotPet 不连接本文的研究配套。Linux xcb 可选链接 X11 并检测 Xext 运行库，使用 ShapeInput 单独设置输入区域；不调用 Qt xcb 的 bounding mask 裁切画面。原生 Wayland 通过 Qt 的 surface 输入区域请求，定位和置顶报告 Unavailable。Windows/macOS 的公共输入区域私有适配仍待完成；既有手动原型的通过不代表公共组件已通过。
+CatMascotPet 不连接本文的研究配套。Linux xcb 可选链接 X11 并检测 Xext 运行库，使用 ShapeInput 单独设置输入区域；不调用 Qt xcb 的 bounding mask 裁切画面。原生 Wayland 通过 Qt 的 surface 输入区域请求，定位和置顶报告 Unavailable。Windows 公共输入区域采用独立的无绘制原生窗口，不对角色视觉窗口应用形状掩码。macOS 的公共输入区域私有适配仍待完成；既有手动原型的通过不代表公共组件已通过。
+
+Windows 输入窗口使用 WS_EX_NOREDIRECTIONBITMAP，不创建重定向绘制表面；SetWindowRgn 仅作用于该输入窗口。鼠标捕获保持拖动期间的连续事件，失去捕获时释放 Qt 抓取；原生物理坐标按当前窗口 DPR 转为逻辑坐标。窗口由同实例视觉窗口拥有，不独立激活、不进入任务栏，按钮显式申请的键盘焦点仍属于公共窗口。不使用全局鼠标钩子、光标轮询或向背后应用转发消息；区域外输入由系统自然投递。机制依据 [Windows 扩展样式](https://learn.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles)及 [WM_NCHITTEST 的线程边界](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-nchittest)。
 
 实现核对参考 Qt 6.12 官方源码：[xcb setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/xcb/qxcbwindow.cpp)、[Wayland setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/wayland/qwaylandwindow.cpp)。真实输入、焦点和混合 DPI 结果继续按具体版本记录，不外推支持。

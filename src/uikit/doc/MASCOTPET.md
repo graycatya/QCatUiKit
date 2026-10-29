@@ -191,12 +191,12 @@ CatMascotPet {
 
 `capabilities` 按功能提供 status 与 reason，`platformStatus` 保持 Pending，实际桌面验收单独记录。定位、平滑移动和置顶在原生 Wayland 明确 Unavailable；窗口不会连接已安装扩展以获得这些权限。skipTaskbar 同样报告当前会话的限制。Gallery 在 Linux Wayland 会话且有 DISPLAY、没有显式 QT_QPA_PLATFORM 时优先选 xcb，以获得置顶和任务栏控制；显式 -platform／QT_QPA_PLATFORM 选择会被保留。宿主应用可按自己的窗口需求选择 Qt QPA。offscreen/minimal 不能证明桌面能力。其他 QPA 的 Qt 请求路径报告 Unknown，表示可发起请求但仍需桌面验证，不能读作完整支持。
 
-`alwaysOnTop` 默认请求置顶；不支持时不会施加标志，修改请求发 platformError。`inputTransparent` 默认 false，切换整窗穿透，宿主可随时设 false 恢复；`inputRegionsEnabled` 默认 false，默认整窗接收鼠标，不启用区域外穿透。只有宿主显式设 true 时，动态输入范围才来自当前动作、镜像、缩放后的声明区域和气泡矩形。Linux xcb 在 XShape 可用时仅更新 ShapeInput，不裁切角色画面；缺少 X11 开发依赖或 Xext 运行库的构建仍能显示角色，但 inputRegions 报告 Unavailable。Windows/macOS 的区域输入私有适配尚待实现，当前明确报告该能力不可用，不使用会裁切画面的窗口形状模拟穿透。`dragEnabled` 控制角色拖动，原生 Wayland 使用 Qt 的系统拖动请求，其他桌面使用原生鼠标事件全局坐标；不通过 QML 局部坐标反复反推窗口位移。真实输入与透明合成须实机检查。
+`alwaysOnTop` 默认请求置顶；不支持时不会施加标志，修改请求发 platformError。`inputTransparent` 默认 false，切换整窗穿透，宿主可随时设 false 恢复；`inputRegionsEnabled` 默认 false，默认整窗接收鼠标，不启用区域外穿透。只有宿主显式设 true 时，动态输入范围才来自当前动作、镜像、缩放后的声明区域和气泡矩形。Linux xcb 在 XShape 可用时仅更新 ShapeInput，不裁切角色画面；缺少 X11 开发依赖或 Xext 运行库的构建仍能显示角色，但 inputRegions 报告 Unavailable。Windows 使用不绘制内容的私有原生输入窗口承接声明区域，角色画面保持完整；原生鼠标消息转换为同实例 Qt 输入，支持默认全窗阻挡、区域外穿透与整窗穿透。输入窗口随角色窗口隐藏和销毁，不创建托盘或独立生命周期。创建／更新失败时发出 InputRegionUnavailable，能力报告不可用。macOS 的区域输入私有适配尚待实现，不使用会裁切画面的窗口形状模拟穿透。`dragEnabled` 控制角色拖动，原生 Wayland 使用 Qt 的系统拖动请求，其他桌面使用原生鼠标事件全局坐标；不通过 QML 局部坐标反复反推窗口位移。真实输入与透明合成须实机检查。
 
 角色显示默认不申请键盘焦点。用户点击气泡操作按钮后，窗口按需申请焦点，按钮可用空格再次触发；Tab／Shift+Tab 在关闭按钮、文本滚动区和操作按钮之间循环，不要求更改 macOS 系统键盘导航设置。气泡关闭、窗口隐藏或失活、开启整窗穿透后恢复被动焦点策略；再次显示角色不会沿用上一轮气泡的键盘焦点权限。主动申请发生在点击完成后，避免在按下与释放之间修改原生窗口标志。平台可能拒绝激活请求，不能仅以调用成功作为跨应用焦点验收证据。
 
 
-`screens` 提供 id、name、availableGeometry、devicePixelRatio。`setPosition(screenId, point)` 和 `moveTo(screenId, point, durationMs)` 的 point 均为目标屏幕可用区域左上角起算的逻辑坐标；空或失效屏幕使用当前屏幕，再回退主屏。setPosition 返回是否接受位置；moveTo 返回实例内唯一标识，终态经 moveEnded(id, reason) 报告 Completed、Cancelled 或 Failed。受限定位明确失败，不把 Wayland 内部坐标当作成功。`cancelMove()`、新移动、定位、拖动、切包和隐藏会取消旧轨迹；移动不切换动作或朝向。实际拖动期间，setPosition 返回 false、moveTo 报告 Failed，并发出 InteractionBusy，防止宿主轨迹与鼠标争用窗口；拒绝的请求不会在松开后重放。`constrainToAvailableGeometry` 默认 true，约束窗口边界；超大角色会缩小 petScale 并发出 ScaleCorrected，effectivePetScale 可读回当前缩放。跨混合 DPI 和真实屏幕移除仍待完整验收。
+`screens` 提供 id、name、availableGeometry、devicePixelRatio。`setPosition(screenId, point)` 和 `moveTo(screenId, point, durationMs)` 的 point 均为目标屏幕可用区域左上角起算的逻辑坐标；空或失效屏幕使用当前屏幕，再回退主屏。setPosition 返回是否接受位置；moveTo 返回实例内唯一标识，终态经 moveEnded(id, reason) 报告 Completed、Cancelled 或 Failed。受限定位明确失败，不把 Wayland 内部坐标当作成功。`cancelMove()`、新移动、定位、拖动、切包和隐藏会取消旧轨迹；移动不切换动作或朝向。实际拖动期间，setPosition 返回 false、moveTo 报告 Failed，并发出 InteractionBusy，防止宿主轨迹与鼠标争用窗口；拒绝的请求不会在松开后重放。`constrainToAvailableGeometry` 默认 true，约束角色逻辑外框，气泡偏移不改变可定位范围；屏幕可用区、DPI 或边界约束开关变化后重新校正。超大角色会缩小 petScale 并发出 ScaleCorrected，effectivePetScale 可读回当前缩放。跨混合 DPI 和真实屏幕移除仍待完整验收。
 
 ### 纯文本气泡
 
