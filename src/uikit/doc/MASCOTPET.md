@@ -212,7 +212,7 @@ pet.appendBubbleText(id, "，继续追加")
 
 showBubble 返回 bubbleId，无效参数返回空字符串且保留旧气泡。options 支持 durationMs（默认 0，手动关闭）和最多八项 actions（非空唯一 id 与纯文本 text）。`bubbleId`、`bubbleText` 可观察当前内容。updateBubble(id, text)、appendBubbleText(id, text)、closeBubble(id) 拒绝旧标识。按钮只发 bubbleActionTriggered，不自动关闭或执行宿主业务。bubbleClosed 的原因为 Replaced、Closed、TimedOut 或 PackageChanged。隐藏冻结剩余时限，恢复继续；更新不重置时限，旧定时器不关闭新气泡。文字使用 PlainText 与受限滚动区域。
 
-气泡按角色上方／下方的实际剩余空间选择方位、限制高度和水平对齐，长内容在内部滚动，在可定位会话中补偿窗口原点以保持角色锚点。原生 Wayland 无法精确补偿全局位置，组件报告定位不可用；气泡尺寸与布局仍由合成器约束，不能宣称完整边缘定位支持。宿主应保留恢复显示和关闭穿透的操作入口。
+气泡按角色上方／下方的实际剩余空间选择方位，文本视口首选高度最多 240 逻辑像素，并受剩余屏幕空间限制；长内容在内部滚动。水平方向按气泡超出可用区的实际距离补偿，即使气泡宽度接近整屏也保持在边界内，在可定位会话中补偿窗口原点以保持角色锚点。原生 Wayland 无法精确补偿全局位置，组件报告定位不可用；气泡尺寸与布局仍由合成器约束，不能宣称完整边缘定位支持。宿主应保留恢复显示和关闭穿透的操作入口。
 
 托盘完全由宿主应用实现。组件没有 trayEnabled、trayAvailable、trayIcon、trayActions 或 exitRequested 接口，不创建托盘图标、菜单或进程退出入口。宿主自己的托盘可调用 show/hide，并设置 inputTransparent 来恢复交互。
 

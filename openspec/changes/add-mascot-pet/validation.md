@@ -715,3 +715,52 @@ LaunchServices 本轮恢复正常：部署版原生结构／事件／椭圆命�
 新增检查真实激活普通 Qt 宿主后启动独立 helper 获取前台，等待本应用失活；确认角色视觉与输入面板仍可见、原生层级保持且系统命中桌宠面板。不发送鼠标／键盘系统事件，不申请辅助功能权限。macOS 26.6.2 / Qt 6.10.2 / Metal，原生三组检查含 init/cleanup 为 5 passed、0 failed、0 skipped（2050 ms，`/tmp/qcat-deactivation-native.txt`）。库、测试与 Gallery 已重新构建。此修复不提升完整平台矩阵结论，进度保持 31/41。
 
 补充：QT_SCALE_FACTOR=1.25 的 nativeLifecycle 为 3 passed（1081 ms，含 init/cleanup）；受影响 mascot_contracts、gallery_mascot_shutdown、mascot_macos_reject_headless 三项 CTest 全通过（13.80 秒）。文档检查 38 文件／522 本地链接、OpenSpec strict 及差异空白检查通过。未将此次不发送系统输入的检查写为新的完整输入验收。
+
+
+## 2026-10-30 气泡边缘与锚点（5.2）
+
+本轮修复两项布局问题：首选气泡高度原来按全文高度计算，导致长消息几乎占满屏幕，现按最多 240 逻辑像素文本视口加控件高度计算；水平避让原为左右二选一，在 320 像素视口、气泡宽度接近整屏时把角色偏移完整的“气泡宽减角色宽”，产生 x=-294 的窗口，现按超出屏幕的实际距离计算并限制偏移，保持角色原点不变。保留上下剩余空间选择和既有窗口原点补偿，不新增公开 C++ 接口。
+
+扩展 desktopBubbleEdges 至 Cocoa：明暗主题、四角长文本、每次显示后三次增量更新及关闭均检查 exportState.position 不变、窗口处于可用区和实际截图。macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal 最终结果：
+
+- 正常缩放：3 passed／0 failed／0 skipped，8561 ms；`build/mascot-bubble-macos-final.txt`。可用区约 1920x972，角色 petScale=0.5。
+- QT_SCALE_FACTOR=6、QCAT_MASCOT_EDGE_SCALE=0.125：3 passed／0 failed／0 skipped，9047 ms；`build/mascot-bubble-macos-320.txt`，可用区 (0,5 320x162)。Qt 缩放模拟窄逻辑视口，不是实际小屏／混合 DPI 硬件验收。
+
+nativeBubbleEdges 新增两主题、四角、显示／更新的原生命中及完整控件范围检查，正常缩放和 320 逻辑像素分别 3 passed（6886 ms）与 3 passed（7053 ms），无失败／跳过；`build/mascot-bubble-macos-input.txt`、`build/mascot-bubble-macos-input-320.txt`。系统命中确认动作与关闭按钮进入当前实例输入面板，角色与气泡间 8 像素空白不命中面板；检查两个按钮整个矩形位于气泡内，关闭后窗口回到角色原点。带系统单调时间戳的进程内 Qt 滚轮事件检查 contentY 增长，正常与窄视口都能滚动。此项不发送系统事件、不申请辅助功能权限，不把同实例滚轮当作新一轮跨进程真实输入验收。
+
+已查看正常亮色与 320 视口亮／暗色实际 Metal 截图，关闭及动作按钮完整、受限文本视口可滚动，角色位于补偿后的角落。截图前缀 `/tmp/qcat-bubble-final`、`/tmp/qcat-bubble-320-final`。中间失败均未记为通过：最初缩放启动曾出现 19 像素位置差异，后续发现首次激活前后 Cocoa 菜单／Dock 工作区尚未稳定，测试现先激活并等待工作区；另一次原生测试文本区为 0 高度；先激活并等待工作区后，该情况未再复现。滚轮初版缺少事件时间戳导致连续事件未生效，补齐后通过。宽度二选一导致的 x=-294 是独立的确定性布局缺陷，已由最终 320 视口四角渲染与命中覆盖。
+
+5.2 完成，进度 32/41。完整平台矩阵、多屏／实际混合 DPI 和极端不足以容纳角色加控件的工作区不据此声明通过。最终构建、lint、CTest 与文档检查见本节补充。
+
+最终补充：完整构建、库／Gallery QML lint、CTest 22/22（153.45 秒，`/tmp/qcat-bubble-final-ctest.log`）、重新安装后独立消费者离屏运行通过。文档检查 38 文件／523 本地链接、OpenSpec strict 和差异空白检查通过。OpenSpec apply 确认 32/41；本轮未开启任何新的系统权限。
+
+
+## 2026-10-30 带消息拖动累积偏移修复
+
+用户反馈 Gallery 显示消息后角色向上偏移，鼠标拖动后偏移进一步增加。此前边缘检查只验证静态显示／更新／关闭，拖动检查则先关闭气泡，遗漏带气泡连续拖动。新增 bubbleDragOrigin，以 Gallery 同源 PNG 包和消息文案覆盖默认位置首次显示／关闭、40 步上移再原路返回、气泡上下翻转、松开和关闭后的原点。
+
+复现轨迹：第 17 步角色期望 y=175，实际 y=176；第 18 步期望 y=160，实际仍 y=176，窗口 y 卡在可用区顶边 30。Cocoa 先限制包含气泡的旧整窗框，QML 又以受限后的窗口位置推导角色原点，气泡无法及时翻到下方。另有布局变化未同步按下时窗口起点、50 ms 布局定时器可能覆盖较新的拖动位置的问题。
+
+修复：拖动期间以鼠标目标维护角色逻辑原点，在设置原生窗口位置前通知气泡布局；偏移改变时同步按下起点，按新偏移重新推导窗口原点；拖动期间不使用延迟布局计时器回写位置。非拖动布局先发布稳定原点再设置原生窗口位置，避免原生位置通知读取中间状态。没有通过放宽最终断言接受偏移，最终回归每步与鼠标目标使用精确 QPoint 比较，40 步返回原点后松开和关闭仍精确一致。
+
+macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal：正常缩放 bubbleDragOrigin 与 desktopBubbleEdges 联合运行 4 passed、0 failed、0 skipped（11083 ms），`build/mascot-bubble-drag-macos-final.txt`；QT_SCALE_FACTOR=1.25 的 bubbleDragOrigin 为 3 passed、0 failed、0 skipped（2995 ms），`build/mascot-bubble-drag-macos-scaled.txt`。均为原生窗口配合进程内 Qt 鼠标事件，无辅助功能授权变更，不声称是新一轮系统输入注入验收。Gallery 已重新构建；本轮启动的非 bundle Gallery 进程未被电脑操作接口识别，未完成该接口下的人工点击／拖动，已结束本轮自行启动的实例，不将其作为人工验收证据。
+
+最终补充：完整构建、库／Gallery QML lint、CTest 22/22（154.42 秒，`/tmp/qcat-bubble-drag-ctest.log`）、重新安装后消费者离屏运行、文档检查（38 文件／524 本地链接）、OpenSpec strict 与差异空白检查均通过。进度保持 32/41；修复未提交 Git。
+
+
+## 2026-10-30 Gallery 显示消息仍上移：实际按钮流程定位与修复
+
+用户再次反馈，点击 Gallery“显示消息”后角色上移仍未修复。本轮先将 5.2 恢复未完成，避免把之前组件级逻辑坐标回归当作实际 Gallery 流程通过。为 tst_gallery 增加仅 macOS 编译的 AppKit 位置读取：以角色 Item 在原生内容视图的位置换算真实屏幕坐标，测试直接实例化 GalleryMascotPreview 并操作页面按钮，而非只调用 CatMascotPet.showBubble。
+
+成功复现：正常缩放时，显示消息前角色原生位置为 (912,636)，之后为 (912,656)（AppKit y 向上），即向上偏移20像素。进一步将操作拆开，单独对已可见桌宠再次调用 pet.show()，尚未创建消息就从 (912,636) 移到 (912,656)，确认 Gallery 在“显示消息”之前无条件重复 show() 是本次确定触发点。旧组件级测试直接调用 showBubble，因而漏掉 Gallery 多调用的这一步；不能继续归因于单纯气泡布局。
+
+修复 Gallery 的“显示桌宠”与“显示消息”两个入口，使用 visible=true；已可见时不重复触发原生 show，隐藏时仍能显示。没有改写 Qt 全局窗口行为，也未保留本轮无效的布局前置事务试验。
+
+最终 macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal，以实际 Gallery 页面两种角色包验证：
+
+- 默认缩放：4 passed／0 failed／0 skipped（7164 ms，含 init/cleanup 与 PNG/Lottie 两行）。重复点击显示按钮、三次显示及关闭消息，原生角色位置精确不变。`build/mascot-gallery-message-native.txt`。
+- QT_SCALE_FACTOR=1.25：4 passed／0 failed／0 skipped（7462 ms）。重复显示按钮精确稳定；气泡展开的原生坐标存在约0.792个AppKit像素的渲染取整差，关闭后回原位，三轮不累积。非整数缩放测试以一个原生物理像素为界限，不据此容忍20像素位移；整数缩放仍为精确比较。`build/mascot-gallery-message-native-scaled.txt`。
+
+失败原始重复show证据 `build/mascot-gallery-reshow-before.txt`。测试调用真实 Gallery 按钮处理并读取原生窗口位置，但输入由 QtQuickTest 在本进程投递，不是新一轮系统鼠标注入，无辅助功能权限变更。Lottie 在测试中需先显示再等 Ready，初版在隐藏时等待导致超时，未记为通过。此前宣称 Gallery 显示问题已修复的组件级证据不覆盖此流程，以本节的实际 Gallery 按钮与原生位置证据为准。5.2 重新完成，进度恢复32/41，完整平台矩阵继续 Pending。
+
+本轮最终完整构建、库／Gallery QML lint、CTest 22/22（156.60 秒，`/tmp/qcat-gallery-reshow-ctest.log`）、重新安装后消费者离屏运行、文档检查（38 文件／525 本地链接）、OpenSpec strict 与差异空白检查通过。最新 Gallery 可执行文件已重建；本轮未提交 Git。

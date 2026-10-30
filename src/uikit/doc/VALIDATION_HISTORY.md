@@ -37,3 +37,22 @@ macOS / Qt 6.10.2 Release 完整构建、库／Gallery QML lint、最终 CTest 2
 ## 2026-10-30 Gallery 应用失活层级回归
 
 修复角色视觉 NSPanel 仍使用 Tool 面板失活隐藏／浮动行为的缺口。新增“先激活普通宿主，再切换到独立 helper”原生检查，验证可见性、层级和系统命中，5 passed；无需辅助功能权限。具体环境与补充结果见 [变更证据](../../../openspec/changes/add-mascot-pet/validation.md)，完整平台矩阵仍待验收。
+
+
+## 2026-10-30 气泡边缘与角色锚点
+
+限制长文本首选视口高度，修复气泡接近整屏宽时二选一对齐导致的屏幕越界。macOS Metal 下正常及 320 逻辑像素视口，明暗主题四角长文本、增量更新与关闭的锚点／边界检查均通过；原生按钮命中、间隙穿透、完整控件范围及进程内滚动检查通过。完成 5.2，进度 32/41；无辅助功能权限变更，不把 Qt 缩放模拟当作硬件多屏验收。失败与最终结果见 [变更证据](../../../openspec/changes/add-mascot-pet/validation.md)。
+
+本轮最终完整构建、库／Gallery QML lint、CTest 22/22（153.45 秒）、安装消费者、文档检查和 OpenSpec strict 通过。
+
+
+## 2026-10-30 带气泡拖动位置回归
+
+修复 Cocoa 整窗边界约束与气泡翻转形成的角色位置卡住，以及旧拖动起点／延迟布局锚点覆盖新位置的问题。新增 Gallery 同源包的首次消息与40步往返拖动检查，每步、松开和关闭后精确核对角色原点；正常与1.25倍缩放通过。事件为进程内 Qt 事件，无系统输入授权变更。具体失败轨迹与证据见 [变更记录](../../../openspec/changes/add-mascot-pet/validation.md)。
+
+
+## 2026-10-30 Gallery 重复 show 导致显示消息上移
+
+用户复测仍偏移后重新打开5.2。以实际 Gallery 页面按钮和 AppKit 原生画面坐标复现20像素上移，拆分操作确认是对已显示桌宠重复调用 show()；之前直接调用 showBubble 的组件测试漏了这一步。两个显示入口改为 visible=true。PNG/Lottie 两行默认与1.25倍缩放均通过，正常缩放精确稳定，分数缩放不超过单个原生像素且不累积；5.2 恢复完成，32/41。失败轨迹、精度与输入范围见 [变更记录](../../../openspec/changes/add-mascot-pet/validation.md)。
+
+最终完整构建、库／Gallery QML lint、CTest 22/22（156.60 秒）、安装消费者、文档与 OpenSpec strict 检查均通过。

@@ -66,7 +66,7 @@ class MascotWindowAdapter : public QObject
     QRect availableGeometry() const;
     QPoint characterPosition() const
     {
-        return m_layoutTimer.isActive() ? m_layoutAnchor
+        return (m_dragging || m_layoutTimer.isActive()) ? m_layoutAnchor
                : m_window               ? m_window->position() + m_characterOffset
                                         : QPoint();
     }

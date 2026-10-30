@@ -59,6 +59,48 @@ TestCase {
         verify(show.height >= show.implicitHeight)
         verify(status.width <= preview.width)
     }
+    function test_nativeBubbleKeepsRenderedPosition_data() {
+        return [
+            {tag: "sprite", source: "qrc:/gallery-mascot/catgray/manifest.json"},
+            {tag: "lottie", source: "qrc:/gallery-mascot/catgray-lottie/mascot.json"}
+        ]
+    }
+    function test_nativeBubbleKeepsRenderedPosition(data) {
+        if (!nativeMascotTest.nativeCocoa()) skip("Requires Cocoa native rendering")
+        const preview = createTemporaryObject(factory, test)
+        const pet = findChild(preview, "galleryMascotPet")
+        pet.packageSource = data.source
+        nativeMascotTest.activateHost(test)
+        mouseClick(findChild(preview, "mascotShow"))
+        tryCompare(pet, "visible", true)
+        tryCompare(pet, "status", MascotPetController.Ready, 30000)
+        wait(200)
+        const character = findChild(pet.contentItem, "mascotCharacter")
+        verify(character !== null)
+        const before = nativeMascotTest.nativePosition(character)
+        const tolerance = nativeMascotTest.nativePositionTolerance(character)
+        const checkPosition = actual => {
+            verify(Math.abs(actual.x - before.x) <= tolerance && Math.abs(actual.y - before.y) <= tolerance,
+                   "Actual rendered position " + actual + "; expected " + before)
+        }
+        console.info("Before Qt", pet.x, pet.y, pet.width, pet.height, character.x, character.y)
+        mouseClick(findChild(preview, "mascotShow"))
+        wait(200)
+        console.info("Repeated show button", nativeMascotTest.nativePosition(character))
+        checkPosition(nativeMascotTest.nativePosition(character))
+        for (let i = 0; i < 3; ++i) {
+            mouseClick(findChild(preview, "mascotBubble"))
+            wait(200)
+            const shown = nativeMascotTest.nativePosition(character)
+            console.info("Actual character origin", before, shown, "Qt", pet.x, pet.y,
+                         "local", character.x, character.y)
+            checkPosition(shown)
+            pet.closeBubble(pet.bubbleId)
+            wait(200)
+            checkPosition(nativeMascotTest.nativePosition(character))
+        }
+        pet.hide()
+    }
     function test_hostControlsIndependentWindows() {
         const preview = createTemporaryObject(factory, test)
         verify(preview !== null)

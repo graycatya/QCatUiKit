@@ -63,7 +63,7 @@ Item {
             CatButton {
                 objectName: "mascotShow"
                 text: qsTr("Show character")
-                onClicked: pet.show()
+                onClicked: pet.visible = true
             }
             CatButton { text: qsTr("Hide character"); onClicked: pet.hide() }
             CatButton { text: qsTr("Second instance"); onClicked: second.visible = !second.visible }
@@ -94,7 +94,7 @@ Item {
                 objectName: "mascotBubble"
                 text: qsTr("Show message")
                 onClicked: {
-                    pet.show()
+                    pet.visible = true
                     pet.showBubble(qsTr("A message from your application. <b>This is plain text.</b>"),
                         {actions: [{id: "reply", text: qsTr("Reply")}], durationMs: 10000})
                 }

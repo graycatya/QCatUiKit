@@ -34,9 +34,10 @@ Window {
     readonly property real effectivePetScale: actor.petScale
     readonly property real bubbleSpaceAbove: Math.max(0, desktop.characterPosition.y - desktop.availableGeometry.y - 8)
     readonly property real bubbleSpaceBelow: Math.max(0, desktop.availableGeometry.y + desktop.availableGeometry.height - desktop.characterPosition.y - sprite.height - 8)
-    readonly property real preferredBubbleHeight: message.implicitHeight + closeMessage.implicitHeight + bubbleActions.implicitHeight + 40
+    readonly property real preferredBubbleHeight: Math.min(message.implicitHeight, 240) + closeMessage.implicitHeight + bubbleActions.implicitHeight + 40
     readonly property bool bubbleAbove: bubbleSpaceAbove >= preferredBubbleHeight || bubbleSpaceAbove >= bubbleSpaceBelow
-    readonly property bool bubbleAlignRight: desktop.characterPosition.x + bubble.width > desktop.availableGeometry.x + desktop.availableGeometry.width
+    readonly property real bubbleCharacterOffsetX: Math.max(0, Math.min(Math.max(0, bubble.width - sprite.width), desktop.characterPosition.x + bubble.width - desktop.availableGeometry.x - desktop.availableGeometry.width))
+    readonly property bool bubbleAlignRight: bubbleCharacterOffsetX > 0
     signal moveEnded(string requestId, string reason)
     signal platformError(string code, string detail)
     signal bubbleClosed(string id, string reason)
@@ -133,7 +134,8 @@ Window {
     }
     MascotSprite {
         id: sprite
-        x: root.bubbleAlignRight && (root.bubbleId.length > 0) ? Math.max(0, bubble.width - width) : 0
+        objectName: "mascotCharacter"
+        x: (root.bubbleId.length > 0) ? root.bubbleCharacterOffsetX : 0
         y: (root.bubbleId.length > 0) && root.bubbleAbove ? bubble.height + 8 : 0
         width: Math.max(actor.status === MascotPetController.Error ? 160 : 0, implicitWidth)
         height: Math.max(actor.status === MascotPetController.Error ? 160 : 0, implicitHeight)
@@ -176,6 +178,7 @@ Window {
     }
     Rectangle {
         id: bubble
+        objectName: "mascotBubble"
         x: 0
         y: root.bubbleAbove ? 0 : sprite.height + 8
         width: Math.max(1, Math.min(320, desktop.availableGeometry.width ? desktop.availableGeometry.width : 320))
@@ -204,6 +207,7 @@ Window {
             }
             B.ScrollView {
                 id: bubbleScroll
+                objectName: "mascotBubbleScroll"
                 focusPolicy: Qt.StrongFocus
                 KeyNavigation.priority: KeyNavigation.BeforeItem
                 KeyNavigation.tab: bubbleActionRepeater.count > 0 ? bubbleActionRepeater.itemAt(0) : closeMessage

@@ -565,3 +565,15 @@ Cocoa 行需真实可用的 macOS 图形会话；离屏通过不能替代该行�
 使用上节部署及授权流程运行 `tst_mascotmacosinput --native-input --report <json>`。routing 除区域输入外，还以独立背后应用真实按键计数检查显示／隐藏恢复、动作切换、气泡显示及增量更新均不抢焦点；关闭置顶须读回普通 AppKit 层级并让背后浮动窗口获得系统命中，恢复置顶须保留被动焦点。气泡主动点击后检查真实 Tab 到关闭按钮、Shift+Tab 返回操作按钮及空格关闭；分别检查隐藏、整窗穿透和失活后恢复拒绝焦点策略，再显示时背后应用仍接收按键。结果应包含 passive-show-action-bubble-update、always-on-top-toggle-without-activation、real-tab-backtab-and-keyboard-close、focus-release-hide／passthrough／deactivate 六组记录；任一失败或跳过均不能标记该轮完整通过。测试只激活本轮 helper，不切换或输入到用户的其他应用。完整屏幕／Spaces 及系统级窗口覆盖另列平台矩阵。
 
 应用失活回归无需辅助功能权限：在真实 Cocoa 会话运行 `tst_mascotmacosinput nativeLifecycle`。它先激活模拟 Gallery 的宿主窗口，再启动独立 helper 获取前台与键盘焦点，确认应用失活后角色视觉窗口、输入面板仍可见，原生层级不降，系统命中仍为桌宠输入面板。分别以默认 DPR 和 QT_SCALE_FACTOR=1.25 执行；不把仅由背后应用起始就激活的检查替代这个切换过程。
+
+
+### macOS 气泡边缘、窄视口与输入范围
+
+在真实 Cocoa 图形会话设置 QCAT_MASCOT_DESKTOP=1，运行 `tst_mascot desktopBubbleEdges`；可设 QCAT_MASCOT_BUBBLE_CAPTURE 为截图前缀。测试明暗主题与四角长文本、连续增量更新、关闭气泡，读回 exportState.position 验证角色原点不变，并检查窗口处于可用区、实际原生渲染非空。可用 `QT_SCALE_FACTOR=6 QCAT_MASCOT_EDGE_SCALE=0.125` 模拟 320 逻辑像素宽度（实际尺寸取决于物理屏幕）；角色同步缩小以留出按钮和文本空间。该模拟不是硬件混合 DPI 验收。启动时等待 Cocoa 首次菜单／Dock 工作区发布，记录实际可用区。
+
+运行 `tst_mascotmacosinput nativeBubbleEdges`，并按需以 QT_SCALE_FACTOR=6 重复。测试先激活本应用稳定屏幕工作区，无需辅助功能权限；明暗主题、四角、显示和更新后检查气泡及完整按钮范围，使用 AppKit 系统命中查询确认按钮落入本实例输入面板、角色与气泡间隙不命中输入面板。带单调时间戳的进程内滚轮事件验证内容可滚动；它不是系统鼠标注入，不替代 4.2 的真实跨进程输入证据。极小可用区若不足以同时容纳角色和操作控件，须另行记录限制，不用截图非空代替布局验收。
+
+带消息拖动回归：真实 Cocoa 会话设置 QCAT_MASCOT_DESKTOP=1，运行 `tst_mascot bubbleDragOrigin`，可另加 QT_SCALE_FACTOR=1.25。测试使用 Gallery 同源 PNG 包和相同消息内容，检查默认位置首次显示／关闭不改变角色原点；带消息进行 40 步往返拖动，跨越气泡上／下方切换边界，每步角色原点必须精确等于鼠标全局位移，松开和关闭后回到原点。事件为进程内 Qt 鼠标事件，不申请辅助功能权限，不替代独立进程真实输入测试。
+
+
+Gallery 显示消息的原生位置回归：在 Cocoa 会话运行 `tst_gallery -import <build>/qml GalleryMascot::test_nativeBubbleKeepsRenderedPosition`，以默认缩放和 QT_SCALE_FACTOR=1.25 分别执行。测试实际 GalleryMascotPreview、默认 PNG 与 Lottie 包，激活宿主并调用页面的显示／消息按钮，重复显示以及三轮消息显示／关闭。以 AppKit 将角色 Item 的实际位置换算为屏幕坐标，不能仅检查 exportState。正常整数缩放要求精确稳定；非整数缩放允许至多一个原生物理像素的渲染取整误差，并检查重复操作不累积。Lottie 先显示窗口再等待 Ready，使原生 QRhi 初始化完成。QtQuickTest 的按钮事件在本进程内投递，不申请系统输入权限。离屏会明确跳过这个原生测试，不能代替 Cocoa 行。

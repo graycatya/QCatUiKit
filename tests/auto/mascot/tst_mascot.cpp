@@ -571,6 +571,86 @@ CatMascotPet {
         QVERIFY(!actor->dragging());
     }
 
+    void bubbleDragOrigin()
+    {
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
+            QGuiApplication::platformName() == "offscreen")
+            QSKIP("Requires a real desktop coordinate session");
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 0.5
+    function message() { showBubble("A message from your application. <b>This is plain text.</b>",
+        {actions:[{id:"reply",text:"Reply"}]}) }
+    function dismiss() { closeBubble(bubbleId) }
+})", QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        actor->setPackageSource(QUrl::fromLocalFile(QCAT_MASCOT_SAMPLE));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        const auto area = window->screen()->availableGeometry();
+        QTest::qWait(150);
+        auto origin = [&]()
+        {
+            QVariant value;
+            QMetaObject::invokeMethod(pet.get(), "exportState", Q_RETURN_ARG(QVariant, value));
+            return value.toMap().value("position").toPoint() + area.topLeft();
+        };
+        const QPoint defaultOrigin = origin();
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+        QTest::qWait(150);
+        QCOMPARE(origin(), defaultOrigin);
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "dismiss"));
+        QTest::qWait(150);
+        QCOMPARE(origin(), defaultOrigin);
+        window->setPosition(area.topLeft() + QPoint(300, 400));
+        QTest::qWait(150);
+        const QPoint initial = origin();
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+        QTest::qWait(150);
+        QCOMPARE(origin(), initial);
+        const QPointF start = origin() + QPoint(48, 52);
+        auto send = [&](QEvent::Type type, QPointF global, Qt::MouseButton button,
+                        Qt::MouseButtons buttons)
+        {
+            QMouseEvent event(type, window->mapFromGlobal(global), global, button, buttons,
+                              Qt::NoModifier);
+            QCoreApplication::sendEvent(window, &event);
+        };
+        send(QEvent::MouseButtonPress, start, Qt::LeftButton, Qt::LeftButton);
+        for (int i = 1; i <= 20; ++i)
+        {
+            const QPoint delta(i * 2, -i * 15);
+            send(QEvent::MouseMove, start + delta, Qt::NoButton, Qt::LeftButton);
+            QTest::qWait(30);
+            qInfo() << "Bubble drag step" << i << "actual" << origin() << "expected"
+                    << initial + delta << "window" << window->position()
+                    << "above" << pet->property("bubbleAbove");
+            QCOMPARE(origin(), initial + delta);
+        }
+        for (int i = 19; i >= 0; --i)
+        {
+            const QPoint delta(i * 2, -i * 15);
+            send(QEvent::MouseMove, start + delta, Qt::NoButton, Qt::LeftButton);
+            QTest::qWait(30);
+            QCOMPARE(origin(), initial + delta);
+        }
+        const QPoint finalDelta;
+        send(QEvent::MouseButtonRelease, start + finalDelta, Qt::LeftButton, Qt::NoButton);
+        QTest::qWait(150);
+        QCOMPARE(origin(), initial + finalDelta);
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "dismiss"));
+        QTest::qWait(150);
+        QCOMPARE(origin(), initial + finalDelta);
+    }
+
     void windowsInputRouting()
     {
 #ifndef Q_OS_WIN
@@ -1055,8 +1135,9 @@ CatMascotPet {
     void desktopBubbleEdges()
     {
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
-            QGuiApplication::platformName() != "xcb")
-            QSKIP("Requires an explicitly selected xcb desktop");
+            (QGuiApplication::platformName() != "xcb" &&
+             QGuiApplication::platformName() != "cocoa"))
+            QSKIP("Requires an explicitly selected xcb or Cocoa desktop");
         QTest::failOnWarning(QRegularExpression(".*Binding loop.*"));
         QQmlEngine engine;
         QQmlComponent component(&engine);
@@ -1068,6 +1149,7 @@ CatMascotPet {
     function dark(value) { palette.colorScheme = value ? ThemePalette.Dark : ThemePalette.Light }
     function message() { showBubble("Long wrapped message ".repeat(180), {actions: [{id: "ok", text: "Continue"}]}) }
     function clearMessage() { closeBubble(bubbleId) }
+    function updateMessage() { updateBubble(bubbleId, "Updated long message ".repeat(240)) }
 })",
                           QUrl());
         QTRY_VERIFY(component.status() != QQmlComponent::Loading);
@@ -1078,8 +1160,12 @@ CatMascotPet {
         auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
         actor->setPackageSource(QUrl::fromLocalFile(QCAT_MASCOT_SAMPLE));
         QTRY_COMPARE(actor->status(), Controller::Ready);
+        const auto scale = qEnvironmentVariable("QCAT_MASCOT_EDGE_SCALE").toDouble();
+        if (scale > 0)
+            actor->setPetScale(scale);
         window->show();
         QVERIFY(QTest::qWaitForWindowExposed(window));
+        QTest::qWait(250); // Let Cocoa publish its initial menu/Dock work area.
         const auto available = window->screen()->availableGeometry();
         const QPoint corners[] = {
             available.topLeft() + QPoint(2, 2),
@@ -1101,6 +1187,10 @@ CatMascotPet {
                 QVariant after;
                 QVERIFY(QMetaObject::invokeMethod(pet.get(), "exportState",
                                                   Q_RETURN_ARG(QVariant, after)));
+                qInfo() << "Bubble edge" << available << corner << "before" << before
+                        << "after" << after << "geometry" << window->geometry()
+                        << "above" << pet->property("bubbleAbove")
+                        << "space" << pet->property("bubbleSpaceAbove") << pet->property("bubbleSpaceBelow");
                 QCOMPARE(after.toMap().value("position").toPoint(),
                          before.toMap().value("position").toPoint());
                 QVERIFY2(available.contains(window->geometry()),
@@ -1109,6 +1199,17 @@ CatMascotPet {
                                         .arg(window->y())
                                         .arg(window->width())
                                         .arg(window->height())));
+                for (int repeat = 0; repeat < 3; ++repeat)
+                {
+                    QVERIFY(QMetaObject::invokeMethod(pet.get(), "updateMessage"));
+                    QTest::qWait(150);
+                    QVariant updated;
+                    QVERIFY(QMetaObject::invokeMethod(pet.get(), "exportState",
+                                                      Q_RETURN_ARG(QVariant, updated)));
+                    QCOMPARE(updated.toMap().value("position").toPoint(),
+                             before.toMap().value("position").toPoint());
+                    QVERIFY(available.contains(window->geometry()));
+                }
                 const auto image = window->grabWindow();
                 QVERIFY(!image.isNull());
                 const auto capture = qEnvironmentVariable("QCAT_MASCOT_BUBBLE_CAPTURE");

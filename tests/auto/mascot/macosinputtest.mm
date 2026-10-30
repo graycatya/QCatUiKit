@@ -20,6 +20,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QUuid>
+#include <QWheelEvent>
 #include <memory>
 using Controller = QCatUiKit::MascotPetController;
 
@@ -420,6 +421,106 @@ CatMascotPet {
                 [info release];
                 QVERIFY2(false, "Ellipse corner is intercepted by an input rectangle");
             }
+        object.reset();
+        pet.clear();
+    }
+    void nativeBubbleEdges()
+    {
+        [NSApp activateIgnoringOtherApps:YES];
+        QTest::qWait(250);
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 3
+    inputRegionsEnabled: true
+    packageSource: "qrc:/mascot-macos-test/mascot.json"
+    theme: ThemePalette { id: palette }
+    function dark(value) { palette.colorScheme = value ? ThemePalette.Dark : ThemePalette.Light }
+    function message() { showBubble("Long text ".repeat(200), {actions:[{id:"ok",text:"Continue"}]}) }
+    function updateMessage() { updateBubble(bubbleId, "Updated text ".repeat(250)) }
+    function dismiss() { closeBubble(bubbleId) }
+})", QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> object(component.create());
+        QVERIFY(object);
+        pet = qobject_cast<QQuickWindow *>(object.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        pet->setPosition(0, 0);
+        pet->show();
+        QVERIFY(QTest::qWaitForWindowExposed(pet));
+        QTest::qWait(250);
+        const QRect area = pet->screen()->availableGeometry();
+        const QPoint corners[] = {area.topLeft() + QPoint(2, 2),
+            QPoint(area.right() - 25, area.top() + 2),
+            QPoint(area.left() + 2, area.bottom() - 25), area.bottomRight() - QPoint(25, 25)};
+        auto inputAt = [&](QPointF local)
+        {
+            const NSInteger hit = [NSWindow windowNumberAtPoint:point(local)
+                                     belowWindowWithWindowNumber:0];
+            for (NSWindow *surface in surfaces())
+                if (surface.visible && surface.windowNumber == hit)
+                    return true;
+            return false;
+        };
+        for (bool dark : {false, true})
+        {
+            QVERIFY(QMetaObject::invokeMethod(object.get(), "dark", Q_ARG(QVariant, QVariant(dark))));
+            for (auto corner : corners)
+            {
+                pet->setPosition(corner);
+                QTest::qWait(100);
+                for (const auto *method : {"message", "updateMessage"})
+                {
+                    QVERIFY(QMetaObject::invokeMethod(object.get(), method));
+                    QTest::qWait(200);
+                    auto *bubble = find(pet->contentItem(), "mascotBubble");
+                    auto *action = find(pet->contentItem(), "mascotBubbleAction_ok");
+                    auto *close = find(pet->contentItem(), "mascotBubbleClose");
+                    auto *scroll = find(pet->contentItem(), "mascotBubbleScroll");
+                    QVERIFY(bubble && action && close && scroll);
+                    auto *flickable = qvariant_cast<QObject *>(scroll->property("contentItem"));
+                    QVERIFY(flickable);
+                    const qreal oldY = flickable->property("contentY").toReal();
+                    const auto scrollPoint = scroll->mapToScene(QPointF(scroll->width() / 2, scroll->height() / 2));
+                    qInfo() << "Scroll viewport" << scroll->size() << flickable->property("height")
+                            << "content" << flickable->property("contentHeight") << "position" << scrollPoint
+                            << "bubble" << bubble->size() << "controls" << close->size() << action->size()
+                            << "area" << area << "geometry" << pet->geometry()
+                            << "above" << pet->property("bubbleAbove") << "spaces"
+                            << pet->property("bubbleSpaceAbove") << pet->property("bubbleSpaceBelow");
+                    QTest::mouseMove(pet, scrollPoint.toPoint());
+                    QWheelEvent wheel(scrollPoint, pet->mapToGlobal(scrollPoint), QPoint(),
+                                      QPoint(0, -120), Qt::NoButton, Qt::NoModifier,
+                                      Qt::NoScrollPhase, false);
+                    wheel.setTimestamp(quint64(NSProcessInfo.processInfo.systemUptime * 1000));
+                    QCoreApplication::sendEvent(pet, &wheel);
+                    QTRY_VERIFY(flickable->property("contentY").toReal() > oldY);
+                    qInfo() << "Bubble native edge" << area << pet->screen()->availableGeometry()
+                            << corner << pet->geometry();
+                    QVERIFY(area.contains(pet->geometry()));
+                    const QPoint offset = corner - pet->position();
+                    const QPointF gap(offset.x() + 2, offset.y() > 0 ? offset.y() - 4 : 26);
+                    QVERIFY(!inputAt(gap));
+                    for (auto *control : {action, close})
+                    {
+                        const QPointF local = control->mapToScene(QPointF(control->width() / 2, control->height() / 2));
+                        QVERIFY(control->height() > 0 && control->width() > 0);
+                        QVERIFY(inputAt(local));
+                        QVERIFY(QRectF(bubble->mapToScene(QPointF()), bubble->size()).contains(
+                            QRectF(control->mapToScene(QPointF()), control->size())));
+                    }
+                }
+                QVERIFY(QMetaObject::invokeMethod(object.get(), "dismiss"));
+                QTest::qWait(150);
+                QCOMPARE(pet->position(), corner);
+            }
+        }
+        qInfo() << "Bubble input edges" << area << "DPR" << pet->devicePixelRatio()
+                << "graphics API" << int(pet->rendererInterface()->graphicsApi());
         object.reset();
         pet.clear();
     }

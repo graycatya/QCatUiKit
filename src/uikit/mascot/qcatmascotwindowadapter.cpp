@@ -73,19 +73,29 @@ void MascotWindowAdapter::setCharacterOffset(const QPoint &offset)
     if (offset == m_characterOffset)
         return;
     const auto delta = m_characterOffset - offset;
-    if (m_window && canPosition() && !m_layoutTimer.isActive())
+    // Dragging tracks the original window origin. Layout changes must shift
+    // that origin too, otherwise the next pointer event replays the old offset.
+    if (m_pressed)
+        m_pressWindow += delta;
+    if (m_window && canPosition() && !m_dragging && !m_layoutTimer.isActive())
         m_layoutAnchor = m_window->position() + m_characterOffset;
     m_characterOffset = offset;
     if (m_window && canPosition())
     {
         m_from += delta;
         m_to += delta;
-        if (m_move.isEmpty())
+        if (m_dragging)
         {
+            // A pending layout anchor must never overwrite a newer drag step.
+            m_layoutTimer.stop();
             m_window->setPosition(m_layoutAnchor - m_characterOffset);
-            // Layout and native resize acknowledgements can arrive in different
-            // event turns. Keep one origin through the whole transition.
+        }
+        else if (m_move.isEmpty())
+        {
+            // Publish the stable origin before native position notifications.
+            // Cocoa can constrain the enlarged frame before QML changes sides.
             m_layoutTimer.start();
+            m_window->setPosition(m_layoutAnchor - m_characterOffset);
         }
         else
         {
@@ -705,6 +715,7 @@ bool MascotWindowAdapter::eventFilter(QObject *object, QEvent *event)
                 }
                 cancelMove();
                 m_layoutTimer.stop();
+                m_layoutAnchor = m_window->position() + m_characterOffset;
             }
             if (m_dragging && !canPosition() && !m_window->startSystemMove())
             {
@@ -718,7 +729,11 @@ bool MascotWindowAdapter::eventFilter(QObject *object, QEvent *event)
         {
             const auto p = m_pressWindow + (e->globalPosition() - m_pressGlobal).toPoint();
             auto *s = QGuiApplication::screenAt(e->globalPosition().toPoint());
-            m_window->setPosition(bounded(s ? s : findScreen({}), p));
+            m_layoutAnchor = bounded(s ? s : findScreen({}), p) + m_characterOffset;
+            // Let bubble placement use the pointer's intended character origin,
+            // not a frame Cocoa may have clamped before the bubble can flip.
+            emit characterPositionChanged();
+            m_window->setPosition(m_layoutAnchor - m_characterOffset);
         }
         // Continue delivery so Qt Quick can cancel tap gestures at the drag threshold.
     }
