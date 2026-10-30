@@ -549,3 +549,19 @@ Cocoa 行需真实可用的 macOS 图形会话；离屏通过不能替代该行�
 在 windows、cocoa 或 xcb 图形会话运行 `tst_mascot screenCoordinateRules desktopScreenCoordinates`。Windows 可执行文件通常位于 `<build>/bin/tst_mascot.exe`；其他布局以实际构建输出为准。desktopScreenCoordinates 检查带气泡定位到可用区两端、关闭气泡后角色位置稳定、重新开启约束时超大缩放被校正，以及注入 DPR 变化通知取消旧移动。可用 QCAT_MASCOT_GEOMETRY_CAPTURE 指定气泡窗口 PNG。该测试不改变系统显示配置，不注入其他应用输入；DPR 事件注入不是实际 DPI 切换，合成坐标不是多屏硬件验收。
 
 实机仍需在混合 DPI 的多个屏幕间拖动、移动到负原点屏幕，并拔除当前屏幕，确认角色和输入区域对齐、有效缩放被校正且剩余屏幕内可恢复交互。分别记录各屏可用区、DPR、Qt／系统／图形后端和原生点击去向；未完成时保持对应平台及任务待验收。
+
+
+## macOS 公共区域输入
+
+在真实 Cocoa 图形会话构建 `tst_mascotmacosinput`；直接运行 `<build>/tests/auto/mascot/tst_mascotmacosinput.app/Contents/MacOS/tst_mascotmacosinput nativeLifecycle nativeEventDelivery nativeShapePlacement`，检查透明非激活面板、原生窗口销毁、同实例事件转换及椭圆角点系统命中。此路径无需辅助功能权限，不证明跨进程真实输入。`mascot_macos_reject_headless` 随 CTest 检查离屏运行返回 2 并覆盖旧报告为 Pending。
+
+真实输入需用户临时授权该测试 app 的辅助功能权限，然后通过 `open -n -W <app> --args --native-input --report /tmp/mascot-macos-input.json -o /tmp/mascot-macos-input.txt,txt` 启动。测试启动独立的 mascot-macos-input-target 作为背后进程，发送前核对前台与点击窗口归属；执行时勿操作键鼠。检查报告 inputAcceptance=Passed、postEventAccess=true，且 routing 无跳过，覆盖矩形／椭圆／多边形、镜像、缩放、整窗穿透、气泡点击与空格、连续拖动、隐藏及销毁。acceptance 保持 Pending，表示完整平台矩阵尚未完成。结束须关闭该测试 app 的临时权限并确认两个进程退出。
+
+若 LaunchServices 停在 dyld、未生成报告，不能算测试通过；直接启动时若 CGPreflightPostEventAccess=false，同样保持 Pending。可将两个 app 复制到临时目录，用当前 Qt kit 的 macdeployqt 部署：先部署 helper，再将其放在测试 app 的 Contents/Helpers 下，部署测试 app 时指定库构建目录的 -libpath、src/uikit/qml 的 -qmldir 和构建 qml 的 -qmlimport。必须等部署完成、`codesign --verify --deep --strict <app>` 成功后再运行；自包含部署仍不能保证系统许可可用，不扩大其他系统权限。多屏、实际混合 DPI、Spaces／全屏及其他系统版本另外验收。
+
+
+### macOS 置顶与按需焦点
+
+使用上节部署及授权流程运行 `tst_mascotmacosinput --native-input --report <json>`。routing 除区域输入外，还以独立背后应用真实按键计数检查显示／隐藏恢复、动作切换、气泡显示及增量更新均不抢焦点；关闭置顶须读回普通 AppKit 层级并让背后浮动窗口获得系统命中，恢复置顶须保留被动焦点。气泡主动点击后检查真实 Tab 到关闭按钮、Shift+Tab 返回操作按钮及空格关闭；分别检查隐藏、整窗穿透和失活后恢复拒绝焦点策略，再显示时背后应用仍接收按键。结果应包含 passive-show-action-bubble-update、always-on-top-toggle-without-activation、real-tab-backtab-and-keyboard-close、focus-release-hide／passthrough／deactivate 六组记录；任一失败或跳过均不能标记该轮完整通过。测试只激活本轮 helper，不切换或输入到用户的其他应用。完整屏幕／Spaces 及系统级窗口覆盖另列平台矩阵。
+
+应用失活回归无需辅助功能权限：在真实 Cocoa 会话运行 `tst_mascotmacosinput nativeLifecycle`。它先激活模拟 Gallery 的宿主窗口，再启动独立 helper 获取前台与键盘焦点，确认应用失活后角色视觉窗口、输入面板仍可见，原生层级不降，系统命中仍为桌宠输入面板。分别以默认 DPR 和 QT_SCALE_FACTOR=1.25 执行；不把仅由背后应用起始就激活的检查替代这个切换过程。

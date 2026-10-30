@@ -4,6 +4,9 @@
 #ifdef Q_OS_WIN
 #include "qcatmascotwindowsinput_p.h"
 #endif
+#ifdef Q_OS_MACOS
+#include "qcatmascotmacosinput_p.h"
+#endif
 #include <QGuiApplication>
 #include <QLibrary>
 #include <QMouseEvent>
@@ -162,6 +165,10 @@ void MascotWindowAdapter::setWindow(QQuickWindow *w)
     m_windowsInput.reset();
     m_windowsInputFailed = false;
 #endif
+#ifdef Q_OS_MACOS
+    m_macosInput.reset();
+    m_macosInputFailed = false;
+#endif
     if (m_window)
     {
         m_window->removeEventFilter(this);
@@ -184,7 +191,7 @@ void MascotWindowAdapter::setWindow(QQuickWindow *w)
                 Qt::QueuedConnection);
         connect(w, &QWindow::widthChanged, this, &MascotWindowAdapter::applyMask);
         connect(w, &QWindow::heightChanged, this, &MascotWindowAdapter::applyMask);
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
         connect(w, &QWindow::xChanged, this, &MascotWindowAdapter::applyMask);
         connect(w, &QWindow::yChanged, this, &MascotWindowAdapter::applyMask);
 #endif
@@ -287,6 +294,10 @@ QVariantMap MascotWindowAdapter::capabilities() const
 #ifdef Q_OS_WIN
             if (qpa == "windows")
                 unavailable = m_windowsInputFailed;
+#endif
+#ifdef Q_OS_MACOS
+            if (qpa == "cocoa")
+                unavailable = m_macosInputFailed;
 #endif
 #if defined(QCATUIKIT_HAS_XSHAPE) && QT_CONFIG(xcb)
             if (qpa == "xcb")
@@ -420,6 +431,10 @@ bool MascotWindowAdapter::requestKeyboardFocus()
         return false;
     m_window->setFlag(Qt::WindowDoesNotAcceptFocus, false);
     m_window->requestActivate();
+#ifdef Q_OS_MACOS
+    if (m_macosInput)
+        m_macosInput->requestKeyboardFocus();
+#endif
     return true;
 }
 void MascotWindowAdapter::releaseKeyboardFocus()
@@ -596,6 +611,23 @@ void MascotWindowAdapter::applyMask()
         return;
     }
 #endif
+#ifdef Q_OS_MACOS
+    if (QGuiApplication::platformName() == "cocoa" && !m_macosInputFailed)
+    {
+        if (!m_macosInput)
+            m_macosInput = std::make_unique<MascotMacosInput>(m_window);
+        if (!m_macosInput->sync(input, !m_transparent))
+        {
+            m_macosInputFailed = true;
+            const auto error = m_macosInput->errorString();
+            m_macosInput.reset();
+            m_window->setFlag(Qt::WindowTransparentForInput, m_transparent);
+            emit platformError("InputRegionUnavailable", error);
+            emit changed();
+        }
+        return;
+    }
+#endif
     if (QGuiApplication::platformName() == "xcb")
     {
 #if defined(QCATUIKIT_HAS_XSHAPE) && QT_CONFIG(xcb)
@@ -638,8 +670,9 @@ bool MascotWindowAdapter::eventFilter(QObject *object, QEvent *event)
         releaseKeyboardFocus();
     if (event->type() == QEvent::Expose)
     {
-        applyWindowPolicy();
-        applyMask();
+        // QML may assign the initial flags after the adapter's window binding.
+        // Reassert native input policy once the real window is exposed.
+        refresh();
     }
     if (event->type() == QEvent::MouseButtonPress)
     {

@@ -12,6 +12,9 @@ namespace QCatUiKit
 #ifdef Q_OS_WIN
 class MascotWindowsInput;
 #endif
+#ifdef Q_OS_MACOS
+class MascotMacosInput;
+#endif
 // Private window integration. No desktop service or extension connection.
 class MascotWindowAdapter : public QObject
 {
@@ -120,6 +123,10 @@ class MascotWindowAdapter : public QObject
 #ifdef Q_OS_WIN
     std::unique_ptr<MascotWindowsInput> m_windowsInput;
     bool m_windowsInputFailed = false;
+#endif
+#ifdef Q_OS_MACOS
+    std::unique_ptr<MascotMacosInput> m_macosInput;
+    bool m_macosInputFailed = false;
 #endif
 };
 // Creatable internal QML name; not installed as a public C++ API.

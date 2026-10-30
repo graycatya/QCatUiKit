@@ -138,9 +138,9 @@
 
 Windows 前置原型位于 `tests/manual/mascot-probe`，使用独立 Win32 背后进程记录实际鼠标、键盘及焦点消息。Qt Quick 浮层通过 QWindow.setMask 和 WindowTransparentForInput 控制区域与整窗输入，通过被动窗口标志及 WM_MOUSEACTIVATE 保持普通显示／点击不抢焦点；主动气泡和托盘菜单可申请前台及键盘焦点。Qt Widgets 只用于探针的 QApplication、QSystemTrayIcon 和 QMenu，不加入库依赖。原型输出与完整平台验收分别记录，主规格仍不提前同步。具体运行入口及局限见 MASCOTPLATFORMS 与 VALIDATION。
 
-Windows 公共适配使用视觉窗口与私有无绘制输入窗口组合：视觉窗口保持完整并整窗穿透，输入窗口以 WS_EX_NOREDIRECTIONBITMAP 创建，形状仅由声明区域及气泡形成；默认不开启区域模式时承接整个窗口。原生鼠标消息按视觉窗口 DPR 转为同实例 Qt 鼠标／滚轮事件，输入窗口持有拖动捕获，失去捕获或隐藏时释放交互。键盘焦点仍由气泡显式向公共窗口申请。输入窗口是视觉窗口的原生 owned window，不独立激活、不进入任务栏，隐藏及销毁与实例同步。失败向宿主报告 InputRegionUnavailable 并标记能力不可用。该组合不向背后应用转发消息、不安装钩子或轮询鼠标，不更改公共宿主生命周期契约。原生验证必须使用独立背后进程，而非仅验证同线程 HTTRANSPARENT 或仅抓取 Qt 窗口画面；macOS 区域适配仍独立待办。
+Windows 公共适配使用视觉窗口与私有无绘制输入窗口组合：视觉窗口保持完整并整窗穿透，输入窗口以 WS_EX_NOREDIRECTIONBITMAP 创建，形状仅由声明区域及气泡形成；默认不开启区域模式时承接整个窗口。原生鼠标消息按视觉窗口 DPR 转为同实例 Qt 鼠标／滚轮事件，输入窗口持有拖动捕获，失去捕获或隐藏时释放交互。键盘焦点仍由气泡显式向公共窗口申请。输入窗口是视觉窗口的原生 owned window，不独立激活、不进入任务栏，隐藏及销毁与实例同步。失败向宿主报告 InputRegionUnavailable 并标记能力不可用。该组合不向背后应用转发消息、不安装钩子或轮询鼠标，不更改公共宿主生命周期契约。原生验证必须使用独立背后进程，而非仅验证同线程 HTTRANSPARENT 或仅抓取 Qt 窗口画面；macOS 公共区域适配见下述机制，单屏 Metal 真实输入证据见 validation.md。
 
-Windows 公共适配使用视觉窗口与私有无绘制输入窗口组合：视觉窗口保持完整并整窗穿透，输入窗口以 WS_EX_NOREDIRECTIONBITMAP 创建，形状仅由声明区域及气泡形成；默认不开启区域模式时承接整个窗口。原生鼠标消息按视觉窗口 DPR 转为同实例 Qt 鼠标／滚轮事件，输入窗口持有拖动捕获，失去捕获或隐藏时释放交互。键盘焦点仍由气泡显式向公共窗口申请。输入窗口是视觉窗口的原生 owned window，不独立激活、不进入任务栏，隐藏及销毁与实例同步。失败向宿主报告 InputRegionUnavailable 并标记能力不可用。该组合不向背后应用转发消息、不安装钩子或轮询鼠标，不更改公共宿主生命周期契约。原生验证必须使用独立背后进程，而非仅验证同线程 HTTRANSPARENT 或仅抓取 Qt 窗口画面；macOS 区域适配仍独立待办。
+macOS 公共适配将 QRegion 的非重叠矩形映射为透明 nonactivating NSPanel。视觉及输入面板按 alwaysOnTop 显式设置 AppKit 普通／置顶层级，避免 Qt Tool 在关闭置顶后仍处浮动层。面板独立于原生 child-window 分组，窗口／工作区通知驱动同步，并以 CoreGraphics 窗口 ID 顺序保持紧邻视觉窗口上方。显式 ignoresMouseEvents=false 使完全透明的矩形接收鼠标，视觉窗口保持整窗穿透，区域外直接到背后应用。输入面板不接受键盘焦点，原生事件经视图比例换算交给同实例 Qt 窗口，键盘仍由公共气泡主动申请并显式激活本应用；视觉窗口通过 AppKit ignoresMouseEvents 实现穿透，避免 Qt WindowTransparentForInput 同时拒绝键盘焦点。保留按下视图至释放，隐藏／销毁清理；不使用全局钩子、光标轮询或系统输入权限。面板数量随区域分解复杂度增长，缓存不变区域并释放多余面板；不以裁切视觉或包围矩形放宽形状。此实现与既有矩形探针不同，验收须分别记录系统命中、进程内事件与独立背后进程真实输入。
 
 ### 8. 移动、生命周期与状态
 

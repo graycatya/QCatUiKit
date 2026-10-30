@@ -657,3 +657,61 @@ Gallery 新增“区域输入”开关，按会话能力启用；复用已有中
 已有全量 CTest 为 21/21（207.11 秒）；加入 Gallery 区域开关和连续拖动／模式恢复断言后，又执行最终全量 CTest，结果在下方补充。重复验证步骤写入 VALIDATION，平台机制及边界同步 MASCOTPET、MASCOTPLATFORMS、MAINTENANCE 和 design；最终文档检查与 OpenSpec strict 随补充执行。
 
 最终补充：最终代码及 Gallery 区域开关下，`ctest --test-dir build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release --output-on-failure -j 2` 为 21/21 通过，135.69 秒，证据 build/mascot-windows-input-ctest-final.log。Windows 原生 D3D11 路径运行 `qcat-gallery --smoke-test --page mascot-pet` 退出码 0，验证两个桌宠可见、主窗口最小化保持实例可见、关闭主窗口退出的既有修复未被新输入窗口破坏；日志 build/mascot-windows-input-gallery-exit.log。文档检查、OpenSpec 严格验证、私有实现与新增原生辅助程序的代码格式及差异空白检查通过。任务进度仍为 29/41，4.2 的 macOS 部分、其他待验收项及各平台完整矩阵继续保留。
+
+
+## 2026-10-30 macOS 公共区域输入实现（4.2 仍待验收）
+
+新增私有 Objective-C++ AppKit 输入适配与独立背后进程测试，不新增公共 API。视觉窗口整窗穿透，QRegion 非重叠矩形映射到透明 nonactivating NSPanel；只转换该实例收到的事件，不用全局钩子、光标轮询、透明像素扫描或系统输入权限。窗口／工作区通知同步独立面板的显隐、位置和层级，CoreGraphics 只读取窗口 ID 顺序。按下期间保留输入视图，释放后应用待更新几何；隐藏／销毁清理。Expose 时重申视觉穿透策略，避免 QML 初始 flags 覆盖。默认关闭区域模式时承接全窗。
+
+实机 macOS 26.6.2 (25G83)、arm64、Qt 6.10.2 Release、Metal（实际 graphics API=6）、DPR=1。原始 child-window 方案在真实点击中椭圆角点仍被窗口组拦截，未记为通过；改为独立面板后系统命中检查通过。最终部署版直接运行 nativeLifecycle、nativeEventDelivery、nativeShapePlacement 为 5 passed／0 failed，2095 ms，日志 `/tmp/qcat-deployed-direct.txt`。该结果包含系统命中与进程内事件，不代表跨进程输入通过。
+
+用户明确允许本次临时辅助功能权限，已在系统设置将部署 app 添加为开启。实际直接运行 --native-input 时 CGPreflightPostEventAccess 仍为 false，routing 跳过，报告 inputAcceptance=Pending、nativeLifecycle=Passed、checks=[]；日志 `/tmp/qcat-real-native.txt`，报告 `/tmp/qcat-real-native.json`。通过 LaunchServices 启动的进程未进入 main，采样停在 dyld 依赖文件 open；完整自包含部署及 codesign --verify --deep --strict 校验成功后仍复现，未生成测试日志。这些启动和权限失败不算真实输入验收。仅停止本轮测试进程，已在系统设置确认 tst_mascotmacosinput 权限关闭；既有 qcat-mascot-probe 仍关闭。4.2 保留未勾选，进度 29/41，真实穿透、键盘及连续拖动仍待验收。
+
+构建目录为 build/Qt_6_10_2_for_macOS-Release。完整构建通过；最终回归结果见本节后续补充。安装到 `/tmp/qcat-mac-input-install` 成功。临时日志不作为版本控制内的持久证据，以上环境、结果与限制为本次记录；重复步骤见 VALIDATION 的“macOS 公共区域输入”。
+
+最终补充：完整 CTest 22/22 通过（157.05 秒，`/tmp/qcat-macos-final-ctest.log`），库与 Gallery QML lint 通过。重新安装最终库后，已安装消费者以 QT_QPA_PLATFORM=offscreen、QT_QUICK_BACKEND=software 运行退出 0；首次未指定离屏时因沙箱无屏幕退出，未计为成功。文档检查 38 文件／519 本地链接、OpenSpec strict 和 git diff --check 通过。原生测试及背后 helper 已退出；权限 UI 确认为 off。仍不声明 4.2 或完整 macOS 平台验收通过。
+
+
+## 2026-10-30 macOS 公共区域真实输入续验
+
+LaunchServices 本轮恢复正常：部署版原生结构／事件／椭圆命中在 DPR=1 为 5 passed（1794 ms），DPR=1.25 为 5 passed（1472 ms），均 Metal。用户再次授权仅本轮临时辅助功能权限并自行完成系统密码验证。首次真实输入已通过矩形、椭圆、多边形、镜像、缩放、整窗穿透恢复及被动焦点，但气泡点击后空格未触发；该次为 5 passed／1 failed，不记为完整通过（`/tmp/qcat-continue-real.txt`）。
+
+核对本机 Qt Cocoa 源码：QCocoaWindow::shouldRefuseKeyWindowAndFirstResponder 同时拒绝 WindowDoesNotAcceptFocus 与 WindowTransparentForInput。因此视觉窗口改由 AppKit ignoresMouseEvents=true 保持鼠标穿透，普通显示及角色点击仍不激活；只有公共气泡显式请求键盘时清除拒绝焦点标志、激活本应用并将 Qt 内容视图设为 first responder／key window。同步也覆盖空输入区域，避免 Qt 重设 flags 后误接收整窗鼠标。
+
+重建并部署后 codesign --verify --deep --strict 通过；重新签名使旧系统授权失效，第一次复验 routing 跳过并报告 Pending。通过系统设置为同一路径的同一测试 app 刷新本轮授权后，真实输入最终结果：
+
+- DPR=1、Metal：6 passed／0 failed／0 skipped，7692 ms；`build/macos-public-input-final.txt` 与同名 JSON。
+- QT_SCALE_FACTOR=1.25、Metal：6 passed／0 failed／0 skipped，7551 ms；`build/macos-public-input-final-scaled.txt` 与同名 JSON。Qt 分数缩放模拟不代替混合 DPI 硬件验收。
+
+两份报告 postEventAccess=true、inputAcceptance=Passed，10 组记录覆盖默认阻挡、矩形及背后焦点／真实 A 键、椭圆角点与中心、多边形内外、镜像、角色缩放、整窗穿透及恢复、气泡穿透／点击及真实空格、六步连续拖动终点（+30,+18）、关闭区域模式恢复整窗阻挡；另断言隐藏后命中独立背后窗口、销毁后原生输入窗口 ID 全部消失。测试仅向本轮进程窗口发送事件，背后独立 helper 真实记录 6 次点击／1 次按键；主动气泡键盘后背后 keyWindow=false，普通角色阶段保持 true。验收后已确认 tst_mascotmacosinput 辅助功能关闭，qcat-mascot-probe 仍关闭。完整平台 acceptance 仍 Pending，多屏、真实混合 DPI、Spaces／全屏等未据此声明通过。
+
+本轮完成 4.2，进度 30/41；4.5 等其余任务保持原状态。最终构建／回归补充见下方。
+
+最终补充：完整构建通过；空输入区域也重申 AppKit 穿透策略后的最终代码，原生结构／同实例事件／椭圆命中再次 5 passed（1642 ms，`/tmp/qcat-continue-last-structural.txt`）。最终全量 CTest 22/22（160.29 秒，`/tmp/qcat-continue-final-ctest.log`）、库／Gallery QML lint、重新安装后的消费者离屏运行均通过。文档检查 38 文件／520 本地链接、OpenSpec strict、差异空白检查通过。测试及独立 helper 无残留进程；辅助功能开关最终为 off。OpenSpec apply 已确认 4.2 完成、30/41。
+
+
+## 2026-10-30 macOS 置顶与按需焦点（4.5）
+
+扩展既有独立进程真实输入程序，不新增公开 API。部署版先运行无需权限的原生结构／同实例事件／椭圆命中：5 passed（1762 ms）；既有 Cocoa publicBubbleKeyboardLifecycle：3 passed（700 ms）。用户明确授权仅本轮辅助功能权限，通过系统设置刷新同一测试 app 的签名记录。
+
+首轮真实输入中被动显示、动作及气泡增量更新后的真实按键均进入独立 helper，但关闭 alwaysOnTop 后原生层级为 3 而非普通层 0，测试 5 passed／1 failed（23650 ms，`/tmp/qcat-focus-policy-real.txt`），未计通过。本机 Qt Cocoa 源码 windowLevel 对 Qt::Tool 默认使用 NSFloatingWindowLevel，移除 WindowStaysOnTopHint 仍然浮动。因此私有 AppKit 输入适配同步视觉窗口与输入面板的显式置顶策略：开启为 NSModalPanelWindowLevel，关闭为 NSNormalWindowLevel，仅在变化时写入，不改变独立宿主生命周期。保留非激活输入面板与按需气泡焦点。
+
+重建、部署及 codesign --verify --deep --strict 通过，刷新同一 app 的本轮签名授权后，macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal 真实输入：
+
+- DPR=1：6 passed／0 failed／0 skipped，11581 ms，`build/macos-mascot-focus-final.txt`／`.json`。
+- QT_SCALE_FACTOR=1.25：6 passed／0 failed／0 skipped，11283 ms，`build/macos-mascot-focus-scaled.txt`／`.json`。分数缩放模拟不代替实际混合 DPI 硬件。
+
+两份报告 inputAcceptance=Passed、postEventAccess=true，16 组证据。沿用原 10 组区域输入、键盘、拖动与清理检查，新增六组：passive-show-action-bubble-update、always-on-top-toggle-without-activation、real-tab-backtab-and-keyboard-close、focus-release-hide／passthrough／deactivate。独立 helper 最终记录 6 次点击、9 次真实按键；被动操作后始终保持其 keyWindow=true，主动气泡后切换到本测试窗口。置顶关闭时读回原生普通层且系统命中背后浮动 helper，恢复时读回原层级；全程未激活用户其他应用。真实 Tab 到关闭按钮、Shift+Tab 返回动作、空格关闭气泡；关闭／隐藏／整窗穿透／失活后恢复 WindowDoesNotAcceptFocus，再显示仍由背后应用接收按键。结束恢复原光标／前台应用并清理 helper，临时辅助功能 UI 已确认为 off，原 qcat-mascot-probe 仍 off。
+
+本轮完成 4.5，进度 31/41。窗口坐标会随气泡尺寸变化，本次不将窗口坐标直接当作角色锚点证据；反复显示／更新的角色原点稳定性与边缘避让继续留在 5.2 验证。多屏、Spaces／全屏及其他平台完整矩阵不据此标为通过，报告整体 acceptance 仍 Pending。
+
+最终检查：完整构建、库／Gallery QML lint、CTest 22/22（156.11 秒，`/tmp/qcat-focus-policy-ctest.log`）、重新安装后的独立消费者离屏运行通过。文档、OpenSpec strict 及差异空白检查随本轮收尾执行；OpenSpec apply 已确认进度 31/41。
+
+
+## 2026-10-30 Gallery 切换应用后桌宠层级修复
+
+用户反馈点击其他应用后桌宠落到后面。核对本机 Qt Cocoa 创建 Tool/NSPanel 时默认设置 hidesOnDeactivate；既有代码只对输入面板禁用，角色视觉面板未处理。修复为同步时对视觉 NSPanel 同样关闭 hidesOnDeactivate 与 floatingPanel；不请求激活应用，不修改非桌宠窗口。既有 4.5 检查验证了背后窗口初始已激活与气泡焦点切换，缺少“先激活普通宿主，再激活独立应用”的独立可见性检查，现补入 nativeLifecycle。
+
+新增检查真实激活普通 Qt 宿主后启动独立 helper 获取前台，等待本应用失活；确认角色视觉与输入面板仍可见、原生层级保持且系统命中桌宠面板。不发送鼠标／键盘系统事件，不申请辅助功能权限。macOS 26.6.2 / Qt 6.10.2 / Metal，原生三组检查含 init/cleanup 为 5 passed、0 failed、0 skipped（2050 ms，`/tmp/qcat-deactivation-native.txt`）。库、测试与 Gallery 已重新构建。此修复不提升完整平台矩阵结论，进度保持 31/41。
+
+补充：QT_SCALE_FACTOR=1.25 的 nativeLifecycle 为 3 passed（1081 ms，含 init/cleanup）；受影响 mascot_contracts、gallery_mascot_shutdown、mascot_macos_reject_headless 三项 CTest 全通过（13.80 秒）。文档检查 38 文件／522 本地链接、OpenSpec strict 及差异空白检查通过。未将此次不发送系统输入的检查写为新的完整输入验收。
