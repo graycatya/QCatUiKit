@@ -16,12 +16,16 @@
 #include <QQuickWindow>
 #include <QSGRendererInterface>
 #include <QSaveFile>
+#include <QScopeGuard>
+#include <QTimer>
+#include <QScreen>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QUuid>
 #include <QWheelEvent>
 #include <memory>
+#include <atomic>
 using Controller = QCatUiKit::MascotPetController;
 
 class MacosInputTest : public QObject
@@ -524,6 +528,162 @@ CatMascotPet {
         object.reset();
         pet.clear();
     }
+    void nativeFullscreenRecovery()
+    {
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData("import QtQuick\nimport QCatUiKit\nCatMascotPet { petScale: 10; "
+                          "packageSource: \"qrc:/mascot-macos-test/mascot.json\" }", QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> object(component.create());
+        QVERIFY(object);
+        pet = qobject_cast<QQuickWindow *>(object.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        pet->setPosition(360, 320);
+        pet->setVisible(true);
+        QVERIFY(QTest::qWaitForWindowExposed(pet));
+        settle();
+        const QPoint before = pet->position();
+        const NSInteger level = native().level;
+        const auto bundledTarget = QCoreApplication::applicationDirPath() +
+            "/../Helpers/mascot-macos-input-target.app/Contents/MacOS/mascot-macos-input-target";
+        state = {};
+        pending.clear();
+        behind.start(QFileInfo::exists(bundledTarget) ? bundledTarget
+                         : QString::fromUtf8(QCAT_MACOS_INPUT_TARGET),
+                     {"QCat fullscreen acceptance:" + QUuid::createUuid().toString(), "--fullscreen"});
+        QTRY_VERIFY_WITH_TIMEOUT(state.value("fullscreen").toBool(), 15000);
+        QTRY_VERIFY_WITH_TIMEOUT(!native().onActiveSpace, 15000);
+        auto hasInput = [&]
+        {
+            for (NSWindow *surface in surfaces())
+                if (surface.visible)
+                    return true;
+            return false;
+        };
+        QTRY_VERIFY(!hasInput());
+        QCOMPARE(pet->position(), before);
+        qInfo() << "Independent fullscreen Space" << state << "pet activeSpace"
+                << bool(native().onActiveSpace) << "input visible" << hasInput();
+        behind.terminate();
+        if (!behind.waitForFinished(3000))
+        {
+            behind.kill();
+            QVERIFY(behind.waitForFinished(2000));
+        }
+        QTRY_VERIFY_WITH_TIMEOUT(native().onActiveSpace, 15000);
+        QTRY_VERIFY(native().visible);
+        QTRY_VERIFY(hasInput());
+        QCOMPARE(native().level, level);
+        QCOMPARE(pet->position(), before);
+        qInfo() << "Desktop returned" << pet->position() << "level" << native().level
+                << "input visible" << hasInput();
+        const auto ids = surfaceIds();
+        object.reset();
+        pet.clear();
+        QTRY_VERIFY(retired(ids));
+        state = {};
+        pending.clear();
+    }
+    void nativeSpacesReview()
+    {
+        const QString output = qEnvironmentVariable("QCAT_MASCOT_SPACES_REPORT");
+        const QString done = qEnvironmentVariable("QCAT_MASCOT_SPACES_DONE");
+        if (output.isEmpty() || done.isEmpty())
+            QSKIP("Explicit interactive Spaces review required");
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 10
+    packageSource: "qrc:/mascot-macos-test/mascot.json"
+    function message() { showBubble("Spaces and transparency review", {actions:[{id:"ok",text:"OK"}]}) }
+})", QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> object(component.create());
+        QVERIFY(object);
+        pet = qobject_cast<QQuickWindow *>(object.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        QQuickWindow host;
+        host.setTitle("QCat macOS Spaces acceptance - switch desktop and return");
+        host.setColor(QColor("#224466"));
+        host.resize(500, 320);
+        host.setPosition(600, 200);
+        host.show();
+        [NSApp activateIgnoringOtherApps:YES];
+        host.requestActivate();
+        pet->setPosition(820, 320);
+        pet->setVisible(true);
+        QVERIFY(QTest::qWaitForWindowExposed(pet));
+        settle();
+        QVERIFY(QMetaObject::invokeMethod(object.get(), "message"));
+        QTest::qWait(200);
+        const QPoint before = pet->position();
+        const NSInteger level = native().level;
+        std::atomic_int changes{0};
+        std::atomic_int *spaceCounter = &changes;
+        auto *center = NSWorkspace.sharedWorkspace.notificationCenter;
+        id observer = [center addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification
+                    object:nil queue:nil usingBlock:^(NSNotification *) {
+                        ++(*spaceCounter);
+                    }];
+        const auto removeObserver = qScopeGuard([&] { [center removeObserver:observer]; });
+        bool leftSpace = false, returned = false, wrote = true;
+        QJsonArray samples;
+        auto sample = [&]
+        {
+            bool inputVisible = false;
+            for (NSWindow *surface in surfaces())
+                inputVisible |= bool(surface.visible);
+            const bool active = native().onActiveSpace;
+            if (!active)
+                leftSpace = true;
+            if (leftSpace && active)
+                returned = true;
+            QJsonObject row{{"changes", changes.load()}, {"activeSpace", active},
+                            {"visualVisible", bool(native().visible)}, {"inputVisible", inputVisible},
+                            {"collectionBehavior", int(native().collectionBehavior)},
+                            {"hostActiveSpace", bool(reinterpret_cast<NSView *>(host.winId()).window.onActiveSpace)},
+                            {"level", int(native().level)}, {"x", pet->x()}, {"y", pet->y()}};
+            if (samples.isEmpty() || samples.last().toObject() != row)
+                samples.append(row);
+            QSaveFile file(output);
+            if (!file.open(QIODevice::WriteOnly)) { wrote = false; return; }
+            file.write(QJsonDocument(QJsonObject{{"status", "Pending"},
+                       {"spaceChanges", changes.load()}, {"leftSpace", leftSpace},
+                       {"returned", returned}, {"samples", samples}}).toJson());
+            wrote &= file.commit();
+        };
+        QTimer sampler;
+        connect(&sampler, &QTimer::timeout, this, sample);
+        sampler.start(100);
+        sample();
+        QTRY_VERIFY_WITH_TIMEOUT(QFileInfo::exists(done), 180000);
+        sample();
+        QVERIFY(wrote);
+        if (!(changes.load() >= 2 && leftSpace && returned))
+        {
+            qInfo() << "Spaces automatic evidence incomplete" << samples;
+            QSKIP("Automatic Space round trip not established; report stays Pending, manual evidence is separate");
+        }
+        QTRY_VERIFY(native().onActiveSpace && native().visible);
+        QCOMPARE(native().level, level);
+        QCOMPARE(pet->position(), before);
+        qInfo() << "Interactive Spaces review" << samples;
+        sampler.stop();
+        QSaveFile final(output);
+        QVERIFY(final.open(QIODevice::WriteOnly));
+        final.write(QJsonDocument(QJsonObject{{"status", "Passed"}, {"spaceChanges", changes.load()},
+                    {"leftSpace", leftSpace}, {"returned", returned}, {"samples", samples}}).toJson());
+        QVERIFY(final.commit());
+        object.reset();
+        pet.clear();
+    }
     void routing()
     {
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP"))
@@ -817,7 +977,7 @@ CatMascotPet {
             CGEventPost(kCGHIDEventTap, event);
             CFRelease(event);
         }
-        if (CGPreflightPostEventAccess())
+        if (routingAttempted && CGPreflightPostEventAccess())
             CGWarpMouseCursorPosition(previousCursor);
         if (behind.state() != QProcess::NotRunning)
         {
@@ -857,6 +1017,7 @@ int main(int argc, char **argv)
     QStringList arguments = app.arguments();
     if (arguments.removeAll("--native-input"))
         qputenv("QCAT_MASCOT_DESKTOP", "1");
+    const bool requestAccess = arguments.removeAll("--request-input-access") > 0;
     const int report = arguments.indexOf("--report");
     if (report >= 0 && report + 1 < arguments.size())
     {
@@ -883,6 +1044,44 @@ int main(int argc, char **argv)
         }
         qInfo("macOS native input acceptance Pending: Cocoa desktop required");
         return 2;
+    }
+    if (requestAccess)
+    {
+        const QString output = qEnvironmentVariable("QCAT_MASCOT_REPORT");
+        if (output.isEmpty())
+            return 1;
+        auto save = [&]()
+        {
+            QSaveFile file(output);
+            if (!file.open(QIODevice::WriteOnly))
+                return false;
+            file.write(QJsonDocument(QJsonObject{{"acceptance", "Pending"},
+                {"inputAcceptance", "Pending"}, {"purpose", "explicit permission diagnostic"},
+                {"bundlePath", QString::fromNSString(NSBundle.mainBundle.bundlePath)},
+                {"postEventAccess", bool(CGPreflightPostEventAccess())}}).toJson());
+            return file.commit();
+        };
+        if (!save())
+            return 1;
+        QQuickWindow notice;
+        notice.setTitle("QCat test input permission - enable Accessibility for this app");
+        notice.resize(600, 160);
+        notice.setColor(QColor("#224466"));
+        notice.show();
+        [NSApp activateIgnoringOtherApps:YES];
+        QTimer poll;
+        QObject::connect(&poll, &QTimer::timeout, &app, [&]
+        {
+            if (!save()) { app.exit(1); return; }
+            if (CGPreflightPostEventAccess())
+                app.quit();
+        });
+        poll.start(500);
+        // Only this explicit, user-authorized mode may request permission.
+        // Normal tests preflight and remain Pending without opening a prompt.
+        QTimer::singleShot(0, &app, [] { CGRequestPostEventAccess(); });
+        QTimer::singleShot(180000, &app, [&] { save(); app.exit(2); });
+        return app.exec();
     }
     MacosInputTest test;
     return QTest::qExec(&test, arguments);

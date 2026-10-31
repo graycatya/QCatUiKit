@@ -577,3 +577,19 @@ Cocoa 行需真实可用的 macOS 图形会话；离屏通过不能替代该行�
 
 
 Gallery 显示消息的原生位置回归：在 Cocoa 会话运行 `tst_gallery -import <build>/qml GalleryMascot::test_nativeBubbleKeepsRenderedPosition`，以默认缩放和 QT_SCALE_FACTOR=1.25 分别执行。测试实际 GalleryMascotPreview、默认 PNG 与 Lottie 包，激活宿主并调用页面的显示／消息按钮，重复显示以及三轮消息显示／关闭。以 AppKit 将角色 Item 的实际位置换算为屏幕坐标，不能仅检查 exportState。正常整数缩放要求精确稳定；非整数缩放允许至多一个原生物理像素的渲染取整误差，并检查重复操作不累积。Lottie 先显示窗口再等待 Ready，使原生 QRhi 初始化完成。QtQuickTest 的按钮事件在本进程内投递，不申请系统输入权限。离屏会明确跳过这个原生测试，不能代替 Cocoa 行。
+
+
+## macOS 约定范围矩阵
+
+本轮经用户明确排除多屏、硬件混合 DPI 与拔屏测试，三项标为 Excluded，不以既有坐标单元测试代替硬件通过。按指定 macOS／Qt／Metal 版本保存其余范围结果；该范围通过不表示所有 macOS 版本、所有 Space／全屏覆盖或被排除硬件场景已通过。
+
+- 运行完整构建、库／Gallery QML lint 与 CTest。
+- Cocoa 下运行 `tst_gallery -import <build>/qml GalleryMascot::test_nativeHostLifecycle GalleryMascot::test_nativeBubbleKeepsRenderedPosition`。前者以 WindowServer 检查主窗口最小化／隐藏、整个应用隐藏／恢复、独立关闭和销毁回收；后者验证实际 Gallery 两类角色包的消息位置。
+- 设置 QCAT_MASCOT_GPU=1、QCAT_MASCOT_DESKTOP=1、QSG_RHI_BACKEND=metal 和 QCAT_CATGRAY_LOTTIE_PACKAGE（指向仓库 catgray-lottie 包），运行既有窗口、气泡、状态、帧采样、Lottie 渲染／动作缓存／异步切换用例。不要把离屏专属能力断言直接当作原生期望，原生请求可用且尚未认证的能力状态为 Unknown。
+- 运行 `tst_mascotmacosinput nativeFullscreenRecovery`。独立 helper 用 --fullscreen 进入自己的全屏 Space，检查桌宠不在该 Space、输入面板隐藏；退出 helper 返回后检查位置、层级、可见性及输入面板恢复。该行为不是跨全屏覆盖承诺。
+- 普通 Spaces 交互入口：为 QCAT_MASCOT_SPACES_REPORT 和 QCAT_MASCOT_SPACES_DONE 分配本轮唯一的临时路径，运行 `tst_mascotmacosinput nativeSpacesReview`。切到另一个普通桌面后返回，观察角色／气泡、原位恢复和透明间隙，再创建 DONE 标记。记录程序采集通知、窗口所属 Space、位置和面板状态。未形成完整往返时 JSON 保持 Pending、QtTest 明确跳过自动结论；人工结果另记，不能改写自动证据。受控全屏 Space 的通知轨迹与普通桌面人工确认分开归档。
+- 实际进程退出运行 `qcat-gallery --smoke-test --page mascot-pet`，检查双实例独立于主窗口最小化，并在主窗口关闭后退出。
+
+真实系统输入仍执行上文显式授权流程。临时部署 app 应使用本轮唯一 CFBundleIdentifier、CFBundleName 和签名标识，避免相同 bundle ID 在多个目录的开发副本造成权限记录混淆。显式 `--request-input-access --report <json>` 模式调用 [CGRequestPostEventAccess](https://developer.apple.com/documentation/coregraphics/cgrequestposteventaccess%28%29) 请求系统界面处理，正常测试只调用 [CGPreflightPostEventAccess](https://developer.apple.com/documentation/coregraphics/cgpreflightposteventaccess%28%29) 预检；无权限不注入事件。两种入口在离屏环境均返回2并覆盖旧通过报告为 Pending，随 mascot_macos_reject_headless 验证。
+
+验收后由用户关闭／移除临时权限条目，以新进程记录预检值并确认测试进程退出。若 UI 关闭或移除后预检仍为 true，须保留差异，不能记为 API 撤销确认；本轮采用删除临时验收 app 和退出全部测试进程结束使用，不通过修改系统权限数据库或重签名制造“撤销通过”证据。结构检查仅在实际运行系统输入的用例中恢复鼠标，不因权限仍有效而回写用户光标。

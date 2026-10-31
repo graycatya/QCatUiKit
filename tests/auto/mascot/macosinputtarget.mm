@@ -53,22 +53,28 @@
 int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
-    if (app.arguments().size() != 2 || QGuiApplication::platformName() != "cocoa")
+    const bool fullscreen = app.arguments().contains("--fullscreen");
+    if ((app.arguments().size() != 2 && !(fullscreen && app.arguments().size() == 3)) ||
+        QGuiApplication::platformName() != "cocoa")
         return 2;
     const NSRect bounds = NSInsetRect(NSScreen.screens.firstObject.visibleFrame, 20, 20);
     auto *window = [[QCatInputTargetWindow alloc] initWithContentRect:bounds
-                                                            styleMask:NSWindowStyleMaskBorderless
+                                                            styleMask:fullscreen ? (NSWindowStyleMaskTitled | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable) : NSWindowStyleMaskBorderless
                                                               backing:NSBackingStoreBuffered
                                                                 defer:NO];
     window.title = app.arguments()[1].toNSString();
     window.releasedWhenClosed = NO;
-    window.level = NSFloatingWindowLevel;
+    window.level = fullscreen ? NSNormalWindowLevel : NSFloatingWindowLevel;
+    if (fullscreen)
+        window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     auto *view = [[QCatInputTargetView alloc]
         initWithFrame:NSMakeRect(0, 0, bounds.size.width, bounds.size.height)];
     window.contentView = view;
     [NSApp activateIgnoringOtherApps:YES];
     [window makeKeyAndOrderFront:nil];
     [window makeFirstResponder:view];
+    if (fullscreen)
+        QTimer::singleShot(250, [&] { [window toggleFullScreen:nil]; });
     QTimer timer;
     QObject::connect(&timer, &QTimer::timeout,
                      [&]
@@ -79,7 +85,8 @@ int main(int argc, char **argv)
                                              {"window", int(window.windowNumber)},
                                              {"clicks", view.clicks},
                                              {"keys", view.keys},
-                                             {"keyWindow", bool(window.keyWindow)}})
+                                             {"keyWindow", bool(window.keyWindow)},
+                                             {"fullscreen", bool(window.styleMask & NSWindowStyleMaskFullScreen)}})
                                  .toJson(QJsonDocument::Compact);
                          fwrite(bytes.constData(), 1, size_t(bytes.size()), stdout);
                          fputc('\n', stdout);

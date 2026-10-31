@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [组件目录](COMPONENTS.md)
 
-`MascotPetController` 已提供本地与 qrc 角色包加载、精灵与 Lottie 播放、命名动作请求和角色区域交互。开发预览工具可播放自带的 CatGray Voxel 十个动作，切换动作、暂停、缩放并验证减少动效。`--lottie` 选择从 CatGray 桌宠 Blender 模型直接生成的十动作矢量包，窗口按钮可切换两种角色包。`CatMascotPet` 提供宿主直接持有的透明窗口、角色播放、气泡与窗口请求接口。窗口能力按运行会话反馈，不能据此宣布平台完整支持；组件不提供托盘；边缘气泡已提供接口；完整多屏与桌面交互仍待实机验收。
+`MascotPetController` 已提供本地与 qrc 角色包加载、精灵与 Lottie 播放、命名动作请求和角色区域交互。开发预览工具可播放自带的 CatGray Voxel 十个动作，切换动作、暂停、缩放并验证减少动效。`--lottie` 选择从 CatGray 桌宠 Blender 模型直接生成的十动作矢量包，窗口按钮可切换两种角色包。`CatMascotPet` 提供宿主直接持有的透明窗口、角色播放、气泡与窗口请求接口。窗口能力按运行会话反馈，不能据此宣布平台完整支持；组件不提供托盘；边缘气泡已提供接口；平台验收范围和版本见 [平台记录](MASCOTPLATFORMS.md)。
 
 Windows 桌面原型及跨进程输入检查见 [平台原型与验收边界](MASCOTPLATFORMS.md)。它是独立手动验证程序，不是已交付的公共桌宠窗口。
 
@@ -191,7 +191,7 @@ CatMascotPet {
 
 `capabilities` 按功能提供 status 与 reason，`platformStatus` 保持 Pending，实际桌面验收单独记录。定位、平滑移动和置顶在原生 Wayland 明确 Unavailable；窗口不会连接已安装扩展以获得这些权限。skipTaskbar 同样报告当前会话的限制。Gallery 在 Linux Wayland 会话且有 DISPLAY、没有显式 QT_QPA_PLATFORM 时优先选 xcb，以获得置顶和任务栏控制；显式 -platform／QT_QPA_PLATFORM 选择会被保留。宿主应用可按自己的窗口需求选择 Qt QPA。offscreen/minimal 不能证明桌面能力。其他 QPA 的 Qt 请求路径报告 Unknown，表示可发起请求但仍需桌面验证，不能读作完整支持。
 
-`alwaysOnTop` 默认请求置顶；不支持时不会施加标志，修改请求发 platformError。`inputTransparent` 默认 false，切换整窗穿透，宿主可随时设 false 恢复；`inputRegionsEnabled` 默认 false，默认整窗接收鼠标，不启用区域外穿透。只有宿主显式设 true 时，动态输入范围才来自当前动作、镜像、缩放后的声明区域和气泡矩形。Linux xcb 在 XShape 可用时仅更新 ShapeInput，不裁切角色画面；缺少 X11 开发依赖或 Xext 运行库的构建仍能显示角色，但 inputRegions 报告 Unavailable。Windows 使用不绘制内容的私有原生输入窗口承接声明区域，角色画面保持完整；原生鼠标消息转换为同实例 Qt 输入，支持默认全窗阻挡、区域外穿透与整窗穿透。输入窗口随角色窗口隐藏和销毁，不创建托盘或独立生命周期。创建／更新失败时发出 InputRegionUnavailable，能力报告不可用。macOS 采用完全透明的私有 AppKit 输入面板覆盖声明区域；视觉窗口整窗穿透，不应用形状掩码。该路径已在 Metal 下 DPR=1／1.25 以独立背后进程验证真实输入、气泡键盘及连续拖动，完整平台矩阵仍待验收。`dragEnabled` 控制角色拖动，原生 Wayland 使用 Qt 的系统拖动请求，其他桌面使用原生鼠标事件全局坐标；不通过 QML 局部坐标反复反推窗口位移。真实输入与透明合成须实机检查。
+`alwaysOnTop` 默认请求置顶；不支持时不会施加标志，修改请求发 platformError。`inputTransparent` 默认 false，切换整窗穿透，宿主可随时设 false 恢复；`inputRegionsEnabled` 默认 false，默认整窗接收鼠标，不启用区域外穿透。只有宿主显式设 true 时，动态输入范围才来自当前动作、镜像、缩放后的声明区域和气泡矩形。Linux xcb 在 XShape 可用时仅更新 ShapeInput，不裁切角色画面；缺少 X11 开发依赖或 Xext 运行库的构建仍能显示角色，但 inputRegions 报告 Unavailable。Windows 使用不绘制内容的私有原生输入窗口承接声明区域，角色画面保持完整；原生鼠标消息转换为同实例 Qt 输入，支持默认全窗阻挡、区域外穿透与整窗穿透。输入窗口随角色窗口隐藏和销毁，不创建托盘或独立生命周期。创建／更新失败时发出 InputRegionUnavailable，能力报告不可用。macOS 采用完全透明的私有 AppKit 输入面板覆盖声明区域；视觉窗口整窗穿透，不应用形状掩码。该路径已在 Metal 下 DPR=1／1.25 以独立背后进程验证真实输入、气泡键盘及连续拖动，macOS 约定单屏范围及排除项见平台记录。`dragEnabled` 控制角色拖动，原生 Wayland 使用 Qt 的系统拖动请求，其他桌面使用原生鼠标事件全局坐标；不通过 QML 局部坐标反复反推窗口位移。真实输入与透明合成须实机检查。
 
 角色显示默认不申请键盘焦点。用户点击气泡操作按钮后，窗口按需申请焦点，按钮可用空格再次触发；Tab／Shift+Tab 在关闭按钮、文本滚动区和操作按钮之间循环，不要求更改 macOS 系统键盘导航设置。气泡关闭、窗口隐藏或失活、开启整窗穿透后恢复被动焦点策略；再次显示角色不会沿用上一轮气泡的键盘焦点权限。主动申请发生在点击完成后，避免在按下与释放之间修改原生窗口标志。平台可能拒绝激活请求，不能仅以调用成功作为跨应用焦点验收证据。
 

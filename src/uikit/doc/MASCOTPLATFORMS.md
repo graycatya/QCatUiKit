@@ -6,10 +6,10 @@
 
 库已提供公共 CatMascotPet 桌面窗口，接入方式见角色包与播放专题。`tests/manual/mascot-probe` 用于独立验证平台窗口能力，不是应用接入 API，不依赖 Gallery、角色素材或私有库组件。
 
-| 环境 | 当前原型 | 完整桌宠平台验收 |
+| 环境 | 当前原型 | 公共桌宠平台验收 |
 | --- | --- | --- |
 | Windows | 交互原型和跨进程输入检查；实测版本及结果保存在 OpenSpec change | Pending |
-| macOS | 单屏矩形原型：真实输入检查通过，菜单与区域显示由实机人工确认 | Pending |
+| macOS | 单屏矩形原型及公共组件均有实机证据 | Passed（macOS 26.6.2／Qt 6.10.2／Metal，约定单屏范围；硬件排除项见下文） |
 | X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
 | 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 研究配套已有握手及原生操作读回证据，不作为公共组件依赖；KWin 配套研究暂缓 | Pending |
 
@@ -61,6 +61,8 @@ Qt Quick 透明无边框窗口显示测试角色区域和两个气泡按钮。�
 
 ## macOS 原型
 
+本节为研究探针历史记录，公共组件本轮结论见“macOS 本轮约定范围”。
+
 `--macos-prototype` 打开诊断窗口、独立背后测试进程、原生角色面板、气泡面板和 QCat 菜单栏项目。诊断窗口提供显示、隐藏、复位、整窗穿透、置顶和气泡开关；save 保存当前观察记录。菜单提供 show、hide、passthrough 和 exit，exit 只增加宿主退出请求计数。关闭诊断窗口才结束探针并回收背后进程、面板和菜单栏项目。
 
 角色与气泡采用两个独立矩形 NSPanel，对应两个声明输入区域，中间空白没有原生窗口。这是验证矩形区域并集的原型，不代表任意椭圆／多边形区域已经实现。角色面板使用 nonactivatingPanel 并拒绝成为 key window；气泡允许主动按钮和键盘操作，用户点击气泡时显式激活应用并设置按钮为原生响应者；两按钮提供 Tab／Shift+Tab 切换及空格触发，不修改系统键盘导航设置。整窗穿透同时设置两面板的 ignoresMouseEvents，拖动同步移动气泡，置顶使用 NSFloatingWindowLevel，关闭后使用 NSNormalWindowLevel。角色以 AppKit 绘制，诊断界面使用 Qt Quick；本探针不验证角色 Lottie、QRhi 或 Metal 渲染。窗口属性改变不能代替实际点击去向或合成像素证据。
@@ -79,7 +81,7 @@ Qt 6.10.2 Cocoa 的 setMask 实现裁剪视图图层，不能仅凭该调用认�
 | 会话 | 公共组件使用的机制与依赖 | 当前限制 |
 | --- | --- | --- |
 | Windows | Qt Quick 视觉窗口整窗穿透；私有 Win32 无绘制输入窗口使用声明区域并转换同实例鼠标消息；依赖系统 user32／gdi32 | 已有独立进程真实输入回归；完整平台矩阵仍 Pending |
-| Cocoa | Qt Quick 视觉窗口整窗穿透；私有透明 AppKit 面板覆盖声明区域并转换同实例事件 | Metal 下 DPR=1／1.25 独立进程真实输入通过；完整平台矩阵仍 Pending |
+| Cocoa | Qt Quick 视觉窗口整窗穿透；私有透明 AppKit 面板覆盖声明区域并转换同实例事件 | 本轮单屏约定范围通过；实际版本、人工证据与排除项见下文 |
 | xcb（原生 X11 或 XWayland） | Qt 定位及窗口标志；可选 X11 构建依赖、Xext 运行库及 ShapeInput 1.1；EWMH 任务栏提示 | 缺少 ShapeInput 时区域输入明确不可用；窗口管理器可限制层级；已有 XWayland 证据不能替代原生 X11 |
 | 原生 Wayland | Qt surface 输入区域与系统拖动请求；不连接 D-Bus 配套 | 精确定位、平滑定位、通用置顶及跳过任务栏不可用；真实输入与合成器行为需逐会话验收 |
 
@@ -93,10 +95,19 @@ Windows 输入窗口使用 WS_EX_NOREDIRECTIONBITMAP，不创建重定向绘制�
 
 ### macOS 公共区域输入
 
-角色视觉 NSPanel 与输入面板均关闭 hidesOnDeactivate 和 floatingPanel，避免宿主失活时隐藏或降低层级。Qt Tool 在移除置顶标志后仍默认采用浮动层，公共适配按 alwaysOnTop 显式设置 AppKit 普通／置顶层级，并同步输入面板。气泡显式点击才激活本应用；显示、动作、气泡更新及置顶开关不主动申请键盘焦点。Metal 下 DPR=1／1.25 已以独立进程验证这些行为及真实 Tab／Shift+Tab／空格关闭，完整平台矩阵仍 Pending。
+角色视觉 NSPanel 与输入面板均关闭 hidesOnDeactivate 和 floatingPanel，避免宿主失活时隐藏或降低层级。Qt Tool 在移除置顶标志后仍默认采用浮动层，公共适配按 alwaysOnTop 显式设置 AppKit 普通／置顶层级，并同步输入面板。气泡显式点击才激活本应用；显示、动作、气泡更新及置顶开关不主动申请键盘焦点。Metal 下已以独立进程验证这些行为及真实 Tab／Shift+Tab／空格关闭，本轮约定范围结论见下文。
 
 视觉窗口保持完整，并在 AppKit 层设置 ignoresMouseEvents=true 保持整窗穿透；不用会同时拒绝键盘焦点的 Qt WindowTransparentForInput 标志实现该层策略。声明区域经 QRegion 离散为矩形并与窗口边界相交，每个矩形对应完全透明、无阴影的 nonactivating NSPanel，显式设置 ignoresMouseEvents=false。面板不成为 key／main window，不使用原生 child-window 分组。窗口／工作区通知驱动位置、显隐和层级同步；使用 CoreGraphics 的窗口 ID 顺序将面板排在视觉窗口紧邻上方，不读取其他窗口内容，也不与宿主主窗口建立父子关系。矩形、椭圆、多边形的镜像、缩放及气泡范围复用公共区域数据。未开启区域模式时只需一个整窗输入面板；复杂形状的面板数量随 QRegion 矩形数增长，不代表常量资源开销。区域未变化时不反复创建／重排面板，区域缩小时释放多余面板。
 
 面板收到的原生鼠标、拖动、进入／离开及滚轮事件按 AppKit 视图与 Qt 窗口比例转为同实例 Qt 事件，避免将 Retina DPR 与逻辑缩放混为一谈。按下后保留 AppKit 的原始事件视图至释放；其间保留原始 AppKit 接收视图，声明区域更新在释放时应用。穿透／隐藏取消交互，销毁移除观察者并释放全部面板。失败发出 InputRegionUnavailable 并将能力设为不可用。该实现不扫描帧透明度、不轮询光标、不装全局事件钩子，不使用私有系统 API，不转发事件到背后应用。
 
 运行组件不需要辅助功能权限；仅显式真实输入测试程序需要用户授权以发送系统事件。无权限或无 Cocoa 桌面时报告 Pending，不能将系统命中查询、进程内合成事件或 Qt 窗口截图作为真实跨进程输入验收。原生 child-window 方案因本机窗口组命中范围扩展至父窗口而未采用；相关行为参考 [AppKit child window](https://developer.apple.com/documentation/appkit/nswindow/addchildwindow(_:ordered:))、[ignoresMouseEvents](https://developer.apple.com/documentation/appkit/nswindow/ignoresmouseevents) 与本机 Qt Cocoa 源码核对；测试范围及结果保存在 change 的 validation.md。
+
+
+## macOS 本轮约定范围
+
+macOS 26.6.2（25G83）、arm64、Qt 6.10.2 Release、Metal／Apple M4 的单屏约定范围已通过。覆盖 PNG/Lottie、窗口与气泡、动作和状态、真实区域／整窗穿透、焦点／键盘、置顶、拖动／移动、Gallery 主窗口和应用隐藏恢复、多实例清理、普通 Spaces 人工观察及独立全屏 Space 往返恢复。构建、完整 CTest 与安装消费者通过，详细命令和原始结果见 change 的 validation.md。
+
+按用户决定，多屏、硬件混合 DPI、拔屏为 Excluded，不作为本轮阻塞，也不代表已经验证。桌宠留在所属桌面，其他应用的独立全屏 Space 不显示该桌宠，返回后恢复；不承诺覆盖所有 Spaces、系统安全界面或独占全屏。普通桌面切换由用户确认正常，首次自动采集未形成有效轨迹；后续受控全屏 Space 自动记录了离开与返回，二者证据独立。
+
+临时辅助功能条目由用户确认移除，但新进程的事件发送预检最后仍为 true，API 撤销核对未记通过。验收 app 副本已删除，测试及 helper 进程均退出；这是测试工具权限诊断的保留差异，正常公共组件展示不需要辅助功能权限。该环境记录不替代其他系统版本或排除场景的验证，运行时能力仍按实际会话反馈。

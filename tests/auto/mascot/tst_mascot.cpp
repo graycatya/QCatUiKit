@@ -389,7 +389,10 @@ CatMascotPet { packageSource: "qrc:/mascot-test/data/mascot.json" }
         QTRY_VERIFY(!window->isVisible());
         QCOMPARE(controller->status(), Controller::Ready);
         const auto caps = pet->property("capabilities").toMap();
-        QCOMPARE(caps.value("position").toMap().value("status").toString(), QString("Unavailable"));
+        const auto qpa = QGuiApplication::platformName();
+        const bool directPosition = qpa == "cocoa" || qpa == "windows" || qpa == "xcb";
+        QCOMPARE(caps.value("position").toMap().value("status").toString(),
+                 directPosition ? QString("Unknown") : QString("Unavailable"));
         QSignalSpy moved(pet.get(), SIGNAL(moveEnded(QString, QString)));
         QString request;
         QVERIFY(QMetaObject::invokeMethod(pet.get(), "moveTo", Q_RETURN_ARG(QString, request),

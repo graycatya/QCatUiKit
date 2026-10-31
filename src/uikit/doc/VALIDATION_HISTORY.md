@@ -56,3 +56,10 @@ macOS / Qt 6.10.2 Release 完整构建、库／Gallery QML lint、最终 CTest 2
 用户复测仍偏移后重新打开5.2。以实际 Gallery 页面按钮和 AppKit 原生画面坐标复现20像素上移，拆分操作确认是对已显示桌宠重复调用 show()；之前直接调用 showBubble 的组件测试漏了这一步。两个显示入口改为 visible=true。PNG/Lottie 两行默认与1.25倍缩放均通过，正常缩放精确稳定，分数缩放不超过单个原生像素且不累积；5.2 恢复完成，32/41。失败轨迹、精度与输入范围见 [变更记录](../../../openspec/changes/add-mascot-pet/validation.md)。
 
 最终完整构建、库／Gallery QML lint、CTest 22/22（156.60 秒）、安装消费者、文档与 OpenSpec strict 检查均通过。
+
+
+## 2026-10-31 macOS 约定范围矩阵
+
+按用户要求排除多屏、硬件混合DPI及拔屏（Excluded，不记通过），其余单屏约定范围通过，完成7.3，进度33/41。实际Gallery生命周期/位置5 passed、独立全屏恢复3 passed、真实输入7 passed及16组检查通过；Metal渲染与生命周期的首次错误期望和缺少包路径已修正并补跑。普通Spaces与透明由用户确认，受控全屏Space另有两次通知往返记录，未覆盖首次Pending证据。完整构建、库/Gallery qmllint、CTest22/22（142.08秒）、最终无桌面拒绝检查、重新安装及安装消费者通过。
+
+用户确认移除临时辅助功能条目，但新进程最后预检仍为true，API撤销核对未记通过；本轮验收app已删除、测试及helper进程均退出。正常组件不依赖该权限。范围、失败尝试、修正和清理差异见[变更证据](../../../openspec/changes/add-mascot-pet/validation.md)，重复步骤见[VALIDATION](VALIDATION.md)。

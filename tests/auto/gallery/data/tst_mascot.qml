@@ -14,6 +14,10 @@ TestCase {
     Component { id: factory; GalleryMascotPreview { width: 680 } }
     function init() { failOnWarning(/Binding loop|ReferenceError|TypeError/); GalleryLanguage.language = "en"; }
     function cleanup() {
+        if (nativeMascotTest.nativeCocoa()) {
+            nativeMascotTest.hostAction(test, "unhideApplication")
+            nativeMascotTest.hostAction(test, "restore")
+        }
         GalleryLanguage.language = "en"
         Theme.colorScheme = ThemePalette.Light
         Theme.density = ThemePalette.Desktop
@@ -100,6 +104,52 @@ TestCase {
             checkPosition(nativeMascotTest.nativePosition(character))
         }
         pet.hide()
+    }
+    function test_nativeHostLifecycle() {
+        if (!nativeMascotTest.nativeCocoa()) skip("Requires Cocoa native windows")
+        const preview = createTemporaryObject(factory, test)
+        const pet = findChild(preview, "galleryMascotPet")
+        const second = findChild(preview, "galleryMascotSecond")
+        tryCompare(pet, "status", MascotPetController.Ready, 10000)
+        tryCompare(second, "status", MascotPetController.Ready, 10000)
+        pet.visible = true
+        second.visible = true
+        wait(250)
+        verify(nativeMascotTest.nativeState(pet).visible)
+        verify(nativeMascotTest.nativeState(second).visible)
+        const ids = nativeMascotTest.nativeIds(pet).concat(nativeMascotTest.nativeIds(second))
+        verify(ids.length >= 4)
+        for (const action of ["minimize", "hide"]) {
+            nativeMascotTest.hostAction(test, action)
+            wait(250)
+            for (const character of [pet, second]) {
+                verify(character.visible)
+                const state = nativeMascotTest.nativeState(character)
+                verify(state.visible)
+                verify(!state.miniaturized)
+            }
+            nativeMascotTest.hostAction(test, "restore")
+            wait(250)
+        }
+        nativeMascotTest.hostAction(test, "hideApplication")
+        wait(250)
+        verify(!nativeMascotTest.nativeState(pet).onScreen)
+        verify(!nativeMascotTest.nativeState(second).onScreen)
+        nativeMascotTest.hostAction(test, "unhideApplication")
+        wait(250)
+        verify(nativeMascotTest.nativeState(pet).onScreen)
+        verify(nativeMascotTest.nativeState(second).onScreen)
+        pet.close()
+        tryCompare(pet, "visible", false)
+        verify(!nativeMascotTest.nativeState(pet).visible)
+        verify(nativeMascotTest.nativeState(second).visible)
+        pet.visible = true
+        wait(150)
+        verify(nativeMascotTest.nativeState(pet).visible)
+        preview.destroy()
+        wait(200)
+        tryVerify(() => nativeMascotTest.retired(ids), 3000)
+        console.info("Host minimize/hide/restore, independent close and native cleanup passed", ids)
     }
     function test_hostControlsIndependentWindows() {
         const preview = createTemporaryObject(factory, test)

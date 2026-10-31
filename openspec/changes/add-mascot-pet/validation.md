@@ -764,3 +764,24 @@ macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal：正常缩放 bubbleDragOrigin �
 失败原始重复show证据 `build/mascot-gallery-reshow-before.txt`。测试调用真实 Gallery 按钮处理并读取原生窗口位置，但输入由 QtQuickTest 在本进程投递，不是新一轮系统鼠标注入，无辅助功能权限变更。Lottie 在测试中需先显示再等 Ready，初版在隐藏时等待导致超时，未记为通过。此前宣称 Gallery 显示问题已修复的组件级证据不覆盖此流程，以本节的实际 Gallery 按钮与原生位置证据为准。5.2 重新完成，进度恢复32/41，完整平台矩阵继续 Pending。
 
 本轮最终完整构建、库／Gallery QML lint、CTest 22/22（156.60 秒，`/tmp/qcat-gallery-reshow-ctest.log`）、重新安装后消费者离屏运行、文档检查（38 文件／525 本地链接）、OpenSpec strict 与差异空白检查通过。最新 Gallery 可执行文件已重建；本轮未提交 Git。
+
+
+## 2026-10-31 macOS 约定范围最终验收（任务7.3）
+
+环境：macOS 26.6.2（25G83）、arm64、Qt 6.10.2 Release、Metal / Apple M4；基线提交1b20065，本轮仅补测试、计划和记录。用户明确排除多屏、硬件混合DPI和拔屏，三项为 **Excluded**，没有记为Passed。其余本轮单屏约定矩阵 **Passed**；不外推其他版本或未测硬件。汇总机器记录为 `build/mascot-macos-acceptance-matrix.json`，重复执行步骤见 VALIDATION 的“macOS 约定范围矩阵”。原始文件保留在本机忽略的 build 目录，不作为已提交测试资产。
+
+| 范围 | 结果与证据 |
+| --- | --- |
+| 实际Gallery角色位置和宿主生命周期 | `build/mascot-macos-matrix-gallery.txt`：5 passed，0 failed，0 skipped。PNG/Lottie实际页面按钮、主窗口最小化/隐藏、应用隐藏/恢复、双实例隔离和原生窗口销毁回收 |
+| Metal渲染、气泡、状态、动作缓存及异步切换 | `build/mascot-macos-matrix-render-initial.txt`：14 passed、1 failed、1 skipped；原生生命周期误用离屏能力期望已修正，首次未指定Lottie包未算通过。补跑 `build/mascot-macos-matrix-render-completion.txt`：4 passed、0 failed、0 skipped，补齐生命周期和真实Lottie渲染 |
+| 真实系统输入 | `build/mascot-macos-matrix-input.txt`：7 passed、0 failed、0 skipped；同名JSON的 inputAcceptance=Passed，16组覆盖矩形/椭圆/多边形、镜像/缩放、整窗穿透、气泡和键盘、连续拖动、被动焦点、置顶切换及隐藏/失活释放。独立背后进程计数6次点击、9次按键。原始全局acceptance仍为Pending，由本节汇总范围结论，未改写原始JSON |
+| 独立全屏Space往返 | `build/mascot-macos-matrix-fullscreen.txt`：3 passed、0 failed、0 skipped。离开所属Space时输入面板隐藏，返回原位、原层级恢复；桌宠不覆盖其他应用的独立全屏Space |
+| Spaces及透明间隙 | 用户确认普通桌面切换返回、原位和透明正常。首次自动采集0次通知、Pending，原始 `build/mascot-macos-matrix-spaces-manual-initial.json` 未改成通过。修正观察者队列后，受控全屏Space单独记录2次真实通知和离开/返回；`build/mascot-macos-matrix-spaces.json` 为Passed，对应txt为3 passed。普通桌面人工结论和受控全屏自动结论分列，不互相替代 |
+| Gallery实际退出 | `build/mascot-macos-matrix-gallery-exit.txt`：`qcat-gallery --smoke-test --page mascot-pet` 退出码0 |
+| 构建和回归 | 完整构建、库/Gallery qmllint通过；`build/mascot-macos-matrix-ctest.log`：22/22，142.08秒。最终鼠标清理守卫变更后重新构建通过、无桌面拒绝检查1/1通过；两种权限入口均拒绝离屏并覆盖旧通过记录。重新安装及安装消费者离屏运行通过 |
+
+真实输入首次使用旧同名bundle身份时权限预检失败，两轮6 passed、1 skipped未记为真实输入通过。系统日志显示该身份关联多个开发副本，不能据此确定系统根因。随后以同一测试代码创建唯一临时身份QCatMacOSAcceptance，用户另行授权后完成上述真实输入。临时部署时仅在副本移除了三个无关且依赖缺失的SQL插件，未安装数据库或更改系统服务。正常公共组件不需要辅助功能权限。
+
+清理状态：用户确认关闭旧测试权限并移除QCatMacOSAcceptance条目；新进程最终CGPreflightPostEventAccess仍为true，见 `build/mascot-macos-matrix-permission-after-removal.json`，**API撤销核对未通过**，原因未确定，不宣称权限已由程序验证撤销。没有继续发送测试输入；全部本轮测试/helper进程已退出，`/tmp/qcat-macos-matrix/QCatMacOSAcceptance.app` 和 `tst_mascotmacosinput.app` 已删除，不再启动这些身份。未修改系统权限数据库。结构测试仅在实际尝试真实输入时恢复光标，避免仅因预检有效就移动用户光标。
+
+任务7.3按用户约定功能范围完成，进度33/41。权限诊断差异独立保留；Windows、原生X11、KWin、Mutter和最终跨平台复核仍未完成，不宣称全部平台验收通过。
