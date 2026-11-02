@@ -785,3 +785,30 @@ macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal：正常缩放 bubbleDragOrigin �
 清理状态：用户确认关闭旧测试权限并移除QCatMacOSAcceptance条目；新进程最终CGPreflightPostEventAccess仍为true，见 `build/mascot-macos-matrix-permission-after-removal.json`，**API撤销核对未通过**，原因未确定，不宣称权限已由程序验证撤销。没有继续发送测试输入；全部本轮测试/helper进程已退出，`/tmp/qcat-macos-matrix/QCatMacOSAcceptance.app` 和 `tst_mascotmacosinput.app` 已删除，不再启动这些身份。未修改系统权限数据库。结构测试仅在实际尝试真实输入时恢复光标，避免仅因预检有效就移动用户光标。
 
 任务7.3按用户约定功能范围完成，进度33/41。权限诊断差异独立保留；Windows、原生X11、KWin、Mutter和最终跨平台复核仍未完成，不宣称全部平台验收通过。
+
+## 2026-11-02 原生 Wayland GNOME/Mutter 无扩展集成（自动部分）
+
+环境：Ubuntu 26.04 LTS、GNOME Shell 50.1、`XDG_SESSION_TYPE=wayland`、`XDG_CURRENT_DESKTOP=ubuntu:GNOME`、单屏 HDMI-1 1920×1080、DPR 1、Qt 6.12.0 gcc_64、Release/Ninja，仓库基线提交 `bcbca0d`。本轮不使用扩展能力；公共组件不连接 `org.qcat.MascotProbe1`。用户会话中仍启用研究扩展 `mascot-probe@qcatuikit.local`，它不参与本轮公共组件测试。
+
+新增与修正：
+
+- `tests/auto/mascot/tst_mascot.cpp` 新增 `waylandDesktopIntegration`，仅在 `QCAT_MASCOT_DESKTOP=1` 且 QPA 为原生 Wayland 时运行；覆盖能力报告、明确失败、状态恢复拒绝、`QWindow.mask` 输入区域、动作／气泡同步、整窗穿透标志、渲染 alpha、隐藏恢复。
+- `bubbleDragOrigin` 原只排除 offscreen，依赖窗口定位却在原生 Wayland 误失败；现仅限 xcb／cocoa／windows 可定位桌面，Wayland 明确跳过。
+- 未修改公共库行为；Wayland 是经 `wl_surface.set_input_region` 与 `Qt::WindowTransparentForInput` 的现有 Qt 路径。
+
+自动结果（本机执行，证据在忽略的 build 目录）：
+
+- `QT_QPA_PLATFORM=wayland QCAT_MASCOT_DESKTOP=1 tst_mascot waylandDesktopIntegration`：3 passed、0 failed、0 skipped，727 ms；`build/mascot-wayland-waylandtest.txt`。
+- 全量 `tst_mascot`（同一环境）：38 passed、0 failed、10 skipped，23.6 秒；`build/mascot-wayland-all.txt`。跳过为 xcb／Windows 专用、GPU 可选，以及原生 Wayland 不可定位的坐标／拖动用例。最终代码下离屏 `mascot_contracts` 复跑 1/1 Passed，14.20 秒，非桌面契约未回归。
+- `WAYLAND_DEBUG=1`：`build/mascot-wayland-protocol.log` 记录 `wl_surface.set_input_region` 依次为全窗 64×64、区域 32×32、动作覆盖 (32,32)、气泡 (0,72 320×121)、穿透空区域、关闭后恢复 32×32。只证明协议请求，不证明真实命中。
+- 渲染：`format().alphaBufferSize()=8`；320×193 窗口空白像素 alpha=0、角色像素 alpha=255；`build/mascot-wayland-surface.png`。只证明窗口自身渲染 alpha，不证明桌面合成。
+- 被动显示：协议日志中桌宠 `show()` 未出现 `xdg_activation_v1.get_activation_token` 或 `activate` 请求，仅建立 `xdg_toplevel`、设置尺寸并提交表面；组件只在气泡按钮处理中申请焦点。该协议证据支持“显示不主动抢焦点”，未替代真实跨应用键入复测。
+- 能力与失败：position／smoothMovement／alwaysOnTop／skipTaskbar 为 Unavailable；setPosition 返回 false 并发 PositionUnavailable；moveTo 终止 Failed 并发 MoveUnavailable；restoreState 返回 `{ok=false, reason=InvalidStateOrPositionUnavailable}` 且不部分修改状态；整窗穿透切换 `Qt::WindowTransparentForInput`。
+
+### 分数缩放与人工结果
+
+- `QT_SCALE_FACTOR=1.25` 运行同一测试：3 passed、0 failed、0 skipped，684 ms；渲染表面 400×241（DPR 1.25），输入区域仍为逻辑 320×193（`(0,0 32×32)` 加 `(0,72 320×121)`），空白 alpha=0、角色 alpha=255；`build/mascot-wayland-waylandtest-scaled.txt`。这只验证分数缩放下的渲染与输入区域请求，不替代硬件混合 DPI。
+- 用户在同一会话的 Gallery 桌宠页按清单人工操作，回复“符合预期。测试完毕”。覆盖：角色背景透明无实色矩形；拖动跟随指针并在松手停止；Show message 后 Reply → Tab → 空格关闭气泡；区域输入下角色区域产生事件、透明空白到背后窗口；整窗穿透开启后不拦截输入并可恢复；Move character 显示 `MoveUnavailable` 且未移动；Hide／Show 恢复同一实例；能力列表与预期一致。证据类型为用户人工确认；GNOME Shell 50 拒绝非 Shell 进程调用截图接口，未修改系统策略，因此没有桌面截图。
+- 未覆盖且不据此声称：多屏、硬件混合 DPI、屏幕移除；任务栏／概览图标行为（skipTaskbar 已明确 Unavailable，仅验证了明确报告）；外部应用输入时被动显示／更新不抢焦点；Wayland 长文本气泡的全局边缘避让（输入区域同步由自动测试覆盖）。
+
+结论：任务 1.6 完成，单屏无扩展集成能力、明确失败与宿主恢复路径已取得自动及人工证据。任务 7.6 只覆盖单屏约定场景，多屏、混合 DPI 与拔屏仍未验证，保持未完成；平台表 Wayland 行记录单屏场景通过并保留其余硬件项 Pending，不宣称原生 Wayland 完整支持。

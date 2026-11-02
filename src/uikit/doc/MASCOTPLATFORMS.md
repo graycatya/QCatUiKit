@@ -11,7 +11,7 @@
 | Windows | 交互原型和跨进程输入检查；实测版本及结果保存在 OpenSpec change | Pending |
 | macOS | 单屏矩形原型及公共组件均有实机证据 | Passed（macOS 26.6.2／Qt 6.10.2／Metal，约定单屏范围；硬件排除项见下文） |
 | X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
-| 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 研究配套已有握手及原生操作读回证据，不作为公共组件依赖；KWin 配套研究暂缓 | Pending |
+| 原生 Wayland KWin / Mutter | 公共 CatMascotPet 在 GNOME 50.1 原生 Wayland 完成单屏无扩展验收（自动＋人工）；GNOME Shell 50 研究配套仅作历史记录，不作为公共组件依赖；KWin 配套研究暂缓 | Pending（单屏约定场景通过：透明合成、区域／整窗穿透、拖动、气泡键盘、受限能力失败；多屏、混合 DPI、拔屏与任务栏未验证） |
 
 ## Linux 原型
 
