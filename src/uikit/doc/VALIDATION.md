@@ -523,6 +523,36 @@ Gallery 的 mascot-pet 页面仅使用公共 CatMascotPet，提供两包、多�
 
 在真实桌面显式设置 `QCAT_MASCOT_DESKTOP=1` 并分别用 `QT_QPA_PLATFORM=wayland`／`xcb` 运行 `tst_mascot desktopWindowIntegration`。可设置 `QCAT_MASCOT_CAPTURE` 为 PNG 目标路径。检查定位限制、移动终态、无效状态拒绝、气泡尺寸持续有效，以及可定位环境中气泡前后角色原点相同、状态恢复与取消后无重复终态。PNG 只证明窗口渲染，不证明桌面透明合成或真实输入去向；原生 Wayland 必须保持精确定位不可用。
 
+### 原生 Wayland 无扩展集成验收
+
+公共组件在原生 Wayland 不连接、不安装也不管理任何桌面扩展或配套服务；定位、平滑移动、置顶和跳过任务栏报告不可用，相关请求必须明确失败。先确认 `QT_QPA_PLATFORM=wayland` 且会话确为原生 Wayland（不是 XWayland）。使用当前构建目录：
+
+```sh
+QT_QPA_PLATFORM=wayland QCAT_MASCOT_DESKTOP=1 <build>/tests/auto/mascot/tst_mascot waylandDesktopIntegration
+QT_QPA_PLATFORM=wayland QCAT_MASCOT_DESKTOP=1 <build>/tests/auto/mascot/tst_mascot -o <report>.txt,txt
+WAYLAND_DEBUG=1 QT_QPA_PLATFORM=wayland QCAT_MASCOT_DESKTOP=1 <build>/tests/auto/mascot/tst_mascot waylandDesktopIntegration > <protocol>.log 2>&1
+```
+
+`waylandDesktopIntegration` 检查：四个窗口能力为 Unavailable 且带原因；`setPosition` 返回 false 并发 `PositionUnavailable`；`moveTo` 终止为 Failed 并发 `MoveUnavailable`；`restoreState` 原子拒绝并保留当前状态；启用区域后 `QWindow.mask` 只包含声明区域，动作覆盖、气泡和穿透切换同步变化；渲染目标 alpha 与空白像素透明；隐藏后恢复同一实例。可设置 `QCAT_MASCOT_CAPTURE` 保存窗口自身 PNG 作为渲染 alpha 证据。
+
+`WAYLAND_DEBUG=1` 日志应出现 `wl_surface.set_input_region`：默认整窗、区域模式只含声明矩形、动作覆盖改变矩形位置、气泡加入矩形、整窗穿透时为空区域、关闭穿透后恢复。日志只证明协议请求，不证明合成器实际命中。`bubbleDragOrigin` 需要可定位 QPA，原生 Wayland 上按平台能力跳过，不能用它证明拖动。
+
+真实输入与桌面透明合成仍需人工检查。在原生 Wayland 显式选择 QPA 启动 Gallery 桌宠页：
+
+```sh
+QT_QPA_PLATFORM=wayland <build>/examples/uikit/gallery/qcat-gallery --page mascot-pet
+```
+
+1. Show character：角色背景完全透明；窗口出现在合成器决定的位置。无论是否已安装研究扩展，均不得连接扩展取得定位或置顶。
+2. 按住角色拖动：系统拖动应跟随指针，松手停止，动作和气泡不应跳位。
+3. Show message 后点击 Reply，再按 Tab 和空格：气泡按钮应获得键盘焦点并能以键盘关闭。
+4. 打开 Region input：点击角色应产生区域事件；点击角色与气泡之外的空白应到背后窗口。先把 Gallery 窗口放到桌宠下方，或使用独立背后应用。
+5. 开启整窗穿透：角色与气泡均不再拦截输入；通过 Gallery 按钮关闭穿透后恢复。
+6. Move character：应显示 `MoveUnavailable`，不得假装移动。
+7. Hide／Show character：同一实例恢复；能力列表显示定位、置顶、跳过任务栏不可用，区域输入与系统拖动需实机确认。
+
+GNOME Shell 50 拒绝对非 Shell 进程使用 `org.gnome.Shell.Screenshot`，不要为截图修改系统策略。记录用户实际操作结论；窗口自身 PNG 不能代替桌面合成、点击去向或焦点证据。
+
 
 ## 桌宠独立窗口与采样回归
 

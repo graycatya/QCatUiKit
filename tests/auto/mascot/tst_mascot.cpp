@@ -635,9 +635,10 @@ CatMascotPet {
 
     void bubbleDragOrigin()
     {
+        const auto qpa = QGuiApplication::platformName();
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
-            QGuiApplication::platformName() == "offscreen")
-            QSKIP("Requires a real desktop coordinate session");
+            (qpa != "xcb" && qpa != "cocoa" && qpa != "windows"))
+            QSKIP("Requires a position-capable desktop session");
         QQmlEngine engine;
         QQmlComponent component(&engine);
         component.setData(R"(import QtQuick
@@ -1848,6 +1849,152 @@ CatMascotPet {
         qInfo() << "Desktop QPA" << QGuiApplication::platformName() << "position limited"
                 << limited;
     }
+    void waylandDesktopIntegration()
+    {
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
+            !QGuiApplication::platformName().startsWith("wayland"))
+            QSKIP("Requires an explicitly selected native Wayland desktop");
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        auto definition = fixture();
+        definition["regions"] = QJsonArray{
+            QJsonObject{{"id", "body"},
+                        {"shape", "rect"},
+                        {"rect", QJsonArray{0, 0, 4, 4}},
+                        {"clickable", true},
+                        {"draggable", true}}};
+        auto actions = definition["actions"].toObject();
+        auto jump = actions["jump"].toObject();
+        jump["regions"] = QJsonArray{
+            QJsonObject{{"id", "jump"},
+                        {"shape", "rect"},
+                        {"rect", QJsonArray{4, 4, 4, 4}},
+                        {"clickable", true},
+                        {"draggable", true}}};
+        actions["jump"] = jump;
+        definition["actions"] = actions;
+        write(dir.path(), definition);
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 8
+    function message() { showBubble("Native Wayland message", {actions: [{id: "ok", text: "OK"}]}) }
+    function dismiss() { closeBubble(bubbleId) }
+})",
+                          QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        QVERIFY2(pet, qPrintable(component.errorString()));
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        QVERIFY(window && actor);
+        QSignalSpy errors(pet.get(), SIGNAL(platformError(QString, QString)));
+        actor->setPackageSource(QUrl::fromLocalFile(dir.path()));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        QTest::qWait(150);
+        qInfo() << "Wayland alpha buffer size" << window->format().alphaBufferSize() << "size"
+                << window->size();
+        const auto capabilities = pet->property("capabilities").toMap();
+        for (const auto &name : {"position", "smoothMovement", "alwaysOnTop", "skipTaskbar"})
+        {
+            const auto entry = capabilities.value(name).toMap();
+            QCOMPARE(entry.value("status").toString(), QString("Unavailable"));
+            QVERIFY(!entry.value("reason").toString().isEmpty());
+        }
+        QCOMPARE(capabilities.value("inputRegions").toMap().value("status").toString(),
+                 QString("Unknown"));
+        QCOMPARE(capabilities.value("systemDrag").toMap().value("status").toString(),
+                 QString("Unknown"));
+        // Stacking and positioning requests must fail explicitly and keep the prior state.
+        QVERIFY(pet->property("alwaysOnTop").toBool());
+        pet->setProperty("alwaysOnTop", false);
+        QCOMPARE(pet->property("alwaysOnTop").toBool(), false);
+        pet->setProperty("alwaysOnTop", true);
+        QCOMPARE(pet->property("alwaysOnTop").toBool(), false);
+        QCOMPARE(errors.constLast().at(0).toString(), QString("AlwaysOnTopUnavailable"));
+        bool positioned = true;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "setPosition",
+                                          Q_RETURN_ARG(bool, positioned), Q_ARG(QString, ""),
+                                          Q_ARG(QPointF, QPointF(200, 200))));
+        QVERIFY(!positioned);
+        QCOMPARE(errors.constLast().at(0).toString(), QString("PositionUnavailable"));
+        QSignalSpy moved(pet.get(), SIGNAL(moveEnded(QString, QString)));
+        QString id;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "moveTo", Q_RETURN_ARG(QString, id),
+                                          Q_ARG(QString, ""), Q_ARG(QPointF, QPointF(220, 220)),
+                                          Q_ARG(int, 60)));
+        QVERIFY(!id.isEmpty());
+        QTRY_COMPARE(moved.count(), 1);
+        QCOMPARE(moved.at(0).at(0).toString(), id);
+        QCOMPARE(moved.at(0).at(1).toString(), QString("Failed"));
+        QCOMPARE(errors.constLast().at(0).toString(), QString("MoveUnavailable"));
+        QVariant state;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "exportState", Q_RETURN_ARG(QVariant, state)));
+        QVariant restored;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "restoreState",
+                                          Q_RETURN_ARG(QVariant, restored),
+                                          Q_ARG(QVariant, state)));
+        QVERIFY(!restored.toMap().value("ok").toBool());
+        QCOMPARE(restored.toMap().value("reason").toString(),
+                 QString("InvalidStateOrPositionUnavailable"));
+        // Declared regions become the wl_surface input region; default keeps the whole window.
+        QTRY_COMPARE(window->mask(), QRegion(0, 0, window->width(), window->height()));
+        pet->setProperty("inputRegionsEnabled", true);
+        QTRY_VERIFY(window->mask().contains(QPoint(16, 16)));
+        QVERIFY(!window->mask().contains(QPoint(56, 56)));
+        actor->requestAction("jump", Controller::Replace, {{"loops", -1}});
+        QTRY_COMPARE(actor->currentAction(), QString("jump"));
+        QTRY_VERIFY(window->mask().contains(QPoint(40, 40)));
+        QVERIFY(!window->mask().contains(QPoint(16, 16)));
+        actor->resetToDefault();
+        QTRY_COMPARE(actor->currentAction(), QString("idle"));
+        QTRY_VERIFY(window->mask().contains(QPoint(16, 16)));
+        // The visible bubble joins the input region and resize; hiding it restores the size.
+        const int characterWidth = window->width();
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+        QTRY_VERIFY(window->width() > characterWidth);
+        const int bubblePoint = qRound(actor->logicalSize().height() * actor->petScale()) + 12;
+        QTRY_VERIFY(window->mask().contains(QPoint(8, bubblePoint)));
+        QTest::qWait(150);
+        const auto surface = window->grabWindow();
+        QVERIFY(!surface.isNull());
+        QVERIFY(surface.width() > characterWidth);
+        const qreal dpr = window->devicePixelRatio();
+        const QPoint emptyPoint(characterWidth + 10, 4);
+        const QPoint characterPoint(4, 4);
+        const auto physical = [dpr](const QPoint &point)
+        {
+            return QPoint(qRound(point.x() * dpr), qRound(point.y() * dpr));
+        };
+        qInfo() << "Wayland surface" << surface.size() << "dpr" << dpr << "empty alpha"
+                << surface.pixelColor(physical(emptyPoint)).alpha() << "character alpha"
+                << surface.pixelColor(physical(characterPoint)).alpha() << "mask" << window->mask();
+        QCOMPARE(surface.pixelColor(physical(emptyPoint)).alpha(), 0);
+        QCOMPARE(surface.pixelColor(physical(characterPoint)).alpha(), 255);
+        const auto capture = qEnvironmentVariable("QCAT_MASCOT_CAPTURE");
+        if (!capture.isEmpty())
+            QVERIFY(surface.save(capture));
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "dismiss"));
+        QTRY_COMPARE(window->width(), characterWidth);
+        // Whole-window passthrough maps to Qt::WindowTransparentForInput on Wayland.
+        pet->setProperty("inputTransparent", true);
+        QVERIFY(window->flags().testFlag(Qt::WindowTransparentForInput));
+        pet->setProperty("inputTransparent", false);
+        QVERIFY(!window->flags().testFlag(Qt::WindowTransparentForInput));
+        // Host recovery keeps the same instance and its state.
+        window->hide();
+        QVERIFY(!window->isVisible());
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        QVERIFY(window->isVisible());
+        window->hide();
+    }
+
     void cacheLimitConfiguration()
     {
         Controller first, second;
