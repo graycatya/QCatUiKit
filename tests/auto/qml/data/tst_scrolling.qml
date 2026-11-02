@@ -165,6 +165,9 @@ TestCase {
         for (const child of popup.contentItem.children)
             if (child instanceof CatScrollView) scroll = child;
         verify(scroll !== null);
+        // Popup.opened can precede the ColumnLayout's first polish pass.
+        verify(waitForPolish(scroll));
+        verify(waitForRendering(scroll));
         mouseDrag(scroll, 80, 200, 0, -140, Qt.LeftButton, Qt.NoModifier, 20);
         verify(scroll.contentItem.contentY > 20);
         compare(picker.selectedIndexes.length, 0, "Dragging options must not toggle a checkbox");

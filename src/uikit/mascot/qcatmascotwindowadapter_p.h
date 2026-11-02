@@ -117,6 +117,7 @@ class MascotWindowAdapter : public QObject
     QTimer m_timer;
     QTimer m_layoutTimer;
     QPoint m_layoutAnchor;
+    QPointer<QScreen> m_layoutScreen;
     int m_duration = 0;
     quint64 m_serial = 0;
     QString m_move;

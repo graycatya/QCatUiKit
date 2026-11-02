@@ -385,28 +385,46 @@ TestCase {
         const raw = chart.series[0].at(1), touch = touchEvent(chart);
         const center = Qt.point(280, 200), anchor = chart.mapToValue(center);
         // Deliver the initial contact before Qt Quick coalesces later moves for a frame.
-        touch.press(4, chart, 280, 200).commit(); wait(20);
-        touch.move(4, chart, 310, 220).commit(); wait(20);
+        touch.press(4, chart, 280, 200).commit();
+        chart.update();
+        verify(waitForRendering(chart));
+        touch.move(4, chart, 310, 220).commit();
+        tryVerify(() => {
+            const at = chart.mapToPosition(anchor);
+            return Math.abs(at.x - 310) <= 0.001 && Math.abs(at.y - 220) <= 0.001;
+        });
         let mapped = chart.mapToPosition(anchor);
         fuzzyCompare(mapped.x, 310, 0.001); fuzzyCompare(mapped.y, 220, 0.001);
         compare(chart.zoomSelecting, false);
         const before = chart.xAxis.minimum;
-        touch.stationary(4).press(8, chart, 390, 220).commit(); wait(20);
+        touch.stationary(4).press(8, chart, 390, 220).commit();
+        chart.update();
+        verify(waitForRendering(chart));
         compare(chart.xAxis.minimum, before); // Adding a finger must not jump.
         const pinchAnchor = chart.mapToValue(Qt.point(350, 220));
         const span = data.scale === 1 ? Math.log(chart.xAxis.maximum / chart.xAxis.minimum)
                                      : chart.xAxis.maximum - chart.xAxis.minimum;
-        touch.move(4, chart, 290, 240).move(8, chart, 450, 240).commit(); wait(20);
+        touch.move(4, chart, 290, 240).move(8, chart, 450, 240).commit();
+        tryVerify(() => {
+            const at = chart.mapToPosition(pinchAnchor);
+            return Math.abs(at.x - 370) <= 0.001 && Math.abs(at.y - 240) <= 0.001;
+        });
         mapped = chart.mapToPosition(pinchAnchor);
         fuzzyCompare(mapped.x, 370, 0.001); fuzzyCompare(mapped.y, 240, 0.001);
         const zoomedSpan = data.scale === 1 ? Math.log(chart.xAxis.maximum / chart.xAxis.minimum)
                                            : chart.xAxis.maximum - chart.xAxis.minimum;
         fuzzyCompare(zoomedSpan, span / 2, 0.001);
         const pinched = chart.xAxis.minimum;
-        touch.release(4, chart, 290, 240).stationary(8).commit(); wait(20);
+        touch.release(4, chart, 290, 240).stationary(8).commit();
+        chart.update();
+        verify(waitForRendering(chart));
         compare(chart.xAxis.minimum, pinched);
         const remaining = chart.mapToValue(Qt.point(450, 240));
-        touch.move(8, chart, 420, 220).commit(); wait(20);
+        touch.move(8, chart, 420, 220).commit();
+        tryVerify(() => {
+            const at = chart.mapToPosition(remaining);
+            return Math.abs(at.x - 420) <= 0.001 && Math.abs(at.y - 220) <= 0.001;
+        });
         mapped = chart.mapToPosition(remaining);
         fuzzyCompare(mapped.x, 420, 0.001); fuzzyCompare(mapped.y, 220, 0.001);
         touch.release(8, chart, 420, 220).commit();

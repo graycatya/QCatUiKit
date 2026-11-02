@@ -785,3 +785,73 @@ macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal：正常缩放 bubbleDragOrigin �
 清理状态：用户确认关闭旧测试权限并移除QCatMacOSAcceptance条目；新进程最终CGPreflightPostEventAccess仍为true，见 `build/mascot-macos-matrix-permission-after-removal.json`，**API撤销核对未通过**，原因未确定，不宣称权限已由程序验证撤销。没有继续发送测试输入；全部本轮测试/helper进程已退出，`/tmp/qcat-macos-matrix/QCatMacOSAcceptance.app` 和 `tst_mascotmacosinput.app` 已删除，不再启动这些身份。未修改系统权限数据库。结构测试仅在实际尝试真实输入时恢复光标，避免仅因预检有效就移动用户光标。
 
 任务7.3按用户约定功能范围完成，进度33/41。权限诊断差异独立保留；Windows、原生X11、KWin、Mutter和最终跨平台复核仍未完成，不宣称全部平台验收通过。
+
+## 2026-11-02 Windows 完整矩阵续验（7.2 保持 Pending）
+
+基于提交 bcbca0d，在 Windows 11 26H2、内核 10.0.26300.9711、Qt 6.12.0 MSVC2022 64-bit Release/Ninja 上执行。构建目录从现有 CMakeCache 取得，为 `build/Desktop_Qt_6_12_0_MSVC2022_64bit_Release`。默认主屏可用区为 1920×1032 逻辑像素、DPR=1；D3D11 日志列出 NVIDIA GeForce RTX 5060 Ti 等适配器，不据枚举顺序推断本轮选中的显卡。未改变系统显示配置。历史 4.4 用户人工确认仍按原记录保留，本轮没有重新执行硬件跨屏、混合 DPI 或拔屏。
+
+本轮只修改测试及验证文档，未修改公共 API、组件实现或 Gallery 业务代码：
+
+- windowsInputRouting 增加真实点击背后独立进程建立焦点基线，基线点击不计入后续路由计数。显示、置顶开关、气泡显示及更新后，真实 A 键须增加背后进程计数。
+- 读回原生 TOPMOST、TOOLWINDOW、非 APPWINDOW 和无 owner 标志；气泡使用真实 Tab 导航及空格关闭，恢复穿透后再次操作。保留原有三种形状、镜像／缩放／动作、透明区、屏幕像素、拖动及隐藏／销毁验证。
+- 将连续拖动的精确位移与平滑移动中的拖动打断分开，后者验证 Cancelled 终态唯一、旧轨迹停止且动作不变。首版合并这两项时把移动开始前位置用于位移断言，得到 (26,13) 而非 (30,20)，属于测试基线不适用；拆开后两项通过，没有调整组件行为或放宽位移断言。
+- 启用 Windows desktopBubbleEdges，覆盖明暗主题四角、长文本、三次增量更新、关闭、窗口边界及角色原点。
+
+执行结果（下列路径均为本地未提交的 build 证据）：
+
+| 检查 | 结果与证据 |
+| --- | --- |
+| 构建 tst_mascot、qcat-gallery | 通过，`build/mascot-windows-matrix-build.log` |
+| Windows D3D11 真实输入 | `windowsInputRouting`：3 passed、0 failed、0 skipped，11.951 秒；`build/mascot-windows-matrix-input-final.txt` |
+| Windows D3D11、QT_SCALE_FACTOR=1.25 | 同一原生输入矩阵 3 passed、0 failed、0 skipped，11.857 秒；`build/mascot-windows-matrix-input-125.txt`；模拟缩放不替代硬件混合 DPI |
+| Windows software 真实输入 | 同一矩阵 3 passed、0 failed、0 skipped，11.756 秒；`build/mascot-windows-matrix-input-software.txt` |
+| 原生窗口／GPU 批次 | `desktopWindowIntegration desktopScreenCoordinates desktopBubbleEdges bubbleDragOrigin independentWindowState publicBubbleKeyboardLifecycle framesRendered spriteSamplingStability lottieRendering catgrayLottieRendering asynchronousLottieHandoff actionCacheAndLatency configurableActionCache`：14 passed、1 failed、0 skipped，72.101 秒；失败为 spriteSamplingStability 的透明像素，原始 `build/mascot-windows-matrix-native.txt` 保留，不能记整批通过 |
+| 精灵采样复查 | 单独运行 spriteSamplingStability：3 passed、0 failed，1.950 秒，`build/mascot-windows-matrix-sampling-alone.txt`；随后 desktopBubbleEdges 与 spriteSamplingStability 同批 4 passed、0 failed、0 skipped，16.755 秒，`build/mascot-windows-matrix-edges-final.txt`。首轮未稳定复现的原因未确定，未修改采样实现 |
+| 窄屏模拟 | QT_SCALE_FACTOR=6、QCAT_MASCOT_EDGE_SCALE=0.125 的 desktopBubbleEdges：实际可用区 320×172，3 passed、0 failed、0 skipped，15.252 秒；`build/mascot-windows-matrix-narrow.txt` |
+| 视觉检查 | 查看 `mascot-windows-matrix-bubble-0-1821-2.png`、`mascot-windows-matrix-bubble-1-1821-925.png` 及 `mascot-windows-matrix-narrow-0-2-143.png`：明暗主题及窄屏按钮完整，文本位于受限视口，角色未被气泡裁切。窗口 PNG 不等同于桌面透明合成或真实滚轮验收 |
+| Gallery 原生宿主生命周期 | windows QPA、D3D11 下 `qcat-gallery --smoke-test --page mascot-pet` 退出码 0，双实例显示、主窗口最小化独立及关闭退出路径通过；`build/mascot-windows-matrix-gallery-native.txt` |
+| 库／Gallery qmllint | 两目标通过，`build/mascot-windows-matrix-lint.txt` |
+| 全量 CTest 首轮 | 19/21 通过，183.21 秒；`build/mascot-windows-matrix-ctest.txt`。qml_contracts 的 Scrolling::test_multiSelectPopup 报 window not shown；gallery_contracts 的 GalleryDataExamples::test_continuousAndStop(chatinput) 报 QUnifiedTimer::stopAnimationDriver: driver is not running。mascot_contracts 与 gallery_mascot_shutdown 均通过 |
+| 失败组串行复查 | 在交互会话串行重跑 qml_contracts、gallery_contracts：Gallery 通过（121.95 秒）；QML 仍失败，除多选弹出框外另有 ChartContracts::test_touchPanAndPinch(0-1)、(3-3) 数值差异。完整日志 `build/mascot-windows-matrix-recheck.txt`，总时长163.01秒，不记全量通过 |
+| 弹出框单例诊断 | offscreen/software 单独运行 `tst_qml -import <build>/qml Scrolling::test_multiSelectPopup`：3 passed、0 failed，0.347 秒；`build/mascot-windows-matrix-popup-alone.txt`。说明该失败未在单例复现，尚未确定整组状态／时序原因，未修改无关控件或图表代码 |
+| 最终文档及规格检查 | `python tools/check_docs.py` 通过（38 Markdown、528 本地链接、123 Cat 类型）；`openspec.cmd validate add-mascot-pet --strict` 与差异空白检查通过 |
+
+真实输入的普通沙箱首轮在 click 返回失败；交互桌面运行后通过，未把无输入注入能力的运行当作组件支持或失败结论。新增焦点检查首次未建立背后前台窗口，修正为真实点击建立基线后通过。输入注入只向本轮测试进程，结束恢复光标及原前台窗口；不修改系统输入权限。可重复命令与测试边界已写入 VALIDATION。
+
+当前 7.2 仍未完成：全量检查尚未全绿，窗口 PNG／几何检查未覆盖四角窄屏气泡的完整原生滚轮与输入范围、任务栏实际展示及全部平台矩阵观察。保留 Windows acceptance=Pending，进度33/41；不将本轮局部通过外推为 Windows 完整支持。原生 X11、KWin、Mutter 实机任务仍需对应桌面环境，本轮未执行，不同步主规格、不归档。
+
+## 2026-11-02 Windows 验收收尾与缺陷修复
+
+继续上述 Windows 11 26H2（10.0.26300.9711）／Qt 6.12.0 MSVC2022 64-bit Release 环境。默认实测两块 1920×1080 屏幕，DPR均为1，可用高度1032；左屏原点为(-1920,0)。仅设置测试进程的缩放变量，不改变系统 DPI 或显示器配置。
+
+### 复现与修复
+
+- 多选弹出框失败在完整 Scrolling 文件中复现：opened=true 时滚动区域实际高度仍为0。测试等待布局 polish 和渲染完成后再拖动，保留滚动及选项未误选断言；修复后该文件32 passed、0 failed，9.312秒，`build/mascot-followup-scrolling-fixed.txt`。未修改多选组件的业务行为。
+- 图表触摸改用主动请求帧同步触点增减，并等待映射坐标达到原有0.001误差界限，替代固定20ms后立即断言。接触增减本身不一定触发绘制，因此先请求更新再等待渲染；没有放宽坐标、跨度或父容器不滚动的断言。ChartContracts整组79 passed、0 failed，8.545秒，`build/mascot-followup-charts-fixed.txt`。本轮原始完整QML基线也曾387 passed，说明历史失败有时序性，未据此认定图表算法存在已复现缺陷。
+- 新增 windowsBubbleInputEdges，以独立背后进程和真实 SendInput 检查明暗主题四角的滚轮、完整按钮范围／点击、气泡与角色间隙穿透、关闭后旧气泡位置恢复穿透及角色原点。测试初版未通过QObject树找到视觉子项，改按现有视觉objectName递归定位，不把该定位失败计为组件缺陷。焦点基线等待真实点击生效，而非立即假定已取得前台。
+- 新用例在左屏右边缘复现气泡扩大导致原生窗口临时归属相邻屏幕、角色跳屏及尺寸绑定警告。私有适配在布局补偿期间保留角色锚点所在屏幕；Windows先释放旧尺寸限制，再应用内容尺寸及新限制，避免以旧最小宽度限制新尺寸。未改变其他平台的QML尺寸约束分支；共享锚点屏幕逻辑本轮仅在Windows实测。
+- Win32转出的滚轮事件此前没有时间戳，第二角的真实滚轮不能继续驱动内容滚动。为滚轮事件设置原生消息时间戳后默认、分数DPR和窄屏的八组场景通过；原有鼠标事件时间戳保持原实现。修复前失败日志属于中间诊断，不沿用为最终结果。
+
+### 最终证据
+
+| 检查 | 结果与原始记录 |
+| --- | --- |
+| 完整CTest | 首次修复后21/21通过，183.01秒，`build/mascot-followup-ctest.txt`；最终代码再次21/21通过，189.38秒，`build/mascot-followup-ctest-final.txt`。包含QML、Gallery、mascot契约和Gallery退出回归 |
+| 默认DPR原生气泡输入 | 明暗主题四角共8组，3 passed、0 failed、0 skipped，13.849秒，`build/mascot-followup-bubble-native.txt`；增加任务栏截图后最终3 passed、0 failed、0 skipped，15.271秒，`build/mascot-followup-bubble-taskbar-final.txt` |
+| 分数DPR原生输入 | QT_SCALE_FACTOR=1.25运行windowsInputRouting与windowsBubbleInputEdges，4 passed、0 failed、0 skipped，27.966秒，`build/mascot-followup-input-125-final.txt`；不作为硬件混合DPI证据 |
+| software原生输入 | 合并批次气泡输入通过，但区域输入在前台基线建立时超时，整批3 passed／1 failed，`build/mascot-followup-input-software-final.txt`；单独复查windowsInputRouting为3 passed、0 failed、0 skipped，12.840秒，`build/mascot-followup-software-routing-recheck.txt`。气泡素材在software引擎报告2048纹理上限，输入通过不作为该大图集渲染通过 |
+| 窄屏原生输入 | QT_SCALE_FACTOR=6、QCAT_MASCOT_EDGE_SCALE=0.125，实际逻辑可用区320×172；windowsBubbleInputEdges为3 passed、0 failed、0 skipped，13.837秒，`build/mascot-followup-bubble-narrow.txt` |
+| 原生窗口／状态／键盘 | `build/mascot-followup-native-final.txt`中windowsInputRouting、desktopWindowIntegration、desktopScreenCoordinates、desktopBubbleEdges、bubbleDragOrigin、independentWindowState、publicBubbleKeyboardLifecycle全部通过。该批次新气泡用例曾因前台基线未就绪失败，整批9 passed／1 failed，不记整批通过；改为等待基线后新气泡用例按上行单独通过 |
+| 任务栏实际画面 | 查看 `build/mascot-followup-taskbar-before.png` 和 `build/mascot-followup-taskbar-after.png`：仅显示桌宠时没有新增独立任务栏项；结合原生TOOLWINDOW／非APPWINDOW／无owner断言。截图只取主屏任务栏；背后进程先隐藏，未将其任务栏项当作桌宠项 |
+| Gallery原生退出 | 最终代码windows／D3D11运行 `qcat-gallery --smoke-test --page mascot-pet`退出0，`build/mascot-followup-gallery-native-final.txt`，验证双实例、宿主最小化独立及关闭清理 |
+| QML lint | 库及Gallery两个目标通过，`build/mascot-windows-matrix-lint.txt`；测试C++新增部分按.clang-format整理 |
+
+额外computer-use界面观察在取得Gallery窗口状态时应用授权等待超时，未记通过；本轮该Gallery进程已关闭。普通沙箱启动的隔离Gallery也已关闭。宿主恢复显示和关闭穿透仍以公共窗口生命周期、真实区域输入及既有Gallery公共接口测试为证据，不把界面观察超时写成组件失败。
+
+### Windows矩阵结论与范围
+
+透明显示／被动焦点、置顶与键盘、角色区域和整窗穿透、拖动／定位／平滑移动及打断、四角及窄屏长气泡滚轮／按钮／间隙、多实例／状态、关闭隐藏和宿主恢复、任务栏及宿主最小化／退出，合并前述Windows原型、角色包／Lottie、状态契约和本节最新真实输入证据。跨屏、硬件混合DPI及拔屏项目沿用2026-10-29任务4.4明确列出项目后的用户人工验收确认；本轮新增的是双屏DPR=1的边缘回归及进程模拟缩放，没有重新声称执行硬件混合DPI或拔屏。
+
+本节结论仅适用于已记录的Windows／Qt／后端和证据范围，不外推所有Windows版本，不承诺系统安全界面或独占全屏。macOS本轮未重跑；原生X11、KWin、Mutter保持Pending，最终跨平台逐条复核7.7仍未完成。测试不安装托盘、扩展、后台服务或第三方Agent，不写用户持久化存储。不自动同步主规格或归档。
+
+结合本节与已接受的历史分项证据，完成任务7.2，Windows本轮记录范围为Passed，进度34/41。这不将软件后端纹理限制、未完成的额外界面观察、未重测的硬件操作或其他平台改记为本轮自动通过。

@@ -50,13 +50,28 @@ Window {
     readonly property int contentHeight: Math.ceil(Math.max(1, sprite.height + (root.bubbleId.length > 0 ? bubble.height + 8 : 0)))
     width: contentWidth
     height: contentHeight
-    minimumWidth: desktop.capabilities.systemDrag.status === "Unavailable" ? 0 : contentWidth
-    maximumWidth: desktop.capabilities.systemDrag.status === "Unavailable" ? 16777215 : contentWidth
-    minimumHeight: desktop.capabilities.systemDrag.status === "Unavailable" ? 0 : contentHeight
-    maximumHeight: desktop.capabilities.systemDrag.status === "Unavailable" ? 16777215 : contentHeight
+    minimumWidth: Qt.platform.os === "windows" || desktop.capabilities.systemDrag.status === "Unavailable" ? 0 : contentWidth
+    maximumWidth: Qt.platform.os === "windows" || desktop.capabilities.systemDrag.status === "Unavailable" ? 16777215 : contentWidth
+    minimumHeight: Qt.platform.os === "windows" || desktop.capabilities.systemDrag.status === "Unavailable" ? 0 : contentHeight
+    maximumHeight: Qt.platform.os === "windows" || desktop.capabilities.systemDrag.status === "Unavailable" ? 16777215 : contentHeight
     function syncContentSize() {
+        // Win32 applies each size limit immediately. Release the previous
+        // limits before resizing so bubble changes cannot clamp to stale ones.
+        const fixedWindowsSize = Qt.platform.os === "windows" && desktop.capabilities.systemDrag.status !== "Unavailable"
+        if (fixedWindowsSize && (minimumWidth !== contentWidth || minimumHeight !== contentHeight)) {
+            minimumWidth = 0
+            minimumHeight = 0
+            maximumWidth = 16777215
+            maximumHeight = 16777215
+        }
         if (width !== contentWidth) width = contentWidth
         if (height !== contentHeight) height = contentHeight
+        if (fixedWindowsSize) {
+            minimumWidth = contentWidth
+            minimumHeight = contentHeight
+            maximumWidth = contentWidth
+            maximumHeight = contentHeight
+        }
     }
     onContentWidthChanged: Qt.callLater(syncContentSize)
     onContentHeightChanged: Qt.callLater(syncContentSize)

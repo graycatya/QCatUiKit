@@ -8,7 +8,7 @@
 
 | 环境 | 当前原型 | 公共桌宠平台验收 |
 | --- | --- | --- |
-| Windows | 交互原型和跨进程输入检查；实测版本及结果保存在 OpenSpec change | Pending |
+| Windows | 交互原型和公共组件均有跨进程实机证据 | Passed（Windows 11 26H2／Qt 6.12.0／D3D11；范围及硬件证据来源见下文） |
 | macOS | 单屏矩形原型及公共组件均有实机证据 | Passed（macOS 26.6.2／Qt 6.10.2／Metal，约定单屏范围；硬件排除项见下文） |
 | X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
 | 原生 Wayland KWin / Mutter | Linux Qt 窗口原型；GNOME Shell 50 研究配套已有握手及原生操作读回证据，不作为公共组件依赖；KWin 配套研究暂缓 | Pending |
@@ -80,7 +80,7 @@ Qt 6.10.2 Cocoa 的 setMask 实现裁剪视图图层，不能仅凭该调用认�
 
 | 会话 | 公共组件使用的机制与依赖 | 当前限制 |
 | --- | --- | --- |
-| Windows | Qt Quick 视觉窗口整窗穿透；私有 Win32 无绘制输入窗口使用声明区域并转换同实例鼠标消息；依赖系统 user32／gdi32 | 已有独立进程真实输入回归；完整平台矩阵仍 Pending |
+| Windows | Qt Quick 视觉窗口整窗穿透；私有 Win32 无绘制输入窗口使用声明区域并转换同实例鼠标消息；依赖系统 user32／gdi32 | 已记录环境范围通过；software输入检查不代表大图集／Lottie渲染通过，详见下文 |
 | Cocoa | Qt Quick 视觉窗口整窗穿透；私有透明 AppKit 面板覆盖声明区域并转换同实例事件 | 本轮单屏约定范围通过；实际版本、人工证据与排除项见下文 |
 | xcb（原生 X11 或 XWayland） | Qt 定位及窗口标志；可选 X11 构建依赖、Xext 运行库及 ShapeInput 1.1；EWMH 任务栏提示 | 缺少 ShapeInput 时区域输入明确不可用；窗口管理器可限制层级；已有 XWayland 证据不能替代原生 X11 |
 | 原生 Wayland | Qt surface 输入区域与系统拖动请求；不连接 D-Bus 配套 | 精确定位、平滑定位、通用置顶及跳过任务栏不可用；真实输入与合成器行为需逐会话验收 |
@@ -92,6 +92,14 @@ CatMascotPet 不连接本文的研究配套。Linux xcb 可选链接 X11 并检�
 Windows 输入窗口使用 WS_EX_NOREDIRECTIONBITMAP，不创建重定向绘制表面；SetWindowRgn 仅作用于该输入窗口。鼠标捕获保持拖动期间的连续事件，失去捕获时释放 Qt 抓取；原生物理坐标按当前窗口 DPR 转为逻辑坐标。窗口由同实例视觉窗口拥有，不独立激活、不进入任务栏，按钮显式申请的键盘焦点仍属于公共窗口。不使用全局鼠标钩子、光标轮询或向背后应用转发消息；区域外输入由系统自然投递。机制依据 [Windows 扩展样式](https://learn.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles)及 [WM_NCHITTEST 的线程边界](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-nchittest)。
 
 实现核对参考 Qt 6.12 官方源码：[xcb setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/xcb/qxcbwindow.cpp)、[Wayland setMask](https://github.com/qt/qtbase/blob/6.12/src/plugins/platforms/wayland/qwaylandwindow.cpp)。真实输入、焦点和混合 DPI 结果继续按具体版本记录，不外推支持。
+
+### Windows 本轮验收范围
+
+Windows 11 26H2（10.0.26300.9711）、Qt 6.12.0 MSVC2022 64-bit Release、D3D11 的窗口、PNG/Lottie、动作／状态、跨进程区域／整窗穿透、焦点／键盘、置顶、拖动／移动、明暗主题四角与窄屏气泡输入、任务栏及Gallery宿主生命周期已有验收证据。当前双屏DPR=1；分数DPR=1.25及320×172逻辑窄屏通过进程缩放验证，不等同硬件混合DPI。跨屏、硬件混合DPI和拔屏沿用此前用户逐项确认的人工记录，本轮未重新执行这些硬件操作；具体日期、命令和证据区分见change的validation.md。
+
+Win32滚轮消息转换保留原生时间戳，使连续显示的气泡仍可滚动。气泡布局期间保留角色锚点屏幕，Windows按释放旧尺寸限制、调整内容尺寸、设置新限制的顺序更新，避免靠近相邻屏幕时跳屏或尺寸绑定循环。
+
+software原生输入检查通过，但本机software精灵引擎报告2048纹理上限，较大示例图集的警告不作为渲染通过；Lottie仍要求有效QRhi后端。范围结论不外推其他Windows／Qt版本、所有显卡、系统安全界面或独占全屏。额外computer-use界面观察因应用授权等待超时未记通过，宿主生命周期结论采用已有原生／进程测试及公共接口证据。
 
 ### macOS 公共区域输入
 

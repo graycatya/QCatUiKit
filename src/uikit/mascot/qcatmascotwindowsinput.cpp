@@ -198,6 +198,7 @@ LRESULT CALLBACK MascotWindowsInput::windowProc(HWND window, UINT message, WPARA
             QWheelEvent event(local, global, {},
                               message == WM_MOUSEWHEEL ? QPoint(0, delta) : QPoint(-delta, 0),
                               self->m_buttons, modifiers, Qt::NoScrollPhase, false);
+            event.setTimestamp(quint32(GetMessageTime()));
             QCoreApplication::sendEvent(receiver, &event);
             return 0;
         }

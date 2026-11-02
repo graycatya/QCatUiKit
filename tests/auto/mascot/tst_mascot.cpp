@@ -44,6 +44,7 @@ class WindowsPointer
     HWND foreground = GetForegroundWindow();
     POINT original{};
     bool pressed = false;
+    int clickBaseline = 0;
 
   public:
     WindowsPointer()
@@ -85,6 +86,31 @@ class WindowsPointer
     {
         return GetForegroundWindow() == behind;
     }
+    bool coverDesktop()
+    {
+        return SetWindowPos(behind, HWND_TOPMOST, GetSystemMetrics(SM_XVIRTUALSCREEN),
+                            GetSystemMetrics(SM_YVIRTUALSCREEN),
+                            GetSystemMetrics(SM_CXVIRTUALSCREEN),
+                            GetSystemMetrics(SM_CYVIRTUALSCREEN), SWP_NOACTIVATE);
+    }
+    void hideBackdrop()
+    {
+        ShowWindow(behind, SW_HIDE);
+        QTest::qWait(250);
+    }
+    static bool captureTaskbar(const QString &path)
+    {
+        RECT bounds{};
+        const auto taskbar = FindWindowW(L"Shell_TrayWnd", nullptr);
+        auto *screen = QGuiApplication::primaryScreen();
+        if (!taskbar || !screen || screen->devicePixelRatio() != 1 ||
+            !GetWindowRect(taskbar, &bounds))
+            return false;
+        return screen
+            ->grabWindow(0, bounds.left, bounds.top, bounds.right - bounds.left,
+                         bounds.bottom - bounds.top)
+            .save(path);
+    }
     static int surfaces()
     {
         int count = 0;
@@ -113,11 +139,20 @@ class WindowsPointer
     void raise(QWindow *overlay)
     {
         SetWindowPos(reinterpret_cast<HWND>(overlay->winId()), HWND_TOPMOST, 0, 0, 0, 0,
-                       SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
     int clicks() const
     {
-        return int(reinterpret_cast<UINT_PTR>(GetPropW(behind, L"QCatClicks")));
+        return int(reinterpret_cast<UINT_PTR>(GetPropW(behind, L"QCatClicks"))) - clickBaseline;
+    }
+    bool establishBackgroundFocus()
+    {
+        prepare();
+        RECT bounds{};
+        if (!GetWindowRect(behind, &bounds) || !click({bounds.left + 20, bounds.top + 20}))
+            return false;
+        clickBaseline += clicks();
+        return backgroundActive();
     }
     QPoint point(QWindow *window, QPoint local) const
     {
@@ -159,9 +194,33 @@ class WindowsPointer
     {
         return move(p) && button(true) && button(false);
     }
+    bool wheel(QPoint p)
+    {
+        if (!move(p))
+            return false;
+        INPUT input{};
+        input.type = INPUT_MOUSE;
+        input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+        input.mi.mouseData = DWORD(-WHEEL_DELTA);
+        const bool sent = SendInput(1, &input, sizeof(INPUT)) == 1;
+        QTest::qWait(100);
+        return sent;
+    }
     bool key(QWindow *window, WORD key)
     {
-        if (GetForegroundWindow() != reinterpret_cast<HWND>(window->winId()))
+        return keyTo(reinterpret_cast<HWND>(window->winId()), key);
+    }
+    bool backgroundKey()
+    {
+        const auto before = GetPropW(behind, L"QCatKeys");
+        if (!keyTo(behind, 'A'))
+            return false;
+        return reinterpret_cast<UINT_PTR>(GetPropW(behind, L"QCatKeys")) ==
+               reinterpret_cast<UINT_PTR>(before) + 1;
+    }
+    bool keyTo(HWND destination, WORD key)
+    {
+        if (GetForegroundWindow() != destination)
             return false;
         INPUT input[2]{};
         input[0].type = input[1].type = INPUT_KEYBOARD;
@@ -664,6 +723,7 @@ CatMascotPet {
             QSKIP("Requires an explicitly selected real Windows desktop");
         WindowsPointer pointer;
         QVERIFY(pointer.available());
+        QTRY_VERIFY(pointer.establishBackgroundFocus());
         const int initialSurfaces = WindowsPointer::surfaces();
         QTemporaryDir dir;
         auto definition = fixture();
@@ -713,6 +773,21 @@ CatMascotPet {
         QVERIFY(QTest::qWaitForWindowExposed(window));
         window->setPosition(200, 300);
         QTest::qWait(200);
+        QVERIFY(pointer.backgroundActive());
+        QVERIFY(pointer.backgroundKey());
+        const auto native = reinterpret_cast<HWND>(window->winId());
+        QVERIFY(GetWindowLongPtrW(native, GWL_EXSTYLE) & WS_EX_TOOLWINDOW);
+        QVERIFY(!(GetWindowLongPtrW(native, GWL_EXSTYLE) & WS_EX_APPWINDOW));
+        QVERIFY(!GetWindow(native, GW_OWNER));
+        QVERIFY(GetWindowLongPtrW(native, GWL_EXSTYLE) & WS_EX_TOPMOST);
+        pet->setProperty("alwaysOnTop", false);
+        QTest::qWait(150);
+        QVERIFY(!(GetWindowLongPtrW(native, GWL_EXSTYLE) & WS_EX_TOPMOST));
+        QVERIFY(pointer.backgroundKey());
+        pet->setProperty("alwaysOnTop", true);
+        QTest::qWait(150);
+        QVERIFY(GetWindowLongPtrW(native, GWL_EXSTYLE) & WS_EX_TOPMOST);
+        QVERIFY(pointer.backgroundKey());
         QSignalSpy activated(actor, &Controller::regionActivated);
         const auto click = [&](QPoint local)
         {
@@ -774,6 +849,14 @@ CatMascotPet {
         QCOMPARE(activated.count(), 5);
         QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
         QTest::qWait(250);
+        QVERIFY(pointer.backgroundKey());
+        bool updated = false;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "updateBubble", Q_RETURN_ARG(bool, updated),
+                                          Q_ARG(QString, pet->property("bubbleId").toString()),
+                                          Q_ARG(QString, "Updated native message")));
+        QVERIFY(updated);
+        QTest::qWait(150);
+        QVERIFY(pointer.backgroundKey());
         std::function<QQuickItem *(QQuickItem *)> findButton = [&](QQuickItem *item) -> QQuickItem *
         {
             if (item->objectName() == "mascotBubbleAction_ok")
@@ -786,8 +869,7 @@ CatMascotPet {
         auto *button = findButton(window->contentItem());
         QVERIFY(button);
         QSignalSpy bubbleAction(pet.get(), SIGNAL(bubbleActionTriggered(QString, QString)));
-        const auto buttonPoint = [&]
-        {
+        const auto buttonPoint = [&] {
             return button->mapToScene(QPointF(button->width() / 2, button->height() / 2)).toPoint();
         };
         QVERIFY(click(buttonPoint()));
@@ -800,7 +882,18 @@ CatMascotPet {
         QCOMPARE(pointer.clicks(), 6);
         QCOMPARE(bubbleAction.count(), 2);
         pet->setProperty("inputTransparent", false);
-        QVERIFY(QMetaObject::invokeMethod(pet.get(), "clearMessage"));
+        QTest::qWait(100);
+        QVERIFY(click(buttonPoint()));
+        QCOMPARE(bubbleAction.count(), 3);
+        for (int i = 0; i < 8 && window->activeFocusItem() &&
+                        window->activeFocusItem()->objectName() != "mascotBubbleClose";
+             ++i)
+            QVERIFY(pointer.key(window, VK_TAB));
+        QVERIFY(window->activeFocusItem());
+        QCOMPARE(window->activeFocusItem()->objectName(), QString("mascotBubbleClose"));
+        QVERIFY(pointer.key(window, VK_SPACE));
+        QTRY_VERIFY(pet->property("bubbleId").toString().isEmpty());
+        QTRY_VERIFY(window->flags().testFlag(Qt::WindowDoesNotAcceptFocus));
         QTest::qWait(150);
         QVERIFY(click({5, 5}));
         QCOMPARE(pointer.clicks(), 7);
@@ -825,6 +918,26 @@ CatMascotPet {
         QTRY_VERIFY(!actor->dragging());
         QCOMPARE(window->position() - before, QPoint(qRound(30 / window->devicePixelRatio()),
                                                      qRound(20 / window->devicePixelRatio())));
+        QSignalSpy moveEnded(pet.get(), SIGNAL(moveEnded(QString, QString)));
+        QString moveId;
+        QVERIFY(QMetaObject::invokeMethod(pet.get(), "moveTo", Q_RETURN_ARG(QString, moveId),
+                                          Q_ARG(QString, ""), Q_ARG(QPointF, QPointF(500, 400)),
+                                          Q_ARG(int, 10000)));
+        const auto movingStart = pointer.point(window, {20, 20});
+        QVERIFY(pointer.move(movingStart));
+        QVERIFY(pointer.button(true));
+        QVERIFY(pointer.move(movingStart + QPoint(30, 20)));
+        QTRY_VERIFY(actor->dragging());
+        QCOMPARE(moveEnded.count(), 1);
+        QCOMPARE(moveEnded.at(0).at(0).toString(), moveId);
+        QCOMPARE(moveEnded.at(0).at(1).toString(), QString("Cancelled"));
+        QCOMPARE(actor->currentAction(), QString("polygon"));
+        QVERIFY(pointer.button(false));
+        QTRY_VERIFY(!actor->dragging());
+        const auto stopped = window->position();
+        QTest::qWait(150);
+        QCOMPARE(window->position(), stopped);
+        QCOMPARE(moveEnded.count(), 1);
         pet->setProperty("inputRegionsEnabled", false);
         QTest::qWait(100);
         QVERIFY(click({70, 70}));
@@ -1135,12 +1248,147 @@ CatMascotPet {
         qInfo() << "Native movement interruptions passed; screen-change notification simulated";
     }
 
+    void windowsBubbleInputEdges()
+    {
+#ifndef Q_OS_WIN
+        QSKIP("Windows native bubble input test");
+#else
+        if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
+            QGuiApplication::platformName() != "windows")
+            QSKIP("Requires an explicitly selected real Windows desktop");
+        QTest::failOnWarning(QRegularExpression(".*Binding loop.*"));
+        const auto taskbarCapture = qEnvironmentVariable("QCAT_MASCOT_TASKBAR_CAPTURE");
+        if (!taskbarCapture.isEmpty())
+            QVERIFY(WindowsPointer::captureTaskbar(taskbarCapture + "-before.png"));
+        WindowsPointer pointer;
+        QVERIFY(pointer.available());
+        QVERIFY(pointer.coverDesktop());
+        QTRY_VERIFY(pointer.establishBackgroundFocus());
+        QQmlEngine engine;
+        QQmlComponent component(&engine);
+        component.setData(R"(import QtQuick
+import QCatUiKit
+CatMascotPet {
+    petScale: 0.5
+    inputRegionsEnabled: true
+    theme: ThemePalette { id: palette }
+    function dark(value) { palette.colorScheme = value ? ThemePalette.Dark : ThemePalette.Light }
+    function message() { showBubble("Native scrolling message ".repeat(240), {actions: [{id: "ok", text: "Continue"}]}) }
+})",
+                          QUrl());
+        QTRY_VERIFY(component.status() != QQmlComponent::Loading);
+        QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+        std::unique_ptr<QObject> pet(component.create());
+        auto *window = qobject_cast<QQuickWindow *>(pet.get());
+        QVERIFY(window);
+        auto *actor = qvariant_cast<Controller *>(pet->property("controller"));
+        actor->setPackageSource(QUrl::fromLocalFile(QCAT_MASCOT_SAMPLE));
+        QTRY_COMPARE(actor->status(), Controller::Ready);
+        const auto scale = qEnvironmentVariable("QCAT_MASCOT_EDGE_SCALE").toDouble();
+        if (scale > 0)
+            actor->setPetScale(scale);
+        actor->pauseActions();
+        window->show();
+        QVERIFY(QTest::qWaitForWindowExposed(window));
+        QTest::qWait(200);
+        const auto available = window->screen()->availableGeometry();
+        const QPoint corners[] = {
+            available.topLeft() + QPoint(2, 2),
+            QPoint(available.right() - window->width() - 2, available.top() + 2),
+            QPoint(available.left() + 2, available.bottom() - window->height() - 2),
+            available.bottomRight() - QPoint(window->width() + 2, window->height() + 2)};
+        QSignalSpy action(pet.get(), SIGNAL(bubbleActionTriggered(QString, QString)));
+        const auto origin = [&]
+        {
+            QVariant state;
+            QMetaObject::invokeMethod(pet.get(), "exportState", Q_RETURN_ARG(QVariant, state));
+            return state.toMap().value("position").toPoint();
+        };
+        const std::function<QQuickItem *(QQuickItem *, const QString &)> findItem =
+            [&](QQuickItem *item, const QString &name) -> QQuickItem *
+        {
+            if (item->objectName() == name)
+                return item;
+            for (auto *child : item->childItems())
+                if (auto *found = findItem(child, name))
+                    return found;
+            return nullptr;
+        };
+        for (bool dark : {false, true})
+        {
+            QVERIFY(QMetaObject::invokeMethod(pet.get(), "dark", Q_ARG(QVariant, QVariant(dark))));
+            for (auto corner : corners)
+            {
+                window->setPosition(corner);
+                QTest::qWait(100);
+                const auto before = origin();
+                QVERIFY(QMetaObject::invokeMethod(pet.get(), "message"));
+                QTest::qWait(200);
+                QCOMPARE(origin(), before);
+                pointer.prepare(window);
+                auto *bubble = findItem(window->contentItem(), "mascotBubble");
+                auto *scroll = findItem(window->contentItem(), "mascotBubbleScroll");
+                auto *button = findItem(window->contentItem(), "mascotBubbleAction_ok");
+                auto *close = findItem(window->contentItem(), "mascotBubbleClose");
+                QVERIFY(bubble && scroll && button && close);
+                auto *flickable = qvariant_cast<QQuickItem *>(scroll->property("contentItem"));
+                QVERIFY(flickable);
+                for (auto *control : {button, close})
+                {
+                    const QRectF rect(control->mapToScene(QPointF()), control->size());
+                    QVERIFY(QRectF(QPointF(), window->size()).contains(rect));
+                }
+                const auto center = [&](QQuickItem *item)
+                {
+                    return pointer.point(
+                        window,
+                        item->mapToScene(QPointF(item->width() / 2, item->height() / 2)).toPoint());
+                };
+                const auto scrollBefore = flickable->property("contentY").toReal();
+                qInfo() << "Native bubble scroll" << corner << window->geometry() << "screen"
+                        << window->screen()->name() << "bubble" << bubble->position()
+                        << bubble->size() << "viewport" << scroll->size() << "content"
+                        << flickable->property("contentHeight") << "point" << center(scroll);
+                QVERIFY(pointer.wheel(center(scroll)));
+                QTRY_VERIFY(flickable->property("contentY").toReal() > scrollBefore);
+                const auto actionBefore = action.count();
+                QVERIFY(pointer.click(center(button)));
+                QTRY_COMPARE(action.count(), actionBefore + 1);
+                QCOMPARE(action.last().at(1).toString(), QString("ok"));
+                const qreal gapY = pet->property("bubbleAbove").toBool()
+                                       ? bubble->y() + bubble->height() + 4
+                                       : bubble->y() - 4;
+                const auto clicksBefore = pointer.clicks();
+                QVERIFY(pointer.click(pointer.point(window, {window->width() / 2, qRound(gapY)})));
+                QCOMPARE(pointer.clicks(), clicksBefore + 1);
+                QCOMPARE(action.count(), actionBefore + 1);
+                const auto oldBubbleCenter = center(bubble);
+                QVERIFY(pointer.click(center(close)));
+                QTRY_VERIFY(pet->property("bubbleId").toString().isEmpty());
+                QTest::qWait(100);
+                QCOMPARE(origin(), before);
+                QVERIFY(pointer.click(oldBubbleCenter));
+                QCOMPARE(pointer.clicks(), clicksBefore + 2);
+                qInfo() << "Windows native bubble edge passed" << available << corner << "dark"
+                        << dark << "DPR" << window->devicePixelRatio();
+            }
+        }
+        if (!taskbarCapture.isEmpty())
+        {
+            pointer.hideBackdrop();
+            QVERIFY(window->isVisible());
+            QVERIFY(WindowsPointer::captureTaskbar(taskbarCapture + "-after.png"));
+        }
+#endif
+    }
+
     void desktopBubbleEdges()
     {
         if (!qEnvironmentVariableIsSet("QCAT_MASCOT_DESKTOP") ||
             (QGuiApplication::platformName() != "xcb" &&
-             QGuiApplication::platformName() != "cocoa"))
-            QSKIP("Requires an explicitly selected xcb or Cocoa desktop");
+             QGuiApplication::platformName() != "cocoa" &&
+             QGuiApplication::platformName() != "windows"))
+            QSKIP("Requires an explicitly selected xcb, Cocoa or Windows desktop");
         QTest::failOnWarning(QRegularExpression(".*Binding loop.*"));
         QQmlEngine engine;
         QQmlComponent component(&engine);

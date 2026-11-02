@@ -78,7 +78,13 @@ void MascotWindowAdapter::setCharacterOffset(const QPoint &offset)
     if (m_pressed)
         m_pressWindow += delta;
     if (m_window && canPosition() && !m_dragging && !m_layoutTimer.isActive())
+    {
         m_layoutAnchor = m_window->position() + m_characterOffset;
+        const auto size = m_controller ? m_controller->logicalSize() * m_controller->petScale()
+                                       : QSize();
+        m_layoutScreen = QGuiApplication::screenAt(
+            m_layoutAnchor + QPoint(size.width() / 2, size.height() / 2));
+    }
     m_characterOffset = offset;
     if (m_window && canPosition())
     {
@@ -340,6 +346,11 @@ QScreen *MascotWindowAdapter::findScreen(const QString &id) const
     for (auto *s : QGuiApplication::screens())
         if (screenKey(s) == id)
             return s;
+    // Expanding a bubble must not change screens before its stable character
+    // anchor has been restored. Do not derive this from the changing offset.
+    if (id.isEmpty() && m_layoutTimer.isActive() &&
+        QGuiApplication::screens().contains(m_layoutScreen))
+        return m_layoutScreen;
     if (m_window && QGuiApplication::screens().contains(m_window->screen()))
         return m_window->screen();
     return QGuiApplication::primaryScreen();
