@@ -13,6 +13,8 @@
 | 版本身份 | [core](specs/core/spec.md) | `src/uikit/core/`、`tests/auto/version/tst_version.cpp` | 数字版本、渠道、ABI、QML 查询 |
 | 主题 | [theme](specs/theme/spec.md) | `qcatthemepalette.cpp`、`qml/Theme.qml`、`tests/auto/models/tst_models.cpp` | 配置、密度、覆盖、通知 |
 | 数据模型 | [models](specs/models/spec.md) | `src/uikit/models/`、`tests/auto/models/tst_models.cpp` | 表格、消息 CRUD、树快照 |
+| 桌宠角色 | [mascot-pet](specs/mascot-pet/spec.md) | `src/uikit/mascot/`、`tests/auto/mascot/` | 角色包、播放、动作、气泡、实例与状态 |
+| 桌宠桌面 | [mascot-desktop](specs/mascot-desktop/spec.md) | `qml/CatMascotPet.qml`、私有窗口适配、平台验收记录 | 输入、移动、焦点、宿主生命周期与平台限制 |
 | 体感 | [motion](specs/motion/spec.md) | `qcattiltcontroller.cpp`、`tests/auto/motion/tst_tiltcontroller.cpp` | 输入、校准、授权、失效、参数 |
 | 停靠 | [docking](specs/docking/spec.md) | `qcatdockcontroller.cpp`、`CatDockWorkspace.qml`、`tests/auto/dock/` | 注册、停靠、恢复、内容与界面权限边界 |
 | LED | [led](specs/led/spec.md) | `qcatledsource.cpp`、`qcatledmixer.cpp`、`qcatledstorage.cpp`、`qcatlightingframe.h`、`tests/auto/led/` | Source、帧、混合、仓库、输出/预览边界 |

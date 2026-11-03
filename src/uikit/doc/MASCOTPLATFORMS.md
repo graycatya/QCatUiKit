@@ -10,8 +10,10 @@
 | --- | --- | --- |
 | Windows | 交互原型和公共组件均有跨进程实机证据 | Passed（Windows 11 26H2／Qt 6.12.0／D3D11；范围及硬件证据来源见下文） |
 | macOS | 单屏矩形原型及公共组件均有实机证据 | Passed（macOS 26.6.2／Qt 6.10.2／Metal，约定单屏范围；硬件排除项见下文） |
-| X11 / XWayland | Linux 椭圆角色／矩形气泡交互原型；当前实机输入证据仅来自 GNOME Wayland 会话中的 xcb | Pending |
-| 原生 Wayland KWin / Mutter | 公共 CatMascotPet 在 GNOME 50.1 原生 Wayland 完成单屏无扩展验收（自动＋人工）；GNOME Shell 50 研究配套仅作历史记录，不作为公共组件依赖；KWin 配套研究暂缓 | Pending（单屏约定场景通过：透明合成、区域／整窗穿透、拖动、气泡键盘、受限能力失败；多屏、混合 DPI、拔屏与任务栏未验证） |
+| xcb / XWayland | Linux椭圆角色／矩形气泡原型及公共组件已有GNOME Wayland会话中的xcb证据 | 本轮记录范围通过（已有自动证据及用户接受）；不替代原生X11或原生Wayland |
+| 原生 X11 | 保留xcb实现路径，本轮不单独实测 | Excluded（用户排除，不记为通过） |
+| 原生 Wayland GNOME/Mutter | GNOME 50.1／Qt 6.12.0公共组件无扩展直接集成；已有自动检查及用户人工确认，包含多显示器与剩余约定场景 | 本轮约定范围通过；定位、平滑移动、通用置顶和跳过任务栏仍不可用，任务栏显示及系统拖动边缘吸附为已接受限制 |
+| 原生 Wayland KDE/KWin | 保留通用Wayland路径，本轮不实测，不增加专用适配 | Excluded（用户排除，不记为通过） |
 
 ## Linux 原型
 

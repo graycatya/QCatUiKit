@@ -86,3 +86,11 @@
 #### Scenario: 明确排除的硬件验收
 - WHEN 用户明确排除某平台本轮多屏、混合 DPI 或屏幕移除测试
 - THEN 记录 SHALL 将这些项目列为 Excluded 而非 Passed；其余约定矩阵通过后 SHALL 仅将已验证范围标为通过，SHALL NOT 宣称被排除的硬件场景已验证。
+
+#### Scenario: 本轮 Linux xcb 验收范围
+- WHEN 用户明确接受已有 xcb/XWayland 验证并排除独立原生 X11 实机测试
+- THEN 本轮验收 SHALL 以已记录的 xcb/XWayland 环境及证据为范围；独立原生 X11 SHALL 列为 Excluded 而非 Passed，SHALL NOT 据此宣称原生 X11 完整支持或替代原生 Wayland 验收。
+
+#### Scenario: 本轮排除 KDE Plasma/KWin 验收
+- WHEN 用户明确排除本轮 KDE Plasma/KWin 原生 Wayland 原型及完整实机矩阵
+- THEN 记录 SHALL 将该环境验收列为 Excluded 而非 Passed，SHALL NOT 据此宣称该环境完整支持；该排除项 SHALL NOT 阻塞其余约定范围收尾。

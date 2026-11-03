@@ -888,3 +888,65 @@ macOS 26.6.2 / Qt 6.10.2 arm64 Release / Metal：正常缩放 bubbleDragOrigin �
 合并Windows修复提交9659faa与GNOME/Mutter验收提交b88192c，完整保留各自原始命令、结果、人工证据与限制。两分支分别从33/41推进一个任务：Windows完成7.2，GNOME/Mutter完成1.6；合并后35/41，历史34/41计数不改写。GNOME完整矩阵7.6、原生X11、KWin及最终跨平台复核继续保持未完成。本次Windows构建和契约回归不代替Wayland实机重测。
 
 合并检查：现有Windows Release构建中的tst_mascot和qcat-gallery目标构建通过；mascot_contracts为1/1通过（16.89秒，build/mascot-merge-contracts.txt）。文档检查通过（38 Markdown、528本地链接），OpenSpec严格验证通过，未增加平台实机通过声明。
+
+## 2026-11-03 用户确认多显示器与 Linux 验收范围调整
+
+- 用户在原生 Wayland 桌宠讨论中报告“多显示器我已经测试了没问题”，本轮再次确认“刚确认的多显示器测试结果，这个没有问题”。记录为当前会话多显示器场景人工验收通过；未新增自动测试或截图，未提供屏幕布局、各屏DPR或拔屏步骤，因此不扩大为硬件混合DPI、屏幕移除或所有多屏配置已通过。
+- 用户明确“原生 X11这个不用测试了，xcb验证ok就行”。本轮接受本文已有GNOME Wayland会话中的xcb/XWayland自动及人工证据，不再要求独立原生X11测试。任务1.4和7.4按调整后的范围完成；原生X11实机矩阵记Excluded，不能改写为Passed或宣称原生X11完整支持。
+- 用户决定暂时保留原生Wayland的任务栏显示与拖到边缘吸附。skipTaskbar仍为Unavailable；拖动继续使用startSystemMove，由合成器管理。没有增加Layer Shell、桌面扩展或其他平台适配。
+- 进度37/41；剩余1.5、7.5、7.6、7.7。GNOME多显示器确认不自动完成7.6：混合DPI、拔屏、外部应用输入期间被动显示／更新不抢焦点及长气泡全局边缘场景仍无新增证据。
+
+本次仅修改规划与验收记录，不修改实现，也不声称重新运行平台实机测试。
+
+本次记录检查：`python tools/check_docs.py`通过（38 Markdown、528本地链接、123公共Cat类型）；`openspec validate add-mascot-pet --strict --no-interactive`通过；`git diff --check`通过。
+
+## 2026-11-03 用户排除 KDE Plasma/KWin Wayland 验收
+
+用户明确“KDE/KWin Wayland 验收，这个也不用测试了”。本轮任务1.5的KWin无扩展原型验收与7.5的完整实机矩阵均记Excluded，按调整后的范围关闭，不作为收尾阻塞；没有执行KWin测试，不将排除记为Passed，不宣称KWin完整支持，也不增加平台适配。此前Pending记录保留为历史事实。
+
+当前任务进度39/41，包含按用户排除范围关闭的任务，不代表39项测试全部通过。剩余7.6（GNOME其他未覆盖项）及7.7（最终规格与证据核对）。本次仅调整规划与验收记录，不修改实现。
+
+本次范围调整检查：`python tools/check_docs.py`通过（38 Markdown、528本地链接、123公共Cat类型）；`openspec validate add-mascot-pet --strict --no-interactive`通过；`git diff --check`通过。
+
+## 2026-11-03 GNOME 剩余矩阵人工确认与最终核对
+
+在明确列出GNOME剩余项目（混合DPI、拔屏、其他应用输入时显示／更新桌宠不抢焦点、长气泡屏幕边缘表现）后，用户回复“我都验证ok了”。结合此前多显示器确认及2026-11-02原生Wayland自动与人工证据，完成任务7.6。新增证据类型为用户人工确认，没有新增自动测试、截图或硬件配置日志；沿用已记录的Ubuntu 26.04／GNOME Shell 50.1／Qt 6.12.0环境上下文，不推断未报告的显示器型号、DPR组合及测试步骤。
+
+确认通过表示本轮实际体验符合约定，不能改变协议能力：position、smoothMovement、alwaysOnTop、skipTaskbar仍为Unavailable；定位／平滑移动明确失败，任务栏显示与系统拖动边缘吸附仍为用户接受的限制。长气泡人工确认不构成新增全局定位能力或所有布局下无越界的保证。
+
+### 两份差异规格的证据核对
+
+下表按Requirement逐项核对本文件已有实施、自动测试、人工验收及范围排除记录；属于已有证据审查，不声称本次重新执行测试。历史失败、Pending与阶段进度不改写，最终范围以本节及前述用户调整为准。
+
+| 规格要求 | 证据入口与最终边界 |
+| --- | --- |
+| mascot-pet R01 LocalCharacterPackage | 2026-10-28 Character Package and Sprite Playback：本地/qrc、来源边界、版本、缺失资源与代次隔离；两类包记录见Lottie and Character Interaction |
+| mascot-pet R02 RenderingAndLifecycle | 同日精灵与Lottie记录、2026-10-29播放反馈修正：真实GPU播放、隐藏／暂停／reducedMotion、明确错误及旧画面接管；software大图集限制保留 |
+| mascot-pet R03 ActionRequests | 精灵与Lottie契约记录：FIFO／替换／忽略、请求终态、无效动作、默认底态 |
+| mascot-pet R04 DragFeedback | Lottie and Character Interaction、2026-10-29公共组件输入与移动打断：拖拽抢占、InteractionBusy、结束底态与取消 |
+| mascot-pet R05 RegionsFacingAndScale | 两类包及输入记录：区域形状／覆盖优先级、朝向／镜像／缩放；2026-10-29 PNG采样稳定性 |
+| mascot-pet R06 TextBubble | 2026-10-29宿主直接集成与气泡契约：纯文本、增量、按钮只发事件、关闭及隐藏时限；后续平台边缘输入记录 |
+| mascot-pet R07 IndependentInstances | 2026-10-29 Windows多实例状态、后续平台矩阵：队列／角色／气泡与销毁隔离 |
+| mascot-pet R08 StateTransfer | 同日Windows多实例状态：版本、无效快照原子拒绝、屏幕回退、无自动存储；Wayland定位不可用时整体拒绝恢复 |
+| mascot-pet R09 HostServiceBoundary | 宿主直接集成、移除托盘记录与安装消费者：宿主负责托盘／进程／存储，无Agent／TTS／音频接入 |
+| mascot-pet R10 AsynchronousResourceLoading | 2026-10-28大角色包后台加载与原画面保留：GUI心跳、取消／销毁、代次、同路径重载及真实首帧 |
+| mascot-pet R11 ActionSceneCache | 同日动作缓存、可配置容量记录：预算／淘汰／禁用／负值拒绝／全动作预热／首帧延迟边界 |
+| mascot-desktop R01 FloatingWindow | Windows收尾、macOS焦点与矩阵、xcb窗口记录、GNOME人工确认：不抢焦点、键盘、宿主独立；Wayland置顶／任务栏能力不可用 |
+| mascot-desktop R02 InputRegions | xcb真实背后进程、Windows／macOS原生区域输入及Wayland输入区域协议与人工确认：默认阻挡、区域／整窗穿透与恢复 |
+| mascot-desktop R03 Movement | 2026-10-29移动打断、Windows／macOS后续验收：终态唯一、拖动接续；Wayland系统拖动及定位失败，不保证无吸附 |
+| mascot-desktop R04 ScreensAndBubblePlacement | Windows屏幕人工确认、macOS约定边缘矩阵、GNOME本节人工确认；macOS多屏／混合DPI／拔屏仍Excluded，Wayland无新增全局定位能力 |
+| mascot-desktop R05 HostOwnedLifecycle | 移除托盘、Gallery退出、平台矩阵及GNOME确认：关闭隐藏、宿主恢复、最小化独立和清理 |
+| mascot-desktop R06 PlatformIntegration | 公共窗口直接集成与各平台能力记录：无配套依赖、受限请求失败；研究扩展不作为公共组件路径 |
+| mascot-desktop R07 AcceptanceEvidence | Windows／macOS约定范围通过；xcb/XWayland已有证据获用户接受；GNOME合并自动与人工证据通过本轮约定范围；原生X11、KWin明确Excluded，macOS硬件排除项保留。不外推全部系统版本或合成器 |
+
+本轮没有修改实现，也没有重新执行构建、GPU或平台实机矩阵；自动检查仅覆盖文档和规格。主规格尚未同步，变更尚未归档。
+
+最终检查：`python tools/check_docs.py`通过（38 Markdown、528本地链接、123公共Cat类型）；`openspec validate add-mascot-pet --strict --no-interactive`通过；`git diff --check`通过。完成7.7，当前41/41，包含按用户排除范围关闭的任务，不表示所有平台全部测试通过。
+
+## 2026-11-03 主规格同步与归档
+
+用户明确要求同步主规格、归档并提交Git。已新增mascot-pet和mascot-desktop主规格，共18条Requirement；逐字核对同步的需求块，保留Purpose，并按项目规约补充依赖、数据模型、已知限制、非目标与假设。主规格保留Wayland能力限制、任务栏／吸附现状及验收排除边界，原始自动和人工证据随本记录归档。
+
+归档前检查：`openspec validate --specs --strict --no-interactive`为14/14通过；`python tools/check_docs.py`通过（38 Markdown、528本地链接）；`git diff --check`通过。归档目录为`openspec/changes/archive/2026-11-03-add-mascot-pet`。本轮只变更规格、文档与验收记录，未重跑构建或平台实机测试。此前“尚未同步／未归档”的说明均为各阶段当时状态。
+
+归档后链接检查首次发现VALIDATION_HISTORY中的11处旧路径，已统一指向归档记录；修正后重新执行文档、主规格严格校验及差异空白检查。
