@@ -110,20 +110,45 @@ Window {
                 height: floating.workspace.tokens.controlHeight
                 Repeater {
                     model: floating.record.tabs.length
-                    delegate: Row {
+                    delegate: Item {
                         id: tab
                         required property int index
                         readonly property string panelId: floating.record.tabs[index] || ""
                         readonly property var panel: floating.workspace.registry[panelId]
+                        readonly property bool tabActive: floating.record.active === tab.panelId
+                        readonly property bool tabHovered: tabButton.hovered || closeButton.hovered
                         opacity: floating.workspace.dragging && floating.workspace.dragId === panelId ? 0.45 : 1
+                        width: implicitWidth
                         height: floating.workspace.tokens.controlHeight
+                        implicitWidth: tabButton.implicitWidth + (closeButton.visible ? closeButton.width + 4 : 0)
+                        Rectangle {
+                            anchors.fill: parent
+                            topLeftRadius: 6
+                            topRightRadius: 6
+                            color: tab.tabActive ? floating.workspace.tokens.surface :
+                                                   tab.tabHovered ? floating.workspace.tokens.surfaceHover :
+                                                                    "transparent"
+                            border.width: tabButton.visualFocus ? 1 : 0
+                            border.color: floating.workspace.tokens.primary
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                height: 2
+                                visible: tab.tabActive
+                                color: floating.workspace.tokens.primary
+                            }
+                        }
                         DockTabButton {
                             id: tabButton
                             theme: floating.workspace.theme
                             height: parent.height
                             text: tab.panel ? tab.panel.title : tab.panelId
                             checkable: true
-                            checked: floating.record.active === tab.panelId
+                            checked: tab.tabActive
+                            leftPadding: 12
+                            rightPadding: closeButton.visible ? 4 : 12
+                            background: null
                             onClicked: floating.workspace.controller.activatePanel(tab.panelId)
                             Keys.onLeftPressed: if (!floating.workspace.layoutLocked)
                                 floating.workspace.controller.moveTab(tab.panelId, Math.max(0, tab.index - 1))
@@ -138,15 +163,19 @@ Window {
                             }
                         }
                         DockTabButton {
+                            id: closeButton
                             theme: floating.workspace.theme
-                            height: parent.height
-                            implicitWidth: floating.workspace.headerHeight
+                            width: 26
+                            height: 24
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: 2
                             padding: 0
                             tool: true
                             symbol: 2
-                            text: "×"
+                            text: qsTr("Close %1").arg(tab.panel ? tab.panel.title : "")
                             visible: tab.panel ? tab.panel.closable : false
-                            Accessible.name: qsTr("Close %1").arg(tab.panel ? tab.panel.title : "")
+                            Accessible.name: text
                             onClicked: if (tab.panel)
                                 tab.panel.closeRequested()
                         }

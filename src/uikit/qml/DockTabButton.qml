@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Shapes
 import QCatUiKit
 
 CatButton {
     id: tab
     property bool tool: false
     property int symbol: 0 // 1: detach, 2: close, 3: dock back
-    implicitWidth: tool ? tokens.controlHeight : Math.min(220, Math.max(84, implicitContentWidth + 28))
+    readonly property color symbolColor: !tab.enabled ? tab.tokens.textDisabled :
+                                                        tab.symbol === 2 && tab.tool
+                                                        && (tab.hovered || tab.down)
+                                                        ? tab.tokens.danger :
+                                                          tab.tokens.textSecondary
+    implicitWidth: tool ? tokens.controlHeight : Math.min(240, Math.max(44, implicitContentWidth
+                                                                         + leftPadding
+                                                                         + rightPadding))
     leftPadding: tool ? 0 : 14
     rightPadding: tool ? 0 : 14
     CatToolTip {
@@ -37,33 +45,70 @@ CatButton {
             visible: tab.symbol > 0
             opacity: tab.enabled ? 1 : 0.35
             Rectangle {
-                x: 1; y: 1; width: 12; height: 12
+                x: 1
+                y: 1
+                width: 12
+                height: 12
+                radius: 2
                 visible: tab.symbol !== 2
                 color: "transparent"
-                border.color: tab.tokens.textSecondary
+                border.width: 1.2
+                border.color: tab.symbolColor
+                opacity: 0.8
             }
             Rectangle {
-                x: 4; y: 4; width: 6; height: 6
+                x: 4
+                y: 4
+                width: 6
+                height: 6
+                radius: 1
                 visible: tab.symbol !== 2
-                color: tab.symbol === 1 ? tab.tokens.surface : tab.tokens.primary
-                border.color: tab.tokens.textSecondary
+                color: tab.symbol === 3 ? tab.tokens.primary : "transparent"
+                border.width: 1.2
+                border.color: tab.symbolColor
             }
-            Repeater {
-                model: tab.symbol === 2 ? 2 : 0
-                delegate: Rectangle {
-                    required property int index
-                    anchors.centerIn: parent
-                    width: 12; height: 1
-                    rotation: index === 0 ? 45 : -45
-                    color: tab.tokens.textSecondary
+            Shape {
+                anchors.centerIn: parent
+                width: 10
+                height: 10
+                visible: tab.symbol === 2
+                preferredRendererType: Shape.CurveRenderer
+                ShapePath {
+                    strokeColor: tab.symbolColor
+                    strokeWidth: 1.4
+                    capStyle: ShapePath.RoundCap
+                    fillColor: "transparent"
+                    startX: 1
+                    startY: 1
+                    PathLine {
+                        x: 9
+                        y: 9
+                    }
+                    PathMove {
+                        x: 9
+                        y: 1
+                    }
+                    PathLine {
+                        x: 1
+                        y: 9
+                    }
                 }
             }
         }
     }
     background: Rectangle {
-        color: tab.checked ? tab.tokens.surface : tab.hovered || tab.down ? tab.tokens.surfaceHover : "transparent"
-        border.width: tab.visualFocus ? 1 : 0
-        border.color: tab.tokens.primary
+        color: "transparent"
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: tab.tool ? Math.min(4, Math.max(2, Math.round((tab.height - 22) / 2))) : 0
+            radius: tab.tool ? 4 : tab.tokens.radius
+            color: tab.checked ? tab.tokens.surface :
+                                 tab.tool && tab.symbol === 2 ? tab.tokens.danger : tab.tokens.surfaceHover
+            opacity: tab.tool ? (tab.pressed ? 0.22 : tab.hovered ? 0.12 : 0) :
+                                tab.checked || tab.hovered || tab.down ? 1 : 0
+            border.width: tab.visualFocus ? 1 : 0
+            border.color: tab.tokens.primary
+        }
         Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width

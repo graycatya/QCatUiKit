@@ -649,20 +649,46 @@ Item {
                     height: control.tokens.controlHeight
                     Repeater {
                         model: groupView.group ? groupView.group.tabs.length : 0
-                        delegate: Row {
+                        delegate: Item {
                             id: tabCell
                             required property int index
                             readonly property string panelId: groupView.group.tabs[index] || ""
                             readonly property CatDockPanel panel: control.registry[panelId] || null
+                            readonly property bool tabActive: groupView.group.active === tabCell.panelId
+                            readonly property bool tabHovered: tabButton.hovered || closeButton.hovered
                             opacity: control.dragging && control.dragId === panelId ? 0.45 : 1
+                            width: implicitWidth
                             height: control.tokens.controlHeight
+                            implicitWidth: tabButton.implicitWidth + (closeButton.visible ? closeButton.width + 4 : 0)
+                            Rectangle {
+                                anchors.fill: parent
+                                topLeftRadius: 6
+                                topRightRadius: 6
+                                color: tabCell.tabActive ? control.tokens.surface :
+                                                           tabCell.tabHovered ? control.tokens.surfaceHover :
+                                                                                "transparent"
+                                border.width: tabButton.visualFocus ? 1 : 0
+                                border.color: control.tokens.primary
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+                                    height: 2
+                                    visible: tabCell.tabActive
+                                    color: control.tokens.primary
+                                }
+                            }
                             DockTabButton {
                                 id: tabButton
+                                objectName: "dockTab_" + tabCell.panelId
                                 theme: control.theme
                                 height: parent.height
                                 text: tabCell.panel ? tabCell.panel.title : tabCell.panelId
                                 checkable: true
-                                checked: groupView.group.active === tabCell.panelId
+                                checked: tabCell.tabActive
+                                leftPadding: 12
+                                rightPadding: closeButton.visible ? 4 : 12
+                                background: null
                                 Accessible.name: text
                                 onClicked: dockState.activatePanel(tabCell.panelId)
                                 Keys.onLeftPressed: if (!control.layoutLocked)
@@ -694,15 +720,20 @@ Item {
                                 }
                             }
                             DockTabButton {
+                                id: closeButton
+                                objectName: "dockTabClose_" + tabCell.panelId
                                 theme: control.theme
-                                height: parent.height
-                                implicitWidth: control.tokens.controlHeight
+                                width: 26
+                                height: 24
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                anchors.rightMargin: 2
                                 padding: 0
                                 tool: true
                                 symbol: 2
                                 visible: tabCell.panel ? tabCell.panel.closable : false
-                                text: "×"
-                                Accessible.name: qsTr("Close %1").arg(tabCell.panel ? tabCell.panel.title : "")
+                                text: qsTr("Close %1").arg(tabCell.panel ? tabCell.panel.title : "")
+                                Accessible.name: text
                                 onClicked: if (tabCell.panel)
                                     tabCell.panel.closeRequested()
                             }

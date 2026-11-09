@@ -206,8 +206,8 @@
 | --- | --- |
 | [CatAnnotatedScrollBar](../qml/CatAnnotatedScrollBar.qml) | `minimum`, `maximum`, `value`, `pageStep`, `annotations`, `annotationActivated()`；通过标签定位到滚动范围中的指定位置。 |
 | [CatPipsPager](../qml/CatPipsPager.qml) | `numberOfPages`, `selectedPageIndex`, `maxVisiblePips`, `orientation`, `visiblePages`, `pageRequested()`；通过数量有限的可选指示点切换页面。 |
-| [CatScrollBar](../qml/CatScrollBar.qml) | 拖动主题滑块，或将其附加到可滚动视图。 |
-| [CatScrollView](../qml/CatScrollView.qml) | 支持鼠标按住拖动、滚轮、触摸滑动及主题水平／垂直滚动条；输入框内拖动仍用于选取文字。 |
+| [CatScrollBar](../qml/CatScrollBar.qml) | `revealed`；拖动主题滑块，或将其附加到可滚动视图。`revealed` 为 `false` 时滑块以叠加方式隐藏，仍可悬停或拖动。 |
+| [CatScrollView](../qml/CatScrollView.qml) | 支持鼠标按住拖动、滚轮、触摸滑动及主题水平／垂直滚动条；指针进入视图时滚动条淡入，离开后隐藏；输入框内拖动仍用于选取文字。 |
 
 ## 空间
 

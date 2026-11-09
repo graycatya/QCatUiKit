@@ -20,7 +20,7 @@
 | LED | [led](specs/led/spec.md) | `qcatledsource.cpp`、`qcatledmixer.cpp`、`qcatledstorage.cpp`、`qcatlightingframe.h`、`tests/auto/led/` | Source、帧、混合、仓库、输出/预览边界 |
 | 图表 | [charts](specs/charts/spec.md) | `qcatchartaxis.cpp`、`qcatchartseries.cpp`、`qcatchartseries3d.cpp`、`qcatchartfit.cpp`、`qcatchartitem.cpp`、`tests/auto/charts/` | 核心数据/轴、网格、拟合失败与 PNG 导出 |
 | 矢量 | [vector](specs/vector/spec.md) | `src/uikit/vector/`、三个 Cat 包装组件、`tests/auto/vector/tst_vector.cpp` | 既有基线保持不变 |
-| 基础 UI | [ui-components](specs/ui-components/spec.md) | `CatButton.qml`、`CatTextField.qml`、`CatCheckBox.qml`、`CatChatInput.qml` | 主题、加载禁用、输入、复选和提交 |
+| 基础 UI | [ui-components](specs/ui-components/spec.md) | `CatButton.qml`、`CatTextField.qml`、`CatCheckBox.qml`、`CatChatInput.qml`、`CatScrollBar.qml`、`CatScrollView.qml`、`CatTitleBar.qml` | 主题、加载禁用、输入、复选、提交、叠加滚动条和标题栏按钮 |
 | 构建安装 | [build-install](specs/build-install/spec.md) | 根与模块 CMake、`cmake/QCatUiKitBuildTools.cmake`、`tests/auto/cmake/` | 配置开关、包/头入口、渠道和工具校验 |
 | 示例应用 | [gallery](specs/gallery/spec.md) | Gallery `main.cpp`、`Main.qml`、`gallerylanguage.cpp`、`tests/auto/gallery/` | CLI、导航搜索、翻译、截图和基准入口 |
 | 测试基础设施 | [validation-infrastructure](specs/validation-infrastructure/spec.md) | `tests/CMakeLists.txt`、`tests/runqttest.cmake`、各套件 CMake | 注册条件、日志、时限、GPU 边界 |
@@ -40,7 +40,7 @@
 
 当前形成的是各能力的首轮基线，不是全部公开接口逐项完成的审计。尤其下列内容尚未在新规约中细化：
 
-- 全部 Cat 控件的键盘、焦点、RTL、禁用、可访问性及窄屏场景；当前基础 UI 仅覆盖表中四个组件。
+- 全部 Cat 控件的键盘、焦点、RTL、禁用、可访问性及窄屏场景；当前基础 UI 覆盖按钮、文本输入、复选框、消息输入、叠加滚动条和标题栏按钮，其余控件仍未逐项覆盖。
 - 图表全部扩展系列、坐标转换、拾取、触摸、委托、材质和统计适配器参数。
 - LED 各种布局生成规则、全部 Deck/Provider 生命周期、项目恢复字段及预览设置。
 - Dock 原生平台交互的完整分支；体感姿态仪和控制面板的完整显示/交互契约。
