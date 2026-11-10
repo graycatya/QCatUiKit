@@ -27,14 +27,26 @@ T.Control {
                 flat: true
             }
         }
-        CatDropDownButton {
+        CatButton {
+            id: moreButton
+            objectName: "commandBarOverflow"
             theme: control.theme
+            flat: true
             text: "⋯"
-            implicitWidth: control.tokens.controlHeight
+            implicitWidth: Math.max(control.tokens.controlHeight, implicitContentWidth)
+            leftPadding: 0
+            rightPadding: 0
             visible: control.secondaryActions.length > 0
             Accessible.name: qsTr("More commands")
-            menu: CatMenu {
+            onClicked: {
+                overflow.parent = moreButton;
+                overflow.x = 0;
+                overflow.y = moreButton.height + 4;
+                overflow.open();
+            }
+            CatMenu {
                 id: overflow
+                objectName: "commandBarOverflowMenu"
                 theme: control.theme
                 Instantiator {
                     model: control.secondaryActions

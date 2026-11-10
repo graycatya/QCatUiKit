@@ -18,6 +18,7 @@ Linux 原生 Wayland Dock 的顶层拖动协议探测可选使用 `pkg-config` �
 | `QCATUIKIT_BUILD_MANUAL_TESTS` | `OFF` | 构建 tests/manual 下的交互验证程序，需开启测试 |
 | `QCATUIKIT_TEST_CHART_GPU` | `OFF` | 注册二维／三维及导出的真实图形窗口测试，需开启测试 |
 | `QCATUIKIT_TEST_LED_GPU` | `OFF` | 注册 LED 真实 GPU 测试，需开启测试 |
+| `QCATUIKIT_TEST_ACCESSIBILITY` | `OFF` | 注册原生窗口下的 Qt 进程内无障碍接口测试 `accessibility_interfaces`，需在真实桌面会话运行 |
 | `QCATUIKIT_RELEASE_CHANNEL` | `experimental` | `experimental` 或 `stable`，独立于编译模式 |
 | `CMAKE_BUILD_TYPE` | 由生成器／调用方决定 | 单配置生成器的 Debug／Release 等模式 |
 | `QCATUIKIT_INSTALL_LAYOUT` | `QT` | 跟随所用 Qt 的安装布局；`STANDALONE` 使用 GNUInstallDirs 和 `<libdir>/qml` |

@@ -5,6 +5,7 @@ add_subdirectory(charts)
 add_subdirectory(led)
 add_subdirectory(version)
 add_subdirectory(qml)
+add_subdirectory(accessibility)
 
 if(QCATUIKIT_BUILD_EXAMPLES)
     add_subdirectory(gallery)

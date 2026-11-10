@@ -70,6 +70,36 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 真实后端测试可在配置时开启 `QCATUIKIT_TEST_CHART_GPU`／`QCATUIKIT_TEST_LED_GPU`，然后通过 `ctest --test-dir build/release -R '^(chart_render|chart_3d_render|chart_export_render|led_render)$' --output-on-failure` 运行。用 `QSG_RHI_BACKEND` 选择后端并核对日志；Linux 应使用实际图形会话的 XCB／Wayland 平台，而非强制 offscreen。实际执行环境、后端与结果记录在对应 OpenSpec change 中。
 
+## 无障碍检查
+
+分两层，互不替代。
+
+控件语义随 `qml_contracts` 离屏运行，无需额外配置：
+
+```sh
+ctest --test-dir build/release -R '^qml_contracts$' --output-on-failure
+```
+
+覆盖文本派生控件的辅助名称随文本、超链接角色为 Link、文本更新后名称跟随。它只读取 QML 的 `Accessible.*` 契约，不证明平台桥接，也不验证字形是否被裁切。
+
+Qt 进程内接口检查为可选组，需在原生窗口会话运行。它查询 `QAccessibleInterface` 的名称、角色与动作，并在进程内调用 press 动作验证菜单打开；通过结果不证明操作系统桥接、屏幕阅读器或外部辅助技术可用：
+
+```sh
+cmake -S . -B build-accessibility -DCMAKE_BUILD_TYPE=Release -DQCATUIKIT_TEST_ACCESSIBILITY=ON
+cmake --build build-accessibility --target tst_accessibility
+ctest --test-dir build-accessibility -R '^accessibility_interfaces$' --output-on-failure
+```
+
+平台前提：
+
+- Windows：真实桌面会话，不能用 `offscreen`／`minimal`。
+- Linux：XCB／Wayland 图形会话（X11 可用 Xvfb）。进程内检查不验证 D-Bus 或 at-spi2；平台桥接需要另外通过外部辅助技术客户端验证。
+- macOS：cocoa 会话与窗口服务器。
+
+平台名不在 `windows`、`cocoa`、`xcb`、`wayland` 时，套件在查询前用 `QSKIP` 输出 `QCAT_ACCESSIBILITY_UNSUPPORTED_PLATFORM:` 与平台名；CTest 用 `SKIP_REGULAR_EXPRESSION` 将该结果标为 `Skipped`。平台白名单只决定是否尝试查询，不代表桥接已经启用。本机 offscreen 查询曾以 `0xC0000005` 崩溃，因此保留查询前门控，不把该现象外推到所有 Qt／平台组合。
+
+测试加载构建目录中的 QCatUiKit 模块。若结果与源码不符，先确认没有命中 Qt 前缀下已安装的旧副本；在 Windows 上尤其要保证 PATH 中构建目录优先。
+
 ## 数据量与交互验证
 
 图表数据测试实际为基础演示保留 1,000,000 条原始记录，检查概览数量、容量覆盖、删除、缩小容量和恢复；趋势演示另有拟合端点。还检查非整除分组、求和／均值、正负分离与曲线极值。页面测试验证完整整数、百万预设、反走样及持续运行后的停止。
