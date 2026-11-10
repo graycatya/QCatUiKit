@@ -9,7 +9,7 @@ QCatUiKit is a QML component library for Qt 6, with consistent theming, desktop/
 - **123 Cat-prefixed QML types across 16 Gallery categories**, covering input, navigation, layout, collections, dates, feedback, windows, conversation, and charts.
 - **Vector UI (experimental QRhi backend)**: CatSvgImage, CatLottieAnimation and CatVectorCanvas provide SVG display, playback, shapes, paths and gradients, using automatically prepared, pinned ThorVG sources and the bundled experimental QRhi implementation.
 - **[LedPreview](src/uikit/doc/LEDPREVIEW.md)**: QRhi instanced 2D/3D LEDs with four point shapes; public Deck/Storage/Mixer components support RGB, RGBW, cold/warm white and memory device output while preserving the RGBA8 API.
-- **Theming**: light and dark modes, a brand color, semantic tokens, local palettes, and reduced motion.
+- **Theming**: light and dark modes, a brand color, semantic tokens, local themes, application-defined color palettes (`colorPalette`), and reduced motion.
 - **Native charts**: 10 basic chart types, step and spline curves, gaps, dashes, range areas, preset and textured markers, six bar layouts, multiple axes, gradient/texture fills, budgeted QML delegates, selection, and streaming interactions, using a private QQuickRhiItem data layer with Qt Quick composition and a software fallback.
 - **3D charts**: bars, scatter, trajectories and regular surfaces, with camera, lighting, depth picking and slices; see the [3D guide](src/uikit/doc/CHARTS3D.md).
 - **Attitude and tilt**: aircraft telemetry display and device-independent quaternion input; see [integration](src/uikit/doc/ATTITUDE.md). The application owns sensor acquisition and flight protocols.

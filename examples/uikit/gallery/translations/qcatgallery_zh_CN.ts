@@ -183,23 +183,23 @@
     <name>CatDockWorkspace</name>
     <message>
         <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="623"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="677"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="703"/>
         <source>Float panel</source>
         <translation>浮动面板</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="683"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="709"/>
         <source>Float tab group</source>
         <translation>浮动标签组</translation>
     </message>
     <message>
         <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="632"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="705"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="735"/>
         <source>Close %1</source>
         <translation>关闭 %1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="737"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="768"/>
         <source>Resize dock panels</source>
         <translation>调整停靠面板大小</translation>
     </message>
@@ -228,17 +228,17 @@
 <context>
     <name>CatMascotPet</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="63"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="82"/>
         <source>Desktop character</source>
         <translation>桌宠</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="194"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="216"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="195"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="217"/>
         <source>Close character message</source>
         <translation>关闭桌宠消息</translation>
     </message>
@@ -549,17 +549,17 @@
 <context>
     <name>CatTitleBar</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="51"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="58"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="62"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="92"/>
         <source>Maximize or restore</source>
         <translation>最大化或还原</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="76"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="159"/>
         <source>Close window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -580,7 +580,7 @@
         <translation>停靠回去</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="149"/>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="176"/>
         <source>Close %1</source>
         <translation>关闭 %1</translation>
     </message>
@@ -6494,152 +6494,174 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>GalleryMascotPreview</name>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="36"/>
+        <location filename="../GalleryMascotPreview.qml" line="58"/>
         <source>The host owns these windows. Closing a character hides it; the host can show it again. System startup and application lifecycle belong to the host.</source>
         <translation>这些窗口由宿主持有。关闭桌宠会将其隐藏，宿主可再次显示。开机自启和应用生命周期由宿主负责。</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="43"/>
+        <location filename="../GalleryMascotPreview.qml" line="65"/>
         <source>Show character</source>
         <translation>显示桌宠</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="46"/>
+        <location filename="../GalleryMascotPreview.qml" line="68"/>
         <source>Hide character</source>
         <translation>隐藏桌宠</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="47"/>
+        <location filename="../GalleryMascotPreview.qml" line="69"/>
         <source>Second instance</source>
         <translation>第二个实例</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="49"/>
+        <location filename="../GalleryMascotPreview.qml" line="71"/>
         <source>Switch package</source>
         <translation>切换角色包</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="71"/>
+        <location filename="../GalleryMascotPreview.qml" line="95"/>
         <source>Show message</source>
         <translation>显示消息</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="74"/>
+        <location filename="../GalleryMascotPreview.qml" line="98"/>
         <source>A message from your application. &lt;b&gt;This is plain text.&lt;/b&gt;</source>
         <translation>来自应用的消息。&lt;b&gt;此处按纯文本显示。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="75"/>
+        <location filename="../GalleryMascotPreview.qml" line="99"/>
         <source>Reply</source>
         <translation>回复</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="78"/>
+        <location filename="../GalleryMascotPreview.qml" line="102"/>
         <source>Append text</source>
         <translation>追加文本</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="78"/>
+        <location filename="../GalleryMascotPreview.qml" line="102"/>
         <source> More text.</source>
         <translation> 更多文本。</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="79"/>
+        <location filename="../GalleryMascotPreview.qml" line="103"/>
         <source>Toggle input passthrough</source>
         <translation>切换输入穿透</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="80"/>
+        <location filename="../GalleryMascotPreview.qml" line="111"/>
         <source>Move character</source>
         <translation>移动桌宠</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="81"/>
+        <location filename="../GalleryMascotPreview.qml" line="112"/>
         <source>Cancel move</source>
         <translation>取消移动</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="86"/>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>Status: %1; action: %2; passthrough: %3</source>
         <translation>状态：%1；动作：%2；穿透：%3</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="13"/>
         <source>No character</source>
         <translation>未加载角色</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="14"/>
         <source>Loading</source>
         <translation>加载中</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="15"/>
         <source>Ready</source>
         <translation>就绪</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="16"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="17"/>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="85"/>
         <source>Play action %1</source>
         <translation>播放动作 %1</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>On</source>
         <translation>开启</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="21"/>
         <source>Position</source>
         <translation>定位</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="21"/>
         <source>Smooth movement</source>
         <translation>平滑移动</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="22"/>
         <source>Always on top</source>
         <translation>置顶</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="22"/>
+        <location filename="../GalleryMascotPreview.qml" line="106"/>
         <source>Region input</source>
         <translation>区域输入</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="23"/>
         <source>Whole-window passthrough</source>
         <translation>整窗穿透</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="23"/>
         <source>System dragging</source>
         <translation>系统拖动</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="24"/>
         <source>Skip taskbar</source>
         <translation>跳过任务栏</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Supported</source>
         <translation>支持</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Unavailable</source>
         <translation>不可用</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="28"/>
         <source>Unavailable in the current desktop session</source>
         <translation>当前桌面会话不提供此能力</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="30"/>
         <source>Requires desktop verification</source>
         <translation>需要桌面实机验证</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="31"/>
         <source>%1: %2 — %3</source>
         <translation>%1：%2 — %3</translation>
     </message>
@@ -7034,88 +7056,125 @@ Keep notes, drafts and everyday details together.</source>
 <context>
     <name>GallerySettingsPage</name>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="13"/>
+        <location filename="../GallerySettingsPage.qml" line="34"/>
         <source>Make it yours.</source>
         <translation>调成你喜欢的样子。</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="20"/>
+        <location filename="../GallerySettingsPage.qml" line="41"/>
         <source>One theme, every component. Changes apply throughout the gallery.</source>
         <translation>一个主题，贯穿所有组件。更改会即时应用到整个展示库。</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="31"/>
+        <location filename="../GallerySettingsPage.qml" line="52"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="36"/>
+        <location filename="../GallerySettingsPage.qml" line="57"/>
         <source>Choose the colors that feel right for your workspace.</source>
         <translation>为你的工作区选择舒适的配色。</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="45"/>
+        <location filename="../GallerySettingsPage.qml" line="67"/>
         <source>Light</source>
         <translation>亮色</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="50"/>
+        <location filename="../GallerySettingsPage.qml" line="76"/>
         <source>Dark</source>
         <translation>暗色</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="56"/>
+        <location filename="../GallerySettingsPage.qml" line="85"/>
+        <source>Custom palette</source>
+        <translation>自定义色板</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="94"/>
         <source>Accent color</source>
         <translation>主题色</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="69"/>
+        <location filename="../GallerySettingsPage.qml" line="107"/>
         <source>Accent %1</source>
         <translation>主题色 %1</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="94"/>
+        <location filename="../GallerySettingsPage.qml" line="132"/>
+        <source>Two themes side by side</source>
+        <translation>两套主题并排显示</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="137"/>
+        <source>The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.</source>
+        <translation>右侧面板使用独立的 ThemePalette，因此同一个窗口可以并列展示两种视觉风格。两个面板都只使用公开 API。</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="152"/>
+        <source>Default theme</source>
+        <translation>默认主题</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="156"/>
+        <location filename="../GallerySettingsPage.qml" line="182"/>
+        <source>Primary action</source>
+        <translation>主要操作</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="161"/>
+        <location filename="../GallerySettingsPage.qml" line="188"/>
+        <source>Secondary information</source>
+        <translation>次要信息</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="177"/>
+        <source>Custom palette theme</source>
+        <translation>自定义色板主题</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="204"/>
         <source>Interaction density</source>
         <translation>交互密度</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="99"/>
+        <location filename="../GallerySettingsPage.qml" line="209"/>
         <source>Adapt control sizes for a mouse, a touch screen or a mobile device.</source>
         <translation>为鼠标、触摸屏或移动设备调整控件尺寸。</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="108"/>
+        <location filename="../GallerySettingsPage.qml" line="218"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="113"/>
+        <location filename="../GallerySettingsPage.qml" line="223"/>
         <source>Touch</source>
         <translation>触摸</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="118"/>
+        <location filename="../GallerySettingsPage.qml" line="228"/>
         <source>Mobile</source>
         <translation>移动</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="124"/>
+        <location filename="../GallerySettingsPage.qml" line="234"/>
         <source>Reduced motion: on</source>
         <translation>减少动效：开启</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="124"/>
+        <location filename="../GallerySettingsPage.qml" line="234"/>
         <source>Reduced motion: off</source>
         <translation>减少动效：关闭</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="136"/>
-        <location filename="../GallerySettingsPage.qml" line="149"/>
+        <location filename="../GallerySettingsPage.qml" line="246"/>
+        <location filename="../GallerySettingsPage.qml" line="259"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="141"/>
+        <location filename="../GallerySettingsPage.qml" line="251"/>
         <source>Switch languages without leaving your current example.</source>
         <translation>即时切换语言，继续体验当前示例。</translation>
     </message>

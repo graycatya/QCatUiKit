@@ -45,6 +45,13 @@ For a local palette, define ThemePalette on the owning page and pass theme to it
 children. Passing a palette to one outer CatPane does not theme arbitrary app-owned
 descendants automatically. Avoid toggling global Theme from a reusable leaf control.
 
+When the built-in light and dark colors do not match the product, set colorPalette on a
+ThemePalette with the color tokens the app provides; unlisted colors fall back to the
+active colorScheme. colorPalette accepts colors only, so density, radius, fontSize and
+motion stay controlled by seed properties. Use overrides for single tokens, and read
+Theme.tokens.<name> for custom keys placed there. Invalid entries warn under the
+qcatuikit.theme logging category instead of failing silently.
+
 ## Tables
 
 TableModel has columns (unique nonempty field keys), headers and count. Use append(map),

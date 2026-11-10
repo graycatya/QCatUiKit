@@ -61,6 +61,7 @@ TestCase {
         Theme.colorScheme = ThemePalette.Light;
         Theme.density = ThemePalette.Desktop;
         Theme.reducedMotion = false;
+        Theme.colorPalette = ({});
     }
     function test_buttonInput() {
         const button = createTemporaryObject(buttonFactory, test);
@@ -183,6 +184,56 @@ TestCase {
         compare(local.theme.colorScheme, ThemePalette.Light);
         palette.reducedMotion = true;
         compare(local.theme.tokens.motionDuration, 0);
+    }
+    function test_colorPaletteIsolation() {
+        const teal = createTemporaryObject(paletteFactory, test, {
+            colorPalette: ({surface: "#123456", primary: "#00a6a6"}),
+            overrides: ({radius: 2, fontSize: 20})
+        });
+        const amber = createTemporaryObject(paletteFactory, test, {
+            colorPalette: ({surface: "#654321", primary: "#ffb000"}),
+            overrides: ({radius: 20, fontSize: 11})
+        });
+        const first = createTemporaryObject(buttonFactory, test, {theme: teal});
+        const second = createTemporaryObject(buttonFactory, test, {theme: amber});
+        verify(Qt.colorEqual(first.background.color, "#123456"));
+        verify(Qt.colorEqual(second.background.color, "#654321"));
+        verify(Qt.colorEqual(first.tokens.primary, "#00a6a6"));
+        verify(Qt.colorEqual(second.tokens.primary, "#ffb000"));
+        compare(first.background.radius, 2);
+        compare(second.background.radius, 20);
+        compare(first.font.pixelSize, 20);
+        compare(second.font.pixelSize, 11);
+        // A local palette never leaks into the default theme.
+        verify(!Qt.colorEqual(first.tokens.surface, Theme.tokens.surface));
+        verify(!Qt.colorEqual(second.tokens.surface, Theme.tokens.surface));
+    }
+    function test_colorPaletteSwitchRefreshesControl() {
+        const palette = createTemporaryObject(paletteFactory, test, {
+            colorPalette: ({surface: "#123456"}),
+            reducedMotion: true
+        });
+        const button = createTemporaryObject(buttonFactory, test, {theme: palette});
+        verify(Qt.colorEqual(button.background.color, "#123456"));
+        palette.colorPalette = ({surface: "#abcdef"});
+        wait(1);
+        verify(Qt.colorEqual(button.background.color, "#abcdef"));
+        palette.colorPalette = ({});
+        wait(1);
+        verify(Qt.colorEqual(button.background.color, Theme.tokens.surface));
+    }
+    function test_destroyedPaletteFallsBackToDefaultTheme() {
+        Theme.reducedMotion = true;
+        const palette = paletteFactory.createObject(test, {
+            colorPalette: ({surface: "#123456"}),
+            reducedMotion: true
+        });
+        const button = createTemporaryObject(buttonFactory, test, {theme: palette});
+        verify(Qt.colorEqual(button.background.color, "#123456"));
+        palette.destroy();
+        wait(10);
+        compare(button.theme, null);
+        verify(Qt.colorEqual(button.background.color, Theme.tokens.surface));
     }
     function test_componentImports_data() {
         return ["CatAccordion", "CatAlert", "CatAnnotatedScrollBar", "CatAutoSuggestBox", "CatAvatar", "CatBreadcrumb", "CatBusyIndicator", "CatButton", "CatCalendar", "CatCalendarDatePicker", "CatCarousel", "CatChatInput", "CatChatView", "CatCheckBox", "CatCircularProgress", "CatCoachMark", "CatColorPicker", "CatComboBox", "CatCommandBar", "CatCommandBarFlyout", "CatCompoundButton", "CatConicalGradient", "CatContentDialog", "CatDatePicker", "CatDialog", "CatDivider", "CatDragHandle", "CatDrawer", "CatDropDownButton", "CatEffect", "CatExpander", "CatField", "CatFileDropZone", "CatFileListView", "CatFlipView", "CatFlowView", "CatFlyout", "CatFontIcon", "CatFpsCounter", "CatGridView", "CatHyperlinkButton", "CatImage", "CatImageMotion", "CatInfoBadge", "CatIpAddressField", "CatLabel", "CatListView", "CatMarquee", "CatMenu", "CatMenuBar", "CatMenuBarItem", "CatMenuItem", "CatMenuSeparator", "CatMultiSelectComboBox", "CatNavigationView", "CatNumberBox", "CatPagination", "CatPane", "CatParticleBackdrop", "CatPasswordField", "CatPipsPager", "CatPivot", "CatPopup", "CatProgressBar", "CatProgressRing", "CatRadioButton", "CatRatingControl", "CatRepeatButton", "CatResizeHandle", "CatScrollBar", "CatScrollView", "CatSelectorBar", "CatShimmer", "CatSlider", "CatRangeSlider", "CatSliderField", "CatSpatialItem", "CatSpatialView", "CatSpinBox", "CatSplashScreen", "CatSplitButton", "CatSplitView", "CatStackView", "CatStepper", "CatSwitch", "CatTabView", "CatTableView", "CatTeachingTip", "CatTextArea", "CatTextField", "CatTimePicker", "CatTimeline", "CatTitleBar", "CatToast", "CatToggleButton", "CatToggleSplitButton", "CatToolTip", "CatTreeView", "CatTypewriter", "CatWindow"].map(name => ({

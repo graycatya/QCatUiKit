@@ -9,7 +9,7 @@ QCatUiKit 是面向 Qt 6 的 QML 组件库，提供统一主题、桌面／触�
 - **123 个 Cat 前缀 QML 类型、16 个 Gallery 分类**，覆盖输入、导航、布局、集合、日期、反馈、窗口、对话与图表。
 - **矢量 UI（实验 QRhi 后端）**：CatSvgImage、CatLottieAnimation、CatVectorCanvas，支持 SVG、动画播放、形状、路径及渐变；默认自动下载并构建固定的 ThorVG 源码及仓库内 QRhi 实现。
 - **[LedPreview 灯点预览](src/uikit/doc/LEDPREVIEW.md)**：QRhi 实例化二维/三维灯点、四种点形状；公共 Deck/Storage/Mixer 支持 RGB、RGBW、冷暖双白和设备内存输出，保留旧 RGBA8 API。
-- **主题系统**：亮暗模式、品牌色、语义 Token、局部主题和减少动效。
+- **主题系统**：亮暗模式、品牌色、语义 Token、局部主题、应用自定义色板（`colorPalette`）和减少动效。
 - **原生图表**：10 种基础图表、阶梯／样条、断点、虚线、区间面积、预设／纹理标记、六种柱状布局、多轴、渐变／纹理填充、预算委托、单选／多选及实时交互，使用私有 QQuickRhiItem 数据层与 Qt Quick 合成，保留软件回退。
 - **三维图表**：柱阵、散点、轨迹、规则曲面、相机、光照、深度拾取与切片，见 [三维图表](src/uikit/doc/CHARTS3D.md)。
 - **姿态与体感**：飞机遥测显示与设备无关四元数输入，见 [接口与接入](src/uikit/doc/ATTITUDE.md)；传感器采集与飞控协议由应用接入。

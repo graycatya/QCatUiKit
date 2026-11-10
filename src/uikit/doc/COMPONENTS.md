@@ -250,7 +250,7 @@
 
 | 类型 | 说明 |
 | --- | --- |
-| Theme / ThemePalette | 每个引擎的默认主题与可显式传入的局部主题，见 [主题](THEMING.md) |
+| Theme / ThemePalette | 每个引擎的默认主题与可显式传入的局部主题；`colorPalette` 让应用提供自己的颜色，`overrides` 扩展自定义 token，见 [主题](THEMING.md) |
 | TableModel / ChatModel / TreeModel | 表格、消息和层次数据，见 [模型](MODELS.md) |
 | QCatUiKit | 只读运行时版本单例，见 [版本管理](VERSIONING.md) |
 

@@ -183,23 +183,23 @@
     <name>CatDockWorkspace</name>
     <message>
         <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="623"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="677"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="703"/>
         <source>Float panel</source>
         <translation>Float panel</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="683"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="709"/>
         <source>Float tab group</source>
         <translation>Float tab group</translation>
     </message>
     <message>
         <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="632"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="705"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="735"/>
         <source>Close %1</source>
         <translation>Close %1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="737"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="768"/>
         <source>Resize dock panels</source>
         <translation>Resize dock panels</translation>
     </message>
@@ -228,17 +228,17 @@
 <context>
     <name>CatMascotPet</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="63"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="82"/>
         <source>Desktop character</source>
         <translation>Desktop character</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="194"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="216"/>
         <source>Close</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="195"/>
+        <location filename="../../../../src/uikit/qml/CatMascotPet.qml" line="217"/>
         <source>Close character message</source>
         <translation>Close character message</translation>
     </message>
@@ -549,17 +549,17 @@
 <context>
     <name>CatTitleBar</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="51"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="58"/>
         <source>Minimize</source>
         <translation>Minimize</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="62"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="92"/>
         <source>Maximize or restore</source>
         <translation>Maximize or restore</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="76"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="159"/>
         <source>Close window</source>
         <translation>Close window</translation>
     </message>
@@ -580,7 +580,7 @@
         <translation>Dock back</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="149"/>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="176"/>
         <source>Close %1</source>
         <translation>Close %1</translation>
     </message>
@@ -6494,152 +6494,174 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GalleryMascotPreview</name>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="36"/>
+        <location filename="../GalleryMascotPreview.qml" line="58"/>
         <source>The host owns these windows. Closing a character hides it; the host can show it again. System startup and application lifecycle belong to the host.</source>
         <translation>The host owns these windows. Closing a character hides it; the host can show it again. System startup and application lifecycle belong to the host.</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="43"/>
+        <location filename="../GalleryMascotPreview.qml" line="65"/>
         <source>Show character</source>
         <translation>Show character</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="46"/>
+        <location filename="../GalleryMascotPreview.qml" line="68"/>
         <source>Hide character</source>
         <translation>Hide character</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="47"/>
+        <location filename="../GalleryMascotPreview.qml" line="69"/>
         <source>Second instance</source>
         <translation>Second instance</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="49"/>
+        <location filename="../GalleryMascotPreview.qml" line="71"/>
         <source>Switch package</source>
         <translation>Switch package</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="71"/>
+        <location filename="../GalleryMascotPreview.qml" line="95"/>
         <source>Show message</source>
         <translation>Show message</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="74"/>
+        <location filename="../GalleryMascotPreview.qml" line="98"/>
         <source>A message from your application. &lt;b&gt;This is plain text.&lt;/b&gt;</source>
         <translation>A message from your application. &lt;b&gt;This is plain text.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="75"/>
+        <location filename="../GalleryMascotPreview.qml" line="99"/>
         <source>Reply</source>
         <translation>Reply</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="78"/>
+        <location filename="../GalleryMascotPreview.qml" line="102"/>
         <source>Append text</source>
         <translation>Append text</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="78"/>
+        <location filename="../GalleryMascotPreview.qml" line="102"/>
         <source> More text.</source>
         <translation> More text.</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="79"/>
+        <location filename="../GalleryMascotPreview.qml" line="103"/>
         <source>Toggle input passthrough</source>
         <translation>Toggle input passthrough</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="80"/>
+        <location filename="../GalleryMascotPreview.qml" line="111"/>
         <source>Move character</source>
         <translation>Move character</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="81"/>
+        <location filename="../GalleryMascotPreview.qml" line="112"/>
         <source>Cancel move</source>
         <translation>Cancel move</translation>
     </message>
     <message>
-        <location filename="../GalleryMascotPreview.qml" line="86"/>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>Status: %1; action: %2; passthrough: %3</source>
         <translation>Status: %1; action: %2; passthrough: %3</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="13"/>
         <source>No character</source>
         <translation>No character</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="14"/>
         <source>Loading</source>
         <translation>Loading</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="15"/>
         <source>Ready</source>
         <translation>Ready</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="16"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="17"/>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="85"/>
         <source>Play action %1</source>
         <translation>Play action %1</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>On</source>
         <translation>On</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="118"/>
         <source>Off</source>
         <translation>Off</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="21"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="21"/>
         <source>Smooth movement</source>
         <translation>Smooth movement</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="22"/>
         <source>Always on top</source>
         <translation>Always on top</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="22"/>
+        <location filename="../GalleryMascotPreview.qml" line="106"/>
         <source>Region input</source>
         <translation>Region input</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="23"/>
         <source>Whole-window passthrough</source>
         <translation>Whole-window passthrough</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="23"/>
         <source>System dragging</source>
         <translation>System dragging</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="24"/>
         <source>Skip taskbar</source>
         <translation>Skip taskbar</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Supported</source>
         <translation>Supported</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="25"/>
         <source>Unavailable</source>
         <translation>Unavailable</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="28"/>
         <source>Unavailable in the current desktop session</source>
         <translation>Unavailable in the current desktop session</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="30"/>
         <source>Requires desktop verification</source>
         <translation>Requires desktop verification</translation>
     </message>
     <message>
+        <location filename="../GalleryMascotPreview.qml" line="31"/>
         <source>%1: %2 — %3</source>
         <translation>%1: %2 — %3</translation>
     </message>
@@ -7034,88 +7056,125 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GallerySettingsPage</name>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="13"/>
+        <location filename="../GallerySettingsPage.qml" line="34"/>
         <source>Make it yours.</source>
         <translation>Make it yours.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="20"/>
+        <location filename="../GallerySettingsPage.qml" line="41"/>
         <source>One theme, every component. Changes apply throughout the gallery.</source>
         <translation>One theme, every component. Changes apply throughout the gallery.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="31"/>
+        <location filename="../GallerySettingsPage.qml" line="52"/>
         <source>Appearance</source>
         <translation>Appearance</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="36"/>
+        <location filename="../GallerySettingsPage.qml" line="57"/>
         <source>Choose the colors that feel right for your workspace.</source>
         <translation>Choose the colors that feel right for your workspace.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="45"/>
+        <location filename="../GallerySettingsPage.qml" line="67"/>
         <source>Light</source>
         <translation>Light</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="50"/>
+        <location filename="../GallerySettingsPage.qml" line="76"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="56"/>
+        <location filename="../GallerySettingsPage.qml" line="85"/>
+        <source>Custom palette</source>
+        <translation>Custom palette</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="94"/>
         <source>Accent color</source>
         <translation>Accent color</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="69"/>
+        <location filename="../GallerySettingsPage.qml" line="107"/>
         <source>Accent %1</source>
         <translation>Accent %1</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="94"/>
+        <location filename="../GallerySettingsPage.qml" line="132"/>
+        <source>Two themes side by side</source>
+        <translation>Two themes side by side</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="137"/>
+        <source>The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.</source>
+        <translation>The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="152"/>
+        <source>Default theme</source>
+        <translation>Default theme</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="156"/>
+        <location filename="../GallerySettingsPage.qml" line="182"/>
+        <source>Primary action</source>
+        <translation>Primary action</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="161"/>
+        <location filename="../GallerySettingsPage.qml" line="188"/>
+        <source>Secondary information</source>
+        <translation>Secondary information</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="177"/>
+        <source>Custom palette theme</source>
+        <translation>Custom palette theme</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="204"/>
         <source>Interaction density</source>
         <translation>Interaction density</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="99"/>
+        <location filename="../GallerySettingsPage.qml" line="209"/>
         <source>Adapt control sizes for a mouse, a touch screen or a mobile device.</source>
         <translation>Adapt control sizes for a mouse, a touch screen or a mobile device.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="108"/>
+        <location filename="../GallerySettingsPage.qml" line="218"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="113"/>
+        <location filename="../GallerySettingsPage.qml" line="223"/>
         <source>Touch</source>
         <translation>Touch</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="118"/>
+        <location filename="../GallerySettingsPage.qml" line="228"/>
         <source>Mobile</source>
         <translation>Mobile</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="124"/>
+        <location filename="../GallerySettingsPage.qml" line="234"/>
         <source>Reduced motion: on</source>
         <translation>Reduced motion: on</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="124"/>
+        <location filename="../GallerySettingsPage.qml" line="234"/>
         <source>Reduced motion: off</source>
         <translation>Reduced motion: off</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="136"/>
-        <location filename="../GallerySettingsPage.qml" line="149"/>
+        <location filename="../GallerySettingsPage.qml" line="246"/>
+        <location filename="../GallerySettingsPage.qml" line="259"/>
         <source>Language</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="141"/>
+        <location filename="../GallerySettingsPage.qml" line="251"/>
         <source>Switch languages without leaving your current example.</source>
         <translation>Switch languages without leaving your current example.</translation>
     </message>

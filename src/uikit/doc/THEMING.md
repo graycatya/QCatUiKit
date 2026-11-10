@@ -38,7 +38,44 @@ Component.onCompleted: {
 
 颜色 Token：`primary`、`primaryHover`、`primaryPressed`、`onPrimary`、`background`、`surface`、`surfaceHover`、`text`、`textSecondary`、`textDisabled`、`border`、`disabled`、`success`、`warning`、`danger`。尺寸及行为 Token：`radius`、`fontSize`、`controlHeight`、`spacing`、`padding`、`motionDuration`、`hoverEnabled`。
 
-`onPrimary` 根据品牌色相对亮度选择黑或白。语义颜色覆盖不会自动重新推导其关联 Token，例如覆盖 `primary` 时应同时考虑 `onPrimary`；通常应修改 Seed `primaryColor`。使用透明品牌色和自定义覆盖时，最终对比度由应用背景共同决定。
+`onPrimary` 根据品牌色相对亮度选择黑或白。未显式提供的 `onPrimary`、`primaryHover` 和 `primaryPressed` 从最终生效的 `primary` 推导，因此通过色板或覆盖修改品牌色后，这三项会随之重新计算。显式提供的值优先于推导结果。使用透明品牌色时，最终对比度仍由应用背景共同决定。
+
+## 自定义色板
+
+应用可以在自己的代码中定义一套颜色，不必修改库源码。把 `colorPalette` 设为一个颜色映射即可，Light/Dark 仍作为内置色板与缺失项的来源：
+
+```qml
+ThemePalette {
+    id: solarized
+    colorScheme: ThemePalette.Dark
+    colorPalette: ({
+        background: "#002b36",
+        surface: "#073642",
+        surfaceHover: "#0a4453",
+        text: "#93a1a1",
+        textSecondary: "#839496",
+        border: "#586e75",
+        success: "#859900",
+        warning: "#b58900",
+        danger: "#dc322f"
+    })
+}
+CatPane { theme: solarized; /* ... */ }
+```
+
+- 未在 `colorPalette` 中出现的颜色使用当前 `colorScheme` 的内置值；设为空 map 即回到内置色板。
+- `colorPalette` 只接受颜色 token。尺寸和行为仍由 `colorScheme`、`density`、`radius`、`fontSize` 与 `reducedMotion` 决定，避免出现"色板决定控件尺寸"的双重来源。
+- 不同 `ThemePalette` 实例的色板互不影响，因此同一窗口可以并排显示两种视觉风格。
+- 无效颜色或非颜色键会被忽略，并输出 `qcatuikit.theme` 类别的警告，不会影响其它 token。
+
+`overrides` 用于单点调整。已识别的 token 会按类型和范围校验：越界数值钳制到有效范围，无法应用的值保留原值，均输出警告。未知键会原样保留在 `tokens` 中，供应用暴露自己的设计变量；它不参与内置 token 计算：
+
+```qml
+Theme.overrides = ({ radius: 10, brandAccent: "#ff8800" })
+// 应用自己的组件可以读取 Theme.tokens.brandAccent
+```
+
+`colorPalette` 与 `overrides` 中的无效项只告警一次，输入集合变化后才重新提示，避免每次读取 `tokens` 重复输出。
 
 ## 局部主题
 

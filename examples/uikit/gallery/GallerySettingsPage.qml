@@ -8,6 +8,27 @@ import QCatUiKit
 ColumnLayout {
     id: control
     spacing: 24
+    // A palette defined entirely in the application; it never modifies the library.
+    readonly property var solarizedPalette: ({
+        background: "#002b36",
+        surface: "#073642",
+        surfaceHover: "#0a4453",
+        text: "#93a1a1",
+        textSecondary: "#839496",
+        textDisabled: "#586e75",
+        border: "#586e75",
+        disabled: "#0a2b33",
+        success: "#859900",
+        warning: "#b58900",
+        danger: "#dc322f"
+    })
+    readonly property int schemeIndex: Object.keys(Theme.colorPalette).length > 0 ? 2 : (Theme.colorScheme === ThemePalette.Dark ? 1 : 0)
+    ThemePalette {
+        id: solarizedTheme
+        colorScheme: ThemePalette.Dark
+        radius: 10
+        colorPalette: control.solarizedPalette
+    }
     CatLabel {
         objectName: "galleryPageTitle"
         text: qsTr("Make it yours.")
@@ -42,14 +63,31 @@ ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 12
                 CatButton {
+                    objectName: "gallerySchemeLight"
                     text: qsTr("Light")
-                    checked: Theme.colorScheme === ThemePalette.Light
-                    onClicked: Theme.colorScheme = ThemePalette.Light
+                    checked: control.schemeIndex === 0
+                    onClicked: {
+                        Theme.colorPalette = ({});
+                        Theme.colorScheme = ThemePalette.Light;
+                    }
                 }
                 CatButton {
+                    objectName: "gallerySchemeDark"
                     text: qsTr("Dark")
-                    checked: Theme.colorScheme === ThemePalette.Dark
-                    onClicked: Theme.colorScheme = ThemePalette.Dark
+                    checked: control.schemeIndex === 1
+                    onClicked: {
+                        Theme.colorPalette = ({});
+                        Theme.colorScheme = ThemePalette.Dark;
+                    }
+                }
+                CatButton {
+                    objectName: "gallerySchemeCustom"
+                    text: qsTr("Custom palette")
+                    checked: control.schemeIndex === 2
+                    onClicked: {
+                        Theme.colorScheme = ThemePalette.Dark;
+                        Theme.colorPalette = control.solarizedPalette;
+                    }
                 }
             }
             CatLabel {
@@ -79,6 +117,78 @@ ColumnLayout {
                             color: "white"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+                }
+            }
+        }
+    }
+    CatPane {
+        Layout.fillWidth: true
+        padding: 24
+        contentItem: ColumnLayout {
+            spacing: 16
+            CatLabel {
+                text: qsTr("Two themes side by side")
+                font.pixelSize: 19
+                font.bold: true
+            }
+            CatLabel {
+                text: qsTr("The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.")
+                color: Theme.tokens.textSecondary
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+            }
+            Flow {
+                Layout.fillWidth: true
+                spacing: 16
+                CatPane {
+                    objectName: "galleryThemeDefaultPane"
+                    width: 240
+                    padding: 16
+                    contentItem: ColumnLayout {
+                        spacing: 10
+                        CatLabel {
+                            text: qsTr("Default theme")
+                            font.bold: true
+                        }
+                        CatButton {
+                            text: qsTr("Primary action")
+                            primary: true
+                            Layout.fillWidth: true
+                        }
+                        CatLabel {
+                            text: qsTr("Secondary information")
+                            color: Theme.tokens.textSecondary
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                        }
+                    }
+                }
+                CatPane {
+                    objectName: "galleryThemeCustomPane"
+                    theme: solarizedTheme
+                    width: 240
+                    padding: 16
+                    contentItem: ColumnLayout {
+                        spacing: 10
+                        CatLabel {
+                            theme: solarizedTheme
+                            text: qsTr("Custom palette theme")
+                            font.bold: true
+                        }
+                        CatButton {
+                            theme: solarizedTheme
+                            text: qsTr("Primary action")
+                            primary: true
+                            Layout.fillWidth: true
+                        }
+                        CatLabel {
+                            theme: solarizedTheme
+                            text: qsTr("Secondary information")
+                            color: solarizedTheme.tokens.textSecondary
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
                         }
                     }
                 }

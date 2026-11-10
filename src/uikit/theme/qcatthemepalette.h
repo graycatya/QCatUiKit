@@ -24,6 +24,8 @@ class QCATUIKIT_EXPORT ThemePalette : public QObject
                    reducedMotionChanged FINAL)
     Q_PROPERTY(
         QVariantMap overrides READ overrides WRITE setOverrides NOTIFY overridesChanged FINAL)
+    Q_PROPERTY(QVariantMap colorPalette READ colorPalette WRITE setColorPalette NOTIFY
+                   colorPaletteChanged FINAL)
     Q_PROPERTY(QVariantMap tokens READ tokens NOTIFY tokensChanged FINAL)
   public:
     enum ColorScheme
@@ -55,6 +57,8 @@ class QCATUIKIT_EXPORT ThemePalette : public QObject
     void setReducedMotion(bool value);
     QVariantMap overrides() const;
     void setOverrides(const QVariantMap &value);
+    QVariantMap colorPalette() const;
+    void setColorPalette(const QVariantMap &value);
     QVariantMap tokens() const;
   signals:
     void colorSchemeChanged();
@@ -64,6 +68,7 @@ class QCATUIKIT_EXPORT ThemePalette : public QObject
     void fontSizeChanged();
     void reducedMotionChanged();
     void overridesChanged();
+    void colorPaletteChanged();
     void tokensChanged();
 
   private:

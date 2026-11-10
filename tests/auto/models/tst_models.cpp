@@ -86,8 +86,9 @@ class ModelTests : public QObject
         QCOMPARE(theme.tokens().value("motionDuration").toInt(), 0);
         theme.setOverrides({{"surface", QString("#123456")}, {"unknown", 5}, {"radius", -1}});
         QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#123456"));
-        QVERIFY(!theme.tokens().contains("unknown"));
-        QCOMPARE(theme.tokens().value("radius").toInt(), 6);
+        // Unknown tokens are kept for the application; known numeric tokens clamp to range.
+        QCOMPARE(theme.tokens().value("unknown").toInt(), 5);
+        QCOMPARE(theme.tokens().value("radius").toInt(), 0);
         const int before = changed.size();
         theme.setDensity(ThemePalette::Mobile);
         QCOMPARE(changed.size(), before);
@@ -110,6 +111,75 @@ class ModelTests : public QObject
         QCOMPARE(theme.tokens().value("motionDuration").toInt(), 0);
         theme.setReducedMotion(false);
         QCOMPARE(theme.tokens().value("motionDuration").toInt(), 500);
+    }
+    void customColorPalette()
+    {
+        ThemePalette theme;
+        theme.setColorPalette({{"background", QString("#101418")},
+                               {"surface", QString("#1b2126")},
+                               {"text", QString("#e6edf3")},
+                               {"border", QString("#30363d")}});
+        QCOMPARE(theme.tokens().value("background").value<QColor>(), QColor("#101418"));
+        QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1b2126"));
+        QCOMPARE(theme.tokens().value("text").value<QColor>(), QColor("#e6edf3"));
+        QCOMPARE(theme.tokens().value("border").value<QColor>(), QColor("#30363d"));
+        // Colors not present in the palette keep the built-in value for the active scheme.
+        QCOMPARE(theme.tokens().value("primary").value<QColor>(), QColor("#1677ff"));
+        QCOMPARE(theme.tokens().value("success").value<QColor>(), QColor("#389e0d"));
+        // A palette changes colors only, not dimensions or motion.
+        QCOMPARE(theme.tokens().value("controlHeight").toInt(), 32);
+        QCOMPARE(theme.tokens().value("radius").toInt(), 6);
+        QCOMPARE(theme.tokens().value("motionDuration").toInt(), 160);
+
+        theme.setColorScheme(ThemePalette::Dark);
+        QCOMPARE(theme.tokens().value("background").value<QColor>(), QColor("#101418"));
+        QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1b2126"));
+
+        // Non-color keys and invalid colors fall back instead of hiding other tokens.
+        theme.setColorPalette({{"radius", 20}, {"surface", QString("not-a-color")}});
+        QCOMPARE(theme.tokens().value("radius").toInt(), 6);
+        QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1f1f1f"));
+
+        theme.setColorPalette({});
+        QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1f1f1f"));
+        QCOMPARE(theme.tokens().value("background").value<QColor>(), QColor("#141414"));
+    }
+    void customPaletteIsolation()
+    {
+        ThemePalette first;
+        ThemePalette second;
+        first.setColorPalette({{"surface", QString("#111111")}});
+        second.setColorPalette({{"surface", QString("#222222")}});
+        QCOMPARE(first.tokens().value("surface").value<QColor>(), QColor("#111111"));
+        QCOMPARE(second.tokens().value("surface").value<QColor>(), QColor("#222222"));
+        first.setColorScheme(ThemePalette::Dark);
+        QCOMPARE(first.tokens().value("surface").value<QColor>(), QColor("#111111"));
+        QCOMPARE(second.tokens().value("surface").value<QColor>(), QColor("#222222"));
+        second.setColorPalette({});
+        QCOMPARE(second.tokens().value("surface").value<QColor>(), QColor("#ffffff"));
+        QCOMPARE(first.tokens().value("surface").value<QColor>(), QColor("#111111"));
+    }
+    void derivedColorsFollowBrand()
+    {
+        ThemePalette theme;
+        theme.setOverrides({{"primary", QString("#002b8c")}});
+        const QVariantMap overridden = theme.tokens();
+        QCOMPARE(overridden.value("primary").value<QColor>(), QColor("#002b8c"));
+        QCOMPARE(overridden.value("onPrimary").value<QColor>(), QColor("#ffffff"));
+        QVERIFY(overridden.value("primaryHover").value<QColor>() != QColor("#002b8c"));
+        QVERIFY(overridden.value("primaryPressed").value<QColor>() != QColor("#002b8c"));
+
+        theme.setOverrides({{"primary", QString("#002b8c")},
+                            {"onPrimary", QString("#112233")},
+                            {"primaryHover", QString("#445566")}});
+        const QVariantMap explicitValues = theme.tokens();
+        QCOMPARE(explicitValues.value("onPrimary").value<QColor>(), QColor("#112233"));
+        QCOMPARE(explicitValues.value("primaryHover").value<QColor>(), QColor("#445566"));
+        QVERIFY(explicitValues.value("primaryPressed").value<QColor>() != QColor("#002b8c"));
+
+        theme.setOverrides({});
+        theme.setColorPalette({{"primary", QString("#ffd400")}});
+        QCOMPARE(theme.tokens().value("onPrimary").value<QColor>(), QColor("#000000"));
     }
     void foreignIndexes()
     {

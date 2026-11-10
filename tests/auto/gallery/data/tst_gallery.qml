@@ -33,6 +33,8 @@ TestCase {
         GalleryLanguage.language = "en";
         wait(10);
         Theme.reducedMotion = false;
+        Theme.colorPalette = ({});
+        Theme.colorScheme = ThemePalette.Light;
     }
     function findControl(name) {
         const item = findChild(gallery.contentItem, name) || findChild(gallery, name);
@@ -339,5 +341,26 @@ TestCase {
         keyClick(Qt.Key_Escape);
         tryCompare(drawer, "visible", false);
         compare(drawer.position, 0);
+    }
+    function test_customThemeScheme() {
+        gallery.navigate("settings", "");
+        wait(10);
+        const defaultPane = findControl("galleryThemeDefaultPane");
+        const customPane = findControl("galleryThemeCustomPane");
+        // The two panes already render different visual styles without any global change.
+        verify(!Qt.colorEqual(defaultPane.background.color, customPane.background.color));
+        verify(Qt.colorEqual(customPane.background.color, "#073642"));
+
+        mouseClick(findControl("gallerySchemeCustom"));
+        wait(10);
+        compare(Theme.colorScheme, ThemePalette.Dark);
+        verify(Object.keys(Theme.colorPalette).length > 0);
+        verify(Qt.colorEqual(Theme.tokens.surface, "#073642"));
+        verify(Qt.colorEqual(Theme.tokens.background, "#002b36"));
+
+        mouseClick(findControl("gallerySchemeLight"));
+        wait(10);
+        compare(Theme.colorScheme, ThemePalette.Light);
+        compare(Object.keys(Theme.colorPalette).length, 0);
     }
 }
