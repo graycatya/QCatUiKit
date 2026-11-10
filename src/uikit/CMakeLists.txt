@@ -5,7 +5,7 @@ set_source_files_properties(qml/DockTabButton.qml qml/DockDropOverlay.qml qml/Do
 set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/SurfaceImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 set_source_files_properties(qml/MouseScrollImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
-set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
+set_source_files_properties(qml/SliderTrackImpl.qml qml/SliderHandleImpl.qml qml/TabCellImpl.qml PROPERTIES QT_QML_INTERNAL_TYPE TRUE)
 # Public headers live beside their implementations, as in Qt module sources.
 # Generate the build-tree include facade; install the real headers and portable
 # forwarding headers rather than the absolute build-tree forwarding headers.
@@ -187,6 +187,7 @@ qt_add_qml_module(QCatUiKit
         qml/CatWindow.qml
         qml/SurfaceImpl.qml
         qml/MouseScrollImpl.qml
+        qml/TabCellImpl.qml
         qml/Theme.qml
 )
 add_library(QCatUiKit::QCatUiKit ALIAS QCatUiKit)

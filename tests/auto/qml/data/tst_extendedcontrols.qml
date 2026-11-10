@@ -313,18 +313,28 @@ TestCase {
                   'CatTabView { width: 320; height: 220; titles: ["One", "Two"]; property alias draft: input.text; CatPane { contentItem: CatTextField { id: input; text: "My draft" } } CatPane { } }');
         verify(waitForRendering(tabs));
         compare(tabs.tabCount, 2);
-        mouseClick(tabs, 124, 16);
+        mouseClick(findChild(tabs, "tabTitle_1"));
         compare(tabs.selectedIndex, 1);
-        mouseClick(tabs, 40, 16);
+        mouseClick(findChild(tabs, "tabTitle_0"));
         compare(tabs.selectedIndex, 0);
         compare(tabs.draft, "My draft");
         tabs.tabsClosable = true;
         watch(tabs, "closeRequested");
         verify(waitForRendering(tabs));
-        mouseClick(tabs, 212, 16);
+        const cell = findChild(tabs, "tabCell_0");
+        const title = findChild(tabs, "tabTitle_0");
+        const close = findChild(tabs, "tabClose_0");
+        // The close symbol must share the title's vertical center and stay inside the cell.
+        compare(Math.round(title.contentItem.mapToItem(tabs, 0, title.contentItem.height / 2).y),
+                Math.round(close.contentItem.mapToItem(tabs, 0, close.contentItem.height / 2).y));
+        verify(close.mapToItem(tabs, close.width, 0).x <= cell.mapToItem(tabs, cell.width, 0).x,
+               "The close target must stay inside the tab cell");
+        mouseClick(findChild(tabs, "tabClose_1"));
         compare(spy.count, 1);
         compare(spy.signalArguments[0][0], 1);
         compare(tabs.tabCount, 2);
+        // The close target sits inside the tab cell and must not switch the current tab.
+        compare(tabs.selectedIndex, 0);
     }
     function test_expanderAndAccordion() {
         const accordion = create(

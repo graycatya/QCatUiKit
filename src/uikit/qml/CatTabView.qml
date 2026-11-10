@@ -26,24 +26,16 @@ T.Control {
             spacing: 4
             Repeater {
                 model: control.tabCount
-                Row {
+                TabCellImpl {
                     required property int index
-                    CatToggleButton {
-                        theme: control.theme
-                        text: control.titles[parent.index] || qsTr("Tab %1").arg(parent.index + 1)
-                        checked: control.selectedIndex === parent.index
-                        onClicked: control.selectedIndex = parent.index
-                    }
-                    CatButton {
-                        theme: control.theme
-                        text: "×"
-                        padding: 6
-                        flat: true
-                        implicitWidth: control.tokens.controlHeight
-                        visible: control.tabsClosable
-                        Accessible.name: qsTr("Close tab %1").arg(parent.index + 1)
-                        onClicked: control.closeRequested(parent.index)
-                    }
+                    objectName: "tabCell_" + index
+                    theme: control.theme
+                    tabIndex: index
+                    title: control.titles[index] || qsTr("Tab %1").arg(index + 1)
+                    selected: control.selectedIndex === index
+                    closable: control.tabsClosable
+                    onActivated: control.selectedIndex = index
+                    onCloseRequested: control.closeRequested(index)
                 }
             }
             CatButton {

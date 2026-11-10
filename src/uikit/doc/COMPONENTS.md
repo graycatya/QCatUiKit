@@ -106,7 +106,7 @@
 | [CatPivot](../qml/CatPivot.qml) | 使用带活动下划线的文字选项切换区块。 |
 | [CatSelectorBar](../qml/CatSelectorBar.qml) | `model`, `selectedIndex`, `itemCount`, `selectionRequested()`；从一组带标签的选项中选择一个区块。 |
 | [CatStepper](../qml/CatStepper.qml) | `model`, `currentIndex`, `orientation`, `stepRequested()`；请求切换步骤，由应用决定流程状态。 |
-| [CatTabView](../qml/CatTabView.qml) | `titles`, `selectedIndex`, `tabsClosable`, `addTabButtonVisible`, `pages`, `tabCount`, `closeRequested()`；切换页面时保留状态，并向应用请求新增、关闭页签。 |
+| [CatTabView](../qml/CatTabView.qml) | `titles`, `selectedIndex`, `tabsClosable`, `addTabButtonVisible`, `pages`, `tabCount`, `closeRequested()`；切换页面时保留状态，并向应用请求新增、关闭页签。标题与关闭目标共用一个单元格背景，关闭目标位于页签边界内，点击关闭不切换当前页签。 |
 | [CatPagination](../qml/CatPagination.qml) | `total`, `pageSize`, `currentPage`, `pageCount`；`requestPage()` 钳制且仅实际变页发出 `pageRequested`；总数变小会收敛当前页但不发用户请求事件；空数据页数为 1 |
 | [CatCalendar](../qml/CatCalendar.qml) | `selectedDate`, `month`（0–11）, `year`, `minimumDate`, `maximumDate`；`moveMonth()`、`selectDate()`；只接受范围内日期并发 `dateSelected` |
 | [CatPopup](../qml/CatPopup.qml) | 标准 Popup；默认模态、focus=true，Escape 或外部按下关闭 |
