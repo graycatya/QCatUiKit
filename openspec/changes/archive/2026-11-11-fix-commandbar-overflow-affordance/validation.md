@@ -54,3 +54,20 @@ QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software build-release/tests/auto/qml
 ## 归档核查（2026-11-11）
 
 差异规约已同步至对应主规格，并逐条核对需求与场景。主规格严格校验 14/14 通过，`python tools/check_docs.py` 与 `git diff --check` 通过。本次仅同步规约及归档，保留此前验证证据和未覆盖范围，未重新执行产品测试。
+
+
+## macOS 补验（2026-11-11）
+
+环境：macOS 26.6.2、arm64、Qt 6.10.2、Release、Ninja。构建当前源码的 `tst_accessibility`、`tst_qml` 后，在允许访问桌面会话的 Cocoa 原生后端运行：
+
+```sh
+QT_QPA_PLATFORM=cocoa QT_QUICK_BACKEND=software <build>/tests/auto/qml/tst_qml -import <build>/qml -input "$PWD/tests/auto/qml/data/tst_commandbar.qml" -o /tmp/qcat-macos-commandbar.txt,txt
+```
+
+结果：**5 passed、0 failed、0 skipped**（含初始化与清理），验证字形空间、无次要操作时隐藏、鼠标点击打开菜单及项数。原生执行有 `IMKCFRunLoopWakeUpReliable` 系统诊断输出，未导致测试失败。
+
+同轮 Cocoa `accessibility_interfaces` 为 **1/1 Passed**（1.09 s），覆盖溢出按钮名称、角色及 press 动作打开菜单；完整离屏 `qml_contracts` 为 **1/1 Passed**（34.43 s）。无障碍接口范围与沙箱限制见 [无障碍补验记录](../2026-11-11-add-accessibility-checks/validation.md#macos-补验2026-11-11)。
+
+本轮未重新采集明暗／密度视觉截图，未补验键盘焦点环、RTL、长菜单滚动或全量 CTest。
+
+最终核查：`python3 tools/check_docs.py`（38 个 Markdown、528 个本地链接）、主规约严格校验（14/14）及 `git diff --check` 均通过。

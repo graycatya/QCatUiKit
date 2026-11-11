@@ -107,6 +107,8 @@ ctest --test-dir build-accessibility -R '^accessibility_interfaces$' --output-on
 - Linux：XCB／Wayland 图形会话（X11 可用 Xvfb）。进程内检查不验证 D-Bus 或 at-spi2；平台桥接需要另外通过外部辅助技术客户端验证。
 - macOS：cocoa 会话与窗口服务器。
 
+macOS 可显式设置 `QT_QPA_PLATFORM=cocoa QT_QUICK_BACKEND=software` 执行上述接口测试。若受限沙箱报 `Cannot create window: no screens available`，应在可访问窗口服务器的桌面会话复验；该错误不能记为接口断言失败或平台通过。另以 `QT_QPA_PLATFORM=offscreen` 运行同一 CTest，确认结果为 `Skipped`；使用 `--output-junit <report.xml>` 核对原生运行 `skipped=0`、离屏运行 `skipped=1`。
+
 平台名不在 `windows`、`cocoa`、`xcb`、`wayland` 时，套件在查询前用 `QSKIP` 输出 `QCAT_ACCESSIBILITY_UNSUPPORTED_PLATFORM:` 与平台名；CTest 用 `SKIP_REGULAR_EXPRESSION` 将该结果标为 `Skipped`。平台白名单只决定是否尝试查询，不代表桥接已经启用。本机 offscreen 查询曾以 `0xC0000005` 崩溃，因此保留查询前门控，不把该现象外推到所有 Qt／平台组合。
 
 测试加载构建目录中的 QCatUiKit 模块。若结果与源码不符，先确认没有命中 Qt 前缀下已安装的旧副本；在 Windows 上尤其要保证 PATH 中构建目录优先。

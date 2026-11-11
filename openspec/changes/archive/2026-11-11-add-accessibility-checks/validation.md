@@ -50,7 +50,7 @@ Windows 首次原生执行时，从普通 QML Item 根节点查询找不到溢�
 
 ## 未覆盖
 
-- Linux XCB 的进程内接口检查已于下述补验完成；macOS cocoa 与 Linux Wayland 尚未覆盖。所有平台的操作系统桥接与外部辅助技术客户端均未验证。
+- Linux XCB 的进程内接口检查已于下述补验完成；macOS cocoa 已于下述 macOS 补验完成，Linux Wayland 尚未覆盖。所有平台的操作系统桥接与外部辅助技术客户端均未验证。
 - 未验证库级翻译下发；接口检查按英文源字符串断言。
 - 未覆盖输入类控件：其名称需要应用提供，不能由组件自行断言。
 
@@ -80,3 +80,24 @@ macOS cocoa 本轮明确记为**未覆盖**：当前环境为 Linux，未执行 
 ## 归档核查（2026-11-11）
 
 差异规约已同步至对应主规格，并逐条核对需求与场景。主规格严格校验 14/14 通过，`python tools/check_docs.py` 与 `git diff --check` 通过。本次仅同步规约及归档，保留此前验证证据和未覆盖范围，未重新执行产品测试。
+
+
+## macOS 补验（2026-11-11）
+
+环境：macOS 26.6.2、arm64、Qt 6.10.2、Apple LLVM 16.0.0、Release、Ninja，复用本机已有构建目录。以下 `<build>` 代表该目录；先构建当前源码，避免旧模块影响结果。
+
+```sh
+cmake -S . -B <build> -DQCATUIKIT_TEST_ACCESSIBILITY=ON
+cmake --build <build> --target tst_accessibility tst_qml --parallel 4
+QT_QPA_PLATFORM=cocoa QT_QUICK_BACKEND=software ctest --test-dir <build> -R '^accessibility_interfaces$' --output-on-failure --output-junit /tmp/qcat-macos-accessibility-cocoa.xml
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ctest --test-dir <build> -R '^accessibility_interfaces$' --output-on-failure --output-junit /tmp/qcat-macos-accessibility-offscreen.xml
+ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure --output-junit /tmp/qcat-macos-qml.xml
+```
+
+配置与构建成功。Cocoa 原生会话：**1/1 Passed**（1.09 s），JUnit `failures=0`、`skipped=0`；QtTest 4 passed，覆盖名称、Button 角色、press 动作及菜单打开。offscreen：**Skipped**（0.05 s），JUnit `skipped=1`、`SKIP_REGULAR_EXPRESSION_MATCHED`，未崩溃。完整离屏 `qml_contracts`：**1/1 Passed**（34.43 s），包含无障碍语义及命令栏用例。
+
+首次 Cocoa 执行在受限沙箱内因无法连接窗口服务器而中止（`Cannot create window: no screens available`）；允许访问当前桌面会话后，同一命令通过。原生执行有 `IMKCFRunLoopWakeUpReliable` 系统诊断输出，未导致测试失败。
+
+验证结束后恢复 `QCATUIKIT_TEST_ACCESSIBILITY=OFF` 并重新配置成功；`ctest --test-dir <build> -N -R '^accessibility_interfaces$'` 显示 `Total Tests: 0`。本轮未执行全量 CTest、视觉截图、操作系统无障碍桥接或 VoiceOver 验证。Linux Wayland 仍未覆盖。
+
+最终核查：`python3 tools/check_docs.py`（38 个 Markdown、528 个本地链接）、主规约严格校验（14/14）及 `git diff --check` 均通过。
