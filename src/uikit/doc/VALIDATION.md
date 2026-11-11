@@ -70,6 +70,17 @@ ctest --test-dir build/release -R '^charts$' --output-on-failure
 
 真实后端测试可在配置时开启 `QCATUIKIT_TEST_CHART_GPU`／`QCATUIKIT_TEST_LED_GPU`，然后通过 `ctest --test-dir build/release -R '^(chart_render|chart_3d_render|chart_export_render|led_render)$' --output-on-failure` 运行。用 `QSG_RHI_BACKEND` 选择后端并核对日志；Linux 应使用实际图形会话的 XCB／Wayland 平台，而非强制 offscreen。实际执行环境、后端与结果记录在对应 OpenSpec change 中。
 
+## 命令栏溢出定向回归
+
+使用当前 CMakeCache 对应的构建目录，先构建 `tst_qml`，再直接加载命令栏用例（以下从仓库根目录运行，将 `<build>` 替换为实际构建目录）：
+
+```sh
+cmake --build <build> --target tst_qml --parallel 2
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software <build>/tests/auto/qml/tst_qml -import "$PWD/<build>/qml" -input "$PWD/tests/auto/qml/data/tst_commandbar.qml"
+```
+
+用例检查字形可用空间、无次要操作时隐藏、点击打开菜单及项数。随后运行 `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure` 检查整组契约。必须先完成当前源码构建，避免旧模块缺少新增定位名称导致误判；离屏交互通过不代替视觉及原生平台检查。
+
 ## 无障碍检查
 
 分两层，互不替代。

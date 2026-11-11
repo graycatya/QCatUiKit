@@ -51,3 +51,7 @@ openspec validate add-custom-theme-palette --strict --no-interactive
 - 三方色板在真实项目中的对比度取舍由应用决定，主题不校验最终合成对比度（既有边界）。
 - `colorPalette` 只接受颜色 token；非颜色键与非法颜色输出 `qcatuikit.theme` 警告，这一行为在自动测试中通过结果断言覆盖，未断言告警文本本身。
 - 字号／圆角分级、组件解剖注入不在本次范围。
+
+## 归档核查（2026-11-11）
+
+差异规约已同步至对应主规格，并逐条核对需求与场景。主规格严格校验 14/14 通过，`python tools/check_docs.py` 与 `git diff --check` 通过。本次仅同步规约及归档，保留此前验证证据和未覆盖范围，未重新执行产品测试。

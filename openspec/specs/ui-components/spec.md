@@ -151,6 +151,81 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 - WHEN 通过键盘将焦点移动到任一按钮
 - THEN 按钮 SHALL 显示主题主色焦点描边
 
+### Requirement: R08 TabCell
+
+`CatTabView` 的每个页签 SHALL 是单一单元格：标题与关闭目标共享同一背景和边框，关闭目标 SHALL 完全位于页签边界内，且 SHALL NOT 改变当前页签。
+
+#### Scenario: 单元格边界
+
+- WHEN `tabsClosable=true`
+- THEN 每个页签的标题与关闭目标 SHALL 位于同一圆角背景与边框内，关闭目标 SHALL 完全落在该边界内。
+
+#### Scenario: 关闭符号对齐
+
+- WHEN `tabsClosable=true`
+- THEN 关闭符号 SHALL 与页签标题垂直居中于同一基线，SHALL NOT 因关闭目标尺寸小于单元格高度而向上偏移。
+
+#### Scenario: 关闭不切换
+
+- WHEN 点击非当前页签的关闭目标
+- THEN 控件 SHALL 发出 `closeRequested(索引)`，`selectedIndex` SHALL NOT 改变。
+
+#### Scenario: 选中外观
+
+- WHEN 页签被选中
+- THEN 单元格背景 SHALL 使用 `surfaceHover`，边框 SHALL 使用主题 `primary` 且宽度为 1。
+
+#### Scenario: 键盘焦点
+
+- WHEN 页签标题通过键盘获得焦点
+- THEN 单元格 SHALL 显示主题 `primary` 边框。
+
+#### Scenario: 悬停
+
+- WHEN 指针位于页签单元格的非关闭区域
+- THEN 单元格背景 SHALL 使用 `surfaceHover`。
+- WHEN 指针位于关闭目标
+- THEN 关闭目标 SHALL 显示圆角危险色背景和对比色符号，单元格背景 SHALL NOT 因此改变选中状态。
+
+#### Scenario: 不可关闭
+
+- WHEN `tabsClosable=false`
+- THEN 关闭目标 SHALL NOT 显示，且单元格宽度 SHALL NOT 为关闭目标预留空间。
+
+#### Scenario: 关闭目标无障碍名称
+
+- WHEN `tabsClosable=true`
+- THEN 每个关闭目标 SHALL 提供带页签序号的辅助名称。
+
+### Requirement: R09 CommandBarOverflow
+
+`CatCommandBar` 在有次要操作时 SHALL 显示可辨识的溢出按钮；按钮 SHALL 容纳自身字形，SHALL 与主操作采用一致的扁平样式，并 SHALL 提供非空辅助名称。
+
+#### Scenario: 字形可用
+
+- WHEN 存在至少一个次要操作且密度为 desktop、touch 或 mobile
+- THEN 溢出按钮的可用内容宽度 SHALL 大于零，省略号 SHALL 可见。
+
+#### Scenario: 无次要操作
+
+- WHEN `secondaryActions` 为空
+- THEN 溢出按钮 SHALL NOT 可见。
+
+#### Scenario: 打开菜单
+
+- WHEN 按下溢出按钮
+- THEN SHALL 打开包含全部次要操作的菜单，菜单项数量 SHALL 等于 `secondaryActions.length`。
+
+#### Scenario: 样式一致
+
+- WHEN 溢出按钮与主操作同时显示
+- THEN 溢出按钮 SHALL 使用扁平背景，SHALL NOT 显示下拉箭头或独立边框。
+
+#### Scenario: 辅助名称
+
+- WHEN 辅助技术读取溢出按钮
+- THEN 名称 SHALL 非空，且 SHALL 表达“更多命令”含义。
+
 ## Data Model
 
 本模块无独立持久化数据模型。已核查属性：CatButton primary/danger/loading 默认 false，iconSource 默认空；CatTextField invalid 默认 false，implicitWidth=220；CatChatInput text/placeholderText 为字符串别名，submitted 参数为 string；CatCheckBox 使用 Qt checkState；CatScrollBar.revealed 默认 true；CatTitleBar.maximized 为只读派生状态。窗口按钮和滚动条状态不写入持久化数据。

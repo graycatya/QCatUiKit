@@ -25,8 +25,8 @@
 - [x] 4.3 `openspec validate add-accessibility-checks --strict --no-interactive` 通过。
 - [x] 4.4 无桥接平台行为：Windows 11、offscreen、Release 运行 `tst_accessibility`，报告 `1 skipped`，未崩溃。
 - [x] 4.5 Windows：原生 windows 窗口运行 `accessibility_interfaces`，CTest 1/1 通过；仅验证 Qt 进程内接口，详见 validation.md。
-- [ ] 4.6 Linux：XCB（可用 Xvfb）或 Wayland 会话运行 `accessibility_interfaces`，记录结果。
-- [ ] 4.7 macOS：cocoa 会话运行 `accessibility_interfaces`，记录结果，或明确记为未覆盖。
+- [x] 4.6 Linux：XCB 原生会话运行 `accessibility_interfaces`，CTest 1/1 Passed、无跳过；offscreen 为 Skipped，详见 validation.md。
+- [x] 4.7 macOS：本轮为 Linux 环境，cocoa 明确记为未覆盖，详见 validation.md；不代表 macOS 通过。
 
 ## 5. 审查修正
 

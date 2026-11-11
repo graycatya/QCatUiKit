@@ -33,3 +33,24 @@
 
 - 完整 `ctest` 与 `python tools/check_docs.py` 未在本轮执行。
 - 菜单项过多时的溢出或滚动未验证。
+
+## Linux 补验（2026-11-11）
+
+环境：Ubuntu 26.04、Linux x86_64、Qt 6.12.0 gcc_64、Release、Ninja，构建目录 `build-release`。
+
+```sh
+cmake --build build-release --target tst_qml --parallel 2
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software build-release/tests/auto/qml/tst_qml -import "$PWD/build-release/qml" -input "$PWD/tests/auto/qml/data/tst_commandbar.qml"
+```
+
+构建成功；定向测试 **5 passed、0 failed、0 skipped**（含初始化与清理）。三个行为用例分别验证字形空间、无次要操作时隐藏和点击打开菜单及菜单项数量。
+
+构建完成前试跑旧产物时，三个用例均因找不到新增 objectName 失败；当前源码构建完成后使用相同命令全部通过。此前 Windows 运行器问题仍是历史环境限制，不能据此判断 Linux 运行结果。
+
+随后执行 `ctest --test-dir build-release -R '^qml_contracts$' --output-on-failure`：**1/1 Passed**，35.07 s；覆盖完整 QML 契约组，包含命令栏及无障碍语义用例。本轮未执行全量 CTest 或重新采集视觉截图。
+
+本轮最终 `python tools/check_docs.py`（38 个 Markdown、528 个本地链接）、本变更 OpenSpec 严格校验及 `git diff --check` 均通过。未执行全量 CTest；本轮仅更新验证文档和任务状态。
+
+## 归档核查（2026-11-11）
+
+差异规约已同步至对应主规格，并逐条核对需求与场景。主规格严格校验 14/14 通过，`python tools/check_docs.py` 与 `git diff --check` 通过。本次仅同步规约及归档，保留此前验证证据和未覆盖范围，未重新执行产品测试。

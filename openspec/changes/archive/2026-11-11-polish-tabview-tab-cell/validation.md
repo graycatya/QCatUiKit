@@ -54,3 +54,7 @@ openspec validate polish-tabview-tab-cell --strict --no-interactive
 
 - 自定义页签 delegate 不在本次范围。
 - 页签过多时的横向滚动或换行行为沿用 `Flow`，未在本轮单独验证。
+
+## 归档核查（2026-11-11）
+
+差异规约已同步至对应主规格，并逐条核对需求与场景。主规格严格校验 14/14 通过，`python tools/check_docs.py` 与 `git diff --check` 通过。本次仅同步规约及归档，保留此前验证证据和未覆盖范围，未重新执行产品测试。

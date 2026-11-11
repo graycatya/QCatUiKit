@@ -9,7 +9,7 @@
 ## 2. 测试
 
 - [x] 2.1 新增 `tests/auto/qml/data/tst_commandbar.qml`：可用宽度为正、无次要操作隐藏、点击后菜单打开且项数正确。
-- [ ] 2.2 在可运行的 Qt Quick Test 环境中执行该用例并记录结果；本机 `tst_qml` 在 HEAD 版本同样崩溃，尚未取得绿灯。
+- [x] 2.2 在 Linux／Qt 6.12.0／Release／offscreen 环境执行该用例：5 passed、0 failed、0 skipped，结果见 validation.md；此前 Windows 运行器崩溃记录保留。
 
 ## 3. 验证
 
