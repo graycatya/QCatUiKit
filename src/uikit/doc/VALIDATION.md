@@ -20,6 +20,8 @@ Qt Creator 构建目录若出现 Ninja 未知规则或类型描述缺失，按 [
 
 ## 自动测试入口
 
+CatToolTip 交互回归位于 `tests/auto/qml/data/tst_tooltip.qml`，包含鼠标右下偏移、显示后位置固定、移动重置延迟、点击取消待显示提示、点击／Esc 关闭及重新进入恢复、窗口右侧／底部避让、移出隐藏和按钮输入。构建当前源码后运行 `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`；真实窗口中还应检查明暗主题、窄窗口的提示位置及窗口失活关闭。
+
 先按 [构建说明](BUILDING.md) 配置并构建：
 
 ```sh

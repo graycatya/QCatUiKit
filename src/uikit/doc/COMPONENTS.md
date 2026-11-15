@@ -95,7 +95,7 @@
 | [CatBusyIndicator](../qml/CatBusyIndicator.qml) | `running`；按实际帧间隔以 900 ms 一圈旋转，不可见或减少动效时停止，恢复时不计入停止期间的时间；圆弧优先使用 CurveRenderer 抗锯齿 |
 | [CatProgressBar](../qml/CatProgressBar.qml) | 标准 ProgressBar；from/to/value 和 indeterminate；镜像布局从右向左填充 |
 | [CatCircularProgress](../qml/CatCircularProgress.qml) | `from=0`, `to=100`, `value=0`, `strokeWidth=6`；`position` 钳制为 0–1，零跨度为 0；GPU 后端优先使用内置抗锯齿的 CurveRenderer |
-| [CatToolTip](../qml/CatToolTip.qml) | 标准 ToolTip，delay=600ms、timeout=3000ms；应用显式绑定 hovered 或其他可见条件 |
+| [CatToolTip](../qml/CatToolTip.qml) | 桌面悬停提示：停稳后延迟显示在鼠标右下方（偏移 12、16 逻辑像素），显示后位置固定并避让窗口边缘；点击、移出、Esc 或窗口失活时关闭，点击／Esc／超时关闭后需重新进入控件才会再显示。无鼠标悬停时显示在父项下方。delay=600ms、timeout=3000ms；应用显式绑定 hovered 或其他可见条件，可覆盖 x/y 定位。拖动数值等由应用控制的提示设置 hoverInteractionEnabled=false，禁用悬停重置及输入关闭逻辑；库内滑块已采用此模式 |
 
 ## 导航与浮层
 

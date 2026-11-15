@@ -32,6 +32,7 @@ Rectangle {
         Behavior on scale { NumberAnimation { duration: thumb.tokens.motionDuration } }
     }
     CatToolTip {
+        hoverInteractionEnabled: false
         theme: thumb.theme
         parent: thumb
         visible: thumb.enabled && thumb.tipVisible
