@@ -586,6 +586,17 @@
     </message>
 </context>
 <context>
+    <name>DockTabStrip</name>
+    <message>
+        <source>Scroll tabs left</source>
+        <translation>向左滚动标签</translation>
+    </message>
+    <message>
+        <source>Scroll tabs right</source>
+        <translation>向右滚动标签</translation>
+    </message>
+</context>
+<context>
     <name>GalleryAttitudePreview</name>
     <message>
         <location filename="../GalleryAttitudePreview.qml" line="17"/>
@@ -5319,6 +5330,14 @@ Last batch: %8 operations · slowest data batch: %9 ms</source>
 </context>
 <context>
     <name>GalleryDockPreview</name>
+    <message>
+        <source>Add tab</source>
+        <translation>添加标签页</translation>
+    </message>
+    <message>
+        <source>Tab %1</source>
+        <translation>标签页 %1</translation>
+    </message>
     <message>
         <location filename="../GalleryDockPreview.qml" line="18"/>
         <source>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</source>

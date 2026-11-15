@@ -11,6 +11,7 @@ ColumnLayout {
     property string savedLayout: ""
     property string initialLayout: ""
     property real previewOpacity: 0.8
+    property int nextTabNumber: 1
     spacing: Theme.tokens.spacing
     CatLabel {
         Layout.fillWidth: true
@@ -38,6 +39,21 @@ ColumnLayout {
             onClicked: workspace.controller.openPanel("log")
         }
         CatButton {
+            objectName: "addDockDemoTab"
+            text: qsTr("Add tab")
+            enabled: demo.initialLayout.length > 0 && !workspace.layoutLocked
+            onClicked: {
+                const number = demo.nextTabNumber++;
+                const panel = demoTab.createObject(workspace, { tabNumber: number });
+                if (!panel)
+                    return;
+                workspace.panels.push(panel);
+                Qt.callLater(function () {
+                    workspace.controller.dock(panel.dockId, "editor", DockController.Center);
+                });
+            }
+        }
+        CatButton {
             objectName: "floatDockEditor"
             text: qsTr("Float editor")
             enabled: !workspace.layoutLocked && !workspace.controller.floatingWindows.some(window => window.tabs.indexOf("editor") >= 0)
@@ -62,6 +78,20 @@ ColumnLayout {
         CatSwitch {
             text: qsTr("Lock layout")
             onToggled: workspace.layoutLocked = checked
+        }
+    }
+    Component {
+        id: demoTab
+        CatDockPanel {
+            id: tabPanel
+            required property int tabNumber
+            dockId: "demo-tab-" + tabNumber
+            title: qsTr("Tab %1").arg(tabNumber)
+            onCloseRequested: workspace.controller.closePanel(dockId)
+            CatLabel {
+                anchors.fill: parent
+                text: tabPanel.title
+            }
         }
     }
     B.ScrollView {

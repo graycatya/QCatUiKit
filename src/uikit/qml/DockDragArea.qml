@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Window
 
 MouseArea {
     id: area
     required property var workspace
     required property string panelId
     required property Item focusItem
+    property DockTabStrip tabStrip: null
     property var contextMenu: null
     property point pressPoint
     property bool moved: false
@@ -30,6 +32,34 @@ MouseArea {
         workspace.headerFocusId = panelId;
         focusItem.forceActiveFocus();
     }
+    function updateDragPosition(x, y, releasing) {
+        if (tabStrip && tabStrip.preview(mapToItem(tabStrip, x, y)))
+            return;
+        // Clearing the preview moves the source item. Capture the pointer first.
+        if (!workspace.nativeWaylandDrag) {
+            const point = mapToGlobal(x, y);
+            workspace.reorderIndex = -1;
+            workspace.updateGlobalDrag(point.x, point.y);
+        } else if (tabStrip) {
+            const windowItem = area.Window.window.contentItem;
+            const point = mapToItem(windowItem, x, y);
+            workspace.reorderIndex = -1;
+            if (!workspace.nativeToplevelDrag && !tabStrip.floatingWindowId) {
+                workspace.updateWaylandLocalDrag(windowItem, point.x, point.y);
+            } else if (point.x < 0 || point.y < 0 || point.x >= windowItem.width || point.y >= windowItem.height) {
+                if (!releasing) {
+                    nativeHandled = true;
+                    workspace.beginWaylandDrag(panelId, area);
+                } else {
+                    workspace.cancelDrag();
+                }
+            } else {
+                workspace.updateWaylandDrag(tabStrip.floatingWindowId, point);
+            }
+        } else {
+            workspace.updateWaylandLocalDrag(area, x, y);
+        }
+    }
     onPositionChanged: mouse => {
         if (!pressed || !(pressedButtons & Qt.LeftButton))
             return;
@@ -37,7 +67,7 @@ MouseArea {
             return;
         if (!moved && Math.hypot(mouse.x - pressPoint.x, mouse.y - pressPoint.y) >= workspace.dragStyleHints.startDragDistance) {
             moved = true;
-            if (workspace.nativeWaylandDrag) {
+            if (!tabStrip && workspace.nativeWaylandDrag) {
                 if (windowMoveHandle && !workspace.nativeToplevelDrag) {
                     nativeHandled = workspace.moveWaylandWindow(area, panelId);
                     if (nativeHandled)
@@ -50,32 +80,22 @@ MouseArea {
                 }
             }
             workspace.beginDrag(panelId, false);
-        }
-        if (workspace.dragging) {
-            if (workspace.nativeWaylandDrag) {
-                workspace.updateWaylandLocalDrag(area, mouse.x, mouse.y);
-                return;
+            if (tabStrip && workspace.dragId === panelId) {
+                workspace.reorderStrip = tabStrip;
+                workspace.reorderGrabX = pressPoint.x;
             }
-            const point = mapToGlobal(mouse.x, mouse.y);
-            workspace.updateGlobalDrag(point.x, point.y);
         }
+        if (workspace.dragId === panelId)
+            updateDragPosition(mouse.x, mouse.y, false);
     }
     onReleased: mouse => {
-        if (mouse.button !== Qt.LeftButton)
+        if (mouse.button !== Qt.LeftButton || nativeHandled)
             return;
-        if (nativeHandled)
-            return;
-        if (moved) {
-            if (workspace.nativeWaylandDrag) {
-                workspace.updateWaylandLocalDrag(area, mouse.x, mouse.y);
-                workspace.finishDrag();
-                return;
-            }
-            const point = mapToGlobal(mouse.x, mouse.y);
-            workspace.updateGlobalDrag(point.x, point.y);
-            workspace.finishDrag();
-        } else {
+        if (!moved) {
             workspace.controller.activatePanel(panelId);
+        } else if (workspace.dragId === panelId) {
+            updateDragPosition(mouse.x, mouse.y, true);
+            workspace.finishDrag();
         }
     }
     // QDrag takes over the pointer grab; that cancellation is not user cancel.

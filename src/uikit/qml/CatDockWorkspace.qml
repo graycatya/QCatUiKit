@@ -27,6 +27,10 @@ Item {
     property var focusItems: Object.create(null)
     property bool updatingWindows: false
     property string dragId: ""
+    property DockTabStrip reorderStrip: null
+    property int reorderIndex: -1
+    property real reorderGrabX: 0
+    property real reorderOffset: 0
     property var dropTarget: null
     property var floatDropPoint: null
     property point dragPoint
@@ -298,6 +302,14 @@ Item {
         nativeDrag.acceptsDrop = false;
         if (!ready || !dragId || layoutLocked || !visible || !enabled || !registry[dragId] || !registry[dragId].movable)
             return;
+        if (reorderStrip && reorderStrip.floatingWindowId === windowId) {
+            const sourceWindow = windowId ? floatingHosts[windowId] : Window.window;
+            if (sourceWindow && reorderStrip.preview(reorderStrip.mapFromItem(sourceWindow.contentItem, position.x, position.y))) {
+                nativeDrag.acceptsDrop = true;
+                return;
+            }
+        }
+        reorderIndex = -1;
         if (windowId) {
             const host = floatingHosts[windowId];
             if (host && host.visible && host.visibility !== Window.Minimized
@@ -320,11 +332,14 @@ Item {
             return;
         const snapshot = nativeDragLayout, id = nativeDragPanel, target = nativeDropTarget;
         const accepted = moved && !nativeDragCancelled && !layoutLocked && registry[id] && registry[id].movable;
+        const reorder = reorderIndex;
         nativeDragLayout = "";
         nativeDragPanel = "";
         nativeDropTarget = null;
         cancelDrag();
-        if (accepted && target) {
+        if (accepted && reorder >= 0) {
+            dockState.moveTab(id, reorder);
+        } else if (accepted && target) {
             dragId = id;
             dropTarget = target;
             finishDrag();
@@ -414,12 +429,14 @@ Item {
         }
     }
     function finishDrag() {
-        const id = dragId, target = dropTarget, floatPoint = floatDropPoint;
+        const id = dragId, target = dropTarget, floatPoint = floatDropPoint, index = reorderIndex;
         const open = dockState.floatingWindowForPanel(id) !== "" || geometry.groups.some(group => group.tabs.indexOf(id) >= 0);
         cancelDrag();
         if (!open)
             return;
-        if (id && target && !layoutLocked && registry[id] && registry[id].movable
+        if (index >= 0 && !layoutLocked && registry[id] && registry[id].movable) {
+            dockState.moveTab(id, index);
+        } else if (id && target && !layoutLocked && registry[id] && registry[id].movable
                 && (!target.windowId || (registry[id].floatable && dockState.floatingWindowForPanel(target.target) === target.windowId))) {
             if (target.workspaceEdge)
                 dockState.dockToWorkspace(id, target.position, target.ratio);
@@ -440,6 +457,8 @@ Item {
             nativeDrag.cancel();
         }
         ++dragGeneration;
+        reorderIndex = -1;
+        reorderStrip = null;
         dragId = "";
         hasDragPoint = false;
         dragImageResult = null;
@@ -509,6 +528,7 @@ Item {
         id: nativeDrag
         onMoved: (windowId, position) => control.updateWaylandDrag(windowId, position)
         onLeft: {
+            control.reorderIndex = -1;
             control.dropTarget = null;
             control.hasDragPoint = false;
             acceptsDrop = false;
@@ -636,110 +656,11 @@ Item {
                     }
                 }
             }
-            B.ScrollView {
+            DockTabStrip {
                 anchors.top: titleBar.bottom
                 width: parent.width
-                height: control.tokens.controlHeight
-                contentWidth: tabRow.width
-                contentHeight: height
-                B.ScrollBar.vertical.policy: B.ScrollBar.AlwaysOff
-                B.ScrollBar.horizontal.policy: B.ScrollBar.AsNeeded
-                Row {
-                    id: tabRow
-                    height: control.tokens.controlHeight
-                    Repeater {
-                        model: groupView.group ? groupView.group.tabs.length : 0
-                        delegate: Item {
-                            id: tabCell
-                            required property int index
-                            readonly property string panelId: groupView.group.tabs[index] || ""
-                            readonly property CatDockPanel panel: control.registry[panelId] || null
-                            readonly property bool tabActive: groupView.group.active === tabCell.panelId
-                            readonly property bool tabHovered: tabButton.hovered || closeButton.hovered
-                            opacity: control.dragging && control.dragId === panelId ? 0.45 : 1
-                            width: implicitWidth
-                            height: control.tokens.controlHeight
-                            implicitWidth: tabButton.implicitWidth + (closeButton.visible ? closeButton.width + 4 : 0)
-                            Rectangle {
-                                anchors.fill: parent
-                                topLeftRadius: 6
-                                topRightRadius: 6
-                                color: tabCell.tabActive ? control.tokens.surface :
-                                                           tabCell.tabHovered ? control.tokens.surfaceHover :
-                                                                                "transparent"
-                                border.width: tabButton.visualFocus ? 1 : 0
-                                border.color: control.tokens.primary
-                                Rectangle {
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.bottom: parent.bottom
-                                    height: 2
-                                    visible: tabCell.tabActive
-                                    color: control.tokens.primary
-                                }
-                            }
-                            DockTabButton {
-                                id: tabButton
-                                objectName: "dockTab_" + tabCell.panelId
-                                theme: control.theme
-                                height: parent.height
-                                text: tabCell.panel ? tabCell.panel.title : tabCell.panelId
-                                checkable: true
-                                checked: tabCell.tabActive
-                                leftPadding: 12
-                                rightPadding: closeButton.visible ? 4 : 12
-                                background: null
-                                Accessible.name: text
-                                onClicked: dockState.activatePanel(tabCell.panelId)
-                                Keys.onLeftPressed: if (!control.layoutLocked)
-                                    dockState.moveTab(tabCell.panelId, Math.max(0, tabCell.index - 1))
-                                Keys.onRightPressed: if (!control.layoutLocked)
-                                    dockState.moveTab(tabCell.panelId, Math.min(groupView.group.tabs.length - 1, tabCell.index + 1))
-                                CatMenu {
-                                    id: tabMenu
-                                    theme: control.theme
-                                    CatMenuItem {
-                                        theme: control.theme
-                                        text: qsTr("Float panel")
-                                        enabled: !control.layoutLocked && tabCell.panel && tabCell.panel.movable && tabCell.panel.floatable
-                                        onTriggered: control.floatPanel(tabCell.panelId)
-                                    }
-                                    CatMenuItem {
-                                        theme: control.theme
-                                        text: qsTr("Float tab group")
-                                        enabled: !control.layoutLocked && groupView.group.tabs.every(id => control.registry[id] && control.registry[id].movable && control.registry[id].floatable)
-                                        onTriggered: control.floatPanel(tabCell.panelId, true)
-                                    }
-                                }
-                                Keys.onMenuPressed: tabMenu.popup()
-                                DockDragArea {
-                                    workspace: control
-                                    panelId: tabCell.panelId
-                                    focusItem: tabButton
-                                    contextMenu: tabMenu
-                                }
-                            }
-                            DockTabButton {
-                                id: closeButton
-                                objectName: "dockTabClose_" + tabCell.panelId
-                                theme: control.theme
-                                width: 26
-                                height: 24
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                anchors.rightMargin: 2
-                                padding: 0
-                                tool: true
-                                symbol: 2
-                                visible: tabCell.panel ? tabCell.panel.closable : false
-                                text: qsTr("Close %1").arg(tabCell.panel ? tabCell.panel.title : "")
-                                Accessible.name: text
-                                onClicked: if (tabCell.panel)
-                                    tabCell.panel.closeRequested()
-                            }
-                        }
-                    }
-                }
+                workspace: control
+                record: groupView.group
             }
         }
     }

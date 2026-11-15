@@ -115,6 +115,107 @@ TestCase {
         mouseRelease(w, splitter.x + 65, 100);
         verify(w.registry.a.width > before);
     }
+    function test_tabBottomHitTargets() {
+        const w = createTemporaryObject(sample, test);
+        verify(waitForRendering(w));
+        const tab = findChild(w, "dockTab_a");
+        const close = findChild(w, "dockTabClose_a");
+        verify(tab !== null);
+        verify(close !== null);
+        w.controller.activatePanel("b");
+        mouseMove(tab, 4, tab.height - 2);
+        mouseClick(tab, 4, tab.height - 2);
+        compare(w.geometry.groups[0].active, "a");
+
+        let closeCount = 0;
+        w.registry.a.closeRequested.connect(() => ++closeCount);
+        mouseMove(close, close.width / 2, close.height - 2);
+        verify(close.hovered);
+        mouseClick(close, close.width / 2, close.height - 2);
+        compare(closeCount, 1);
+        compare(w.geometry.groups[0].active, "a");
+    }
+    function test_tabReorderReturnsFromDockPreview() {
+        const w = createTemporaryObject(sample, test);
+        verify(waitForRendering(w));
+        const a = findChild(w, "dockTab_a");
+        const b = findChild(w, "dockTab_b");
+        verify(a !== null);
+        verify(b !== null);
+        tryVerify(() => b.mapToItem(w, 0, 0).x >= a.width);
+        const start = a.mapToItem(w, 10, a.height / 2);
+        const endX = b.mapToItem(w, b.width, 0).x + 80;
+        const previousX = b.mapToItem(w, 0, 0).x;
+        const original = w.controller.saveLayout();
+
+        mousePress(w, start.x, start.y);
+        mouseMove(w, endX, start.y);
+        compare(w.dropTarget, null);
+        compare(w.controller.saveLayout(), original);
+        tryVerify(() => b.mapToItem(w, 0, 0).x < previousX);
+        mouseMove(w, w.width / 2, w.height / 2);
+        verify(w.dropTarget !== null);
+        mouseMove(w, endX, start.y);
+        compare(w.dropTarget, null);
+        keyClick(Qt.Key_Escape);
+        mouseRelease(w, endX, start.y);
+        compare(w.controller.saveLayout(), original);
+        tryVerify(() => b.mapToItem(w, 0, 0).x === previousX);
+
+        mousePress(w, start.x, start.y);
+        mouseMove(w, w.width / 2, w.height / 2);
+        verify(w.dropTarget !== null);
+        mouseMove(w, endX, start.y);
+        compare(w.dropTarget, null);
+        mouseRelease(w, endX, start.y);
+        compare(Array.from(w.geometry.groups[0].tabs), ["b", "a"]);
+        verify(!w.dragging);
+    }
+    function test_overflowDragScrollsWhilePointerIsStill() {
+        const w = createTemporaryObject(sample, test, { width: 220 });
+        w.registry.a.title = "Editor with a long title";
+        w.registry.b.title = "Activity log with a long title";
+        verify(waitForRendering(w));
+        const a = findChild(w, "dockTab_a");
+        const b = findChild(w, "dockTab_b");
+        tryVerify(() => findChild(w, "dockTabsScrollRight") !== null);
+        const left = findChild(w, "dockTabsScrollLeft");
+        const right = findChild(w, "dockTabsScrollRight");
+        verify(!left.enabled);
+        verify(right.enabled);
+        const original = w.controller.saveLayout();
+        const originalX = a.mapToItem(w, 0, 0).x;
+        compare(left.contentItem.color, w.tokens.textDisabled);
+        mouseMove(right);
+        tryCompare(right.background, "color", w.tokens.surfaceHover);
+        mousePress(right);
+        compare(right.background.color, w.tokens.primary);
+        compare(right.contentItem.color, "#ffffff");
+        mouseRelease(right);
+        verify(a.mapToItem(w, 0, 0).x < originalX);
+        verify(left.enabled);
+        mouseMove(left);
+        tryCompare(left.background, "color", w.tokens.surfaceHover);
+        mouseClick(left);
+        compare(a.mapToItem(w, 0, 0).x, originalX);
+        compare(w.controller.saveLayout(), original);
+
+        const start = a.mapToItem(w, 10, a.height / 2);
+        const edge = right.mapToItem(w, right.width / 2, right.height / 2);
+        const before = b.mapToItem(w, 0, 0).x;
+        mousePress(w, start.x, start.y);
+        mouseMove(w, edge.x, edge.y);
+        compare(w.dropTarget, null);
+        tryVerify(() => b.mapToItem(w, 0, 0).x < before);
+        tryVerify(() => !w.reorderStrip.scrollDirection);
+        compare(w.controller.saveLayout(), original);
+        mouseMove(w, w.width / 2, w.height / 2);
+        verify(w.dropTarget !== null);
+        mouseMove(w, edge.x, edge.y);
+        compare(w.dropTarget, null);
+        mouseRelease(w, edge.x, edge.y);
+        compare(Array.from(w.geometry.groups[0].tabs), ["b", "a"]);
+    }
     function test_minimums() {
         const w = createTemporaryObject(sample, test);
         w.controller.dock("a", "b", DockController.Left);
