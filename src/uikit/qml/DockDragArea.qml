@@ -8,7 +8,8 @@ MouseArea {
     required property var workspace
     required property string panelId
     required property Item focusItem
-    property DockTabStrip tabStrip: null
+    // DockTabStrip creates this component; avoid a cyclic QML type dependency.
+    property var tabStrip: null
     property var contextMenu: null
     property point pressPoint
     property bool moved: false
