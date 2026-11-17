@@ -544,12 +544,16 @@ Item {
         }
     }
     Rectangle {
+        objectName: "dockLocalDragPreview"
         // Local preview only for compositors without toplevel-drag support.
         // Native QDrag supplies its own compositor-positioned thumbnail.
+        // The window overlay escapes workspace and enclosing Flickable clips.
+        parent: B.Overlay.overlay
+        readonly property point previewPoint: parent ? control.mapToItem(parent, control.dragPoint.x, control.dragPoint.y) : Qt.point(0, 0)
         z: 1000
-        visible: control.nativeWaylandDrag && control.dragging && !nativeDrag.active && control.hasDragPoint
-        x: control.dragPoint.x + 20
-        y: control.dragPoint.y + 24
+        visible: control.visible && control.nativeWaylandDrag && control.dragging && !nativeDrag.active && control.hasDragPoint
+        x: previewPoint.x + 20
+        y: previewPoint.y + 24
         width: 240
         height: 180
         radius: 5

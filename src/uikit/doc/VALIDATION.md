@@ -20,6 +20,8 @@ Qt Creator 构建目录若出现 Ninja 未知规则或类型描述缺失，按 [
 
 ## 自动测试入口
 
+Wayland Dock 定向回归：用 `tst_qml -input tests/auto/qml/data/tst_dockwayland.qml -import <build>/qml` 运行。offscreen 模式检查离开标签栏即启动原生拖动的分支、栏内换序、无顶层拖动协议时的降级、释放保护，以及窗口覆盖层预览的坐标和销毁；Wayland 模式额外检查真实窗口局部坐标、取消恢复、浮窗合并和权限。真实鼠标验收还需在 Gallery 中把标签拖出原栏但保持在软件窗口内，确认缩略图连续显示，继续拖出后释放、拖回目标及按 Esc，并在嵌套滚动区域检查预览未被裁剪。分别记录有／无顶层拖动协议的环境，自动注入状态不能代替合成器拖动验收。
+
 CatToolTip 交互回归位于 `tests/auto/qml/data/tst_tooltip.qml`，包含鼠标右下偏移、显示后位置固定、移动重置延迟、点击取消待显示提示、点击／Esc 关闭及重新进入恢复、窗口右侧／底部避让、移出隐藏和按钮输入。构建当前源码后运行 `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`；真实窗口中还应检查明暗主题、窄窗口的提示位置及窗口失活关闭。
 
 先按 [构建说明](BUILDING.md) 配置并构建：

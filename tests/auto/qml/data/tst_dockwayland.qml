@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Window
 import QtTest
 import QCatUiKit
+import "qrc:/qt/qml/QCatUiKit/qml" as DockInternal
 
 TestCase {
     id: test
@@ -11,6 +12,72 @@ TestCase {
     width: 800
     height: 600
     visible: true
+    Component {
+        id: dragAreaFactory
+        Item {
+            id: harness
+            width: 400
+            height: 300
+            property bool nativeWaylandDrag: true
+            property bool nativeToplevelDrag: true
+            property int reorderIndex: 2
+            property bool layoutLocked: false
+            property bool dragging: false
+            property var registry: ({})
+            property int nativeStarts: 0
+            property int localUpdates: 0
+            property int cancellations: 0
+            property alias area: dragArea
+            property alias strip: strip
+            function beginWaylandDrag(id, source) { nativeStarts++; }
+            function updateWaylandLocalDrag(source, x, y) { localUpdates++; }
+            function cancelDrag() { cancellations++; }
+            Item {
+                id: strip
+                property string floatingWindowId: ""
+                property bool inside: false
+                function preview(point) { return inside; }
+            }
+            DockInternal.DockDragArea {
+                id: dragArea
+                workspace: harness
+                panelId: "a"
+                focusItem: harness
+                tabStrip: strip
+            }
+        }
+    }
+    function test_leaveStripStartsNativeDragInsideWindow() {
+        const h = createTemporaryObject(dragAreaFactory, test);
+        h.area.updateDragPosition(80, 80, false);
+        compare(h.nativeStarts, 1);
+        compare(h.localUpdates, 0);
+        verify(h.area.nativeHandled);
+        compare(h.reorderIndex, -1);
+    }
+    function test_insideStripKeepsReordering() {
+        const h = createTemporaryObject(dragAreaFactory, test);
+        h.strip.inside = true;
+        h.area.updateDragPosition(80, 80, false);
+        compare(h.nativeStarts, 0);
+        compare(h.reorderIndex, 2);
+    }
+    function test_noToplevelProtocolKeepsSystemMoveFallback() {
+        const h = createTemporaryObject(dragAreaFactory, test);
+        h.nativeToplevelDrag = false;
+        h.area.updateDragPosition(80, 80, false);
+        compare(h.nativeStarts, 0);
+        compare(h.localUpdates, 1);
+        h.strip.floatingWindowId = "floating";
+        h.area.updateDragPosition(80, 80, false);
+        compare(h.nativeStarts, 1);
+    }
+    function test_releaseDoesNotStartNativeDrag() {
+        const h = createTemporaryObject(dragAreaFactory, test);
+        h.area.updateDragPosition(80, 80, true);
+        compare(h.nativeStarts, 0);
+        compare(h.cancellations, 1);
+    }
     Component {
         id: factory
         CatDockWorkspace {
@@ -36,6 +103,19 @@ TestCase {
             return true;
         skip("Wayland QPA integration only; other platforms retain their existing Dock tests");
         return false;
+    }
+    function test_localPreviewEscapesWorkspaceClip() {
+        const w = createTemporaryObject(factory, test);
+        const preview = findChild(w.Window.window.contentItem, "dockLocalDragPreview");
+        verify(preview !== null);
+        verify(preview.parent !== w);
+        w.dragPoint = Qt.point(w.width - 10, 100);
+        const expected = w.mapToItem(preview.parent, w.dragPoint.x, w.dragPoint.y);
+        compare(preview.x, expected.x + 20);
+        compare(preview.y, expected.y + 24);
+        w.destroy();
+        wait(0);
+        compare(findChild(test.Window.window.contentItem, "dockLocalDragPreview"), null);
     }
     function init() {
         failOnWarning(/.*/);

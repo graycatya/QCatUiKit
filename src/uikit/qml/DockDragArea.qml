@@ -47,15 +47,15 @@ MouseArea {
             workspace.reorderIndex = -1;
             if (!workspace.nativeToplevelDrag && !tabStrip.floatingWindowId) {
                 workspace.updateWaylandLocalDrag(windowItem, point.x, point.y);
-            } else if (point.x < 0 || point.y < 0 || point.x >= windowItem.width || point.y >= windowItem.height) {
+            } else {
+                // Leaving the tab strip starts native DND immediately. Waiting
+                // for the window edge leaves a clipped workspace-only preview.
                 if (!releasing) {
                     nativeHandled = true;
                     workspace.beginWaylandDrag(panelId, area);
                 } else {
                     workspace.cancelDrag();
                 }
-            } else {
-                workspace.updateWaylandDrag(tabStrip.floatingWindowId, point);
             }
         } else {
             workspace.updateWaylandLocalDrag(area, x, y);
