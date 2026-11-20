@@ -59,6 +59,44 @@ Item {
         }
     }
     Component.onCompleted: Qt.callLater(control.__anchorRtlScroll)
+
+    function __handleKey(event) {
+        if (!control.__frozen || control.__columns <= 0 || control.__rows <= 0)
+            return;
+        const current = sharedSelection.currentIndex;
+        let row = current && current.row >= 0 ? current.row : 0;
+        let column = current && current.column >= 0 ? current.column : 0;
+        switch (event.key) {
+        case Qt.Key_Left:
+            column = Math.max(0, column - 1);
+            break;
+        case Qt.Key_Right:
+            column = Math.min(control.__columns - 1, column + 1);
+            break;
+        case Qt.Key_Up:
+            row = Math.max(0, row - 1);
+            break;
+        case Qt.Key_Down:
+            row = Math.min(control.__rows - 1, row + 1);
+            break;
+        case Qt.Key_Home:
+            column = control.__rtl ? control.__columns - 1 : 0;
+            break;
+        case Qt.Key_End:
+            column = control.__rtl ? 0 : control.__columns - 1;
+            break;
+        default:
+            return;
+        }
+        event.accepted = true;
+        const next = control.__viewModel.index(row, column);
+        if (next.row >= 0) {
+            sharedSelection.setCurrentIndex(
+                        next, ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Current);
+            control.__ensureCellVisible(row, column);
+        }
+    }
+
     Connections {
         target: control.__frozen ? frozenMainView : plainView
         function onContentWidthChanged() { control.__anchorRtlScroll(); }
@@ -198,6 +236,19 @@ Item {
         const view = __frozen ? frozenMainView : plainView;
         if (view && view.columns > 0 && view.contentWidth > view.width)
             view.contentX = view.contentWidth - view.width;
+    }
+    function __ensureCellVisible(row: int, column: int) {
+        if (!__frozen || !frozenMainView.visible)
+            return;
+        const frozenColumn = __rtl ? column >= __columns - __frozenColumns
+                                   : column < __frozenColumns;
+        const frozenRow = row < __frozenRows;
+        const rowOut = !frozenRow
+                && (row < frozenMainView.topRow || row > frozenMainView.bottomRow);
+        const columnOut = !frozenColumn
+                && (column < frozenMainView.leftColumn || column > frozenMainView.rightColumn);
+        if (rowOut || columnOut)
+            frozenMainView.positionViewAtCell(Qt.point(row, column), TableView.Contain);
     }
     function __rowHeight(row: int): real {
         const provider = rowHeightProvider;
@@ -498,7 +549,9 @@ Item {
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
                 rowHeightProvider: function(row) { return control.__paneRowHeight(true, row); }
                 resizableColumns: false
-                keyNavigationEnabled: false
+                keyNavigationEnabled: true
+                Keys.priority: Keys.BeforeItem
+                Keys.onPressed: (event) => control.__handleKey(event)
             }
             TableView {
                 id: frozenTopRightView
@@ -521,7 +574,9 @@ Item {
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }
                 rowHeightProvider: function(row) { return control.__paneRowHeight(true, row); }
                 resizableColumns: false
-                keyNavigationEnabled: false
+                keyNavigationEnabled: true
+                Keys.priority: Keys.BeforeItem
+                Keys.onPressed: (event) => control.__handleKey(event)
             }
             TableView {
                 id: frozenBottomLeftView
@@ -544,7 +599,9 @@ Item {
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
                 rowHeightProvider: function(row) { return control.__paneRowHeight(false, row); }
                 resizableColumns: false
-                keyNavigationEnabled: false
+                keyNavigationEnabled: true
+                Keys.priority: Keys.BeforeItem
+                Keys.onPressed: (event) => control.__handleKey(event)
             }
             TableView {
                 id: frozenMainView
@@ -564,6 +621,9 @@ Item {
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }
                 rowHeightProvider: function(row) { return control.__paneRowHeight(false, row); }
                 resizableColumns: false
+                keyNavigationEnabled: true
+                Keys.priority: Keys.BeforeItem
+                Keys.onPressed: (event) => control.__handleKey(event)
                 MouseScrollImpl {
                     view: frozenMainView
                 }

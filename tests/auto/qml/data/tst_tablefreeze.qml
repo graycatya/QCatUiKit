@@ -165,6 +165,40 @@ TestCase {
         compare(table.view.B.ScrollBar.horizontal.policy, B.ScrollBar.AlwaysOff);
     }
 
+    function test_keyboardCrossPanes() {
+        const table = make({frozenColumnCount: 1, frozenRowCount: 1});
+        const main = table.view;
+        mouseClick(main, 20, Theme.tokens.controlHeight / 2);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1
+                && main.selectionModel.currentIndex.column === 1;
+        }, 1000);
+        keyClick(Qt.Key_Left);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1
+                && main.selectionModel.currentIndex.column === 0;
+        }, 1000);
+        keyClick(Qt.Key_Right);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1
+                && main.selectionModel.currentIndex.column === 1;
+        }, 1000);
+        keyClick(Qt.Key_Up);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 0;
+        }, 1000);
+        keyClick(Qt.Key_Up);
+        compare(main.selectionModel.currentIndex.row, 0);
+        keyClick(Qt.Key_Left);
+        compare(main.selectionModel.currentIndex.column, 0);
+        keyClick(Qt.Key_Left);
+        compare(main.selectionModel.currentIndex.column, 0);
+        keyClick(Qt.Key_Down);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1;
+        }, 1000);
+    }
+
     function test_verticalScrollBarSpansContent() {
         const table = make({frozenColumnCount: 1, frozenRowCount: 1});
         const bar = findChild(table, "frozenVerticalScrollBar");

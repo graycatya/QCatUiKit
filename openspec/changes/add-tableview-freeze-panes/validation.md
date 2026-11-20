@@ -2,13 +2,14 @@
 
 日期：2026-11-20。环境：Windows 11、Qt 6.12.0 MSVC Debug、offscreen/software。
 
-本轮完成任务 1.1-1.3、2.1、2.2 的选择／行高部分、3.1、3.4、4.1 和 4.2：四区骨架、`frozenColumnCount`/`frozenRowCount`、越界静默钳制、冻结全部时隐藏滚动条、主体驱动滚动同步、共享列宽表与表头调宽手柄、跨区选择、行高一致、表头分段、跨四区统一垂直滚动条、`freezeTo`/`clearFreeze` 和 Gallery 冻结控件；默认 `0/0` 保持原单视图路径。
+本轮完成任务 1.1-1.3、2.1、2.2 的选择／行高部分、2.4、3.1、3.4、4.1 和 4.2：四区骨架、`frozenColumnCount`/`frozenRowCount`、越界静默钳制、冻结全部时隐藏滚动条、主体驱动滚动同步、共享列宽表与表头调宽手柄、跨区选择、行高一致、表头分段、跨四区统一垂直滚动条、键盘跨区、`freezeTo`/`clearFreeze` 和 Gallery 冻结控件；默认 `0/0` 保持原单视图路径。
 
-- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：436 passed、0 failed、4 skipped。
-- 新增 `tests/auto/qml/data/tst_tablefreeze.qml`，覆盖默认路径、四区骨架、provider 宽度、负值与超界钳制、运行时切换、模型收缩与清空、全冻结滚动条、横向／纵向滚动同步、冻结列与主体列调宽、禁用调宽、宽度跨模式保持、跨区选择、行高一致、表头分段、统一垂直滚动条、间距、自定义 delegate 尺寸和 `freezeTo`/`clearFreeze`。
+- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：445 passed、0 failed、4 skipped。
+- 新增 `tests/auto/qml/data/tst_tablefreeze.qml`，覆盖默认路径、四区骨架、provider 宽度、负值与超界钳制、运行时切换、模型收缩与清空、全冻结滚动条、横向／纵向滚动同步、冻结列与主体列调宽、禁用调宽、宽度跨模式保持、跨区选择、行高一致、表头分段、统一垂直滚动条、键盘跨区、间距、自定义 delegate 尺寸和 `freezeTo`/`clearFreeze`。
 - 冻结分区与表头统一 `cellSpacing=1`，冻结宽高计入内部间距；`test_cellSpacing` 覆盖。
 - 冻结模式进入时从单视图继承 delegate 隐式列宽/行高，并在首次冻结布局后补捕获未加载列；`test_customDelegateSizes` 覆盖 120×28 自定义 delegate。无法捕获时仍回退 140/`controlHeight`。
 - 垂直滚动条改为跨四区的外部 `ScrollBar`；`test_verticalScrollBarSpansContent` 验证高度、位置和滑块比例与主体一致。
+- 冻结四区启用 `keyNavigationEnabled` 并用 `Keys.priority: Keys.BeforeItem` 拦截方向键；`test_keyboardCrossPanes` 验证左右跨冻结边界、上下行移动和边界钳制。
 - 非正式 10 万行探针（offscreen/software，120×28 delegate）：冻结/无冻结存活 delegate 约 242/247，未出现翻倍；修复后冻结主体 `contentH` 约 2,899,970、`contentW` 604 + 冻结列 120，与单视图 725 基本对齐。该探针不是验收基准，任务 5.2 仍需正式压力冒烟。
 - Gallery 数据页新增冻结列/行 SpinBox、冻结首行首列和清除冻结按钮，补齐中英文 TS；`GalleryDataExamples::test_tableFreezeControls` 通过。完整 Gallery 契约测试 860 passed、0 failed、3 skipped（在间距与统一滚动条修复前一轮运行；修复后表格页 smoke 通过，未重跑完整 17 分钟套件）。
 - Gallery 表格页启动冒烟 `qcat-gallery --smoke-test --page table`：退出 0；`COMPONENTS.md` 与 `VALIDATION.md` 已补充冻结 API 和回归入口。
@@ -20,4 +21,4 @@
 - `qmllint -I <Qt qml> -I <build>/qml src/uikit/qml/CatTableView.qml`：通过，无告警。
 - 完整 Debug 构建：通过。首次构建因 PDB 损坏报 C2471，重命名旧 `vc140.pdb` 后增量构建成功。
 - RTL 设计 spike 已完成，见 [rtl-spike.md](rtl-spike.md)：Qt Quick `TableView`/`HorizontalHeaderView` 不读取布局方向，真正的 RTL 需要列反转代理模型、索引映射、初始右端滚动、选择/编辑写回和键盘方向。2026-11-20 决策：公开 `ColumnReverseProxyModel`、`CatTableView` 同时暴露 `mapToSource/mapFromSource`、方法映射、RTL 垂直滚动条左侧、RTL 作为归档门槛；实现拆到 [add-tableview-rtl](../add-tableview-rtl/tasks.md)，冻结变更 3.3 待其归档后勾选。
-- 未验证：RTL、编辑、键盘跨区、10 万行正式压力、真实桌面/多屏/读屏。编辑依赖 `add-tableview-customization` 的 `editDelegate`；无 provider 且无法捕获隐式尺寸时仍回退 140/`controlHeight`。
+- 未验证：编辑、10 万行正式压力、真实桌面/多屏/读屏。编辑依赖 `add-tableview-customization` 的 `editDelegate`；无 provider 且无法捕获隐式尺寸时仍回退 140/`controlHeight`。

@@ -129,6 +129,43 @@ TestCase {
         compare(main.width, table.width - 180);
     }
 
+    function test_rtlKeyboardCrossPanes() {
+        const table = createTemporaryObject(rtlFrozenTable, test);
+        verify(table);
+        verify(waitForRendering(table));
+        const main = table.view;
+        mouseClick(main, 20, Theme.tokens.controlHeight / 2);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1
+                && main.selectionModel.currentIndex.column === 0;
+        }, 1000);
+        keyClick(Qt.Key_Right);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.row === 1
+                && main.selectionModel.currentIndex.column === 1;
+        }, 1000);
+        keyClick(Qt.Key_Right);
+        compare(main.selectionModel.currentIndex.column, 2);
+        keyClick(Qt.Key_Right);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.column === 3;
+        }, 1000);
+        keyClick(Qt.Key_Right);
+        compare(main.selectionModel.currentIndex.column, 3);
+        keyClick(Qt.Key_Left);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.column === 2;
+        }, 1000);
+        keyClick(Qt.Key_Home);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.column === 3;
+        }, 1000);
+        keyClick(Qt.Key_End);
+        tryVerify(function() {
+            return main.selectionModel.currentIndex.column === 0;
+        }, 1000);
+    }
+
     function test_rtlSelectionMapping() {
         const table = createTemporaryObject(rtlFrozenTable, test);
         verify(table);
