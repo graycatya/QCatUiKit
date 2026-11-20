@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [组件目录](COMPONENTS.md)
 
-模型通过 `import QCatUiKit` 使用。TableModel、ChatModel 同时提供公开 C++ 类；TreeModel 是 QML 可用的层次模型辅助类型，其 C++ 实现不属于安装接口。
+模型通过 `import QCatUiKit` 使用。TableModel、ChatModel、ColumnReverseProxyModel 同时提供公开 C++ 类；TreeModel 是 QML 可用的层次模型辅助类型，其 C++ 实现不属于安装接口。
 
 所有模型在其 QObject 所属线程操作。工作线程可准备数据，再通过 queued connection 提交给模型。模型只管理数据，不负责网络、数据库、文件持久化或视图尺寸。
 
@@ -47,6 +47,26 @@ Item {
 索引从 0 开始。非法索引返回 false 或空结果，不发虚假的模型通知。列键不能为空或重复；改变列配置保留行值并重置模型。字段缺失时返回无效值，表头不足时使用列键。
 
 TableModel 继承 QAbstractTableModel，提供标准 display／edit 角色和 `setData(EditRole)`。列宽、行高、选择和滚动由 CatTableView 或调用方视图控制，`view` 属性可访问其标准 TableView 配置。
+
+## ColumnReverseProxyModel
+
+`ColumnReverseProxyModel` 是公开的列反转代理，行索引不变，列按 `proxyColumn = sourceColumnCount - 1 - sourceColumn` 映射。它用于 RTL 表格，也可直接用于其他需要从右到左显示列的视图。
+
+```qml
+ColumnReverseProxyModel {
+    sourceModel: rows
+}
+```
+
+| 成员 | 行为 |
+| --- | --- |
+| `sourceModel` | 源 `QAbstractItemModel`；为空时行数和列数为 0 |
+| `mapToSource(index)` / `mapFromSource(index)` | 代理索引与源索引互转；无效索引返回无效索引 |
+| `data` / `flags` / `headerData` / `setData` | 按源索引读写，编辑经代理写回源模型 |
+| 列插入/删除 | 发出映射后的代理列信号 |
+| 列移动/模型重置 | 代理重置模型，选择会丢失 |
+
+`CatTableView` 在 RTL 下自动创建该代理，并通过 `mapToSource` / `mapFromSource` 暴露表格层映射；LTR 下不创建代理，映射为恒等。RTL 下 `view.model` 是代理，应用不应假设它等于 `table.model`。
 
 ## ChatModel
 

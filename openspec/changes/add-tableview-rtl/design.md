@@ -8,7 +8,7 @@ Qt Quick 的 `TableView` 与 `HorizontalHeaderView` 不读取布局方向，列�
 
 2026-11-20 确认：
 
-1. **决策 1 = B**：`ColumnReverseProxyModel` 只作为 `CatTableView` 的内部 C++ 实现，不进入公开头、QML 类型或 ABI；`CatTableView` 公开 `mapToSource` / `mapFromSource` 作为表格层入口。应用不能直接实例化代理，避免新增模型层公开契约。
+1. **决策 1 = A**：新增公开 `ColumnReverseProxyModel`（C++ 类、头文件和 QML 类型），允许应用复用到其他视图；`CatTableView` 同时暴露 `mapToSource` / `mapFromSource`（决策 2）作为表格层入口。
 2. **决策 2 = A**：索引映射使用 `mapToSource(QModelIndex)` / `mapFromSource(QModelIndex)` 方法，不新增 `sourceIndex` / `proxyIndex` 属性。
 3. **决策 3 = B**：RTL 下垂直滚动条移到左侧，避免覆盖右侧冻结块。
 4. **决策 4 = A**：RTL 是本版本归档门槛；本变更先归档，冻结变更随后勾选 3.3 并归档。
@@ -104,14 +104,14 @@ RTL 四区：
 
 ## API and ABI
 
-- `ColumnReverseProxyModel` 作为内部 C++ 类：不进入 `qcat_public_headers`、兼容头或导出符号，不新增公开 ABI；只在 `src/uikit/CMakeLists.txt` 的 SOURCES 登记，并通过模块内部注册供 `CatTableView.qml` 创建。
-- `CatTableView` 新增两个 QML 方法，不改变冻结属性和方法；这是本变更唯一的公开 API。
-- RTL 下 `view.model` 变为内部代理，必须写入 `COMPONENTS.md` 和 R13；应用不能假设 `view.model === table.model`。
-- 内部代理的注册方式要在实现任务 1.2 中验证：优先模块内匿名/私有注册，禁止把代理暴露为可导入的 QML 类型；若 Qt 的注册机制无法满足，再回到评审而不是默默改成公开类型。
+- 新增公开 `ColumnReverseProxyModel` C++ 类、头文件和 QML 类型；进入 `qcat_public_headers`、兼容头、类头三组列表和 `models` 文档。
+- `CatTableView` 新增两个 QML 方法，不改变冻结属性和方法。
+- RTL 下 `view.model` 变为代理，必须写入 `COMPONENTS.md` 和 R13；应用不能假设 `view.model === table.model`。
+- 需要按 `ABI.md` 审查新增公开类和导出符号；`QML_ELEMENT` 注册为 `QCatUiKit/ColumnReverseProxyModel 1.0`。
 
 ## Risks
 
-- 内部代理的 QML 注册机制受 Qt 限制；如果必须借助公开单例工厂，需重新评审公开面，不能把它当作“内部实现”。
+- 公开代理增加 ABI 和 QML API 承诺；后续修改映射或信号语义需要按公开接口处理。
 - 应用依赖源索引比较 `currentIndex` 会失效；映射方法必须覆盖选择、定位和编辑。
 - 列反转代理与列插入/移动/重置的通知容易漏映射；第一版重置会丢失选择，需要文档和测试。
 - 初始右端锚定和列宽变化后的滚动位置可能跳动。

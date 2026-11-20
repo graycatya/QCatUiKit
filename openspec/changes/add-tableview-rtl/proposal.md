@@ -8,7 +8,7 @@
 
 ## What Changes
 
-- 新增内部 `ColumnReverseProxyModel`（QAbstractProxyModel）：行不变、列反转，映射 `data`、`flags`、`headerData`、`setData`、`index` 和索引转换；列插入/删除/移动/重置后重新映射代理列。该类型只作为 `CatTableView` 的内部实现，不进入公开 C++ 头或 ABI。
+- 新增公开 `ColumnReverseProxyModel`（QAbstractProxyModel）：行不变、列反转，映射 `data`、`flags`、`headerData`、`setData`、`index` 和索引转换；列插入/删除/移动/重置后重新映射代理列。
 - `CatTableView` 在 RTL（`LayoutMirroring.enabled`）下自动创建代理并让四区共享它；`table.model` 仍是源模型，`table.view.model` 在 RTL 下是代理。
 - 新增 `mapToSource(index)` / `mapFromSource(index)`，无 RTL 时为恒等映射；无冻结点也支持。
 - 四区、表头、水平/垂直滚动条在 RTL 下水平镜像：主体在左、冻结块在右，垂直滚动条移左侧。
@@ -21,12 +21,13 @@
 
 ### Modified Capabilities
 
+- `models`: 新增 R06 `ColumnReverseProxyModel`。
 - `ui-components`: 新增 R13 `TableRtlColumns`，实现 R11 的 RTL 场景。
 
 ## Impact
 
-涉及内部 C++ 代理源文件、`src/uikit/CMakeLists.txt` 的 SOURCES 登记、`CatTableView.qml`、QML 行为测试、Gallery RTL 入口和中英文文案，以及 `COMPONENTS.md`、`VALIDATION.md`。不新增公开 C++ 头、导出符号或 ABI；只新增 `CatTableView` 的两个 QML 方法。RTL 下 `view.model` 变为内部代理，需要 API 文档明确；不改变 `frozenColumnCount`、`frozenRowCount`、`freezeTo()`、`clearFreeze()` 的语义。
+涉及新增公开 C++ 模型类及头文件、`src/uikit/CMakeLists.txt` 三组头列表、`models` 文档和 ABI 审查、`CatTableView.qml`、QML 行为测试、Gallery RTL 入口和中英文文案，以及 `COMPONENTS.md`、`VALIDATION.md`。RTL 下 `view.model` 变为代理，需要 API 文档明确；不改变 `frozenColumnCount`、`frozenRowCount`、`freezeTo()`、`clearFreeze()` 的语义。
 
 非目标：任意列顺序、每列独立 RTL 开关、其他表格组件（如未来的表单）的 RTL、代理模型的排序/过滤组合。
 
-依赖 `add-tableview-freeze-panes` 的 R11。建议归档顺序：本变更先归档（R13 进入基线），再归档冻结变更并勾选其 3.3。
+依赖 `add-tableview-freeze-panes` 的 R11。建议归档顺序：本变更先归档（R06/R13 进入基线），再归档冻结变更并勾选其 3.3。

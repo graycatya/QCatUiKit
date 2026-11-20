@@ -26,6 +26,8 @@ CatToolTip 交互回归位于 `tests/auto/qml/data/tst_tooltip.qml`，包含鼠�
 
 CatTableView 冻结回归位于 `tests/auto/qml/data/tst_tablefreeze.qml`，覆盖四区布局、默认单视图路径、越界钳制、滚动同步、选择、行高、列宽、表头分段和 `freezeTo`/`clearFreeze`。运行 `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`。Gallery 数据页提供冻结列/行控件，`GalleryDataExamples::test_tableFreezeControls` 覆盖控件与按钮；完整 Gallery 契约套件约 17 分钟，超过单个测试的 300 秒上限，应直接运行生成的 `tests/auto/gallery/gallery_contracts-<Config>.cmake` 或分组执行。
 
+CatTableView RTL 回归位于 `tests/auto/qml/data/tst_tablertl.qml`，覆盖 LTR 恒等映射、RTL 列反转、四区镜像、初始右端滚动、垂直滚动条左侧、跨区选择和表头左侧列宽手柄；`ColumnReverseProxyModel` 的映射、编辑和列结构变化由 `tests/auto/models` 的 `reverseProxyContract` 覆盖。运行 `ctest --test-dir <build> -R '^(models|qml_contracts)$' --output-on-failure`。
+
 先按 [构建说明](BUILDING.md) 配置并构建：
 
 ```sh

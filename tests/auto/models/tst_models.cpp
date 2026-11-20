@@ -1,10 +1,46 @@
 // SPDX-License-Identifier: Apache-2.0
 #include <QAbstractItemModelTester>
 #include <QCatUiKit/ChatModel>
+#include <QCatUiKit/ColumnReverseProxyModel>
 #include <QCatUiKit/TableModel>
 #include <QCatUiKit/ThemePalette>
 #include <QtTest>
 using namespace QCatUiKit;
+
+class MutableTableModel : public QAbstractTableModel
+{
+  public:
+    int rowCount(const QModelIndex &parent = {}) const override
+    {
+        return parent.isValid() ? 0 : 1;
+    }
+    int columnCount(const QModelIndex &parent = {}) const override
+    {
+        return parent.isValid() ? 0 : int(values.size());
+    }
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+    {
+        if (!index.isValid() || role != Qt::DisplayRole || index.column() >= values.size())
+            return {};
+        return values.at(index.column());
+    }
+    void insertColumn(int at)
+    {
+        beginInsertColumns({}, at, at);
+        values.insert(at, 100 + at);
+        endInsertColumns();
+    }
+    void removeColumn(int at)
+    {
+        beginRemoveColumns({}, at, at);
+        values.removeAt(at);
+        endRemoveColumns();
+    }
+
+  private:
+    QList<int> values{0, 10, 20};
+};
+
 class ModelTests : public QObject
 {
     Q_OBJECT
@@ -69,6 +105,56 @@ class ModelTests : public QObject
         model.clear();
         QCOMPARE(model.rowCount(), 0);
     }
+    void reverseProxyContract()
+    {
+        TableModel source;
+        source.setColumns({"a", "b", "c"});
+        source.setHeaders({"A", "B", "C"});
+        QVERIFY(source.append({{"a", 1}, {"b", 2}, {"c", 3}}));
+
+        ColumnReverseProxyModel proxy;
+        proxy.setSourceModel(&source);
+        QAbstractItemModelTester checker(&proxy,
+                                         QAbstractItemModelTester::FailureReportingMode::QtTest);
+        QCOMPARE(proxy.rowCount(), 1);
+        QCOMPARE(proxy.columnCount(), 3);
+        QCOMPARE(proxy.data(proxy.index(0, 0)).toInt(), 3);
+        QCOMPARE(proxy.data(proxy.index(0, 2)).toInt(), 1);
+        QCOMPARE(proxy.headerData(0, Qt::Horizontal).toString(), "C");
+        QCOMPARE(proxy.headerData(2, Qt::Horizontal).toString(), "A");
+        QCOMPARE(proxy.mapToSource(proxy.index(0, 0)), source.index(0, 2));
+        QCOMPARE(proxy.mapFromSource(source.index(0, 0)), proxy.index(0, 2));
+        QCOMPARE(proxy.mapToSource(QModelIndex()), QModelIndex());
+        QCOMPARE(proxy.mapFromSource(QModelIndex()), QModelIndex());
+
+        QVERIFY(proxy.setData(proxy.index(0, 0), 30));
+        QCOMPARE(source.data(source.index(0, 2)).toInt(), 30);
+        QVERIFY(proxy.flags(proxy.index(0, 0)).testFlag(Qt::ItemIsEditable));
+        QVERIFY(!proxy.setData(proxy.index(0, 0), 1, Qt::DisplayRole));
+
+        source.setColumns({"a", "b", "c", "d"});
+        QCOMPARE(proxy.columnCount(), 4);
+        QCOMPARE(proxy.mapToSource(proxy.index(0, 0)), source.index(0, 3));
+
+        proxy.setSourceModel(nullptr);
+        QCOMPARE(proxy.rowCount(), 0);
+        QCOMPARE(proxy.columnCount(), 0);
+        QVERIFY(!proxy.mapToSource(proxy.index(0, 0)).isValid());
+
+        MutableTableModel mutableSource;
+        ColumnReverseProxyModel columnProxy;
+        columnProxy.setSourceModel(&mutableSource);
+        QAbstractItemModelTester columnChecker(
+            &columnProxy, QAbstractItemModelTester::FailureReportingMode::QtTest);
+        QCOMPARE(columnProxy.data(columnProxy.index(0, 2)).toInt(), 0);
+        mutableSource.insertColumn(1);
+        QCOMPARE(columnProxy.columnCount(), 4);
+        QCOMPARE(columnProxy.data(columnProxy.index(0, 2)).toInt(), 101);
+        mutableSource.removeColumn(2);
+        QCOMPARE(columnProxy.columnCount(), 3);
+        QCOMPARE(columnProxy.data(columnProxy.index(0, 1)).toInt(), 101);
+    }
+
     void themeContract()
     {
         ThemePalette theme;

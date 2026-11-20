@@ -18,13 +18,14 @@ set(qcat_public_headers
     theme/qcatthemepalette.h
     models/qcatchatmodel.h
     models/qcattablemodel.h
+    models/qcatcolumnreverseproxymodel.h
     charts/qcatchartcolorscale.h charts/qcatchartbubble.h charts/qcatchartgrid.h charts/qcatchartcontour.h
     charts/qcatchartohlc.h charts/qcatchartboxplot.h
     charts/qcatwaterfall.h charts/qcatchartfit.h charts/qcatcharthistogram.h charts/qcatchartstack.h
     charts/qcatchartseries3d.h charts/qcatchartscene3d.h charts/qcatchartaxis.h charts/qcatchartseries.h charts/qcatchartitem.h led/qcatledsource.h led/qcatledpreview.h led/qcatledlayoutmodel.h led/qcatlightingframe.h led/qcatledeffectregistry.h led/qcatledstorage.h led/qcatleddeck.h led/qcatledmixer.h led/qcatledoutput.h led/qcatledproject.h
     vector/qcatvectoritem.h)
-set(qcat_compat_headers MascotPetController.h DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h VectorItem.h)
-set(qcat_class_headers MascotPetController DockController TiltController Export Version ThemePalette ChatModel TableModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject VectorItem)
+set(qcat_compat_headers MascotPetController.h DockController.h TiltController.h Export.h Version.h ThemePalette.h ChatModel.h TableModel.h ColumnReverseProxyModel.h ChartColorScale.h ChartBubble.h ChartGrid.h ChartContour.h ChartOhlc.h ChartBoxPlot.h ChartWaterfall.h ChartFit.h ChartHistogram.h ChartStack.h ChartSeries3D.h ChartScene3D.h ChartAxis.h ChartSeries.h ChartItem.h LedSource.h LedPreview.h LedLayoutModel.h LightingFrame.h LedEffectRegistry.h LedStorage.h LedDeck.h LedMixer.h LedOutput.h LedProject.h VectorItem.h)
+set(qcat_class_headers MascotPetController DockController TiltController Export Version ThemePalette ChatModel TableModel ColumnReverseProxyModel ChartColorScale ChartBubble ChartGrid ChartContour ChartOhlc ChartBoxPlot ChartWaterfall ChartFit ChartHistogram ChartStack ChartSeries3D ChartScene3D ChartAxis ChartSeries ChartItem LedSource LedPreview LedLayoutModel LightingFrame LedEffectRegistry LedStorage LedDeck LedMixer LedOutput LedProject VectorItem)
 set(qcat_include_dir "${QCatUiKit_BINARY_DIR}/include/QCatUiKit")
 set(qcat_forwarding_dir "${CMAKE_CURRENT_BINARY_DIR}/forwarding")
 file(MAKE_DIRECTORY "${qcat_include_dir}" "${qcat_forwarding_dir}")
@@ -62,6 +63,7 @@ qt_add_qml_module(QCatUiKit
         docking/qcatdocknativedrag.cpp docking/qcatdocknativedrag_p.h
         motion/qcattiltcontroller.cpp
         theme/qcatthemepalette.cpp models/qcatchatmodel.cpp models/qcattablemodel.cpp
+        models/qcatcolumnreverseproxymodel.cpp
         charts/qcatchartmapping.cpp charts/qcatchartcontour.cpp
         charts/qcatchartfinancial.cpp
         charts/qcatwaterfall.cpp charts/qcatchartfit.cpp charts/qcatcharthistogram.cpp charts/qcatchartstack.cpp charts/qcatchartstatistics_p.h

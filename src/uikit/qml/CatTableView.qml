@@ -17,6 +17,14 @@ Item {
     readonly property TableView view: __frozen ? frozenMainView : plainView
     property int frozenColumnCount: 0
     property int frozenRowCount: 0
+    readonly property bool __rtl: control.LayoutMirroring.enabled
+    readonly property var __viewModel: __rtl ? rtlProxy : control.model
+    function mapToSource(index) {
+        return __rtl && rtlProxy ? rtlProxy.mapToSource(index) : index;
+    }
+    function mapFromSource(index) {
+        return __rtl && rtlProxy ? rtlProxy.mapFromSource(index) : index;
+    }
     implicitWidth: 480
     implicitHeight: 280
 
@@ -27,17 +35,41 @@ Item {
     readonly property bool __frozen: __frozenColumns > 0 || __frozenRows > 0
     readonly property real __defaultColumnWidth: 140
     readonly property real __cellSpacing: 1
+    readonly property real __frozenX: __rtl ? width - __frozenWidth : 0
+    readonly property real __mainX: __rtl ? 0 : __frozenWidth
     property var __columnWidths: ({})
     property real __implicitRowHeight: 0
     property bool __wasFrozen: false
     property bool __sizesCaptured: false
     property int __captureAttempts: 0
+    property int __rtlAnchorAttempts: 0
+
+    ColumnReverseProxyModel {
+        id: rtlProxy
+        sourceModel: control.__rtl ? control.model : null
+    }
+
+    Timer {
+        interval: 16
+        repeat: true
+        running: control.__rtl && control.__rtlAnchorAttempts < 60
+        onTriggered: {
+            control.__rtlAnchorAttempts += 1;
+            control.__anchorRtlScroll();
+        }
+    }
+    Component.onCompleted: Qt.callLater(control.__anchorRtlScroll)
+    Connections {
+        target: control.__frozen ? frozenMainView : plainView
+        function onContentWidthChanged() { control.__anchorRtlScroll(); }
+    }
 
     onModelChanged: {
         control.__columnWidths = ({});
         control.__implicitRowHeight = 0;
         control.__sizesCaptured = false;
         control.__captureAttempts = 0;
+        control.__rtlAnchorAttempts = 0;
     }
 
     function __columnWidth(column: int): real {
@@ -102,8 +134,10 @@ Item {
             __sizesCaptured = false;
             __captureAttempts = 0;
         }
+        __rtlAnchorAttempts = 0;
         __wasFrozen = __frozen;
         __relayout();
+        Qt.callLater(__anchorRtlScroll);
     }
     function __captureImplicitSizes() {
         __captureAttempts += 1;
@@ -158,6 +192,13 @@ Item {
         frozenRowCount = 0;
         frozenColumnCount = 0;
     }
+    function __anchorRtlScroll() {
+        if (!__rtl)
+            return;
+        const view = __frozen ? frozenMainView : plainView;
+        if (view && view.columns > 0 && view.contentWidth > view.width)
+            view.contentX = view.contentWidth - view.width;
+    }
     function __rowHeight(row: int): real {
         const provider = rowHeightProvider;
         if (typeof provider === "function") {
@@ -168,10 +209,11 @@ Item {
         return __implicitRowHeight > 0 ? __implicitRowHeight : tokens.controlHeight;
     }
     function __paneColumnWidth(frozenPane: bool, column: int): real {
-        const frozen = column < __frozenColumns;
+        const frozen = __rtl ? column >= __columns - __frozenColumns
+                             : column < __frozenColumns;
         if (frozenPane !== frozen)
             return 0;
-        return __columnWidth(column);
+        return __columnWidth(__rtl ? __columns - 1 - column : column);
     }
     function __paneRowHeight(frozenPane: bool, row: int): real {
         const frozen = row < __frozenRows;
@@ -226,7 +268,7 @@ Item {
 
     ItemSelectionModel {
         id: sharedSelection
-        model: control.model
+        model: control.__viewModel
     }
 
     Component {
@@ -292,8 +334,9 @@ Item {
                 width: 6
                 anchors {
                     top: parent.top
-                    right: parent.right
                     bottom: parent.bottom
+                    left: control.__rtl ? parent.left : undefined
+                    right: control.__rtl ? undefined : parent.right
                 }
                 color: handleHover.hovered || resizeDrag.active ? control.tokens.primary : "transparent"
                 HoverHandler {
@@ -309,13 +352,27 @@ Item {
                     yAxis.enabled: false
                     grabPermissions: PointerHandler.CanTakeOverFromItems
                     property real startWidth: 0
+                    property real startSceneX: 0
                     onActiveChanged: {
-                        if (active)
-                            startWidth = control.__columnWidth(headerCell.column);
+                        if (active) {
+                            const sourceColumn = control.__rtl
+                                    ? control.__columns - 1 - headerCell.column
+                                    : headerCell.column;
+                            startWidth = control.__columnWidth(sourceColumn);
+                            startSceneX = centroid.scenePosition.x;
+                        }
                     }
                     onTranslationChanged: {
-                        if (active)
-                            control.__setColumnWidth(headerCell.column, startWidth + translation.x);
+                        if (active) {
+                            const sourceColumn = control.__rtl
+                                    ? control.__columns - 1 - headerCell.column
+                                    : headerCell.column;
+                            const dx = control.__rtl
+                                    ? centroid.scenePosition.x - startSceneX
+                                    : translation.x;
+                            const delta = control.__rtl ? -dx : dx;
+                            control.__setColumnWidth(sourceColumn, startWidth + delta);
+                        }
                     }
                 }
             }
@@ -352,19 +409,24 @@ Item {
             rowSpacing: control.__cellSpacing
             resizableColumns: true
             boundsBehavior: Flickable.StopAtBounds
-            model: control.model
+            model: control.__viewModel
             delegate: control.delegate
             selectionModel: sharedSelection
             MouseScrollImpl {
                 view: plainView
             }
-            B.ScrollBar.vertical: B.ScrollBar {}
-            B.ScrollBar.horizontal: B.ScrollBar {}
+            B.ScrollBar.vertical: B.ScrollBar {
+                LayoutMirroring.enabled: control.__rtl
+            }
+            B.ScrollBar.horizontal: B.ScrollBar {
+                LayoutMirroring.enabled: control.__rtl
+            }
         }
     }
 
     Item {
         id: frozenArea
+        objectName: "frozenArea"
         anchors.fill: parent
         visible: control.__frozen
 
@@ -381,7 +443,7 @@ Item {
             B.HorizontalHeaderView {
                 id: frozenHeader
                 objectName: "frozenHeader"
-                x: 0
+                x: control.__frozenX
                 width: control.__frozenWidth
                 height: parent.height
                 visible: control.__frozenColumns > 0
@@ -394,7 +456,7 @@ Item {
             B.HorizontalHeaderView {
                 id: frozenMainHeader
                 objectName: "frozenMainHeader"
-                x: control.__frozenWidth
+                x: control.__mainX
                 width: Math.max(0, parent.width - control.__frozenWidth)
                 height: parent.height
                 clip: true
@@ -407,6 +469,7 @@ Item {
 
         Item {
             id: frozenContentArea
+            objectName: "frozenContentArea"
             anchors {
                 top: frozenHeaderArea.bottom
                 left: parent.left
@@ -418,7 +481,7 @@ Item {
             TableView {
                 id: frozenTopLeftView
                 objectName: "frozenTopLeftView"
-                x: 0
+                x: control.__frozenX
                 y: 0
                 width: control.__frozenWidth
                 height: control.__frozenHeight
@@ -429,7 +492,7 @@ Item {
                 rowSpacing: control.__cellSpacing
                 interactive: false
                 boundsBehavior: Flickable.StopAtBounds
-                model: control.model
+                model: control.__viewModel
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
@@ -440,7 +503,7 @@ Item {
             TableView {
                 id: frozenTopRightView
                 objectName: "frozenTopRightView"
-                x: control.__frozenWidth
+                x: control.__mainX
                 y: 0
                 width: Math.max(0, frozenContentArea.width - control.__frozenWidth)
                 height: control.__frozenHeight
@@ -452,7 +515,7 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 syncView: frozenMainView
                 syncDirection: Qt.Horizontal
-                model: control.model
+                model: control.__viewModel
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }
@@ -463,7 +526,7 @@ Item {
             TableView {
                 id: frozenBottomLeftView
                 objectName: "frozenBottomLeftView"
-                x: 0
+                x: control.__frozenX
                 y: control.__frozenHeight
                 width: control.__frozenWidth
                 height: Math.max(0, frozenContentArea.height - control.__frozenHeight)
@@ -475,7 +538,7 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 syncView: frozenMainView
                 syncDirection: Qt.Vertical
-                model: control.model
+                model: control.__viewModel
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
@@ -486,7 +549,7 @@ Item {
             TableView {
                 id: frozenMainView
                 objectName: "frozenMainView"
-                x: control.__frozenWidth
+                x: control.__mainX
                 y: control.__frozenHeight
                 width: Math.max(0, frozenContentArea.width - control.__frozenWidth)
                 height: Math.max(0, frozenContentArea.height - control.__frozenHeight)
@@ -495,7 +558,7 @@ Item {
                 columnSpacing: control.__cellSpacing
                 rowSpacing: control.__cellSpacing
                 boundsBehavior: Flickable.StopAtBounds
-                model: control.model
+                model: control.__viewModel
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }
@@ -505,6 +568,7 @@ Item {
                     view: frozenMainView
                 }
                 B.ScrollBar.horizontal: B.ScrollBar {
+                    LayoutMirroring.enabled: control.__rtl
                     policy: control.__columns > 0 && control.__frozenColumns >= control.__columns
                             ? B.ScrollBar.AlwaysOff : B.ScrollBar.AsNeeded
                 }
@@ -515,9 +579,9 @@ Item {
                 orientation: Qt.Vertical
                 anchors {
                     top: parent.top
-                    right: parent.right
                     bottom: parent.bottom
                 }
+                x: control.__rtl ? 0 : parent.width - width
                 z: 20
                 policy: B.ScrollBar.AsNeeded
                 visible: control.__rows > 0 && control.__frozenRows < control.__rows

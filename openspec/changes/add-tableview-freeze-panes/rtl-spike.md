@@ -8,7 +8,7 @@
 
 | 决策 | 选择 |
 | --- | --- |
-| 1 | **B**：`ColumnReverseProxyModel` 只做内部实现；`CatTableView` 暴露 `mapToSource` / `mapFromSource` |
+| 1 | **A**：公开 `ColumnReverseProxyModel`；`CatTableView` 同时暴露 `mapToSource` / `mapFromSource` |
 | 2 | **A**：索引映射使用方法 |
 | 3 | **B**：RTL 下垂直滚动条位于左侧 |
 | 4 | **A**：RTL 是本版本归档门槛，实现拆到 `add-tableview-rtl` |
