@@ -5256,6 +5256,14 @@ Slowest data batch: %6 ms</translation>
         <source>Right-to-left layout</source>
         <translation>Right-to-left layout</translation>
     </message>
+    <message>
+        <source>Load 100,000 rows in RTL</source>
+        <translation>Load 100,000 rows in RTL</translation>
+    </message>
+    <message>
+        <source>RTL is applied before loading, avoiding a full model reset.</source>
+        <translation>RTL is applied before loading, avoiding a full model reset.</translation>
+    </message>
     </context>
 <context>
     <name>GalleryDataStressPanel</name>

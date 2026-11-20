@@ -161,6 +161,24 @@ TestCase {
         table.clearFreeze();
     }
 
+    function test_tableRtlLargePreset() {
+        choose("table");
+        verify(waitForRendering(find("demoTableView")));
+        const table = find("demoTableView");
+        table.LayoutMirroring.enabled = false;
+        table.clearFreeze();
+        table.model.clear();
+        const preset = find("tableRtlLargePreset");
+        verify(preset);
+        preset.clicked();
+        compare(table.LayoutMirroring.enabled, true);
+        compare(find("tableRtlToggle").checked, true);
+        tryVerify(function() { return table.view.rows > 0; }, 5000);
+        find("dataStressButton").clicked();
+        table.LayoutMirroring.enabled = false;
+        table.model.clear();
+    }
+
     function test_chatStatusesAttachmentsAndTail() {
         const demo = choose("chat");
         for (let type = 0; type < 4; type++) {

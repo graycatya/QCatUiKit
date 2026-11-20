@@ -13,7 +13,7 @@
 - 编辑委托接入后，`tst_tableediting.qml` 验证冻结列与主体编辑切换、提交/取消关闭其他区编辑器；Qt 6.12 的 `QQuickTableView::edit()` 注解告警记为已知上游噪声。
 - 非正式 10 万行探针（offscreen/software，120×28 delegate）：冻结/无冻结存活 delegate 约 242/247，未出现翻倍；修复后冻结主体 `contentH` 约 2,899,970、`contentW` 604 + 冻结列 120，与单视图 725 基本对齐。
 - 正式压力冒烟 `tests/auto/qml/data/tst_tablestress.qml`：10 万行、4 列、冻结 1/1；断言 `view.rows=100000`、存活 delegate < 2000、100 次纵向滚动后仍 < 2000。单文件约 7 秒，随 `qml_contracts` 一起通过（448 passed）。
-- Gallery 数据页新增冻结列/行 SpinBox、冻结首行首列、清除冻结和 RTL 布局开关，补齐中英文 TS；`GalleryDataExamples::test_tableFreezeControls` 和 `GalleryDataExamples::test_tableRtl` 通过。完整 Gallery 契约测试 861 passed、0 failed、3 skipped。
+- Gallery 数据页新增冻结列/行 SpinBox、冻结首行首列、清除冻结、RTL 布局开关和 `Load 100,000 rows in RTL` 预设，补齐中英文 TS；`GalleryDataExamples::test_tableFreezeControls`、`test_tableRtl` 和 `test_tableRtlLargePreset` 通过。完整 Gallery 契约测试 862 passed、0 failed、3 skipped。
 - Gallery 表格页启动冒烟 `qcat-gallery --smoke-test --page table`：退出 0；`COMPONENTS.md` 与 `VALIDATION.md` 已补充冻结 API 和回归入口。
 - 注意：`gallery_contracts` 的 CTest 超时为 300 秒，而完整套件实际约 1060 秒，直接运行 CTest 会超时；本轮通过生成的 `gallery_contracts-Debug.cmake` 脚本运行并保留结果。该超时属于现有验证基础设施配置，不在本变更内修改。
 - 冻结模式列宽由共享宽度表驱动，表头 6px 手柄调整后四区同步；`resizableColumns=false` 同时禁用手柄；切回无冻结时把宽度回写到单视图。

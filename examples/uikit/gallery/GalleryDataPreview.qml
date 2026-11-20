@@ -187,12 +187,32 @@ ColumnLayout {
                 onClicked: table.clearFreeze()
             }
             CatCheckBox {
+                id: rtlToggle
                 objectName: "tableRtlToggle"
                 text: qsTr("Right-to-left layout")
                 checked: table.LayoutMirroring.enabled
                 onToggled: table.LayoutMirroring.enabled = checked
                 Accessible.name: qsTr("Right-to-left layout")
             }
+            CatButton {
+                objectName: "tableRtlLargePreset"
+                text: qsTr("Load 100,000 rows in RTL")
+                onClicked: {
+                    if (demo.running)
+                        demo.stopStress();
+                    demo.clearData();
+                    table.LayoutMirroring.enabled = true;
+                    rtlToggle.checked = true;
+                    demo.configureLargeData();
+                    demo.startStress();
+                }
+            }
+        }
+        CatLabel {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            color: Theme.tokens.textSecondary
+            text: qsTr("RTL is applied before loading, avoiding a full model reset.")
         }
     }
     Connections {
