@@ -386,6 +386,7 @@ Item {
             required property int row
             required property int column
             required property bool selected
+            required property bool editing
             implicitWidth: 140
             implicitHeight: control.tokens.controlHeight
             color: selected ? control.tokens.surfaceHover : control.tokens.surface
@@ -396,6 +397,7 @@ Item {
                 text: parent.display === undefined ? "" : String(parent.display)
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
+                visible: !parent.editing
             }
             TableView.editDelegate: control.editDelegate
         }
@@ -406,8 +408,10 @@ Item {
         TextInput {
             objectName: "tableEditField"
             required property var display
+            required property int row
+            required property int column
             anchors.fill: parent
-            anchors.margins: 4
+            anchors.margins: 8
             text: display === undefined ? "" : String(display)
             font.pixelSize: control.tokens.fontSize
             color: control.tokens.text
@@ -415,18 +419,29 @@ Item {
             selectByMouse: true
             clip: true
             verticalAlignment: TextInput.AlignVCenter
-            Component.onCompleted: {
-                control.__editing = true;
-                selectAll();
-            }
-            Component.onDestruction: control.__editing = false
-            TableView.onCommit: {
-                display = text;
+            function commitText() {
+                if (!control.__editing)
+                    return;
+                const index = control.__viewModel.index(row, column);
+                if (index.row >= 0)
+                    control.__viewModel.setData(index, text, Qt.EditRole);
+                if (TableView.view)
+                    TableView.view.closeEditor();
                 control.__editing = false;
                 control.__editIndex = null;
             }
+            Component.onCompleted: {
+                control.__editing = true;
+                forceActiveFocus();
+                selectAll();
+            }
+            Component.onDestruction: control.__editing = false
+            TableView.onCommit: commitText()
+            Keys.onReturnPressed: commitText()
+            Keys.onEnterPressed: commitText()
             Keys.onEscapePressed: {
-                TableView.view.closeEditor();
+                if (TableView.view)
+                    TableView.view.closeEditor();
                 control.__editing = false;
                 control.__editIndex = null;
             }
@@ -635,7 +650,7 @@ Item {
                 interactive: false
                 boundsBehavior: Flickable.StopAtBounds
                 model: control.__viewModel
-                editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
+                    editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
@@ -661,7 +676,7 @@ Item {
                 syncView: frozenMainView
                 syncDirection: Qt.Horizontal
                 model: control.__viewModel
-                editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
+                    editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }
@@ -687,7 +702,7 @@ Item {
                 syncView: frozenMainView
                 syncDirection: Qt.Vertical
                 model: control.__viewModel
-                editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
+                    editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(true, column); }
@@ -710,7 +725,7 @@ Item {
                 rowSpacing: control.__cellSpacing
                 boundsBehavior: Flickable.StopAtBounds
                 model: control.__viewModel
-                editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
+                    editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
                 delegate: control.delegate
                 selectionModel: sharedSelection
                 columnWidthProvider: function(column) { return control.__paneColumnWidth(false, column); }

@@ -4,7 +4,7 @@
 
 本轮完成任务 1.1-1.3、2.1、2.2 的选择／行高部分、2.4、3.1、3.4、4.1 和 4.2：四区骨架、`frozenColumnCount`/`frozenRowCount`、越界静默钳制、冻结全部时隐藏滚动条、主体驱动滚动同步、共享列宽表与表头调宽手柄、跨区选择、行高一致、表头分段、跨四区统一垂直滚动条、键盘跨区、`freezeTo`/`clearFreeze` 和 Gallery 冻结控件；默认 `0/0` 保持原单视图路径。
 
-- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：455 passed、0 failed、4 skipped。
+- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：456 passed、0 failed、4 skipped。
 - 新增 `tests/auto/qml/data/tst_tablefreeze.qml`，覆盖默认路径、四区骨架、provider 宽度、负值与超界钳制、运行时切换、模型收缩与清空、全冻结滚动条、横向／纵向滚动同步、冻结列与主体列调宽、禁用调宽、宽度跨模式保持、跨区选择、行高一致、表头分段、统一垂直滚动条、键盘跨区、间距、自定义 delegate 尺寸和 `freezeTo`/`clearFreeze`。
 - 冻结分区与表头统一 `cellSpacing=1`，冻结宽高计入内部间距；`test_cellSpacing` 覆盖。
 - 冻结模式进入时从单视图继承 delegate 隐式列宽/行高，并在首次冻结布局后补捕获未加载列；`test_customDelegateSizes` 覆盖 120×28 自定义 delegate。无法捕获时仍回退 140/`controlHeight`。

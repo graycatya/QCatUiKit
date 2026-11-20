@@ -9,7 +9,8 @@
 - `__closeEditors()` 在开始编辑、提交和取消时关闭四区编辑器，保证同一时间只有一个编辑项。
 - 新增 `tests/auto/qml/data/tst_tableediting.qml`：编辑提交、取消、非法索引、冻结列/主体编辑切换。
 - `tst_tablertl.qml` 新增 RTL 编辑提交，验证代理列写回源列。
-- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：455 passed、0 failed、4 skipped。
+- Enter 提交改用 `EditRole` 写回，避免 `display = text` 写 DisplayRole 被 `TableModel` 拒绝；编辑时隐藏底层单元格文本并强制编辑框聚焦，修复重复文字。新增 `test_enterCommit`。
+- `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：456 passed、0 failed、4 skipped。
 - `qmllint`、`check_docs.py`、`git diff --check`、OpenSpec 严格校验：通过。
 
 ## 已知问题

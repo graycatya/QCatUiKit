@@ -52,6 +52,20 @@ TestCase {
         tryVerify(function() { return !findChild(table, "tableEditField"); }, 1000);
     }
 
+    function test_enterCommit() {
+        const table = createTemporaryObject(tableComponent, test);
+        verify(table);
+        verify(waitForRendering(table));
+        verify(table.edit(1, 1));
+        let field = null;
+        tryVerify(function() { field = findChild(table, "tableEditField"); return field; }, 1000);
+        field.text = "enter";
+        field.forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        tryVerify(function() { return rows.get(1).value === "enter"; }, 1000);
+        tryVerify(function() { return !findChild(table, "tableEditField"); }, 1000);
+    }
+
     function test_editCancel() {
         const table = createTemporaryObject(tableComponent, test);
         verify(table);
