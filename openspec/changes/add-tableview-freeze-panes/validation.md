@@ -11,7 +11,7 @@
 - 垂直滚动条改为跨四区的外部 `ScrollBar`；`test_verticalScrollBarSpansContent` 验证高度、位置和滑块比例与主体一致。
 - 冻结四区启用 `keyNavigationEnabled` 并用 `Keys.priority: Keys.BeforeItem` 拦截方向键；`test_keyboardCrossPanes` 验证左右跨冻结边界、上下行移动和边界钳制。
 - 非正式 10 万行探针（offscreen/software，120×28 delegate）：冻结/无冻结存活 delegate 约 242/247，未出现翻倍；修复后冻结主体 `contentH` 约 2,899,970、`contentW` 604 + 冻结列 120，与单视图 725 基本对齐。该探针不是验收基准，任务 5.2 仍需正式压力冒烟。
-- Gallery 数据页新增冻结列/行 SpinBox、冻结首行首列和清除冻结按钮，补齐中英文 TS；`GalleryDataExamples::test_tableFreezeControls` 通过。完整 Gallery 契约测试 860 passed、0 failed、3 skipped（在间距与统一滚动条修复前一轮运行；修复后表格页 smoke 通过，未重跑完整 17 分钟套件）。
+- Gallery 数据页新增冻结列/行 SpinBox、冻结首行首列、清除冻结和 RTL 布局开关，补齐中英文 TS；`GalleryDataExamples::test_tableFreezeControls` 和 `GalleryDataExamples::test_tableRtl` 通过。完整 Gallery 契约测试 861 passed、0 failed、3 skipped。
 - Gallery 表格页启动冒烟 `qcat-gallery --smoke-test --page table`：退出 0；`COMPONENTS.md` 与 `VALIDATION.md` 已补充冻结 API 和回归入口。
 - 注意：`gallery_contracts` 的 CTest 超时为 300 秒，而完整套件实际约 1060 秒，直接运行 CTest 会超时；本轮通过生成的 `gallery_contracts-Debug.cmake` 脚本运行并保留结果。该超时属于现有验证基础设施配置，不在本变更内修改。
 - 冻结模式列宽由共享宽度表驱动，表头 6px 手柄调整后四区同步；`resizableColumns=false` 同时禁用手柄；切回无冻结时把宽度回写到单视图。

@@ -28,7 +28,7 @@
 
 ## 5. Gallery、文档与回归
 
-- [ ] 5.1 Gallery 增加 RTL 语言/布局检查入口，表格页冻结控件在中英文下可用；补中英文文案。
+- [x] 5.1 Gallery 增加 RTL 语言/布局检查入口，表格页冻结控件在中英文下可用；补中英文文案。
 - [x] 5.2 更新 `COMPONENTS.md`、`VALIDATION.md` 和 `rtl-spike.md` 的决策记录；说明 RTL 下 `view.model` 是代理。
 - [x] 5.3 运行 QML 行为测试、代理 C++ 测试、库/Gallery qmllint、`python tools/check_docs.py`、`git diff --check` 和 OpenSpec 严格校验，写入 `validation.md`。
 - [ ] 5.4 在 Gallery 表格页做 RTL 冒烟（无冻结和 1/1 冻结），确认初始右端、滚动条、选择、编辑、键盘和列宽手柄；记录未覆盖的真实桌面/多屏/读屏场景。

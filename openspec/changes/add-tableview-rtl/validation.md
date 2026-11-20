@@ -17,12 +17,13 @@
   - 表头左边界手柄拖动改变冻结列宽，四区同步。
 - `tst_tablefreeze.qml` 20 个用例通过，LTR 冻结行为未回归。
 - `ctest --test-dir <build> -R '^qml_contracts$' --output-on-failure`：445 passed、0 failed、4 skipped。
+- Gallery 数据页新增 `Right-to-left layout` 开关，中英文 TS 已补；`GalleryDataExamples::test_tableRtl` 验证开关、代理切换、主体 x 和冻结列右侧位置。完整 Gallery 契约 861 passed、0 failed、3 skipped（用生成的 `gallery_contracts-Debug.cmake` 绕过 CTest 的 300 秒超时）。
 - `qmllint -I <Qt qml> -I <build>/qml src/uikit/qml/CatTableView.qml`：通过。
 - `python tools/check_docs.py`、`git diff --check`、OpenSpec 严格校验：通过。
 
 ## 未覆盖
 
 - 4.2 RTL 编辑写回：依赖 `add-tableview-customization` 的 `editDelegate`。
-- 5.1 Gallery RTL 入口、5.4 真实桌面/多屏/读屏检查。
+- 5.4 真实桌面/多屏/读屏检查；Gallery RTL 开关已加，但未做人工视觉确认。
 - 水平滚动条的视觉镜像通过 `LayoutMirroring.enabled` 设置，尚未做像素级位置断言；需要 Gallery 视觉确认。
 - 一次完整套件运行可能命中既有 `ChartContracts::test_touchCoincidentPointsAndData` 触摸时序偶发失败；该用例在表格测试之前执行，与本变更无依赖，重跑通过。

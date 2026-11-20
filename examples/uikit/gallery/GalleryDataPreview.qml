@@ -186,6 +186,13 @@ ColumnLayout {
                 enabled: table.frozenColumnCount > 0 || table.frozenRowCount > 0
                 onClicked: table.clearFreeze()
             }
+            CatCheckBox {
+                objectName: "tableRtlToggle"
+                text: qsTr("Right-to-left layout")
+                checked: table.LayoutMirroring.enabled
+                onToggled: table.LayoutMirroring.enabled = checked
+                Accessible.name: qsTr("Right-to-left layout")
+            }
         }
     }
     Connections {

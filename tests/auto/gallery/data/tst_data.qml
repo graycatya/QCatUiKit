@@ -140,6 +140,27 @@ TestCase {
         compare(demo.count, 3);
     }
 
+    function test_tableRtl() {
+        choose("table");
+        verify(waitForRendering(find("demoTableView")));
+        const table = find("demoTableView");
+        const toggle = find("tableRtlToggle");
+        table.freezeTo(0, 0);
+        toggle.checked = true;
+        toggle.toggled();
+        compare(table.LayoutMirroring.enabled, true);
+        verify(table.view.model !== table.model);
+        compare(table.view.x, 0);
+        const frozen = findChild(table, "frozenBottomLeftView");
+        verify(frozen);
+        compare(frozen.x, table.width - table.__frozenWidth);
+        toggle.checked = false;
+        toggle.toggled();
+        compare(table.LayoutMirroring.enabled, false);
+        verify(table.view.model === table.model);
+        table.clearFreeze();
+    }
+
     function test_chatStatusesAttachmentsAndTail() {
         const demo = choose("chat");
         for (let type = 0; type < 4; type++) {

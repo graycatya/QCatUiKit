@@ -5252,7 +5252,11 @@ Slowest data batch: %6 ms</source>
         <source>Clear freeze</source>
         <translation>清除冻结</translation>
     </message>
-</context>
+    <message>
+        <source>Right-to-left layout</source>
+        <translation>从右向左布局</translation>
+    </message>
+    </context>
 <context>
     <name>GalleryDataStressPanel</name>
     <message>

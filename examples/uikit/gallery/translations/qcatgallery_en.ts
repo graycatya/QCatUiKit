@@ -5252,7 +5252,11 @@ Slowest data batch: %6 ms</translation>
         <source>Clear freeze</source>
         <translation>Clear freeze</translation>
     </message>
-</context>
+    <message>
+        <source>Right-to-left layout</source>
+        <translation>Right-to-left layout</translation>
+    </message>
+    </context>
 <context>
     <name>GalleryDataStressPanel</name>
     <message>
