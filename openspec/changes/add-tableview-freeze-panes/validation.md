@@ -19,4 +19,5 @@
 - 首轮套件 423 passed、1 failed：`CatTableView {}` 无模型时 `ItemSelectionModel` 接收 undefined 并告警。将 `model` 默认值改为 `null` 后全部通过。
 - `qmllint -I <Qt qml> -I <build>/qml src/uikit/qml/CatTableView.qml`：通过，无告警。
 - 完整 Debug 构建：通过。首次构建因 PDB 损坏报 C2471，重命名旧 `vc140.pdb` 后增量构建成功。
+- RTL 设计 spike 已完成，见 [rtl-spike.md](rtl-spike.md)：Qt Quick `TableView`/`HorizontalHeaderView` 不读取布局方向，真正的 RTL 需要列反转代理模型、索引映射、初始右端滚动、选择/编辑写回和键盘方向。2026-11-20 决策：`ColumnReverseProxyModel` 只做内部实现、`CatTableView` 暴露 `mapToSource/mapFromSource`、方法映射、RTL 垂直滚动条左侧、RTL 作为归档门槛；实现拆到 [add-tableview-rtl](../add-tableview-rtl/tasks.md)，冻结变更 3.3 待其归档后勾选。
 - 未验证：RTL、编辑、键盘跨区、10 万行正式压力、真实桌面/多屏/读屏。编辑依赖 `add-tableview-customization` 的 `editDelegate`；无 provider 且无法捕获隐式尺寸时仍回退 140/`controlHeight`。
