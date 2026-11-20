@@ -10,7 +10,7 @@
 
 - [x] 2.1 建立共享列宽表并实现冻结模式下的列宽调整手柄，四区 provider 读取同一宽度；用 QML 测试验证冻结区与主体同步调宽。
 - [x] 2.2 共享 `selectionModel` 和行高结果；用 QML 测试验证跨区选择和同一行在四区高度一致。
-- [ ] 2.3 待 `add-tableview-customization` 提供 `editDelegate` 后，验证冻结四区共享编辑态，并在提交或取消时关闭其他区编辑器。
+- [x] 2.3 待 `add-tableview-customization` 提供 `editDelegate` 后，验证冻结四区共享编辑态，并在提交或取消时关闭其他区编辑器。
 - [x] 2.4 实现方向键跨冻结边界的焦点转移和可见性定位；用 QML 测试验证四个方向的边界导航。
 
 ## 3. 表头与抓手

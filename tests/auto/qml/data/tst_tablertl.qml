@@ -166,6 +166,16 @@ TestCase {
         }, 1000);
     }
 
+    function test_rtlEditCommit() {
+        const table = createTemporaryObject(rtlFrozenTable, test);
+        verify(table);
+        verify(waitForRendering(table));
+        verify(table.edit(1, 1));
+        tryVerify(function() { return findChild(table, "tableEditField"); }, 1000);
+        verify(table.commitEdit("rtl"));
+        tryVerify(function() { return rows.get(1).c === "rtl"; }, 1000);
+    }
+
     function test_rtlSelectionMapping() {
         const table = createTemporaryObject(rtlFrozenTable, test);
         verify(table);

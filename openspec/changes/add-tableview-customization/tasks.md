@@ -8,9 +8,9 @@
 
 ## 2. 编辑委托
 
-- [ ] 2.1 新增 `editDelegate` 并转发到默认 delegate 的 `TableView.editDelegate`，设置双击和编辑键触发；用 QML 测试验证双击、F2、Enter 进入编辑。
-- [ ] 2.2 实现 `edit(row, column)`、`commitEdit(value)`、`cancelEdit()`，按 EditRole 写回并处理模型拒绝；用 QML 测试验证提交、取消、Esc 和只读 flags。
-- [ ] 2.3 验证冻结四区共享编辑态，提交/取消时关闭其他区编辑器；在冻结合并后补 QML 回归。
+- [x] 2.1 新增 `editDelegate` 并转发到默认 delegate 的 `TableView.editDelegate`，设置双击和编辑键触发；用 QML 测试验证双击、F2、Enter 进入编辑。
+- [x] 2.2 实现 `edit(row, column)`、`commitEdit(value)`、`cancelEdit()`，按 EditRole 写回并处理模型拒绝；用 QML 测试验证提交、取消、Esc 和只读 flags。
+- [x] 2.3 验证冻结四区共享编辑态，提交/取消时关闭其他区编辑器；在冻结合并后补 QML 回归。
 
 ## 3. 状态插槽与工具条
 
