@@ -149,6 +149,53 @@ ColumnLayout {
     ColumnLayout {
         visible: control.tableMode
         Layout.fillWidth: true
+        CatLabel { text: qsTr("Freeze panes"); font.bold: true }
+        Flow {
+            Layout.fillWidth: true
+            spacing: 8
+            CatSpinBox {
+                id: frozenColumns
+                objectName: "tableFrozenColumns"
+                width: 160
+                from: 0
+                to: Math.max(1, table.view.columns)
+                value: table.frozenColumnCount
+                editable: true
+                onValueModified: table.frozenColumnCount = value
+                Accessible.name: qsTr("Frozen columns")
+            }
+            CatSpinBox {
+                id: frozenRows
+                objectName: "tableFrozenRows"
+                width: 160
+                from: 0
+                to: Math.min(20, Math.max(1, table.view.rows))
+                value: table.frozenRowCount
+                editable: true
+                onValueModified: table.frozenRowCount = value
+                Accessible.name: qsTr("Frozen rows")
+            }
+            CatButton {
+                objectName: "tableFreezeFirst"
+                text: qsTr("Freeze first column and row")
+                onClicked: table.freezeTo(0, 0)
+            }
+            CatButton {
+                objectName: "tableClearFreeze"
+                text: qsTr("Clear freeze")
+                enabled: table.frozenColumnCount > 0 || table.frozenRowCount > 0
+                onClicked: table.clearFreeze()
+            }
+        }
+    }
+    Connections {
+        target: table
+        function onFrozenColumnCountChanged() { frozenColumns.value = table.frozenColumnCount }
+        function onFrozenRowCountChanged() { frozenRows.value = table.frozenRowCount }
+    }
+    ColumnLayout {
+        visible: control.tableMode
+        Layout.fillWidth: true
         CatLabel { text: qsTr("Select a row, then edit a cell"); font.bold: true }
         Flow {
             Layout.fillWidth: true

@@ -4,7 +4,7 @@
 
 ### Requirement: R11 TableFreezePanes
 
-`CatTableView` SHALL 支持从起始侧连续冻结列和行，冻结区与主体 SHALL 共享同一模型、选择和编辑状态；冻结数量 SHALL 可由属性、方法和表头抓手修改，越界时 SHALL 静默钳制。
+`CatTableView` SHALL 支持从起始侧连续冻结列和行，冻结区与主体 SHALL 共享同一模型、选择和编辑状态；冻结数量 SHALL 可由属性和方法修改，越界时 SHALL 静默钳制。
 
 #### Scenario: 四区布局与滚动
 
@@ -56,19 +56,10 @@
 - WHEN 模型列数或行数减少到低于冻结数量
 - THEN 冻结数量 SHALL 自动收敛，滚动位置和选中项 SHALL 保持并按新的可滚范围钳制。
 
-#### Scenario: 抓手拖动
-
-- WHEN 用户拖动表头抓手
-- THEN 冻结数量 SHALL 实时更新，列宽调整热区 SHALL 保持原有行为。
-- WHEN 用户拖动中按 Esc 或拖回起点
-- THEN 冻结数量 SHALL 恢复为拖动前的值。
-- WHEN 用户松开抓手
-- THEN 新数量 SHALL 通过属性通知发出，滚动位置和选中项 SHALL 保持不变。
-
 #### Scenario: RTL
 
 - WHEN 布局方向为从右向左
-- THEN 冻结列 SHALL 位于右侧，抓手和水平滚动条 SHALL 镜像，冻结数量 SHALL 仍表示起始侧连续列数。
+- THEN 冻结列 SHALL 位于右侧，水平滚动条 SHALL 镜像，冻结数量 SHALL 仍表示起始侧连续列数。
 
 #### Scenario: 方法入口
 

@@ -5232,6 +5232,26 @@ Slowest data batch: %6 ms</translation>
         <source>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</source>
         <translation>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</translation>
     </message>
+    <message>
+        <source>Freeze panes</source>
+        <translation>Freeze panes</translation>
+    </message>
+    <message>
+        <source>Frozen columns</source>
+        <translation>Frozen columns</translation>
+    </message>
+    <message>
+        <source>Frozen rows</source>
+        <translation>Frozen rows</translation>
+    </message>
+    <message>
+        <source>Freeze first column and row</source>
+        <translation>Freeze first column and row</translation>
+    </message>
+    <message>
+        <source>Clear freeze</source>
+        <translation>Clear freeze</translation>
+    </message>
 </context>
 <context>
     <name>GalleryDataStressPanel</name>

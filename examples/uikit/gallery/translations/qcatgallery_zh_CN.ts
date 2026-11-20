@@ -5232,6 +5232,26 @@ Slowest data batch: %6 ms</source>
         <source>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</source>
         <translation>图片、音频和视频条目用于展示附件信息；此组件不下载或播放媒体。</translation>
     </message>
+    <message>
+        <source>Freeze panes</source>
+        <translation>冻结窗格</translation>
+    </message>
+    <message>
+        <source>Frozen columns</source>
+        <translation>冻结列</translation>
+    </message>
+    <message>
+        <source>Frozen rows</source>
+        <translation>冻结行</translation>
+    </message>
+    <message>
+        <source>Freeze first column and row</source>
+        <translation>冻结首行首列</translation>
+    </message>
+    <message>
+        <source>Clear freeze</source>
+        <translation>清除冻结</translation>
+    </message>
 </context>
 <context>
     <name>GalleryDataStressPanel</name>

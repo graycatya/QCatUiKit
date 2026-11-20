@@ -117,6 +117,29 @@ TestCase {
         view.setColumnWidth(1, 220);
         compare(view.explicitColumnWidth(1), 220);
     }
+    function test_tableFreezeControls() {
+        const demo = choose("table");
+        verify(waitForRendering(find("demoTableView")));
+        const table = find("demoTableView");
+        const columns = find("tableFrozenColumns");
+        const rows = find("tableFrozenRows");
+        columns.value = 1;
+        columns.valueModified();
+        compare(table.frozenColumnCount, 1);
+        rows.value = 2;
+        rows.valueModified();
+        compare(table.frozenRowCount, 2);
+        find("tableClearFreeze").clicked();
+        compare(table.frozenColumnCount, 0);
+        compare(table.frozenRowCount, 0);
+        find("tableFreezeFirst").clicked();
+        compare(table.frozenColumnCount, 1);
+        compare(table.frozenRowCount, 1);
+        compare(columns.value, 1);
+        compare(rows.value, 1);
+        compare(demo.count, 3);
+    }
+
     function test_chatStatusesAttachmentsAndTail() {
         const demo = choose("chat");
         for (let type = 0; type < 4; type++) {

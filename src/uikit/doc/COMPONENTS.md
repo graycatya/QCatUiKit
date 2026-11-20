@@ -116,7 +116,7 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`view` 可配置标准 TableView 选择与滚动属性 |
+| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`frozenColumnCount`/`frozenRowCount` 从起始侧连续冻结列和行并静默钳制，`freezeTo(row, column)`/`clearFreeze()` 修改冻结数量，冻结模式表头边界可调列宽；`view` 可配置标准 TableView 选择与滚动属性 |
 | [CatChatView](../qml/CatChatView.qml) | 标准 ListView；`currentUser`、`followTail=true`；支持替换 delegate，关闭尾部跟随后可持续浏览历史。 |
 | [CatChatInput](../qml/CatChatInput.qml) | `text`、`placeholderText`、`submit()`、`submitted(string)`；忽略纯空白，提交去除首尾空白后清空输入。 |
 
