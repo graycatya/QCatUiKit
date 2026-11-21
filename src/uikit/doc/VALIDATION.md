@@ -28,11 +28,11 @@ CatTableView 冻结回归位于 `tests/auto/qml/data/tst_tablefreeze.qml`，覆�
 
 CatTableView RTL 回归位于 `tests/auto/qml/data/tst_tablertl.qml`，覆盖 LTR 恒等映射、RTL 列反转、四区镜像、初始右端滚动、垂直滚动条左侧、跨区选择、键盘跨区和表头左侧列宽手柄；`ColumnReverseProxyModel` 的映射、编辑和列结构变化由 `tests/auto/models` 的 `reverseProxyContract` 覆盖。运行 `ctest --test-dir <build> -R '^(models|qml_contracts)$' --output-on-failure`。10 万行冻结 1/1 压力冒烟位于 `tests/auto/qml/data/tst_tablestress.qml`，断言存活 delegate 少于 2000，随 `qml_contracts` 执行。表格编辑回归位于 `tests/auto/qml/data/tst_tableediting.qml`，覆盖提交、取消、非法索引和冻结列/主体切换；RTL 编辑写回在 `tst_tablertl.qml`。`tst_tablecells.qml` 覆盖 `CatTableCell`/`CatTableHeaderCell` 基类契约，`tst_tablecustomization.qml` 覆盖 toolbar、空态/加载态、`headerDelegate` 动态切换和普通/工具栏/冻结/RTL/尺寸变化后的垂直滚轮；Gallery 数据页提供对应示例。Qt 6.12 的 `QQuickTableView::edit()` 缺少返回类型注解，调用时会输出 `QCRITICAL` 但不影响行为。
 
-Release（MSVC 2022、offscreen/software）补充验证：`models` 通过，`qml_contracts` 475 passed，完整 Gallery 865 passed；包含可排序表头点击、指示器、边缘列宽手柄和普通视图列宽同步。临时 10 万行探针切换 RTL 的耗时约为普通表 162 ms、冻结 1/1 102 ms；Debug 下同场景约 2.6 s / 0.9 s。Release 已满足运行时切换的交互需求，不需要“无重置列顺序”架构改动；临时探针不进入 CI。
+Release（MSVC 2022、offscreen/software）补充验证：`models` 通过，`qml_contracts` 477 passed，完整 Gallery 865 passed；包含可排序表头点击、指示器、统一列宽手柄和普通视图列宽同步。临时 10 万行探针切换 RTL 的耗时约为普通表 162 ms、冻结 1/1 102 ms；Debug 下同场景约 2.6 s / 0.9 s。Release 已满足运行时切换的交互需求，不需要“无重置列顺序”架构改动；临时探针不进入 CI。
 
 表格排序接入回归：Gallery 数据页 `Sortable header` 使用应用层 `GalleryTableSortModel`（`QSortFilterProxyModel`），排序代理位于 `CatTableView` 的 RTL 代理下层；表头通过 `sourceColumn` 把视觉列映射回源列。`gallery_data_demo` 覆盖升/降序、切列、清除和行映射，`GalleryDataExamples::test_tableSorting` 覆盖 LTR/RTL、冻结 1/1 和表头指示，`test_tableSortResize` 覆盖可排序表头边缘列宽拖动。排序本身不进入 `CatTableView` 公共状态。
 
-列宽拖动已统一为 `CatTableResizeHandle`：普通表头关闭 Qt `HorizontalHeaderView` 内置列宽拖动，默认表头、Gallery 自定义排序表头和冻结表头共用同一手柄；`CatTableView.columnWidth(visualColumn)` / `setColumnWidth(visualColumn, width)` 统一视觉列映射和宽度写入。手柄悬停/拖动时由同一组件显示主题色和 `SplitHCursor`，避免内置拖动有光标而自定义拖动无颜色状态。普通表头同时固定 `controlHeight`，修复表头与首行重叠；`tst_tablecustomization.qml` 增加悬停颜色、默认表头拖动和表头高度断言。Debug 下 `qml_contracts` 477 passed、完整 Gallery 865 passed；Release 复验仍以最近一次 475/865 为准。
+列宽拖动已统一为 `CatTableResizeHandle`：普通表头关闭 Qt `HorizontalHeaderView` 内置列宽拖动，默认表头、Gallery 自定义排序表头和冻结表头共用同一手柄；`CatTableView.columnWidth(visualColumn)` / `setColumnWidth(visualColumn, width)` 统一视觉列映射和宽度写入。手柄悬停/拖动时由同一组件显示主题色和 `SplitHCursor`，避免内置拖动有光标而自定义拖动无颜色状态。普通表头同时固定 `controlHeight`，修复表头与首行重叠；`tst_tablecustomization.qml` 增加悬停颜色、默认表头拖动和表头高度断言。Debug 与 Release 下 `qml_contracts` 均为 477 passed，完整 Gallery 均为 865 passed。
 
 先按 [构建说明](BUILDING.md) 配置并构建：
 
