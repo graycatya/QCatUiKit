@@ -25,6 +25,16 @@ TestCase {
         headers: ["Name", "Value"]
     }
 
+    TableModel {
+        id: longRows
+        columns: ["name", "value"]
+        headers: ["Name", "Value"]
+        Component.onCompleted: {
+            for (let i = 0; i < 100; ++i)
+                append({name: "Row " + i, value: i});
+        }
+    }
+
     Component {
         id: tableComponent
         CatTableView {
@@ -99,6 +109,63 @@ TestCase {
         verify(waitForRendering(table));
         compare(findChild(table, "tableToolbarHost").height, 0);
         compare(table.view.y, Theme.tokens.controlHeight);
+    }
+
+    function test_verticalWheel() {
+        const table = make({model: longRows});
+        verify(table);
+        verify(waitForRendering(table));
+        table.view.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
+    }
+
+    function test_verticalWheelWithToolbar() {
+        const table = make({model: longRows, toolbar: toolbarComponent});
+        verify(table);
+        verify(waitForRendering(table));
+        table.view.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
+    }
+
+    function test_verticalWheelFrozen() {
+        const table = make({model: longRows, frozenColumnCount: 1, frozenRowCount: 1});
+        verify(table);
+        verify(waitForRendering(table));
+        table.view.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
+    }
+
+    function test_layoutChangesKeepVerticalScroll() {
+        const table = make({model: longRows});
+        verify(table);
+        verify(waitForRendering(table));
+        table.toolbar = toolbarComponent;
+        wait(50);
+        table.toolbar = null;
+        wait(50);
+        table.headerDelegate = headerComponent;
+        wait(50);
+        table.headerDelegate = null;
+        wait(50);
+        table.loadingState = loadingComponent;
+        table.loading = true;
+        wait(50);
+        table.loading = false;
+        wait(50);
+        table.LayoutMirroring.enabled = true;
+        wait(50);
+        table.view.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
+        table.LayoutMirroring.enabled = false;
+        table.height = 420;
+        wait(50);
+        table.view.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
     }
 
     function test_emptyState() {
