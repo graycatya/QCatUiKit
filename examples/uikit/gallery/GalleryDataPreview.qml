@@ -500,40 +500,10 @@ ColumnLayout {
             TapHandler {
                 onTapped: control.requestSort(headerCell.column)
             }
-            MouseArea {
-                id: sortResizeHandle
+            CatTableResizeHandle {
                 objectName: "tableSortResizeHandle"
-                width: 6
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: table.__rtl ? parent.left : undefined
-                    right: table.__rtl ? undefined : parent.right
-                }
-                enabled: table.resizableColumns
-                hoverEnabled: enabled
-                preventStealing: true
-                cursorShape: Qt.SplitHCursor
-                property real startWidth: 0
-                property real startSceneX: 0
-                Rectangle {
-                    anchors.fill: parent
-                    color: sortResizeHandle.containsMouse || sortResizeHandle.pressed
-                           ? Theme.tokens.primary : "transparent"
-                }
-                onPressed: mouse => {
-                    const source = table.sourceColumn(headerCell.column);
-                    startWidth = table.__columnWidth(source);
-                    startSceneX = sortResizeHandle.mapToItem(null, mouse.x, mouse.y).x;
-                }
-                onPositionChanged: mouse => {
-                    if (!pressed) return;
-                    const source = table.sourceColumn(headerCell.column);
-                    const dx = sortResizeHandle.mapToItem(null, mouse.x, mouse.y).x
-                            - startSceneX;
-                    const delta = table.__rtl ? -dx : dx;
-                    table.__setColumnWidth(source, startWidth + delta);
-                }
+                tableView: table
+                visualColumn: headerCell.column
             }
         }
     }

@@ -256,6 +256,12 @@ Item {
             return visualColumn;
         return __rtl ? __columns - 1 - visualColumn : visualColumn;
     }
+    function columnWidth(visualColumn: int): real {
+        return __columnWidth(sourceColumn(visualColumn));
+    }
+    function setColumnWidth(visualColumn: int, value: real): void {
+        __setColumnWidth(sourceColumn(visualColumn), value);
+    }
     function __paneAt(row: int, column: int) {
         if (!__frozen)
             return plainView;
@@ -463,7 +469,12 @@ Item {
     Component {
         id: defaultHeaderCell
         CatTableHeaderCell {
+            id: headerCell
             theme: control.theme
+            CatTableResizeHandle {
+                tableView: control
+                visualColumn: headerCell.column
+            }
         }
     }
 
@@ -472,52 +483,9 @@ Item {
         CatTableHeaderCell {
             id: headerCell
             theme: control.theme
-            Rectangle {
-                id: resizeHandle
-                width: 6
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: control.__rtl ? parent.left : undefined
-                    right: control.__rtl ? undefined : parent.right
-                }
-                color: handleHover.hovered || resizeDrag.active ? control.tokens.primary : "transparent"
-                HoverHandler {
-                    id: handleHover
-                    enabled: control.resizableColumns
-                    cursorShape: Qt.SplitHCursor
-                }
-                DragHandler {
-                    id: resizeDrag
-                    enabled: control.resizableColumns
-                    target: null
-                    xAxis.enabled: true
-                    yAxis.enabled: false
-                    grabPermissions: PointerHandler.CanTakeOverFromItems
-                    property real startWidth: 0
-                    property real startSceneX: 0
-                    onActiveChanged: {
-                        if (active) {
-                            const sourceColumn = control.__rtl
-                                    ? control.__columns - 1 - headerCell.column
-                                    : headerCell.column;
-                            startWidth = control.__columnWidth(sourceColumn);
-                            startSceneX = centroid.scenePosition.x;
-                        }
-                    }
-                    onTranslationChanged: {
-                        if (active) {
-                            const sourceColumn = control.__rtl
-                                    ? control.__columns - 1 - headerCell.column
-                                    : headerCell.column;
-                            const dx = control.__rtl
-                                    ? centroid.scenePosition.x - startSceneX
-                                    : translation.x;
-                            const delta = control.__rtl ? -dx : dx;
-                            control.__setColumnWidth(sourceColumn, startWidth + delta);
-                        }
-                    }
-                }
+            CatTableResizeHandle {
+                tableView: control
+                visualColumn: headerCell.column
             }
         }
     }
@@ -557,6 +525,8 @@ Item {
                 left: parent.left
                 right: parent.right
             }
+            height: control.tokens.controlHeight
+            resizableColumns: false
             clip: true
             columnSpacing: control.__cellSpacing
             syncView: plainView

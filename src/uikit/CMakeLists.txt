@@ -118,6 +118,7 @@ qt_add_qml_module(QCatUiKit
         qml/CatResizeHandle.qml
         qml/CatTableCell.qml
         qml/CatTableHeaderCell.qml
+        qml/CatTableResizeHandle.qml
         qml/CatTableView.qml
         qml/CatTextField.qml
         qml/CatToolTip.qml

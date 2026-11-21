@@ -98,6 +98,8 @@ TestCase {
         compare(host.height, 36);
         compare(host.width, table.width);
         compare(header.mapToItem(table, 0, 0).y, 36);
+        compare(header.height, Theme.tokens.controlHeight);
+        compare(table.view.y, header.height);
         table.view.contentY = 100;
         compare(host.y, 0);
         compare(toolbar.height, 36);
@@ -201,6 +203,22 @@ TestCase {
         tryVerify(function() { return findChild(table, "customHeader"); }, 1000);
         table.headerDelegate = null;
         tryVerify(function() { return !findChild(table, "customHeader"); }, 1000);
+    }
+
+    function test_resizeHandleHoverAndDrag() {
+        const table = make({});
+        verify(table);
+        verify(waitForRendering(table));
+        const handle = findChild(table, "catTableResizeHandle");
+        verify(handle);
+        mouseMove(handle, handle.width / 2, handle.height / 2);
+        tryCompare(handle, "color", Theme.tokens.primary);
+        mouseMove(table.view, 20, 20);
+        tryVerify(function() { return handle.color !== Theme.tokens.primary; }, 1000);
+        const column = handle.parent.column;
+        const before = table.columnWidth(column);
+        mouseDrag(handle, 3, handle.height / 2, 40, 0);
+        tryVerify(function() { return table.columnWidth(column) > before; }, 1000);
     }
 
     function test_headerDelegate() {

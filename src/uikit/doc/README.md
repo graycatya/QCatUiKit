@@ -43,7 +43,7 @@
 
 GPU 渲染和兼容 RGBA8 接口见 [LED 预览](LEDPREVIEW.md)；共享布局、Deck/Storage、多通道混合及设备内存输出见 [LED 工作流](LEDWORKFLOW.md)。
 
-- **QML**：125 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController、MascotPetController、VectorItem 和版本信息单例。
+- **QML**：126 个 Cat 前缀类型，以及 Theme、ThemePalette、TableModel、ChatModel、TreeModel、TiltController、DockController、MascotPetController、VectorItem 和版本信息单例。
 - **C++**：主题、表格、消息、图表、坐标轴、序列、LED 工作流、TiltController、DockController、VectorItem 和版本查询接口；公开头安装到 `include/QCatUiKit`。
 - **Gallery**：独立示例应用，数据生成器、压力测试控制器、导航和翻译管理属于示例实现，不是安装库 API。
 

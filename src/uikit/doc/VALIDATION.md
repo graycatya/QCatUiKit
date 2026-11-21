@@ -32,6 +32,8 @@ Release（MSVC 2022、offscreen/software）补充验证：`models` 通过，`qml
 
 表格排序接入回归：Gallery 数据页 `Sortable header` 使用应用层 `GalleryTableSortModel`（`QSortFilterProxyModel`），排序代理位于 `CatTableView` 的 RTL 代理下层；表头通过 `sourceColumn` 把视觉列映射回源列。`gallery_data_demo` 覆盖升/降序、切列、清除和行映射，`GalleryDataExamples::test_tableSorting` 覆盖 LTR/RTL、冻结 1/1 和表头指示，`test_tableSortResize` 覆盖可排序表头边缘列宽拖动。排序本身不进入 `CatTableView` 公共状态。
 
+列宽拖动已统一为 `CatTableResizeHandle`：普通表头关闭 Qt `HorizontalHeaderView` 内置列宽拖动，默认表头、Gallery 自定义排序表头和冻结表头共用同一手柄；`CatTableView.columnWidth(visualColumn)` / `setColumnWidth(visualColumn, width)` 统一视觉列映射和宽度写入。手柄悬停/拖动时由同一组件显示主题色和 `SplitHCursor`，避免内置拖动有光标而自定义拖动无颜色状态。普通表头同时固定 `controlHeight`，修复表头与首行重叠；`tst_tablecustomization.qml` 增加悬停颜色、默认表头拖动和表头高度断言。Debug 下 `qml_contracts` 477 passed、完整 Gallery 865 passed；Release 复验仍以最近一次 475/865 为准。
+
 先按 [构建说明](BUILDING.md) 配置并构建：
 
 ```sh

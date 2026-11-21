@@ -2,7 +2,7 @@
 
 [文档索引](README.md) · [Gallery 使用指南](../../../examples/uikit/gallery/README.md)
 
-当前包含 125 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
+当前包含 126 个 Cat 前缀 QML 类型，以下按 Gallery 的 16 个分类组织。使用 `import QCatUiKit` 导入；主题和模型等辅助类型另见文末。
 
 所有带主题的组件默认 `theme: Theme`，`tokens` 为解析后的只读视图。继承 Qt 控件的类型支持相应基类的标准属性、信号、方法及可访问性语义；表格列出本库的主要入口。内部 id、子对象树与 SurfaceImpl 不属于公开接口。
 
@@ -116,9 +116,10 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`frozenColumnCount`/`frozenRowCount` 从起始侧连续冻结列和行并静默钳制，`freezeTo(row, column)`/`clearFreeze()` 修改冻结数量，冻结模式表头边界可调列宽；RTL 下通过列反转代理保持起始列在右，`mapToSource`/`mapFromSource` 转换代理与源索引，`sourceColumn(visualColumn)` 快速映射视觉列到 `table.model` 列；`view.model` 在 RTL 下是 `ColumnReverseProxyModel`；`editDelegate` 配合 `edit(row, column)`/`commitEdit(value)`/`cancelEdit()` 提供单元格编辑，默认 delegate 自动转发，自定义 delegate 需设置 `TableView.editDelegate`；`headerDelegate`、`toolbar`、`emptyState`、`loadingState`/`loading` 提供表头、工具栏和内容区状态定制；`view` 可配置标准 TableView 选择与滚动属性 |
+| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`frozenColumnCount`/`frozenRowCount` 从起始侧连续冻结列和行并静默钳制，`freezeTo(row, column)`/`clearFreeze()` 修改冻结数量，冻结模式表头边界可调列宽；RTL 下通过列反转代理保持起始列在右，`mapToSource`/`mapFromSource` 转换代理与源索引，`sourceColumn(visualColumn)` 快速映射视觉列到 `table.model` 列，`columnWidth(visualColumn)`/`setColumnWidth(visualColumn, width)` 统一列宽读写；`view.model` 在 RTL 下是 `ColumnReverseProxyModel`；`editDelegate` 配合 `edit(row, column)`/`commitEdit(value)`/`cancelEdit()` 提供单元格编辑，默认 delegate 自动转发，自定义 delegate 需设置 `TableView.editDelegate`；`headerDelegate`、`toolbar`、`emptyState`、`loadingState`/`loading` 提供表头、工具栏和内容区状态定制；`view` 可配置标准 TableView 选择与滚动属性 |
 | [CatTableCell](../qml/CatTableCell.qml) | 公开单元格基类；继承后自带 `row`/`column`/`display`/`selected`/`editing`/`theme` 契约、默认内边距、选中背景和 `TableView.editDelegate` 转发。 |
 | [CatTableHeaderCell](../qml/CatTableHeaderCell.qml) | 公开表头基类；自带 `display`/`column`/`theme` 契约和默认表头背景，可继承为 `headerDelegate`。 |
+| [CatTableResizeHandle](../qml/CatTableResizeHandle.qml) | 共享列宽手柄；`tableView`/`visualColumn`，悬停或拖动时显示主题色，RTL 自动放左侧，拖拽调用 `CatTableView.setColumnWidth`。 |
 | [CatChatView](../qml/CatChatView.qml) | 标准 ListView；`currentUser`、`followTail=true`；支持替换 delegate，关闭尾部跟随后可持续浏览历史。 |
 | [CatChatInput](../qml/CatChatInput.qml) | `text`、`placeholderText`、`submit()`、`submitted(string)`；忽略纯空白，提交去除首尾空白后清空输入。 |
 
