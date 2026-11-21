@@ -288,6 +288,153 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 - WHEN `hoverInteractionEnabled=false`
 - THEN 提示 SHALL 保留应用设置的可见性和 x/y，SHALL NOT 因指针移动重置延迟，也 SHALL NOT 因点击、移出或窗口失活被自动关闭；Esc 快捷关闭 SHALL 不生效。
 
+### Requirement: R13 TableRtlColumns
+
+`CatTableView` SHALL 在 RTL 布局方向下按起始侧（右侧）显示列，并通过列反转代理保持选择、编辑、键盘和列宽行为正确；LTR 行为 SHALL 保持不变。RTL 模式由继承的 `LayoutMirroring.enabled` 决定，`frozenColumnCount` / `frozenRowCount` 仍表示源模型起始侧的连续数量。
+
+#### Scenario: 无冻结 RTL 列顺序
+
+- WHEN `LayoutMirroring.enabled=true` 且 `frozenColumnCount=0`、`frozenRowCount=0`
+- THEN 源列 0 SHALL 显示在最右侧，源列 N-1 SHALL 显示在最左侧。
+- THEN 初始滚动位置 SHALL 位于内容右端，水平滚动条滑块初始在右端。
+- WHEN 用户向左滚动
+- THEN 水平滚动条 SHALL 按 RTL 方向镜像移动。
+
+#### Scenario: 四区与表头镜像
+
+- WHEN RTL 且 `frozenColumnCount>0`
+- THEN 主体区 SHALL 在左、冻结列区 SHALL 在右；冻结行仍在顶部。
+- THEN 表头 SHALL 分为左侧主体段和右侧冻结段，两段列宽、文本与单元格一致。
+- THEN 垂直滚动条 SHALL 位于左侧并跨四区高度，避免覆盖右侧冻结列。
+
+#### Scenario: 选择与索引映射
+
+- WHEN 用户在任一区点击单元格
+- THEN 选择 SHALL 写入共享代理选择模型，视觉高亮 SHALL 与点击单元格一致。
+- WHEN 读取 `view.selectionModel.currentIndex`
+- THEN 返回的 SHALL 是代理索引；`mapToSource` SHALL 返回源索引，`mapFromSource` 可往返。
+- WHEN 应用用源索引定位或设置当前项
+- THEN 应经 `mapFromSource` 转换后仍定位到同一源单元格。
+
+#### Scenario: 编辑写回
+
+- WHEN RTL 下通过 `editDelegate` 或 `commitEdit(value)` 提交编辑
+- THEN 写入 SHALL 经代理映射到源索引，`dataChanged` SHALL 正常发出。
+- WHEN 提交失败或用户取消
+- THEN 编辑态 SHALL 保留或关闭，SHALL NOT 写错列。
+- THEN 进入编辑时关闭其他区编辑器的行为 SHALL 与 LTR 一致。
+
+#### Scenario: 键盘方向
+
+- WHEN RTL 下焦点位于主体区并向右移动到冻结边界
+- THEN 按 `Right` SHALL 进入冻结区，按 `Left` SHALL 返回主体区。
+- THEN `Home` / `End` 的视觉方向 SHALL 与列顺序一致。
+- WHEN 在冻结区继续移动到最右边界
+- THEN 当前索引 SHALL 停在源列 0，SHALL NOT 越界。
+
+#### Scenario: 列宽调整
+
+- WHEN RTL 下表头显示列宽手柄
+- THEN 手柄 SHALL 位于表头单元格视觉左边界，拖动方向 SHALL 与 LTR 相反。
+- THEN 调整的 SHALL 是该表头对应的源列，四区宽度 SHALL 同步。
+- WHEN `resizableColumns=false`
+- THEN 手柄 SHALL 禁用。
+
+#### Scenario: 模型列变化
+
+- WHEN RTL 下源模型插入、删除或重置列
+- THEN 代理列数、冻结侧列范围、表头和当前索引 SHALL 重新映射；滚动位置 SHALL 按新范围钳制。
+- WHEN 模型为空
+- THEN 表格 SHALL 显示空态，SHALL NOT 访问越界代理列。
+
+#### Scenario: LTR 回归
+
+- WHEN `LayoutMirroring.enabled=false`
+- THEN 列顺序、滚动、选择、编辑、键盘和列宽 SHALL 与现有 LTR 行为一致。
+- THEN `table.model` 与 `view.model` SHALL 保持同一源模型，映射方法为恒等映射。
+
+#### Scenario: 性能
+
+- WHEN 10 万行模型开启 RTL
+- THEN 代理映射 SHALL 为 O(1)，SHALL NOT 复制行/列数据；存活 delegate 数量 SHALL 仍与视口相关，而非行数。
+
+### Requirement: R11 TableFreezePanes
+
+`CatTableView` SHALL 支持从起始侧连续冻结列和行，冻结区与主体 SHALL 共享同一模型、选择和编辑状态；冻结数量 SHALL 可由属性和方法修改，越界时 SHALL 静默钳制。
+
+#### Scenario: 四区布局与滚动
+
+- WHEN `frozenColumnCount>0` 且 `frozenRowCount>0`
+- THEN 表格 SHALL 呈现左上、顶部、左侧和主体四区。
+- WHEN 用户横向滚动主体
+- THEN 顶部区和主体 SHALL 同步横向移动，左侧区和左上区 SHALL 保持水平位置不变。
+- WHEN 用户纵向滚动主体
+- THEN 左侧区和主体 SHALL 同步纵向移动，顶部区和左上区 SHALL 保持垂直位置不变。
+
+#### Scenario: 滚动条
+
+- WHEN `frozenColumnCount>0`
+- THEN 水平滚动条 SHALL 只覆盖主体区宽度，垂直滚动条 SHALL 覆盖四区总高度。
+- WHEN 冻结列数等于列数或冻结行数等于行数
+- THEN 对应的水平或垂直滚动条 SHALL 隐藏。
+
+#### Scenario: 表头分段
+
+- WHEN `frozenColumnCount>0`
+- THEN 冻结列表头 SHALL 固定显示，主体列头 SHALL 随主体横向滚动。
+- THEN 两段表头 SHALL 使用与主体一致的列宽和表头文本。
+
+#### Scenario: 选择与编辑一致
+
+- WHEN 用户点击冻结区单元格
+- THEN 选择 SHALL 写入与主体相同的 `selectionModel`，选中高亮 SHALL 跨区域一致。
+- WHEN 冻结区单元格进入编辑并提交
+- THEN `editDelegate` SHALL 与主体行为一致，提交 SHALL 写回同一模型索引。
+
+#### Scenario: 键盘跨区导航
+
+- WHEN 焦点位于主体区且用户按方向键移动到冻结列边界
+- THEN 焦点 SHALL 能进入冻结区，并保持行列索引连续。
+- WHEN 焦点位于冻结区且用户按方向键回到边界
+- THEN 焦点 SHALL 能返回主体区。
+
+#### Scenario: 列宽与行高一致
+
+- WHEN 用户调整冻结区或主体区的列宽
+- THEN 同一列在四个区域 SHALL 使用相同宽度。
+- WHEN `rowHeightProvider` 对某行返回高度
+- THEN 冻结区和主体区中同一行 SHALL 使用相同高度。
+
+#### Scenario: 越界与模型变化
+
+- WHEN `frozenColumnCount` 或 `frozenRowCount` 为负数或超过当前列数／行数
+- THEN 数值 SHALL 钳制到 `[0, 列数]` 或 `[0, 行数]`，SHALL NOT 输出告警。
+- WHEN 模型列数或行数减少到低于冻结数量
+- THEN 冻结数量 SHALL 自动收敛，滚动位置和选中项 SHALL 保持并按新的可滚范围钳制。
+
+#### Scenario: RTL
+
+- WHEN 布局方向为从右向左
+- THEN 冻结列 SHALL 位于右侧，水平滚动条 SHALL 镜像，冻结数量 SHALL 仍表示起始侧连续列数。
+
+#### Scenario: 方法入口
+
+- WHEN 调用 `freezeTo(row, column)`
+- THEN 行为 SHALL 等价于设置 `frozenRowCount=row+1` 和 `frozenColumnCount=column+1`。
+- WHEN 调用 `clearFreeze()`
+- THEN `frozenRowCount` 和 `frozenColumnCount` SHALL 均变为 0。
+
+#### Scenario: 冻结区超过视口
+
+- WHEN 冻结区总宽或总高超过视口
+- THEN 冻结区 SHALL 按自然尺寸占据，主体可被压缩到 0。
+- THEN 冻结区 SHALL NOT 提供内部滚动。
+
+#### Scenario: 无冻结
+
+- WHEN `frozenColumnCount=0` 且 `frozenRowCount=0`
+- THEN 布局、滚动和交互 SHALL 与现有 `CatTableView` 一致。
+
 ## Data Model
 
 本模块无独立持久化数据模型。已核查属性：CatButton primary/danger/loading 默认 false，iconSource 默认空；CatTextField invalid 默认 false，implicitWidth=220；CatChatInput text/placeholderText 为字符串别名，submitted 参数为 string；CatCheckBox 使用 Qt checkState；CatScrollBar.revealed 默认 true；CatTitleBar.maximized 为只读派生状态。窗口按钮和滚动条状态不写入持久化数据。

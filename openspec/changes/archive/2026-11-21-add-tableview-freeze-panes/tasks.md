@@ -17,7 +17,7 @@
 
 - [x] 3.1 将表头拆为冻结段和主体段并保持列宽、文本同步；用 QML 测试验证横向滚动时冻结段不动、主体段跟随。
 - 3.2 已取消（2026-11-20）：表头拖拽抓手经确认鸡肋，冻结数量改由属性和 `freezeTo`/`clearFreeze` 控制。
-- [ ] 3.3 实现 RTL 镜像下的冻结侧和滚动条位置；用 QML 测试或 Gallery RTL 检查验证。实现由 [add-tableview-rtl](../add-tableview-rtl/tasks.md) 承担，待该变更归档后再勾选；背景见 [rtl-spike.md](rtl-spike.md)。
+- [x] 3.3 实现 RTL 镜像下的冻结侧和滚动条位置；用 QML 测试或 Gallery RTL 检查验证。实现由 `add-tableview-rtl` 承担，该变更已于 2026-11-21 归档；背景见 [rtl-spike.md](rtl-spike.md)。
 - [x] 3.4 将垂直滚动条改为跨四区统一，隐藏主体视图自带滚动条；用 QML 测试验证滚动范围和位置。
 
 ## 4. API 与演示

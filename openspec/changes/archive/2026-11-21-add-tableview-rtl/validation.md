@@ -24,7 +24,7 @@
 
 ## 未覆盖
 
-- 5.4 真实桌面/多屏/读屏检查；Gallery RTL 开关已加，但未做人工视觉确认。
+- 5.4 真实桌面/多屏/读屏检查：2026-11-21 已人工在 Gallery 表格页检查无冻结和 1/1 冻结的 RTL 布局、滚动、选择、编辑、键盘和列宽手柄，未发现阻塞问题；真实桌面/多屏/读屏仍未覆盖。
 - 水平滚动条的视觉镜像通过 `LayoutMirroring.enabled` 设置，尚未做像素级位置断言；需要 Gallery 视觉确认。
 - 10 万行模型运行时切换 RTL 在 Debug/software 下约 2.6 秒（冻结 1/1 约 0.9 秒），存活 delegate 仍为约 172。定位为 Qt TableView 在模型切换/重置时释放并重建视口 delegate 的成本；`reuseItems`、预设 `contentHeight`、代理 `reversed` 重置和隐藏视图均未改善。Gallery 的 `Load 100,000 rows in RTL` 预设演示推荐用法：加载前设置 `LayoutMirroring`，增量填充，避免运行时切换；该性能项不阻塞 RTL 功能验收。
 - 一次完整套件运行可能命中既有 `ChartContracts::test_touchCoincidentPointsAndData` 触摸时序偶发失败；该用例在表格测试之前执行，与本变更无依赖，重跑通过。
