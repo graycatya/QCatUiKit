@@ -139,6 +139,8 @@ Item {
         const next = Object.assign({}, __columnWidths);
         next[column] = width;
         __columnWidths = next;
+        if (plainView.visible)
+            plainView.setColumnWidth(column, width);
         __relayout();
     }
     function __seedWidths() {
@@ -343,6 +345,8 @@ Item {
         return __rowHeight(row);
     }
     function __relayout() {
+        if (plainView.visible)
+            plainView.forceLayout();
         if (frozenTopLeftView.visible)
             frozenTopLeftView.forceLayout();
         if (frozenTopRightView.visible)

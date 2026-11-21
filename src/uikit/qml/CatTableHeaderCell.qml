@@ -8,6 +8,7 @@ Rectangle {
     required property int column
     property ThemePalette theme: Theme
     property real padding: 8
+    property real rightPadding: 8
     readonly property var tokens: (theme || Theme).tokens
     implicitWidth: 140
     implicitHeight: tokens.controlHeight
@@ -17,10 +18,21 @@ Rectangle {
         objectName: "catTableHeaderCellLabel"
         theme: cell.theme
         anchors.fill: parent
-        anchors.margins: cell.padding
+        anchors.leftMargin: cell.padding
+        anchors.rightMargin: cell.rightPadding
         text: cell.display === undefined ? "" : String(cell.display)
         font.bold: true
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
+    }
+
+    Rectangle {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: 1
+        color: cell.tokens.border
     }
 }

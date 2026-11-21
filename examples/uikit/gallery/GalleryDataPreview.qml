@@ -147,6 +147,7 @@ ColumnLayout {
             const explicit = table.view.explicitColumnWidth(column);
             return explicit > 0 ? explicit : Math.max(120, (table.width - 4) / 4);
         }
+        resizableColumns: true
         view.selectionBehavior: TableView.SelectRows
         view.selectionMode: TableView.SingleSelection
         view.pointerNavigationEnabled: true
@@ -482,13 +483,15 @@ ColumnLayout {
             id: headerCell
             objectName: "tableCustomHeaderCell"
             property string marker: "custom"
+            padding: 12
+            rightPadding: 28
             readonly property int sourceColumn: control.sourceColumnForVisual(headerCell.column)
             CatLabel {
                 objectName: "tableSortIndicator"
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
-                    rightMargin: 12
+                    rightMargin: 10
                 }
                 text: control.sortIndicator(headerCell.column)
                 color: Theme.tokens.primary
@@ -497,11 +500,40 @@ ColumnLayout {
             TapHandler {
                 onTapped: control.requestSort(headerCell.column)
             }
-            Rectangle {
-                width: 4
-                height: parent.height
-                anchors.left: parent.left
-                color: Theme.tokens.primary
+            MouseArea {
+                id: sortResizeHandle
+                objectName: "tableSortResizeHandle"
+                width: 6
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    left: table.__rtl ? parent.left : undefined
+                    right: table.__rtl ? undefined : parent.right
+                }
+                enabled: table.resizableColumns
+                hoverEnabled: enabled
+                preventStealing: true
+                cursorShape: Qt.SplitHCursor
+                property real startWidth: 0
+                property real startSceneX: 0
+                Rectangle {
+                    anchors.fill: parent
+                    color: sortResizeHandle.containsMouse || sortResizeHandle.pressed
+                           ? Theme.tokens.primary : "transparent"
+                }
+                onPressed: mouse => {
+                    const source = table.sourceColumn(headerCell.column);
+                    startWidth = table.__columnWidth(source);
+                    startSceneX = sortResizeHandle.mapToItem(null, mouse.x, mouse.y).x;
+                }
+                onPositionChanged: mouse => {
+                    if (!pressed) return;
+                    const source = table.sourceColumn(headerCell.column);
+                    const dx = sortResizeHandle.mapToItem(null, mouse.x, mouse.y).x
+                            - startSceneX;
+                    const delta = table.__rtl ? -dx : dx;
+                    table.__setColumnWidth(source, startWidth + delta);
+                }
             }
         }
     }

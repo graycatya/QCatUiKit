@@ -179,6 +179,23 @@ TestCase {
         demo.tableModel.clear();
     }
 
+    function test_tableSortResize() {
+        choose("table");
+        const table = find("demoTableView");
+        const headerToggle = find("tableCustomHeader");
+        headerToggle.checked = true;
+        headerToggle.toggled();
+        wait(50);
+        const handle = findChild(table, "tableSortResizeHandle");
+        verify(handle);
+        const column = handle.parent.column;
+        const before = table.view.columnWidth(column);
+        mouseDrag(handle, 3, handle.height / 2, 40, 0);
+        tryVerify(function() { return table.view.columnWidth(column) > before; }, 1000);
+        headerToggle.checked = false;
+        headerToggle.toggled();
+    }
+
     function test_tableSorting() {
         const demo = choose("table");
         const table = find("demoTableView");
