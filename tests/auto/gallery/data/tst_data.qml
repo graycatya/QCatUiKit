@@ -162,12 +162,12 @@ TestCase {
     }
 
     function test_tableRtlLargePreset() {
-        choose("table");
+        const demo = choose("table");
         verify(waitForRendering(find("demoTableView")));
         const table = find("demoTableView");
         table.LayoutMirroring.enabled = false;
         table.clearFreeze();
-        table.model.clear();
+        demo.tableModel.clear();
         const preset = find("tableRtlLargePreset");
         verify(preset);
         preset.clicked();
@@ -176,7 +176,45 @@ TestCase {
         tryVerify(function() { return table.view.rows > 0; }, 5000);
         find("dataStressButton").clicked();
         table.LayoutMirroring.enabled = false;
-        table.model.clear();
+        demo.tableModel.clear();
+    }
+
+    function test_tableSorting() {
+        const demo = choose("table");
+        const table = find("demoTableView");
+        const headerToggle = find("tableCustomHeader");
+        headerToggle.checked = true;
+        headerToggle.toggled();
+        const header = find("plainHeader");
+        const sortModel = table.model;
+        compare(sortModel.sortColumn, -1);
+        mouseClick(header, 20, header.height / 2);
+        tryVerify(function() { return sortModel.sortColumn === 0; }, 1000);
+        compare(sortModel.sortOrder, Qt.AscendingOrder);
+        const ascending = sortModel.displayAt(0, 0);
+        const indicator = findChild(table, "tableSortIndicator");
+        verify(indicator);
+        compare(indicator.text, "▲");
+        mouseClick(header, 20, header.height / 2);
+        tryVerify(function() { return sortModel.sortOrder === Qt.DescendingOrder; }, 1000);
+        const descending = sortModel.displayAt(0, 0);
+        verify(ascending !== descending);
+        sortModel.clearSort();
+        table.LayoutMirroring.enabled = true;
+        wait(50);
+        mouseClick(header, header.width - 20, header.height / 2);
+        tryVerify(function() { return sortModel.sortColumn === 0; }, 1000);
+        sortModel.clearSort();
+        table.LayoutMirroring.enabled = false;
+        table.freezeTo(0, 0);
+        wait(50);
+        const frozenHeader = find("frozenHeader");
+        mouseClick(frozenHeader, 70, frozenHeader.height / 2);
+        tryVerify(function() { return sortModel.sortColumn === 0; }, 1000);
+        table.clearFreeze();
+        headerToggle.checked = false;
+        headerToggle.toggled();
+        demo.resetData();
     }
 
     function test_tableCustomization() {

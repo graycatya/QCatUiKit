@@ -116,7 +116,7 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`frozenColumnCount`/`frozenRowCount` 从起始侧连续冻结列和行并静默钳制，`freezeTo(row, column)`/`clearFreeze()` 修改冻结数量，冻结模式表头边界可调列宽；RTL 下通过列反转代理保持起始列在右，`mapToSource`/`mapFromSource` 转换代理与源索引，`view.model` 在 RTL 下是 `ColumnReverseProxyModel`；`editDelegate` 配合 `edit(row, column)`/`commitEdit(value)`/`cancelEdit()` 提供单元格编辑，默认 delegate 自动转发，自定义 delegate 需设置 `TableView.editDelegate`；`headerDelegate`、`toolbar`、`emptyState`、`loadingState`/`loading` 提供表头、工具栏和内容区状态定制；`view` 可配置标准 TableView 选择与滚动属性 |
+| [CatTableView](../qml/CatTableView.qml) | `model`, `delegate`, `columnWidthProvider`, `rowHeightProvider`, `resizableColumns`；`frozenColumnCount`/`frozenRowCount` 从起始侧连续冻结列和行并静默钳制，`freezeTo(row, column)`/`clearFreeze()` 修改冻结数量，冻结模式表头边界可调列宽；RTL 下通过列反转代理保持起始列在右，`mapToSource`/`mapFromSource` 转换代理与源索引，`sourceColumn(visualColumn)` 快速映射视觉列到 `table.model` 列；`view.model` 在 RTL 下是 `ColumnReverseProxyModel`；`editDelegate` 配合 `edit(row, column)`/`commitEdit(value)`/`cancelEdit()` 提供单元格编辑，默认 delegate 自动转发，自定义 delegate 需设置 `TableView.editDelegate`；`headerDelegate`、`toolbar`、`emptyState`、`loadingState`/`loading` 提供表头、工具栏和内容区状态定制；`view` 可配置标准 TableView 选择与滚动属性 |
 | [CatTableCell](../qml/CatTableCell.qml) | 公开单元格基类；继承后自带 `row`/`column`/`display`/`selected`/`editing`/`theme` 契约、默认内边距、选中背景和 `TableView.editDelegate` 转发。 |
 | [CatTableHeaderCell](../qml/CatTableHeaderCell.qml) | 公开表头基类；自带 `display`/`column`/`theme` 契约和默认表头背景，可继承为 `headerDelegate`。 |
 | [CatChatView](../qml/CatChatView.qml) | 标准 ListView；`currentUser`、`followTail=true`；支持替换 delegate，关闭尾部跟随后可持续浏览历史。 |

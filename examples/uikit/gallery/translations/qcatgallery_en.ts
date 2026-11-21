@@ -5269,8 +5269,8 @@ Slowest data batch: %6 ms</translation>
         <translation>Table customization</translation>
     </message>
     <message>
-        <source>Custom header</source>
-        <translation>Custom header</translation>
+        <source>Sortable header</source>
+        <translation>Sortable header</translation>
     </message>
     <message>
         <source>Table toolbar</source>

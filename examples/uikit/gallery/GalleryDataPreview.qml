@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
-import QtQml.Models
 import QCatUiKit
 
 ColumnLayout {
@@ -18,12 +17,36 @@ ColumnLayout {
     function countText(value: real): string {
         return value.toLocaleString(Qt.locale(GalleryLanguage.localeName), "f", 0);
     }
+    function sourceColumnForVisual(visual: int): int {
+        return table.sourceColumn(visual);
+    }
+    function sortIndicator(visual: int): string {
+        if (tableSort.sortColumn !== sourceColumnForVisual(visual)) return "";
+        return tableSort.sortOrder === Qt.AscendingOrder ? "▲" : "▼";
+    }
+    function requestSort(visual: int): void {
+        table.cancelEdit();
+        tableSort.toggleSort(sourceColumnForVisual(visual));
+    }
+    function restoreSortedSelection(): void {
+        if (demo.selectedIndex < 0) return;
+        const viewRow = tableSort.proxyRowForSourceRow(demo.selectedIndex);
+        if (viewRow < 0) {
+            table.view.selectionModel.clearCurrentIndex();
+            return;
+        }
+        tableSort.selectSourceRow(table.view.selectionModel, table.view.model,
+                                  demo.selectedIndex, true);
+        table.view.positionViewAtRow(viewRow, TableView.Contain);
+    }
     function selectTableRow(row: int): void {
         demo.select(row);
         if (demo.selectedIndex < 0) return;
-        table.view.selectionModel.setCurrentIndex(demo.tableModel.index(demo.selectedIndex, 0),
-                                                  ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Rows);
-        table.view.positionViewAtRow(demo.selectedIndex, TableView.Contain);
+        const viewRow = tableSort.proxyRowForSourceRow(demo.selectedIndex);
+        if (viewRow < 0) return;
+        tableSort.selectSourceRow(table.view.selectionModel, table.view.model,
+                                  demo.selectedIndex, true);
+        table.view.positionViewAtRow(viewRow, TableView.Contain);
     }
     onVisibleChanged: if (!visible) demo.stopStress()
     Component.onDestruction: demo.stopStress()
@@ -40,6 +63,10 @@ ColumnLayout {
             composer.text = text;
             composer.submit();
         }
+    }
+    GalleryTableSortModel {
+        id: tableSort
+        sourceTableModel: demo.tableModel
     }
     Connections {
         target: GalleryLanguage
@@ -115,7 +142,7 @@ ColumnLayout {
         visible: control.tableMode
         Layout.fillWidth: true
         Layout.preferredHeight: 320
-        model: demo.tableModel
+        model: tableSort
         columnWidthProvider: column => {
             const explicit = table.view.explicitColumnWidth(column);
             return explicit > 0 ? explicit : Math.max(120, (table.width - 4) / 4);
@@ -130,8 +157,14 @@ ColumnLayout {
     Connections {
         target: table.view
         function onCurrentRowChanged() {
-            if (control.tableMode && table.view.currentRow >= 0) demo.select(table.view.currentRow);
+            if (!control.tableMode || table.view.currentRow < 0) return;
+            const sourceRow = tableSort.sourceRowForProxyRow(table.view.currentRow);
+            if (sourceRow >= 0) demo.select(sourceRow);
         }
+    }
+    Connections {
+        target: tableSort
+        function onSortChanged() { Qt.callLater(control.restoreSortedSelection); }
     }
     CatLabel {
         Layout.fillWidth: true
@@ -227,9 +260,9 @@ ColumnLayout {
             CatCheckBox {
                 id: customHeaderToggle
                 objectName: "tableCustomHeader"
-                text: qsTr("Custom header")
+                text: qsTr("Sortable header")
                 onToggled: table.headerDelegate = checked ? tableCustomHeader : null
-                Accessible.name: qsTr("Custom header")
+                Accessible.name: qsTr("Sortable header")
             }
             CatCheckBox {
                 id: toolbarToggle
@@ -446,12 +479,28 @@ ColumnLayout {
     Component {
         id: tableCustomHeader
         CatTableHeaderCell {
+            id: headerCell
             objectName: "tableCustomHeaderCell"
             property string marker: "custom"
+            readonly property int sourceColumn: control.sourceColumnForVisual(headerCell.column)
+            CatLabel {
+                objectName: "tableSortIndicator"
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    rightMargin: 12
+                }
+                text: control.sortIndicator(headerCell.column)
+                color: Theme.tokens.primary
+                font.bold: true
+            }
+            TapHandler {
+                onTapped: control.requestSort(headerCell.column)
+            }
             Rectangle {
                 width: 4
                 height: parent.height
-                anchors.right: parent.right
+                anchors.left: parent.left
                 color: Theme.tokens.primary
             }
         }

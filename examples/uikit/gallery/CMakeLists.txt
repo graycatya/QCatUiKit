@@ -11,6 +11,7 @@ qt_add_qml_module(qcat-gallery-ui
     OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}/QCatUiKit/Gallery
     SOURCES gallerylanguage.h gallerylanguage.cpp gallerychartdata.h gallerychartdata.cpp
         gallerydatademo.h gallerydatademo.cpp
+    gallerytablesortmodel.h gallerytablesortmodel.cpp
         galleryleddemo.h galleryleddemo.cpp
     QML_FILES
         Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml

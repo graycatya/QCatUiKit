@@ -60,6 +60,8 @@ TestCase {
         const sourceIndex = table.model.index(0, 0);
         compare(table.mapToSource(sourceIndex), sourceIndex);
         compare(table.mapFromSource(sourceIndex), sourceIndex);
+        compare(table.sourceColumn(0), 0);
+        compare(table.sourceColumn(3), 3);
     }
 
     function test_rtlProxyMapping() {
@@ -77,6 +79,8 @@ TestCase {
         const firstProxy = table.mapFromSource(lastSource);
         compare(firstProxy.column, 0);
         compare(table.mapToSource(firstProxy), lastSource);
+        compare(table.sourceColumn(0), 3);
+        compare(table.sourceColumn(3), 0);
 
         tryVerify(function() {
             return table.view.contentWidth > table.view.width

@@ -249,6 +249,11 @@ Item {
         if (view && view.columns > 0 && view.contentWidth > view.width)
             view.contentX = view.contentWidth - view.width;
     }
+    function sourceColumn(visualColumn: int): int {
+        if (visualColumn < 0 || visualColumn >= __columns)
+            return visualColumn;
+        return __rtl ? __columns - 1 - visualColumn : visualColumn;
+    }
     function __paneAt(row: int, column: int) {
         if (!__frozen)
             return plainView;

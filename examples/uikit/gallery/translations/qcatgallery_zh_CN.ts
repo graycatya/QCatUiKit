@@ -5269,8 +5269,8 @@ Slowest data batch: %6 ms</source>
         <translation>表格定制</translation>
     </message>
     <message>
-        <source>Custom header</source>
-        <translation>自定义表头</translation>
+        <source>Sortable header</source>
+        <translation>可排序表头</translation>
     </message>
     <message>
         <source>Table toolbar</source>

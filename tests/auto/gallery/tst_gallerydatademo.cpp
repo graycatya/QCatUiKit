@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "gallerydatademo.h"
+#include "gallerytablesortmodel.h"
 #include <QtTest>
 
 using namespace QCatUiKit;
@@ -7,6 +8,50 @@ class GalleryDataDemoTests : public QObject
 {
     Q_OBJECT
   private slots:
+    void sortingModel()
+    {
+        TableModel source;
+        source.setColumns({"name", "value"});
+        source.setHeaders({"Name", "Value"});
+        source.append({{"name", "b"}, {"value", 2}});
+        source.append({{"name", "a"}, {"value", 1}});
+        source.append({{"name", "c"}, {"value", 3}});
+
+        GalleryTableSortModel sort;
+        sort.setSourceTableModel(&source);
+        QCOMPARE(sort.sortColumn(), -1);
+        QCOMPARE(sort.proxyRowForSourceRow(0), 0);
+        QCOMPARE(sort.sourceRowForProxyRow(0), 0);
+
+        sort.toggleSort(0);
+        QCOMPARE(sort.sortColumn(), 0);
+        QCOMPARE(sort.sortOrder(), Qt::AscendingOrder);
+        QCOMPARE(sort.data(sort.index(0, 0)).toString(), "a");
+        QCOMPARE(sort.displayAt(0, 0).toString(), "a");
+
+        sort.toggleSort(0);
+        QCOMPARE(sort.sortOrder(), Qt::DescendingOrder);
+        QCOMPARE(sort.displayAt(0, 0).toString(), "c");
+
+        sort.toggleSort(1);
+        QCOMPARE(sort.sortColumn(), 1);
+        QCOMPARE(sort.sortOrder(), Qt::AscendingOrder);
+        QCOMPARE(sort.displayAt(0, 1).toInt(), 1);
+
+        sort.clearSort();
+        QCOMPARE(sort.sortColumn(), -1);
+        QCOMPARE(sort.displayAt(0, 0).toString(), "b");
+        QCOMPARE(source.get(0).value("name").toString(), "b");
+        QCOMPARE(sort.proxyRowForSourceRow(1), 1);
+        QCOMPARE(sort.sourceRowForProxyRow(1), 1);
+
+        sort.setSourceTableModel(nullptr);
+        QCOMPARE(sort.sortColumn(), -1);
+        QCOMPARE(sort.rowCount(), 0);
+        QCOMPARE(sort.proxyRowForSourceRow(0), -1);
+        QCOMPARE(sort.sourceRowForProxyRow(0), -1);
+    }
+
     void retainedCapacity_data()
     {
         QTest::addColumn<int>("mode");
