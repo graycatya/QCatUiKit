@@ -179,6 +179,40 @@ TestCase {
         table.model.clear();
     }
 
+    function test_tableCustomization() {
+        const demo = choose("table");
+        verify(waitForRendering(find("demoTableView")));
+        const table = find("demoTableView");
+        const headerToggle = find("tableCustomHeader");
+        headerToggle.checked = true;
+        headerToggle.toggled();
+        tryVerify(function() { return find("tableCustomHeaderCell"); }, 1000);
+        const toolbarToggle = find("tableToolbar");
+        toolbarToggle.checked = true;
+        toolbarToggle.toggled();
+        tryVerify(function() { return find("tableCustomToolbar"); }, 1000);
+        const loadingToggle = find("tableLoading");
+        loadingToggle.checked = true;
+        loadingToggle.toggled();
+        tryVerify(function() {
+            return find("tableStateOverlay").visible && find("tableLoadingState");
+        }, 1000);
+        loadingToggle.checked = false;
+        loadingToggle.toggled();
+        tryVerify(function() { return !find("tableStateOverlay").visible; }, 1000);
+        find("tableEmptyDemo").clicked();
+        tryVerify(function() {
+            return find("tableStateOverlay").visible && find("tableEmptyState");
+        }, 1000);
+        find("tableRestoreRows").clicked();
+        tryVerify(function() { return table.view.rows > 0; }, 1000);
+        headerToggle.checked = false;
+        headerToggle.toggled();
+        toolbarToggle.checked = false;
+        toolbarToggle.toggled();
+        demo.resetData();
+    }
+
     function test_chatStatusesAttachmentsAndTail() {
         const demo = choose("chat");
         for (let type = 0; type < 4; type++) {

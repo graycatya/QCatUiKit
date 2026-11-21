@@ -5264,6 +5264,46 @@ Slowest data batch: %6 ms</translation>
         <source>RTL is applied before loading, avoiding a full model reset.</source>
         <translation>RTL is applied before loading, avoiding a full model reset.</translation>
     </message>
+    <message>
+        <source>Table customization</source>
+        <translation>Table customization</translation>
+    </message>
+    <message>
+        <source>Custom header</source>
+        <translation>Custom header</translation>
+    </message>
+    <message>
+        <source>Table toolbar</source>
+        <translation>Table toolbar</translation>
+    </message>
+    <message>
+        <source>Show loading</source>
+        <translation>Show loading</translation>
+    </message>
+    <message>
+        <source>Show empty state</source>
+        <translation>Show empty state</translation>
+    </message>
+    <message>
+        <source>Restore rows</source>
+        <translation>Restore rows</translation>
+    </message>
+    <message>
+        <source>Custom toolbar</source>
+        <translation>Custom toolbar</translation>
+    </message>
+    <message>
+        <source>Toolbar action</source>
+        <translation>Toolbar action</translation>
+    </message>
+    <message>
+        <source>No rows to display.</source>
+        <translation>No rows to display.</translation>
+    </message>
+    <message>
+        <source>Loading rows...</source>
+        <translation>Loading rows...</translation>
+    </message>
     </context>
 <context>
     <name>GalleryDataStressPanel</name>

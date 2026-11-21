@@ -2,9 +2,9 @@
 
 ## 1. 基类与 delegate 契约
 
-- [ ] 1.1 新增 `CatTableCell` 与 `CatTableHeaderCell`，声明 row/column/display/selected/editing/theme 契约和主题背景；在 `src/uikit/CMakeLists.txt` 登记，并用 QML 测试验证继承后默认外观与选中/编辑态。
-- [ ] 1.2 用 `CatTableCell` 重写 `CatTableView` 默认 delegate，保持现有视觉；用现有 QML 控件测试验证默认渲染和滚动不变。
-- [ ] 1.3 在 `tst_controls.qml` 的组件导入清单加入两个新类型，用 QML 测试验证可导入。
+- [x] 1.1 新增 `CatTableCell` 与 `CatTableHeaderCell`，声明 row/column/display/selected/editing/theme 契约和主题背景；在 `src/uikit/CMakeLists.txt` 登记，并用 QML 测试验证继承后默认外观与选中/编辑态。
+- [x] 1.2 用 `CatTableCell` 重写 `CatTableView` 默认 delegate，保持现有视觉；用现有 QML 控件测试验证默认渲染和滚动不变。
+- [x] 1.3 在 `tst_controls.qml` 的组件导入清单加入两个新类型，用 QML 测试验证可导入。
 
 ## 2. 编辑委托
 
@@ -14,17 +14,17 @@
 
 ## 3. 状态插槽与工具条
 
-- [ ] 3.1 新增 `loading`、`emptyState`、`loadingState` 和内容区覆盖层，未提供插槽时不显示；用 QML 测试验证空数据、加载、未提供插槽三种状态。
-- [ ] 3.2 新增 `toolbar` 插槽，固定于表头之上且跨全宽；用 QML 测试验证位置、宽度、不随滚动和未提供时不占空间。
-- [ ] 3.3 验证状态覆盖层不遮挡表头和 toolbar，且不阻断表格滚动；用 QML 测试验证点击/滚动穿透。
+- [x] 3.1 新增 `loading`、`emptyState`、`loadingState` 和内容区覆盖层，未提供插槽时不显示；用 QML 测试验证空数据、加载、未提供插槽三种状态。
+- [x] 3.2 新增 `toolbar` 插槽，固定于表头之上且跨全宽；用 QML 测试验证位置、宽度、不随滚动和未提供时不占空间。
+- [x] 3.3 验证状态覆盖层不遮挡表头和 toolbar，且不阻断表格滚动；用 QML 测试验证点击/滚动穿透。
 
 ## 4. 表头委托与演示
 
-- [ ] 4.1 新增 `headerDelegate` 并同时应用到冻结段和主体段表头；用 QML 测试验证两段都使用该 delegate 且列宽/文本同步。
-- [ ] 4.2 在 Gallery 数据页增加编辑、空态、加载、toolbar 和表头定制示例，补齐中英文 TS；用 Gallery 测试验证页面装配和语言切换。
-- [ ] 4.3 更新 `COMPONENTS.md`、`VALIDATION.md` 和组件目录条目。
+- [x] 4.1 新增 `headerDelegate` 并同时应用到冻结段和主体段表头；用 QML 测试验证两段都使用该 delegate 且列宽/文本同步。
+- [x] 4.2 在 Gallery 数据页增加编辑、空态、加载、toolbar 和表头定制示例，补齐中英文 TS；用 Gallery 测试验证页面装配和语言切换。
+- [x] 4.3 更新 `COMPONENTS.md`、`VALIDATION.md` 和组件目录条目。
 
 ## 5. 回归与验收
 
-- [ ] 5.1 运行 QML 行为测试、库与 Gallery qmllint、`python tools/check_docs.py` 和 `git diff --check`，记录结果。
-- [ ] 5.2 在无冻结和冻结两种布局下做默认行为回归，确认未设置新属性时布局、滚动和现有 delegate 不变。
+- [x] 5.1 运行 QML 行为测试、库与 Gallery qmllint、`python tools/check_docs.py` 和 `git diff --check`，记录结果。
+- [x] 5.2 在无冻结和冻结两种布局下做默认行为回归，确认未设置新属性时布局、滚动和现有 delegate 不变。

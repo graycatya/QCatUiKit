@@ -12,6 +12,11 @@ Item {
     property var model: null
     property Component delegate: defaultCell
     property Component editDelegate: defaultEditDelegate
+    property Component headerDelegate: null
+    property Component toolbar: null
+    property Component emptyState: null
+    property Component loadingState: null
+    property bool loading: false
     property alias columnWidthProvider: plainView.columnWidthProvider
     property alias rowHeightProvider: plainView.rowHeightProvider
     property alias resizableColumns: plainView.resizableColumns
@@ -61,7 +66,10 @@ Item {
             control.__anchorRtlScroll();
         }
     }
-    Component.onCompleted: Qt.callLater(control.__anchorRtlScroll)
+    Component.onCompleted: {
+        control.__applyHeaderDelegate();
+        Qt.callLater(control.__anchorRtlScroll);
+    }
 
     function __handleKey(event) {
         if (!control.__frozen || control.__editing
@@ -339,6 +347,17 @@ Item {
         if (frozenMainView.visible)
             frozenMainView.forceLayout();
     }
+    function __applyHeaderDelegate() {
+        if (!plainHeader)
+            return;
+        plainHeader.delegate = headerDelegate ? headerDelegate : defaultHeaderCell;
+        frozenHeader.delegate = headerDelegate ? headerDelegate : frozenHeaderCell;
+        frozenMainHeader.delegate = headerDelegate ? headerDelegate : frozenHeaderCell;
+        plainHeader.forceLayout();
+        frozenHeader.forceLayout();
+        frozenMainHeader.forceLayout();
+    }
+    onHeaderDelegateChanged: __applyHeaderDelegate()
     readonly property real __frozenWidth: {
         let total = 0;
         for (let column = 0; column < __frozenColumns; ++column)
@@ -381,25 +400,9 @@ Item {
 
     Component {
         id: defaultCell
-        Rectangle {
-            required property var display
-            required property int row
-            required property int column
-            required property bool selected
-            required property bool editing
-            implicitWidth: 140
-            implicitHeight: control.tokens.controlHeight
-            color: selected ? control.tokens.surfaceHover : control.tokens.surface
-            CatLabel {
-                theme: control.theme
-                anchors.fill: parent
-                anchors.margins: 8
-                text: parent.display === undefined ? "" : String(parent.display)
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-                visible: !parent.editing
-            }
-            TableView.editDelegate: control.editDelegate
+        CatTableCell {
+            theme: control.theme
+            editDelegate: control.editDelegate
         }
     }
 
@@ -450,41 +453,16 @@ Item {
 
     Component {
         id: defaultHeaderCell
-        Rectangle {
-            required property var display
-            implicitHeight: control.tokens.controlHeight
-            implicitWidth: 140
-            color: control.tokens.surfaceHover
-            CatLabel {
-                theme: control.theme
-                anchors.fill: parent
-                anchors.margins: 8
-                text: parent.display === undefined ? "" : String(parent.display)
-                font.bold: true
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-            }
+        CatTableHeaderCell {
+            theme: control.theme
         }
     }
 
     Component {
         id: frozenHeaderCell
-        Rectangle {
+        CatTableHeaderCell {
             id: headerCell
-            required property var display
-            required property int column
-            implicitHeight: control.tokens.controlHeight
-            implicitWidth: 140
-            color: control.tokens.surfaceHover
-            CatLabel {
-                theme: control.theme
-                anchors.fill: parent
-                anchors.margins: 8
-                text: parent.display === undefined ? "" : String(parent.display)
-                font.bold: true
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-            }
+            theme: control.theme
             Rectangle {
                 id: resizeHandle
                 width: 6
@@ -536,12 +514,35 @@ Item {
     }
 
     Item {
+        id: toolbarHost
+        objectName: "tableToolbarHost"
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: toolbarLoader.childrenRect.height
+        visible: height > 0
+        Loader {
+            id: toolbarLoader
+            anchors.fill: parent
+            sourceComponent: control.toolbar
+        }
+    }
+
+    Item {
         id: plainArea
-        anchors.fill: parent
+        anchors {
+            top: toolbarHost.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         visible: !control.__frozen
 
         B.HorizontalHeaderView {
             id: plainHeader
+            objectName: "plainHeader"
             anchors {
                 top: parent.top
                 left: parent.left
@@ -550,7 +551,7 @@ Item {
             clip: true
             columnSpacing: control.__cellSpacing
             syncView: plainView
-            delegate: defaultHeaderCell
+            delegate: control.headerDelegate ? control.headerDelegate : defaultHeaderCell
         }
         TableView {
             id: plainView
@@ -584,7 +585,12 @@ Item {
     Item {
         id: frozenArea
         objectName: "frozenArea"
-        anchors.fill: parent
+        anchors {
+            top: toolbarHost.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         visible: control.__frozen
 
         Item {
@@ -608,7 +614,7 @@ Item {
                 columnSpacing: control.__cellSpacing
                 syncView: frozenBottomLeftView
                 resizableColumns: false
-                delegate: frozenHeaderCell
+                delegate: control.headerDelegate ? control.headerDelegate : frozenHeaderCell
             }
             B.HorizontalHeaderView {
                 id: frozenMainHeader
@@ -620,7 +626,7 @@ Item {
                 columnSpacing: control.__cellSpacing
                 syncView: frozenMainView
                 resizableColumns: false
-                delegate: frozenHeaderCell
+                delegate: control.headerDelegate ? control.headerDelegate : frozenHeaderCell
             }
         }
 
@@ -769,4 +775,21 @@ Item {
         }
     }
 
+    Loader {
+        id: stateOverlay
+        objectName: "tableStateOverlay"
+        anchors {
+            top: toolbarHost.bottom
+            topMargin: control.tokens.controlHeight
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        z: 30
+        visible: item !== null
+        sourceComponent: control.loading && control.loadingState
+                         ? control.loadingState
+                         : (!control.loading && control.__rows === 0
+                            ? control.emptyState : null)
+    }
 }

@@ -5264,6 +5264,46 @@ Slowest data batch: %6 ms</source>
         <source>RTL is applied before loading, avoiding a full model reset.</source>
         <translation>RTL 在加载前应用，避免整表模型重置。</translation>
     </message>
+    <message>
+        <source>Table customization</source>
+        <translation>表格定制</translation>
+    </message>
+    <message>
+        <source>Custom header</source>
+        <translation>自定义表头</translation>
+    </message>
+    <message>
+        <source>Table toolbar</source>
+        <translation>表格工具栏</translation>
+    </message>
+    <message>
+        <source>Show loading</source>
+        <translation>显示加载状态</translation>
+    </message>
+    <message>
+        <source>Show empty state</source>
+        <translation>显示空状态</translation>
+    </message>
+    <message>
+        <source>Restore rows</source>
+        <translation>恢复行</translation>
+    </message>
+    <message>
+        <source>Custom toolbar</source>
+        <translation>自定义工具栏</translation>
+    </message>
+    <message>
+        <source>Toolbar action</source>
+        <translation>工具栏操作</translation>
+    </message>
+    <message>
+        <source>No rows to display.</source>
+        <translation>没有可显示的行。</translation>
+    </message>
+    <message>
+        <source>Loading rows...</source>
+        <translation>正在加载行…</translation>
+    </message>
     </context>
 <context>
     <name>GalleryDataStressPanel</name>

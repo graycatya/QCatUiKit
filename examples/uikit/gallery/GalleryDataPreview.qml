@@ -124,6 +124,8 @@ ColumnLayout {
         view.selectionMode: TableView.SingleSelection
         view.pointerNavigationEnabled: true
         view.keyNavigationEnabled: true
+        emptyState: tableEmptyState
+        loadingState: tableLoadingState
     }
     Connections {
         target: table.view
@@ -213,6 +215,52 @@ ColumnLayout {
             wrapMode: Text.Wrap
             color: Theme.tokens.textSecondary
             text: qsTr("RTL is applied before loading, avoiding a full model reset.")
+        }
+    }
+    ColumnLayout {
+        visible: control.tableMode
+        Layout.fillWidth: true
+        CatLabel { text: qsTr("Table customization"); font.bold: true }
+        Flow {
+            Layout.fillWidth: true
+            spacing: 8
+            CatCheckBox {
+                id: customHeaderToggle
+                objectName: "tableCustomHeader"
+                text: qsTr("Custom header")
+                onToggled: table.headerDelegate = checked ? tableCustomHeader : null
+                Accessible.name: qsTr("Custom header")
+            }
+            CatCheckBox {
+                id: toolbarToggle
+                objectName: "tableToolbar"
+                text: qsTr("Table toolbar")
+                onToggled: table.toolbar = checked ? tableToolbar : null
+                Accessible.name: qsTr("Table toolbar")
+            }
+            CatCheckBox {
+                id: loadingToggle
+                objectName: "tableLoading"
+                text: qsTr("Show loading")
+                onToggled: table.loading = checked
+                Accessible.name: qsTr("Show loading")
+            }
+            CatButton {
+                objectName: "tableEmptyDemo"
+                text: qsTr("Show empty state")
+                enabled: !demo.running
+                onClicked: {
+                    table.loading = false;
+                    loadingToggle.checked = false;
+                    demo.clearData();
+                }
+            }
+            CatButton {
+                objectName: "tableRestoreRows"
+                text: qsTr("Restore rows")
+                enabled: !demo.running
+                onClicked: demo.resetData()
+            }
         }
     }
     Connections {
@@ -394,4 +442,59 @@ ColumnLayout {
         }
     }
     GalleryDataStressPanel { demo: control.dataController }
+
+    Component {
+        id: tableCustomHeader
+        CatTableHeaderCell {
+            objectName: "tableCustomHeaderCell"
+            property string marker: "custom"
+            Rectangle {
+                width: 4
+                height: parent.height
+                anchors.right: parent.right
+                color: Theme.tokens.primary
+            }
+        }
+    }
+
+    Component {
+        id: tableToolbar
+        Rectangle {
+            objectName: "tableCustomToolbar"
+            height: 40
+            implicitHeight: 40
+            color: Theme.tokens.surfaceHover
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 8
+                CatLabel { text: qsTr("Custom toolbar") }
+                Item { Layout.fillWidth: true }
+                CatButton { text: qsTr("Toolbar action") }
+            }
+        }
+    }
+
+    Component {
+        id: tableEmptyState
+        Rectangle {
+            objectName: "tableEmptyState"
+            color: Theme.tokens.surface
+            ColumnLayout {
+                anchors.centerIn: parent
+                CatLabel { text: qsTr("No rows to display."); font.bold: true }
+            }
+        }
+    }
+
+    Component {
+        id: tableLoadingState
+        Rectangle {
+            objectName: "tableLoadingState"
+            color: Theme.tokens.surface
+            CatLabel {
+                anchors.centerIn: parent
+                text: qsTr("Loading rows...")
+            }
+        }
+    }
 }
