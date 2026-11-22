@@ -12,13 +12,22 @@ Rectangle {
     property ThemePalette theme: Theme
     property Component editDelegate: null
     property real padding: 8
+    property color hoverColor: tokens.surfaceHover
+    property color selectedColor: Qt.rgba(tokens.primary.r, tokens.primary.g,
+                                           tokens.primary.b, 0.16)
+    readonly property bool hovered: hoverHandler.hovered
     readonly property var tokens: (theme || Theme).tokens
     implicitWidth: 140
     implicitHeight: tokens.controlHeight
-    color: selected ? tokens.surfaceHover : tokens.surface
+    color: selected ? selectedColor : (hovered ? hoverColor : tokens.surface)
     Accessible.role: Accessible.Cell
     Accessible.name: display === undefined ? "" : String(display)
     Accessible.selected: selected
+
+    HoverHandler {
+        id: hoverHandler
+        enabled: !cell.editing
+    }
 
     CatLabel {
         objectName: "catTableCellLabel"

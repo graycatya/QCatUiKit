@@ -10,13 +10,20 @@ Rectangle {
     property real padding: 8
     property real rightPadding: 8
     property string accessibleDescription: ""
+    property color hoverColor: Qt.rgba(tokens.primary.r, tokens.primary.g,
+                                        tokens.primary.b, 0.10)
+    readonly property bool hovered: hoverHandler.hovered
     readonly property var tokens: (theme || Theme).tokens
     implicitWidth: 140
     implicitHeight: tokens.controlHeight
-    color: tokens.surfaceHover
+    color: hovered ? hoverColor : tokens.surfaceHover
     Accessible.role: Accessible.ColumnHeader
     Accessible.name: display === undefined ? "" : String(display)
     Accessible.description: accessibleDescription
+
+    HoverHandler {
+        id: hoverHandler
+    }
 
     CatLabel {
         objectName: "catTableHeaderCellLabel"

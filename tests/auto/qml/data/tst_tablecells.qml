@@ -12,6 +12,8 @@ TestCase {
     Component {
         id: cellComponent
         CatTableCell {
+            width: 140
+            height: Theme.tokens.controlHeight
             row: 0
             column: 0
             display: "value"
@@ -35,6 +37,8 @@ TestCase {
     Component {
         id: headerComponent
         CatTableHeaderCell {
+            width: 140
+            height: Theme.tokens.controlHeight
             column: 0
             display: "Header"
         }
@@ -57,12 +61,23 @@ TestCase {
         compare(label.text, "value");
         compare(cell.editing, false);
         verify(label.visible);
+        mouseMove(cell, 20, 20);
+        tryCompare(cell, "hovered", true);
+        compare(cell.color, cell.hoverColor);
+        mouseMove(test, 300, 300);
+        tryVerify(function() { return !cell.hovered; }, 1000);
+        compare(cell.color, Theme.tokens.surface);
         cell.editing = true;
         verify(!label.visible);
         cell.editing = false;
         cell.selected = true;
-        compare(cell.color, Theme.tokens.surfaceHover);
+        compare(cell.color, cell.selectedColor);
         compare(cell.Accessible.selected, true);
+        mouseMove(cell, 20, 20);
+        tryCompare(cell, "hovered", true);
+        compare(cell.color, cell.selectedColor);
+        mouseMove(test, 300, 300);
+        tryVerify(function() { return !cell.hovered; }, 1000);
     }
 
     function test_derivedCell() {
@@ -84,6 +99,12 @@ TestCase {
         compare(cell.Accessible.description, "");
         cell.accessibleDescription = "Sorted ascending";
         compare(cell.Accessible.description, "Sorted ascending");
+        mouseMove(cell, 20, 20);
+        tryCompare(cell, "hovered", true);
+        compare(cell.color, cell.hoverColor);
+        mouseMove(test, 300, 300);
+        tryVerify(function() { return !cell.hovered; }, 1000);
+        compare(cell.color, Theme.tokens.surfaceHover);
         const label = findChild(cell, "catTableHeaderCellLabel");
         verify(label);
         compare(label.text, "Header");
