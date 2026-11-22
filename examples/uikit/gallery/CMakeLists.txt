@@ -12,6 +12,7 @@ qt_add_qml_module(qcat-gallery-ui
     SOURCES gallerylanguage.h gallerylanguage.cpp gallerychartdata.h gallerychartdata.cpp
         gallerydatademo.h gallerydatademo.cpp
     gallerytablesortmodel.h gallerytablesortmodel.cpp
+        gallerytablecolumnmodel.h gallerytablecolumnmodel.cpp
         galleryleddemo.h galleryleddemo.cpp
     QML_FILES
         Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml

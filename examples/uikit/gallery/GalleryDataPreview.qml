@@ -17,21 +17,29 @@ ColumnLayout {
     function countText(value: real): string {
         return value.toLocaleString(Qt.locale(GalleryLanguage.localeName), "f", 0);
     }
-    function sourceColumnForVisual(visual: int): int {
-        return table.sourceColumn(visual);
+    function sortColumnForVisual(visual: int): int {
+        if (!table.view.model || visual < 0) return -1;
+        const viewIndex = table.view.model.index(0, visual);
+        if (!viewIndex || !viewIndex.valid) return -1;
+        const columnIndex = table.mapToSource(viewIndex);
+        if (!columnIndex || !columnIndex.valid) return -1;
+        const sortIndex = tableColumns.mapToSource(columnIndex);
+        return sortIndex && sortIndex.valid ? sortIndex.column : -1;
     }
     function sortIndicator(visual: int): string {
-        if (tableSort.sortColumn !== sourceColumnForVisual(visual)) return "";
+        if (tableSort.sortColumn !== sortColumnForVisual(visual)) return "";
         return tableSort.sortOrder === Qt.AscendingOrder ? "▲" : "▼";
     }
     function sortDescription(visual: int): string {
-        if (tableSort.sortColumn !== sourceColumnForVisual(visual)) return "";
+        if (tableSort.sortColumn !== sortColumnForVisual(visual)) return "";
         return tableSort.sortOrder === Qt.AscendingOrder
                 ? qsTr("Sorted ascending") : qsTr("Sorted descending");
     }
     function requestSort(visual: int): void {
+        const column = sortColumnForVisual(visual);
+        if (column < 0) return;
         table.cancelEdit();
-        tableSort.toggleSort(sourceColumnForVisual(visual));
+        tableSort.toggleSort(column);
     }
     function restoreSortedSelection(): void {
         if (demo.selectedIndex < 0) return;
@@ -40,8 +48,8 @@ ColumnLayout {
             table.view.selectionModel.clearCurrentIndex();
             return;
         }
-        tableSort.selectSourceRow(table.view.selectionModel, table.view.model,
-                                  demo.selectedIndex, true);
+        tableSort.selectSourceRow(table.view.selectionModel, tableColumns,
+                                  table.view.model, demo.selectedIndex, true);
         table.view.positionViewAtRow(viewRow, TableView.Contain);
     }
     function selectTableRow(row: int): void {
@@ -49,8 +57,8 @@ ColumnLayout {
         if (demo.selectedIndex < 0) return;
         const viewRow = tableSort.proxyRowForSourceRow(demo.selectedIndex);
         if (viewRow < 0) return;
-        tableSort.selectSourceRow(table.view.selectionModel, table.view.model,
-                                  demo.selectedIndex, true);
+        tableSort.selectSourceRow(table.view.selectionModel, tableColumns,
+                                  table.view.model, demo.selectedIndex, true);
         table.view.positionViewAtRow(viewRow, TableView.Contain);
     }
     onVisibleChanged: if (!visible) demo.stopStress()
@@ -71,7 +79,13 @@ ColumnLayout {
     }
     GalleryTableSortModel {
         id: tableSort
+        objectName: "tableSort"
         sourceTableModel: demo.tableModel
+    }
+    GalleryTableColumnModel {
+        id: tableColumns
+        objectName: "tableColumns"
+        sourceTableModel: tableSort
     }
     Connections {
         target: GalleryLanguage
@@ -147,7 +161,7 @@ ColumnLayout {
         visible: control.tableMode
         Layout.fillWidth: true
         Layout.preferredHeight: 320
-        model: tableSort
+        model: tableColumns
         columnWidthProvider: column => {
             const explicit = table.view.explicitColumnWidth(column);
             return explicit > 0 ? explicit : Math.max(120, (table.width - 4) / 4);
@@ -299,6 +313,51 @@ ColumnLayout {
                 text: qsTr("Restore rows")
                 enabled: !demo.running
                 onClicked: demo.resetData()
+            }
+        }
+    }
+    ColumnLayout {
+        visible: control.tableMode
+        Layout.fillWidth: true
+        CatLabel { text: qsTr("Table columns"); font.bold: true }
+        Flow {
+            Layout.fillWidth: true
+            spacing: 6
+            Repeater {
+                model: tableColumns.allColumns
+                delegate: Row {
+                    required property int index
+                    required property var modelData
+                    spacing: 2
+                    CatCheckBox {
+                        objectName: "tableColumnToggle" + modelData
+                        text: tableSort.headerData(modelData, Qt.Horizontal)
+                        checked: tableColumns.visibleColumns.indexOf(modelData) >= 0
+                        enabled: !checked || tableColumns.visibleColumns.length > 1
+                        onToggled: tableColumns.setColumnVisible(modelData, checked)
+                    }
+                    CatButton {
+                        text: "◀"
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        enabled: index > 0
+                        Accessible.name: qsTr("Move column left")
+                        onClicked: tableColumns.moveColumn(modelData, -1)
+                    }
+                    CatButton {
+                        text: "▶"
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        enabled: index < tableColumns.allColumns.length - 1
+                        Accessible.name: qsTr("Move column right")
+                        onClicked: tableColumns.moveColumn(modelData, 1)
+                    }
+                }
+            }
+            CatButton {
+                objectName: "tableColumnsReset"
+                text: qsTr("Reset columns")
+                onClicked: tableColumns.resetColumns()
             }
         }
     }
@@ -491,7 +550,6 @@ ColumnLayout {
             padding: 12
             rightPadding: 28
             accessibleDescription: control.sortDescription(headerCell.column)
-            readonly property int sourceColumn: control.sourceColumnForVisual(headerCell.column)
             Accessible.onPressAction: control.requestSort(headerCell.column)
             CatLabel {
                 objectName: "tableSortIndicator"

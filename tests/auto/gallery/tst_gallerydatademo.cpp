@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "gallerydatademo.h"
+#include "gallerytablecolumnmodel.h"
 #include "gallerytablesortmodel.h"
 #include <QtTest>
 
@@ -50,6 +51,72 @@ class GalleryDataDemoTests : public QObject
         QCOMPARE(sort.rowCount(), 0);
         QCOMPARE(sort.proxyRowForSourceRow(0), -1);
         QCOMPARE(sort.sourceRowForProxyRow(0), -1);
+    }
+
+    void columnModel()
+    {
+        TableModel source;
+        source.setColumns({"name", "value", "status"});
+        source.setHeaders({"Name", "Value", "Status"});
+        source.append({{"name", "a"}, {"value", 1}, {"status", "ok"}});
+        source.append({{"name", "b"}, {"value", 2}, {"status", "bad"}});
+
+        GalleryTableColumnModel columns;
+        columns.setSourceTableModel(&source);
+        QCOMPARE(columns.columnCount(), 3);
+        QCOMPARE(columns.visibleColumns(), (QVariantList{0, 1, 2}));
+        QCOMPARE(columns.mapToSource(columns.index(0, 1)).column(), 1);
+        QCOMPARE(columns.headerData(1, Qt::Horizontal).toString(), "Value");
+        QCOMPARE(columns.data(columns.index(1, 2)).toString(), "bad");
+
+        columns.setColumnVisible(0, false);
+        QCOMPARE(columns.columnCount(), 2);
+        QCOMPARE(columns.visibleColumns(), (QVariantList{1, 2}));
+        QCOMPARE(columns.mapToSource(columns.index(0, 0)).column(), 1);
+        columns.setColumnVisible(0, false);
+        QCOMPARE(columns.columnCount(), 2);
+
+        columns.setColumnVisible(0, true);
+        QCOMPARE(columns.visibleColumns(), (QVariantList{0, 1, 2}));
+        columns.moveColumn(0, 1);
+        QCOMPARE(columns.visibleColumns(), (QVariantList{1, 0, 2}));
+        QCOMPARE(columns.mapToSource(columns.index(0, 0)).column(), 1);
+
+        columns.setColumnVisible(1, false);
+        columns.setColumnVisible(2, false);
+        QCOMPARE(columns.columnCount(), 1);
+        columns.setColumnVisible(0, false);
+        QCOMPARE(columns.columnCount(), 1);
+
+        columns.resetColumns();
+        QCOMPARE(columns.visibleColumns(), (QVariantList{0, 1, 2}));
+        source.clear();
+        QCOMPARE(columns.rowCount(), 0);
+        source.append({{"name", "c"}, {"value", 3}, {"status", "ok"}});
+        QCOMPARE(columns.rowCount(), 1);
+        QCOMPARE(columns.data(columns.index(0, 0)).toString(), "c");
+        columns.setSourceTableModel(nullptr);
+        QCOMPARE(columns.columnCount(), 0);
+        QCOMPARE(columns.rowCount(), 0);
+    }
+
+    void columnModelWithSortingAndReset()
+    {
+        GalleryDataDemo demo;
+        demo.setMode(0);
+
+        GalleryTableSortModel sort;
+        sort.setSourceTableModel(demo.tableModel());
+        GalleryTableColumnModel columns;
+        columns.setSourceTableModel(&sort);
+
+        const int initialRows = columns.rowCount();
+        QVERIFY(initialRows > 0);
+        demo.clearData();
+        QCOMPARE(columns.rowCount(), 0);
+        demo.resetData();
+        QVERIFY(columns.rowCount() > 0);
+        QCOMPARE(columns.visibleColumnCount(), 4);
     }
 
     void retainedCapacity_data()

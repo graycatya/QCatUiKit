@@ -5269,6 +5269,22 @@ Slowest data batch: %6 ms</source>
         <translation>表格定制</translation>
     </message>
     <message>
+        <source>Table columns</source>
+        <translation>表格列</translation>
+    </message>
+    <message>
+        <source>Move column left</source>
+        <translation>向左移动列</translation>
+    </message>
+    <message>
+        <source>Move column right</source>
+        <translation>向右移动列</translation>
+    </message>
+    <message>
+        <source>Reset columns</source>
+        <translation>重置列</translation>
+    </message>
+    <message>
         <source>Sortable header</source>
         <translation>可排序表头</translation>
     </message>

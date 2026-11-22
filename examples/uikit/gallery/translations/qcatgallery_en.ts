@@ -5269,6 +5269,22 @@ Slowest data batch: %6 ms</translation>
         <translation>Table customization</translation>
     </message>
     <message>
+        <source>Table columns</source>
+        <translation>Table columns</translation>
+    </message>
+    <message>
+        <source>Move column left</source>
+        <translation>Move column left</translation>
+    </message>
+    <message>
+        <source>Move column right</source>
+        <translation>Move column right</translation>
+    </message>
+    <message>
+        <source>Reset columns</source>
+        <translation>Reset columns</translation>
+    </message>
+    <message>
         <source>Sortable header</source>
         <translation>Sortable header</translation>
     </message>

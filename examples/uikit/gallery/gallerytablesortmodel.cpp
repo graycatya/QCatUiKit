@@ -79,16 +79,19 @@ QVariant GalleryTableSortModel::displayAt(int proxyRow, int column) const
 }
 
 void GalleryTableSortModel::selectSourceRow(QItemSelectionModel *selection,
+                                            QAbstractItemModel *columnModel,
                                             QAbstractItemModel *viewModel, int sourceRow,
                                             bool rows) const
 {
-    if (!selection || !viewModel || selection->model() != viewModel)
+    if (!selection || !columnModel || !viewModel || selection->model() != viewModel)
         return;
     const int proxyRow = proxyRowForSourceRow(sourceRow);
     if (proxyRow < 0)
         return;
-    QModelIndex viewIndex = index(proxyRow, 0);
-    if (viewModel != this) {
+    QModelIndex viewIndex = columnModel->index(proxyRow, 0);
+    if (!viewIndex.isValid())
+        return;
+    if (viewModel != columnModel) {
         auto *proxy = qobject_cast<QAbstractProxyModel *>(viewModel);
         if (!proxy)
             return;

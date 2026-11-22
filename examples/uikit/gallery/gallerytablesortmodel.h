@@ -31,6 +31,7 @@ class GalleryTableSortModel : public QSortFilterProxyModel
     Q_INVOKABLE int sourceRowForProxyRow(int proxyRow) const;
     Q_INVOKABLE QVariant displayAt(int proxyRow, int column) const;
     Q_INVOKABLE void selectSourceRow(QItemSelectionModel *selection,
+                                     QAbstractItemModel *columnModel,
                                      QAbstractItemModel *viewModel, int sourceRow,
                                      bool rows) const;
 

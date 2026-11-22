@@ -207,7 +207,8 @@ TestCase {
         verify(customHeader);
         compare(customHeader.Accessible.role, Accessible.ColumnHeader);
         compare(customHeader.Accessible.name, String(customHeader.display));
-        const sortModel = table.model;
+        const sortModel = table.model.sourceTableModel;
+        verify(sortModel);
         compare(sortModel.sortColumn, -1);
         mouseClick(header, 20, header.height / 2);
         tryVerify(function() { return sortModel.sortColumn === 0; }, 1000);
@@ -240,6 +241,39 @@ TestCase {
         mouseClick(frozenHeader, 70, frozenHeader.height / 2);
         tryVerify(function() { return sortModel.sortColumn === 0; }, 1000);
         table.clearFreeze();
+        headerToggle.checked = false;
+        headerToggle.toggled();
+        demo.resetData();
+    }
+
+    function test_tableColumnControls() {
+        const demo = choose("table");
+        const table = find("demoTableView");
+        const columns = table.model;
+        verify(columns);
+        compare(columns.visibleColumnCount, 4);
+
+        columns.setColumnVisible(0, false);
+        tryVerify(function() { return table.view.columns === 3; }, 1000);
+        columns.setColumnVisible(0, true);
+        tryVerify(function() { return table.view.columns === 4; }, 1000);
+
+        columns.moveColumn(0, 1);
+        compare(columns.visibleColumns[0], 1);
+        columns.resetColumns();
+        compare(columns.visibleColumns[0], 0);
+
+        const headerToggle = find("tableCustomHeader");
+        headerToggle.checked = true;
+        headerToggle.toggled();
+        columns.moveColumn(0, 1);
+        wait(50);
+        const sortModel = columns.sourceTableModel;
+        const header = find("plainHeader");
+        mouseClick(header, 20, header.height / 2);
+        tryVerify(function() { return sortModel.sortColumn === 1; }, 1000);
+        sortModel.clearSort();
+        columns.resetColumns();
         headerToggle.checked = false;
         headerToggle.toggled();
         demo.resetData();
