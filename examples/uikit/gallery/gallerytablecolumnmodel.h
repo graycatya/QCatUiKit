@@ -46,9 +46,16 @@ class GalleryTableColumnModel : public QIdentityProxyModel
 
   private:
     void connectSource();
-    void refreshColumns();
+    void sourceReset();
+    void sourceColumnsChanged();
+    void syncColumns();
+    QStringList currentKeys() const;
+    QString columnKey(int sourceColumn) const;
     QList<int> visibleSourceColumns() const;
 
     QList<int> m_order;
     QList<int> m_hidden;
+    QStringList m_keys;
+    QStringList m_hiddenKeys;
+    QStringList m_sourceKeys;
 };

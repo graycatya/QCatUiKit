@@ -161,6 +161,7 @@ ColumnLayout {
             const explicit = table.view.explicitColumnWidth(column);
             return explicit > 0 ? explicit : Math.max(120, (table.width - 4) / 4);
         }
+        columnWidthKeyProvider: column => tableColumns.sourceColumn(column)
         resizableColumns: true
         view.selectionBehavior: TableView.SelectRows
         view.selectionMode: TableView.SingleSelection

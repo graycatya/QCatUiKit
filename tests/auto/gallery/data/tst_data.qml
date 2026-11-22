@@ -279,6 +279,51 @@ TestCase {
         demo.resetData();
     }
 
+    function test_tableColumnWidthFollowsSource() {
+        const demo = choose("table");
+        const table = find("demoTableView");
+        const columns = table.model;
+        columns.resetColumns();
+        waitForRendering(table);
+        const handle = findChild(table, "catTableResizeHandle");
+        verify(handle);
+        const visual = handle.parent.column;
+        const source = columns.sourceColumn(visual);
+        verify(source >= 0);
+        const before = table.columnWidth(visual);
+        mouseDrag(handle, 3, handle.height / 2, 40, 0);
+        tryVerify(function() { return table.columnWidth(visual) > before; }, 1000);
+        const width = table.columnWidth(visual);
+        columns.moveColumn(source, 1);
+        const movedVisual = columns.visibleColumns.indexOf(source);
+        verify(movedVisual >= 0);
+        compare(table.columnWidth(movedVisual), width);
+        columns.resetColumns();
+        demo.resetData();
+    }
+
+    function test_tableColumnConfigSurvivesDataReset() {
+        const demo = choose("table");
+        const table = find("demoTableView");
+        const columns = table.model;
+        columns.resetColumns();
+        columns.setColumnVisible(1, false);
+        columns.moveColumn(0, 1);
+        const order = columns.visibleColumns;
+        demo.clearData();
+        demo.resetData();
+        tryVerify(function() {
+            const current = columns.visibleColumns;
+            if (current.length !== order.length) return false;
+            for (let i = 0; i < order.length; ++i) {
+                if (current[i] !== order[i]) return false;
+            }
+            return true;
+        }, 1000);
+        columns.resetColumns();
+        demo.resetData();
+    }
+
     function test_tableCustomization() {
         const demo = choose("table");
         verify(waitForRendering(find("demoTableView")));

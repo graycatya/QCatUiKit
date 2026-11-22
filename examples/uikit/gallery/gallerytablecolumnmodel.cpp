@@ -18,8 +18,13 @@ void GalleryTableColumnModel::setSourceTableModel(QAbstractItemModel *model)
     if (sourceModel())
         disconnect(sourceModel(), nullptr, this, nullptr);
     QIdentityProxyModel::setSourceModel(model);
+    m_order.clear();
+    m_hidden.clear();
+    m_keys.clear();
+    m_hiddenKeys.clear();
+    m_sourceKeys.clear();
     connectSource();
-    refreshColumns();
+    syncColumns();
     emit sourceTableModelChanged();
 }
 
@@ -28,21 +33,78 @@ void GalleryTableColumnModel::connectSource()
     if (!sourceModel())
         return;
     connect(sourceModel(), &QAbstractItemModel::modelReset, this,
-            &GalleryTableColumnModel::refreshColumns, Qt::UniqueConnection);
+            &GalleryTableColumnModel::sourceReset, Qt::UniqueConnection);
     connect(sourceModel(), &QAbstractItemModel::columnsInserted, this,
-            &GalleryTableColumnModel::refreshColumns, Qt::UniqueConnection);
+            &GalleryTableColumnModel::sourceColumnsChanged, Qt::UniqueConnection);
     connect(sourceModel(), &QAbstractItemModel::columnsRemoved, this,
-            &GalleryTableColumnModel::refreshColumns, Qt::UniqueConnection);
+            &GalleryTableColumnModel::sourceColumnsChanged, Qt::UniqueConnection);
 }
 
-void GalleryTableColumnModel::refreshColumns()
+QString GalleryTableColumnModel::columnKey(int sourceColumn) const
 {
+    if (!sourceModel() || sourceColumn < 0
+            || sourceColumn >= sourceModel()->columnCount())
+        return {};
+    const QString header = sourceModel()->headerData(
+                sourceColumn, Qt::Horizontal, Qt::DisplayRole).toString();
+    return header.isEmpty() ? QStringLiteral("column-%1").arg(sourceColumn)
+                            : QStringLiteral("%1#%2").arg(header).arg(sourceColumn);
+}
+
+QStringList GalleryTableColumnModel::currentKeys() const
+{
+    QStringList keys;
+    if (!sourceModel())
+        return keys;
+    for (int column = 0; column < sourceModel()->columnCount(); ++column)
+        keys.append(columnKey(column));
+    return keys;
+}
+
+void GalleryTableColumnModel::sourceReset()
+{
+    // Row-only resets keep the existing column configuration.
+    if (currentKeys() == m_sourceKeys)
+        return;
+    syncColumns();
+}
+
+void GalleryTableColumnModel::sourceColumnsChanged()
+{
+    syncColumns();
+}
+
+void GalleryTableColumnModel::syncColumns()
+{
+    const QStringList newSourceKeys = currentKeys();
+    if (newSourceKeys == m_sourceKeys)
+        return;
+
+    QStringList nextOrderKeys;
+    for (const QString &key : m_keys) {
+        if (newSourceKeys.contains(key) && !nextOrderKeys.contains(key))
+            nextOrderKeys.append(key);
+    }
+    for (const QString &key : newSourceKeys) {
+        if (!nextOrderKeys.contains(key))
+            nextOrderKeys.append(key);
+    }
+
+    QStringList nextHiddenKeys;
+    for (const QString &key : m_hiddenKeys) {
+        if (newSourceKeys.contains(key) && !nextHiddenKeys.contains(key))
+            nextHiddenKeys.append(key);
+    }
+
+    m_sourceKeys = newSourceKeys;
+    m_keys = nextOrderKeys;
+    m_hiddenKeys = nextHiddenKeys;
     m_order.clear();
     m_hidden.clear();
-    if (sourceModel()) {
-        for (int column = 0; column < sourceModel()->columnCount(); ++column)
-            m_order.append(column);
-    }
+    for (const QString &key : m_keys)
+        m_order.append(newSourceKeys.indexOf(key));
+    for (const QString &key : m_hiddenKeys)
+        m_hidden.append(newSourceKeys.indexOf(key));
     emit columnsChanged();
 }
 
@@ -101,10 +163,15 @@ void GalleryTableColumnModel::setColumnVisible(int sourceColumn, bool visible)
     if (wasVisible == visible)
         return;
     beginResetModel();
-    if (visible)
+    const QString key = m_keys.value(m_order.indexOf(sourceColumn));
+    if (visible) {
         m_hidden.removeAll(sourceColumn);
-    else
+        m_hiddenKeys.removeAll(key);
+    } else {
         m_hidden.append(sourceColumn);
+        if (!key.isEmpty() && !m_hiddenKeys.contains(key))
+            m_hiddenKeys.append(key);
+    }
     endResetModel();
     emit columnsChanged();
 }
@@ -119,6 +186,7 @@ void GalleryTableColumnModel::moveColumn(int sourceColumn, int delta)
         return;
     beginResetModel();
     m_order.move(from, to);
+    m_keys.move(from, to);
     endResetModel();
     emit columnsChanged();
 }
@@ -130,6 +198,8 @@ void GalleryTableColumnModel::resetColumns()
     beginResetModel();
     m_order.clear();
     m_hidden.clear();
+    m_hiddenKeys.clear();
+    m_keys = m_sourceKeys;
     for (int column = 0; column < sourceModel()->columnCount(); ++column)
         m_order.append(column);
     endResetModel();

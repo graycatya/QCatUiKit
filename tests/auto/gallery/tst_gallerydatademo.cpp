@@ -90,11 +90,15 @@ class GalleryDataDemoTests : public QObject
 
         columns.resetColumns();
         QCOMPARE(columns.visibleColumns(), (QVariantList{0, 1, 2}));
+        columns.setColumnVisible(0, false);
+        columns.moveColumn(2, -1);
+        const QVariantList configured = columns.visibleColumns();
         source.clear();
         QCOMPARE(columns.rowCount(), 0);
         source.append({{"name", "c"}, {"value", 3}, {"status", "ok"}});
         QCOMPARE(columns.rowCount(), 1);
-        QCOMPARE(columns.data(columns.index(0, 0)).toString(), "c");
+        QCOMPARE(columns.visibleColumns(), configured);
+        QCOMPARE(columns.data(columns.index(0, 0)).toString(), "ok");
         columns.setSourceTableModel(nullptr);
         QCOMPARE(columns.columnCount(), 0);
         QCOMPARE(columns.rowCount(), 0);

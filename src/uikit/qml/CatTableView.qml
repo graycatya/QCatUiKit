@@ -28,7 +28,8 @@ Item {
                                         || frozenTopRightView.activeFocus
                                         || frozenBottomLeftView.activeFocus
                                         || frozenMainView.activeFocus
-    property alias columnWidthProvider: plainView.columnWidthProvider
+    property var columnWidthProvider: null
+    property var columnWidthKeyProvider: null
     property alias rowHeightProvider: plainView.rowHeightProvider
     property alias resizableColumns: plainView.resizableColumns
     readonly property TableView view: __frozen ? frozenMainView : plainView
@@ -181,8 +182,38 @@ Item {
         control.__rtlAnchorAttempts = 0;
     }
 
+    function __columnWidthKey(column: int): var {
+        const provider = columnWidthKeyProvider;
+        if (typeof provider === "function") {
+            const key = provider(column);
+            if (key !== undefined && key !== null && key !== "")
+                return key;
+        }
+        return column;
+    }
+    function __viewColumnKey(column: int): var {
+        return __columnWidthKey(__rtl ? __columns - 1 - column : column);
+    }
+    function __plainColumnWidth(column: int): real {
+        const stored = __columnWidths[__viewColumnKey(column)];
+        if (typeof stored === "number" && stored >= 0)
+            return stored;
+        const provider = columnWidthProvider;
+        if (typeof provider === "function") {
+            const value = provider(column);
+            if (typeof value === "number" && value >= 0)
+                return value;
+        }
+        const explicit = plainView.explicitColumnWidth(column);
+        if (explicit >= 0)
+            return explicit;
+        const implicit = plainView.implicitColumnWidth(column);
+        if (implicit > 0)
+            return implicit;
+        return __defaultColumnWidth;
+    }
     function __columnWidth(column: int): real {
-        const stored = __columnWidths[column];
+        const stored = __columnWidths[__columnWidthKey(column)];
         if (typeof stored === "number" && stored >= 0)
             return stored;
         const provider = columnWidthProvider;
@@ -196,7 +227,7 @@ Item {
     function __setColumnWidth(column: int, value: real) {
         const width = Math.max(40, Math.round(value));
         const next = Object.assign({}, __columnWidths);
-        next[column] = width;
+        next[__columnWidthKey(column)] = width;
         __columnWidths = next;
         if (plainView.visible)
             plainView.setColumnWidth(column, width);
@@ -206,16 +237,17 @@ Item {
         if (typeof columnWidthProvider !== "function") {
             const next = Object.assign({}, __columnWidths);
             for (let column = 0; column < __columns; ++column) {
-                if (typeof next[column] === "number")
+                const key = __viewColumnKey(column);
+                if (typeof next[key] === "number")
                     continue;
                 const explicit = plainView.explicitColumnWidth(column);
                 if (explicit >= 0) {
-                    next[column] = explicit;
+                    next[key] = explicit;
                     continue;
                 }
                 const implicit = plainView.implicitColumnWidth(column);
                 if (implicit > 0)
-                    next[column] = implicit;
+                    next[key] = implicit;
             }
             __columnWidths = next;
         }
@@ -227,13 +259,13 @@ Item {
         }
     }
     function __applyWidths() {
-        for (const key in __columnWidths) {
-            const column = Number(key);
-            const width = __columnWidths[key];
-            if (column >= 0 && column < __columns && typeof width === "number")
+        for (let column = 0; column < __columns; ++column) {
+            const width = __columnWidths[__viewColumnKey(column)];
+            if (typeof width === "number")
                 plainView.setColumnWidth(column, width);
         }
-        __columnWidths = ({});
+        if (typeof columnWidthKeyProvider !== "function")
+            __columnWidths = ({});
         plainView.forceLayout();
     }
     function __handleFrozenChange() {
@@ -257,7 +289,8 @@ Item {
             const next = Object.assign({}, __columnWidths);
             let changed = false;
             for (let column = 0; column < __columns; ++column) {
-                if (typeof next[column] === "number")
+                const key = __viewColumnKey(column);
+                if (typeof next[key] === "number")
                     continue;
                 const pane = column < __frozenColumns
                         ? (frozenBottomLeftView.visible ? frozenBottomLeftView
@@ -268,7 +301,7 @@ Item {
                     continue;
                 const width = pane.implicitColumnWidth(column);
                 if (width > 0) {
-                    next[column] = width;
+                    next[key] = width;
                     changed = true;
                 }
             }
@@ -464,6 +497,10 @@ Item {
             control.__columnWidths = ({});
             control.__relayout();
         }
+        function onColumnWidthKeyProviderChanged() {
+            control.__columnWidths = ({});
+            control.__relayout();
+        }
         function onRowHeightProviderChanged() {
             control.__implicitRowHeight = 0;
             control.__relayout();
@@ -608,6 +645,7 @@ Item {
             resizableColumns: true
             boundsBehavior: Flickable.StopAtBounds
             model: control.__viewModel
+            columnWidthProvider: column => control.__plainColumnWidth(column)
             editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
             delegate: control.delegate
             selectionModel: sharedSelection
