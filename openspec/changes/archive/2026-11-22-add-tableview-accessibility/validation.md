@@ -26,8 +26,12 @@
 - Debug / Release 完整 Gallery：865 passed、0 failed、3 skipped。
 - `qmllint`、`check_docs.py`、`git diff --check`、OpenSpec 严格校验：通过。
 
+## 人工验收
+
+- 2026-11-22 Windows NVDA 人工检查通过：Table/ColumnHeader/Cell 角色、表头名称、单元格选中状态、排序方向描述、焦点边框、PageUp/PageDown、Ctrl+Home/Ctrl+End，以及 RTL 和冻结布局均正常朗读和导航。
+- 未覆盖 Orca、VoiceOver 和真实桌面多屏环境。
+
 ## 已知边界
 
-- 未在真实屏幕阅读器（NVDA/Orca/VoiceOver）和真实桌面多屏环境做人工验收。
 - 焦点边框为视觉提示，不改变 Qt 的虚拟焦点树。
 - `Accessible.description` 的排序文案由应用提供；库不内置排序状态。
