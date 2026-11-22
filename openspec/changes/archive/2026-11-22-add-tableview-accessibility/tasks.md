@@ -9,4 +9,4 @@
 - [x] 4.1 新增 `tst_tableaccessibility.qml`，扩展 `tst_tablecells.qml` 和 Gallery 排序测试。
 - [x] 4.2 更新 `COMPONENTS.md`、`VALIDATION.md` 和验证记录。
 - [x] 5.1 运行 Debug/Release `qml_contracts`、完整 Gallery、qmllint、`check_docs.py` 和 `git diff --check`。
-- [ ] 5.2 归档 `add-tableview-accessibility`，校验主规约。
+- [x] 5.2 归档 `add-tableview-accessibility`，校验主规约。
