@@ -78,6 +78,14 @@ int GalleryTableColumnModel::visibleColumnCount() const
     return visibleSourceColumns().size();
 }
 
+int GalleryTableColumnModel::sourceColumn(int proxyColumn) const
+{
+    const auto visible = visibleSourceColumns();
+    if (proxyColumn < 0 || proxyColumn >= visible.size())
+        return -1;
+    return visible.at(proxyColumn);
+}
+
 bool GalleryTableColumnModel::isColumnVisible(int sourceColumn) const
 {
     return m_order.contains(sourceColumn) && !m_hidden.contains(sourceColumn);

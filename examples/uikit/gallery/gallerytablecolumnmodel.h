@@ -24,6 +24,7 @@ class GalleryTableColumnModel : public QIdentityProxyModel
     QVariantList allColumns() const;
     QVariantList visibleColumns() const;
     int visibleColumnCount() const;
+    Q_INVOKABLE int sourceColumn(int proxyColumn) const;
     Q_INVOKABLE bool isColumnVisible(int sourceColumn) const;
     Q_INVOKABLE void setColumnVisible(int sourceColumn, bool visible);
     Q_INVOKABLE void moveColumn(int sourceColumn, int delta);

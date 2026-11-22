@@ -19,12 +19,7 @@ ColumnLayout {
     }
     function sortColumnForVisual(visual: int): int {
         if (!table.view.model || visual < 0) return -1;
-        const viewIndex = table.view.model.index(0, visual);
-        if (!viewIndex || !viewIndex.valid) return -1;
-        const columnIndex = table.mapToSource(viewIndex);
-        if (!columnIndex || !columnIndex.valid) return -1;
-        const sortIndex = tableColumns.mapToSource(columnIndex);
-        return sortIndex && sortIndex.valid ? sortIndex.column : -1;
+        return tableColumns.sourceColumn(table.sourceColumn(visual));
     }
     function sortIndicator(visual: int): string {
         if (tableSort.sortColumn !== sortColumnForVisual(visual)) return "";
@@ -326,31 +321,32 @@ ColumnLayout {
             Repeater {
                 model: tableColumns.allColumns
                 delegate: Row {
+                    id: columnControl
                     required property int index
                     required property var modelData
                     spacing: 2
                     CatCheckBox {
-                        objectName: "tableColumnToggle" + modelData
-                        text: tableSort.headerData(modelData, Qt.Horizontal)
-                        checked: tableColumns.visibleColumns.indexOf(modelData) >= 0
+                        objectName: "tableColumnToggle" + columnControl.modelData
+                        text: tableSort.headerData(columnControl.modelData, Qt.Horizontal)
+                        checked: tableColumns.visibleColumns.indexOf(columnControl.modelData) >= 0
                         enabled: !checked || tableColumns.visibleColumns.length > 1
-                        onToggled: tableColumns.setColumnVisible(modelData, checked)
+                        onToggled: tableColumns.setColumnVisible(columnControl.modelData, checked)
                     }
                     CatButton {
                         text: "◀"
                         implicitWidth: 28
                         implicitHeight: 28
-                        enabled: index > 0
+                        enabled: columnControl.index > 0
                         Accessible.name: qsTr("Move column left")
-                        onClicked: tableColumns.moveColumn(modelData, -1)
+                        onClicked: tableColumns.moveColumn(columnControl.modelData, -1)
                     }
                     CatButton {
                         text: "▶"
                         implicitWidth: 28
                         implicitHeight: 28
-                        enabled: index < tableColumns.allColumns.length - 1
+                        enabled: columnControl.index < tableColumns.allColumns.length - 1
                         Accessible.name: qsTr("Move column right")
-                        onClicked: tableColumns.moveColumn(modelData, 1)
+                        onClicked: tableColumns.moveColumn(columnControl.modelData, 1)
                     }
                 }
             }
