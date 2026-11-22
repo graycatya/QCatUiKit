@@ -5273,6 +5273,14 @@ Slowest data batch: %6 ms</source>
         <translation>可排序表头</translation>
     </message>
     <message>
+        <source>Sorted ascending</source>
+        <translation>已按升序排序</translation>
+    </message>
+    <message>
+        <source>Sorted descending</source>
+        <translation>已按降序排序</translation>
+    </message>
+    <message>
         <source>Table toolbar</source>
         <translation>表格工具栏</translation>
     </message>

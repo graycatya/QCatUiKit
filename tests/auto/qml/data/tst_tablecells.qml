@@ -49,6 +49,9 @@ TestCase {
         compare(cell.implicitWidth, 140);
         compare(cell.implicitHeight, Theme.tokens.controlHeight);
         compare(cell.color, Theme.tokens.surface);
+        compare(cell.Accessible.role, Accessible.Cell);
+        compare(cell.Accessible.name, "value");
+        compare(cell.Accessible.selected, false);
         const label = findChild(cell, "catTableCellLabel");
         verify(label);
         compare(label.text, "value");
@@ -59,6 +62,7 @@ TestCase {
         cell.editing = false;
         cell.selected = true;
         compare(cell.color, Theme.tokens.surfaceHover);
+        compare(cell.Accessible.selected, true);
     }
 
     function test_derivedCell() {
@@ -75,6 +79,11 @@ TestCase {
         compare(cell.column, 0);
         compare(cell.implicitWidth, 140);
         compare(cell.color, Theme.tokens.surfaceHover);
+        compare(cell.Accessible.role, Accessible.ColumnHeader);
+        compare(cell.Accessible.name, "Header");
+        compare(cell.Accessible.description, "");
+        cell.accessibleDescription = "Sorted ascending";
+        compare(cell.Accessible.description, "Sorted ascending");
         const label = findChild(cell, "catTableHeaderCellLabel");
         verify(label);
         compare(label.text, "Header");

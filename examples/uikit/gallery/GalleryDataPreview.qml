@@ -24,6 +24,11 @@ ColumnLayout {
         if (tableSort.sortColumn !== sourceColumnForVisual(visual)) return "";
         return tableSort.sortOrder === Qt.AscendingOrder ? "▲" : "▼";
     }
+    function sortDescription(visual: int): string {
+        if (tableSort.sortColumn !== sourceColumnForVisual(visual)) return "";
+        return tableSort.sortOrder === Qt.AscendingOrder
+                ? qsTr("Sorted ascending") : qsTr("Sorted descending");
+    }
     function requestSort(visual: int): void {
         table.cancelEdit();
         tableSort.toggleSort(sourceColumnForVisual(visual));
@@ -485,7 +490,9 @@ ColumnLayout {
             property string marker: "custom"
             padding: 12
             rightPadding: 28
+            accessibleDescription: control.sortDescription(headerCell.column)
             readonly property int sourceColumn: control.sourceColumnForVisual(headerCell.column)
+            Accessible.onPressAction: control.requestSort(headerCell.column)
             CatLabel {
                 objectName: "tableSortIndicator"
                 anchors {

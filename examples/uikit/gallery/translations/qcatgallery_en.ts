@@ -5273,6 +5273,14 @@ Slowest data batch: %6 ms</translation>
         <translation>Sortable header</translation>
     </message>
     <message>
+        <source>Sorted ascending</source>
+        <translation>Sorted ascending</translation>
+    </message>
+    <message>
+        <source>Sorted descending</source>
+        <translation>Sorted descending</translation>
+    </message>
+    <message>
         <source>Table toolbar</source>
         <translation>Table toolbar</translation>
     </message>

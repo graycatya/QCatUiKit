@@ -16,6 +16,9 @@ Rectangle {
     implicitWidth: 140
     implicitHeight: tokens.controlHeight
     color: selected ? tokens.surfaceHover : tokens.surface
+    Accessible.role: Accessible.Cell
+    Accessible.name: display === undefined ? "" : String(display)
+    Accessible.selected: selected
 
     CatLabel {
         objectName: "catTableCellLabel"

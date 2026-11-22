@@ -203,6 +203,10 @@ TestCase {
         headerToggle.checked = true;
         headerToggle.toggled();
         const header = find("plainHeader");
+        const customHeader = findChild(table, "tableCustomHeaderCell");
+        verify(customHeader);
+        compare(customHeader.Accessible.role, Accessible.ColumnHeader);
+        compare(customHeader.Accessible.name, String(customHeader.display));
         const sortModel = table.model;
         compare(sortModel.sortColumn, -1);
         mouseClick(header, 20, header.height / 2);
@@ -212,8 +216,15 @@ TestCase {
         const indicator = findChild(table, "tableSortIndicator");
         verify(indicator);
         compare(indicator.text, "▲");
+        tryVerify(function() {
+            return customHeader.Accessible.description.length > 0;
+        }, 1000);
+        const ascendingDescription = customHeader.Accessible.description;
         mouseClick(header, 20, header.height / 2);
         tryVerify(function() { return sortModel.sortOrder === Qt.DescendingOrder; }, 1000);
+        tryVerify(function() {
+            return customHeader.Accessible.description !== ascendingDescription;
+        }, 1000);
         const descending = sortModel.displayAt(0, 0);
         verify(ascending !== descending);
         sortModel.clearSort();

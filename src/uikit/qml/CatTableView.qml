@@ -17,6 +17,17 @@ Item {
     property Component emptyState: null
     property Component loadingState: null
     property bool loading: false
+    property string accessibleName: qsTr("Table")
+    Accessible.role: Accessible.Table
+    Accessible.name: control.accessibleName
+    Accessible.description: qsTr("%1 rows, %2 columns")
+                            .arg(control.__rows).arg(control.__columns)
+    Accessible.focusable: true
+    readonly property bool __hasFocus: plainView.activeFocus
+                                        || frozenTopLeftView.activeFocus
+                                        || frozenTopRightView.activeFocus
+                                        || frozenBottomLeftView.activeFocus
+                                        || frozenMainView.activeFocus
     property alias columnWidthProvider: plainView.columnWidthProvider
     property alias rowHeightProvider: plainView.rowHeightProvider
     property alias resizableColumns: plainView.resizableColumns
@@ -71,6 +82,54 @@ Item {
         Qt.callLater(control.__anchorRtlScroll);
     }
 
+    function __pageRows(row: int): int {
+        const height = Math.max(1, control.view ? control.view.height : control.height);
+        return Math.max(1, Math.floor(height / Math.max(1, control.__rowHeight(row))));
+    }
+    function __navigateTo(row: int, column: int): bool {
+        const next = control.__viewModel.index(row, column);
+        if (!next || next.row < 0)
+            return false;
+        sharedSelection.setCurrentIndex(
+                    next, ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Current);
+        if (control.__frozen)
+            control.__ensureCellVisible(row, column);
+        else
+            plainView.positionViewAtCell(Qt.point(row, column), TableView.Contain);
+        return true;
+    }
+    function __handlePageKey(event): bool {
+        if (control.__editing || control.__columns <= 0 || control.__rows <= 0)
+            return false;
+        const current = sharedSelection.currentIndex;
+        let row = current && current.row >= 0 ? current.row : 0;
+        let column = current && current.column >= 0 ? current.column : 0;
+        const page = control.__pageRows(row);
+        switch (event.key) {
+        case Qt.Key_PageUp:
+            row = Math.max(0, row - page);
+            break;
+        case Qt.Key_PageDown:
+            row = Math.min(control.__rows - 1, row + page);
+            break;
+        case Qt.Key_Home:
+            if (!(event.modifiers & Qt.ControlModifier))
+                return false;
+            row = 0;
+            column = control.__rtl ? control.__columns - 1 : 0;
+            break;
+        case Qt.Key_End:
+            if (!(event.modifiers & Qt.ControlModifier))
+                return false;
+            row = control.__rows - 1;
+            column = control.__rtl ? 0 : control.__columns - 1;
+            break;
+        default:
+            return false;
+        }
+        event.accepted = true;
+        return control.__navigateTo(row, column);
+    }
     function __handleKey(event) {
         if (!control.__frozen || control.__editing
                 || control.__columns <= 0 || control.__rows <= 0)
@@ -316,8 +375,11 @@ Item {
         __editIndex = null;
     }
     function __ensureCellVisible(row: int, column: int) {
-        if (!__frozen || !frozenMainView.visible)
+        if (!__frozen || !frozenMainView.visible) {
+            if (!__frozen)
+                plainView.positionViewAtCell(Qt.point(row, column), TableView.Contain);
             return;
+        }
         const frozenColumn = __rtl ? column >= __columns - __frozenColumns
                                    : column < __frozenColumns;
         const frozenRow = row < __frozenRows;
@@ -549,6 +611,8 @@ Item {
             editTriggers: TableView.DoubleTapped | TableView.EditKeyPressed
             delegate: control.delegate
             selectionModel: sharedSelection
+            Keys.priority: Keys.BeforeItem
+            Keys.onPressed: event => control.__handlePageKey(event)
             MouseScrollImpl {
                 view: plainView
             }
@@ -643,7 +707,10 @@ Item {
                 resizableColumns: false
                 keyNavigationEnabled: true
                 Keys.priority: Keys.BeforeItem
-                Keys.onPressed: (event) => control.__handleKey(event)
+                Keys.onPressed: event => {
+                    if (!control.__handlePageKey(event))
+                        control.__handleKey(event);
+                }
             }
             TableView {
                 id: frozenTopRightView
@@ -669,7 +736,10 @@ Item {
                 resizableColumns: false
                 keyNavigationEnabled: true
                 Keys.priority: Keys.BeforeItem
-                Keys.onPressed: (event) => control.__handleKey(event)
+                Keys.onPressed: event => {
+                    if (!control.__handlePageKey(event))
+                        control.__handleKey(event);
+                }
             }
             TableView {
                 id: frozenBottomLeftView
@@ -695,7 +765,10 @@ Item {
                 resizableColumns: false
                 keyNavigationEnabled: true
                 Keys.priority: Keys.BeforeItem
-                Keys.onPressed: (event) => control.__handleKey(event)
+                Keys.onPressed: event => {
+                    if (!control.__handlePageKey(event))
+                        control.__handleKey(event);
+                }
             }
             TableView {
                 id: frozenMainView
@@ -718,7 +791,10 @@ Item {
                 resizableColumns: false
                 keyNavigationEnabled: true
                 Keys.priority: Keys.BeforeItem
-                Keys.onPressed: (event) => control.__handleKey(event)
+                Keys.onPressed: event => {
+                    if (!control.__handlePageKey(event))
+                        control.__handleKey(event);
+                }
                 MouseScrollImpl {
                     view: frozenMainView
                 }
@@ -770,5 +846,16 @@ Item {
                          ? control.loadingState
                          : (!control.loading && control.__rows === 0
                             ? control.emptyState : null)
+    }
+
+    Rectangle {
+        objectName: "tableFocusRing"
+        anchors.fill: parent
+        color: "transparent"
+        border.width: control.__hasFocus ? 2 : 0
+        border.color: control.tokens.primary
+        radius: control.tokens.radius
+        z: 40
+        visible: border.width > 0
     }
 }

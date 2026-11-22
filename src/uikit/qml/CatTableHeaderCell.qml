@@ -9,10 +9,14 @@ Rectangle {
     property ThemePalette theme: Theme
     property real padding: 8
     property real rightPadding: 8
+    property string accessibleDescription: ""
     readonly property var tokens: (theme || Theme).tokens
     implicitWidth: 140
     implicitHeight: tokens.controlHeight
     color: tokens.surfaceHover
+    Accessible.role: Accessible.ColumnHeader
+    Accessible.name: display === undefined ? "" : String(display)
+    Accessible.description: accessibleDescription
 
     CatLabel {
         objectName: "catTableHeaderCellLabel"
