@@ -8,4 +8,4 @@
 - [x] 3.2 增加 Gallery 列隐藏/恢复/排序集成测试。
 - [x] 4.1 更新 `COMPONENTS.md`、`VALIDATION.md` 和变更验证记录。
 - [x] 5.1 运行 Debug/Release QML、完整 Gallery、单元测试、qmllint、`check_docs.py` 和 `git diff --check`。
-- [ ] 5.2 归档 `add-tableview-column-controls`，校验主规约。
+- [x] 5.2 归档 `add-tableview-column-controls`，校验主规约。
