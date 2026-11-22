@@ -848,6 +848,41 @@ Item {
                             ? control.emptyState : null)
     }
 
+    Item {
+        objectName: "tableWheelCapture"
+        anchors.fill: parent
+        z: 25
+
+        WheelHandler {
+            objectName: "tableWheelHandler"
+            blocking: true
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+            onWheel: event => {
+                const view = control.view;
+                if (!view)
+                    return;
+                const step = control.tokens.controlHeight;
+                let dx = event.pixelDelta.x !== 0
+                        ? event.pixelDelta.x : event.angleDelta.x / 120 * step;
+                let dy = event.pixelDelta.y !== 0
+                        ? event.pixelDelta.y : event.angleDelta.y / 120 * step;
+                if ((event.modifiers & Qt.ShiftModifier) && dx === 0) {
+                    dx = dy;
+                    dy = 0;
+                }
+                if (dx !== 0) {
+                    const maxX = Math.max(0, view.contentWidth - view.width);
+                    view.contentX = Math.max(0, Math.min(maxX, view.contentX - dx));
+                }
+                if (dy !== 0) {
+                    const maxY = Math.max(0, view.contentHeight - view.height);
+                    view.contentY = Math.max(0, Math.min(maxY, view.contentY - dy));
+                }
+                event.accepted = true;
+            }
+        }
+    }
+
     Rectangle {
         objectName: "tableFocusRing"
         anchors.fill: parent

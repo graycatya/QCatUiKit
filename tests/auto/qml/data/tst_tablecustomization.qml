@@ -55,6 +55,21 @@ TestCase {
     }
 
     Component {
+        id: nestedScrollComponent
+        Flickable {
+            width: 480
+            height: 240
+            contentHeight: 1000
+            CatTableView {
+                objectName: "nestedTable"
+                width: 480
+                height: 240
+                model: longRows
+            }
+        }
+    }
+
+    Component {
         id: emptyComponent
         Rectangle {
             objectName: "testEmptyState"
@@ -129,6 +144,20 @@ TestCase {
         table.view.contentY = 0;
         mouseWheel(table.view, 40, 80, 0, -120);
         tryVerify(function() { return table.view.contentY > 0; }, 1000);
+    }
+
+    function test_verticalWheelDoesNotBubbleToParent() {
+        const host = createTemporaryObject(nestedScrollComponent, test);
+        verify(host);
+        const table = findChild(host, "nestedTable");
+        verify(table);
+        verify(waitForRendering(table));
+        table.view.contentY = 0;
+        host.contentY = 0;
+        mouseWheel(table.view, 40, 80, 0, -120);
+        mouseWheel(table.view, 40, 80, 0, -120);
+        tryVerify(function() { return table.view.contentY > 0; }, 1000);
+        compare(host.contentY, 0);
     }
 
     function test_verticalWheelFrozen() {
