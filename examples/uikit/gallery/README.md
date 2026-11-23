@@ -28,6 +28,8 @@ Windows 单配置程序位于 `<build>/bin/qcat-gallery.exe`，多配置程序�
 | `--density desktop\|touch\|mobile` | 交互密度，默认 desktop |
 | `--width <pixels>` | 初始宽度，默认 1200，最小 360 |
 | `--page <id>` | home、all、settings 或组件 ID |
+
+示例的图标按钮使用随附的 RemixIcon 字体 `assets/remixicon.ttf`，码位集中声明在 `GalleryIcons` 单例中。该字体只随 Gallery 分发，不属于库 API；来源与许可见仓库根目录的 `NOTICE` 与 `LICENSES/RemixIcon-1.0.txt`。
 | `--chart-demo <0–29>` | 图表演示编号，自动打开对应图表页面 |
 | `--led-count <0–100000>` / `--led-layout matrix\|sphere` | LED 页面每路数量及布局，须配合 `--page led-preview` |
 | `--led-interval <4–1000>` | 独立 Deck 效果调度间隔，单位 ms |

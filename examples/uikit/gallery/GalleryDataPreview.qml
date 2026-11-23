@@ -334,20 +334,34 @@ ColumnLayout {
                         onToggled: tableColumns.setColumnVisible(columnControl.modelData, checked)
                     }
                     CatButton {
-                        text: "◀"
-                        implicitWidth: 28
-                        implicitHeight: 28
+                        objectName: "tableColumnMoveLeft" + columnControl.modelData
+                        implicitWidth: Theme.tokens.controlHeight
+                        implicitHeight: Theme.tokens.controlHeight
+                        padding: 0
                         enabled: columnControl.index > 0
                         Accessible.name: qsTr("Move column left")
                         onClicked: tableColumns.moveColumn(columnControl.modelData, -1)
+                        contentItem: CatFontIcon {
+                            glyph: GalleryIcons.chevronLeft
+                            font.family: GalleryIcons.family
+                            iconSize: 16
+                            color: enabled ? Theme.tokens.text : Theme.tokens.textDisabled
+                        }
                     }
                     CatButton {
-                        text: "▶"
-                        implicitWidth: 28
-                        implicitHeight: 28
+                        objectName: "tableColumnMoveRight" + columnControl.modelData
+                        implicitWidth: Theme.tokens.controlHeight
+                        implicitHeight: Theme.tokens.controlHeight
+                        padding: 0
                         enabled: columnControl.index < tableColumns.allColumns.length - 1
                         Accessible.name: qsTr("Move column right")
                         onClicked: tableColumns.moveColumn(columnControl.modelData, 1)
+                        contentItem: CatFontIcon {
+                            glyph: GalleryIcons.chevronRight
+                            font.family: GalleryIcons.family
+                            iconSize: 16
+                            color: enabled ? Theme.tokens.text : Theme.tokens.textDisabled
+                        }
                     }
                 }
             }

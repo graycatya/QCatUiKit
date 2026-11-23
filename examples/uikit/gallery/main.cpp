@@ -39,6 +39,11 @@ int main(int argc, char **argv)
     for (const int size : {16, 24, 32, 48, 64, 128, 256, 512})
         applicationIcon.addFile(QStringLiteral(":/qt/qml/QCatUiKit/Gallery/assets/brand/png/qcat-uikit-%1.png").arg(size), QSize(size, size));
     app.setWindowIcon(applicationIcon);
+    // Register before the engine loads QML so icon glyphs never fall back to a placeholder.
+    if (QFontDatabase::addApplicationFont(
+            QStringLiteral(":/qt/qml/QCatUiKit/Gallery/assets/remixicon.ttf"))
+        == -1)
+        qWarning("Gallery: failed to register the bundled icon font");
     QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
 #ifdef Q_OS_WIN
     font.setFamilies({QStringLiteral("Segoe UI"), QStringLiteral("Microsoft YaHei UI")});

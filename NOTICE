@@ -24,6 +24,13 @@ applies our experimental implementation in adapters/qcatthorvgqrhi/overlay.
 Downloaded sources and managed build tools retain their upstream licenses.
 ThorVG is statically linked into QCatUiKit when the vector backend is enabled.
 
+Icon font bundled with the Gallery example at examples/uikit/gallery/assets/remixicon.ttf:
+Remix Icon — Copyright (c) 2017-2026 Remix Design.
+Source: https://github.com/Remix-Design/RemixIcon
+Font version 4.9; Remix Icon License v1.0: LICENSES/RemixIcon-1.0.txt.
+The font is used by the Gallery example only. It is not a QCatUiKit resource or API,
+and the icons remain governed by the Remix Icon License rather than Apache-2.0.
+
 Character samples in tests/manual/mascot-player/catgray and catgray-lottie:
 CatGray Voxel — CatGray character assets, provided by the repository owner.
 Source: CatGrayWiki/logo/ip/model_voxel/desktop_pet.

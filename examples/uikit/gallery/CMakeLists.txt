@@ -2,7 +2,7 @@
 find_package(Qt6 6.8 REQUIRED COMPONENTS LinguistTools)
 qt_add_library(qcat-gallery-ui STATIC)
 add_dependencies(qcat-gallery-ui QCatUiKitplugin)
-set_source_files_properties(GalleryCatalog.qml GalleryChartCatalog.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 qt_add_qml_module(qcat-gallery-ui
     URI QCatUiKit.Gallery
     VERSION 1.0
@@ -15,7 +15,7 @@ qt_add_qml_module(qcat-gallery-ui
         gallerytablecolumnmodel.h gallerytablecolumnmodel.cpp
         galleryleddemo.h galleryleddemo.cpp
     QML_FILES
-        Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
+        Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
         GalleryChartExport.qml GalleryChartRangeControls.qml GalleryChartAxisRange.qml
         GalleryAttitudePreview.qml GalleryTiltPreview.qml GalleryDockPreview.qml
@@ -26,7 +26,7 @@ qt_add_qml_module(qcat-gallery-ui
         GallerySettingsPage.qml GalleryComponentPage.qml GalleryPreview.qml GalleryExtendedPreview.qml GalleryChartPreview.qml
         GalleryDataPreview.qml GalleryDataStressPanel.qml GalleryChartAdvancedPreview.qml GalleryChartAxesPreview.qml GalleryChart3DPreview.qml GalleryChartRadialPreview.qml GalleryChartAreaOptions.qml GalleryChartStrokeOptions.qml GalleryChartInteractionOptions.qml GalleryChartDelegateOptions.qml GalleryChartMotionOptions.qml
         GalleryLedPreview.qml
-    RESOURCES assets/Emotion_Joy.svg assets/CatGray_All_Actions.json assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png)
+    RESOURCES assets/Emotion_Joy.svg assets/CatGray_All_Actions.json assets/preview-art.svg assets/chart-weave.png assets/chart-marker.png assets/remixicon.ttf)
 # Reuse the licensed sample packages without copying assets or exposing Gallery helpers.
 set(qcat_mascot_sample_dir "${PROJECT_SOURCE_DIR}/tests/manual/mascot-player")
 set(qcat_mascot_sample_files)

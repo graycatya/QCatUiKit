@@ -117,6 +117,32 @@ TestCase {
         view.setColumnWidth(1, 220);
         compare(view.explicitColumnWidth(1), 220);
     }
+    function test_tableColumnMoveIcons() {
+        choose("table");
+        verify(waitForRendering(find("demoTableView")));
+        // The bundled icon font must be loadable from the Gallery module itself.
+        compare(GalleryIcons.loader.status, FontLoader.Ready);
+        find("tableColumnsReset").clicked();
+        wait(10);
+        const firstLeft = find("tableColumnMoveLeft0");
+        const firstRight = find("tableColumnMoveRight0");
+        const lastLeft = find("tableColumnMoveLeft3");
+        const lastRight = find("tableColumnMoveRight3");
+        compare(firstLeft.enabled, false);
+        compare(firstRight.enabled, true);
+        compare(lastLeft.enabled, true);
+        compare(lastRight.enabled, false);
+        for (const button of [firstLeft, firstRight, lastLeft, lastRight]) {
+            compare(button.contentItem.font.family, "remixicon");
+            compare(button.width, Theme.tokens.controlHeight);
+        }
+        // The icon keeps the themed foreground instead of a fixed colour.
+        compare(firstLeft.contentItem.color, Theme.tokens.textDisabled);
+        compare(firstRight.contentItem.color, Theme.tokens.text);
+        firstRight.clicked();
+        wait(10);
+        compare(find("tableColumnMoveLeft1").enabled, false);
+    }
     function test_tableFreezeControls() {
         const demo = choose("table");
         verify(waitForRendering(find("demoTableView")));
