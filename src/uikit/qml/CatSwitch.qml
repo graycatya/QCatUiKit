@@ -33,9 +33,10 @@ T.Switch {
                                                                                  ? control.tokens.primaryHover :
                                                                                    control.tokens.primary) :
                                                                               control.down
-                                                                              || control.hovered
-                                                                              ? control.tokens.surfaceHover :
-                                                                                control.tokens.surface
+                                                                              ? control.tokens.surfacePressed :
+                                                                                control.hovered
+                                                                                ? control.tokens.surfaceHover :
+                                                                                  control.tokens.surface
         border.color: control.enabled && control.checked ? color : control.tokens.border
         Rectangle {
             width: 16
@@ -82,6 +83,6 @@ T.Switch {
         radius: control.tokens.radius
         color: "transparent"
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

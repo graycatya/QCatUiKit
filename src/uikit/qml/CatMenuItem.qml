@@ -49,9 +49,11 @@ T.MenuItem {
     }
     background: Rectangle {
         radius: Math.min(4, control.tokens.radius)
-        color: control.highlighted || control.hovered || control.down ? control.tokens.surfaceHover :
-                                                                        control.tokens.surface
+        color: control.down ? control.tokens.surfacePressed :
+               control.highlighted ? control.tokens.surfaceSelected :
+               control.hovered ? control.tokens.surfaceHover :
+               control.tokens.surface
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

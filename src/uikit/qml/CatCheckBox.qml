@@ -35,9 +35,10 @@ T.CheckBox {
                                                                                                         ? control.tokens.primaryHover :
                                                                                                           control.tokens.primary) :
                                                                                                   control.down
-                                                                                                  || control.hovered
-                                                                                                  ? control.tokens.surfaceHover :
-                                                                                                    control.tokens.surface
+                                                                                                  ? control.tokens.surfacePressed :
+                                                                                                    control.hovered
+                                                                                                    ? control.tokens.surfaceHover :
+                                                                                                      control.tokens.surface
         border.color: control.enabled && control.checkState !== Qt.Unchecked ? color :
                                                                                control.tokens.border
 
@@ -95,6 +96,6 @@ T.CheckBox {
         radius: control.tokens.radius
         color: "transparent"
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

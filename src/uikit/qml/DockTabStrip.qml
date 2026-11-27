@@ -72,7 +72,7 @@ Item {
                 color: scrollButton.down ? strip.tokens.primary : scrollButton.hovered
                                           ? strip.tokens.surfaceHover : "transparent"
                 border.width: scrollButton.visualFocus ? 1 : 0
-                border.color: strip.tokens.primary
+                border.color: strip.tokens.focusRing
             }
             contentItem: Item {
                 id: arrow
@@ -219,7 +219,7 @@ Item {
                                cell.lifted || tabDrag.containsMouse || closeButton.hovered ? strip.tokens.surfaceHover :
                                "transparent"
                         border.width: tabButton.visualFocus ? 1 : 0
-                        border.color: strip.tokens.primary
+                        border.color: strip.tokens.focusRing
                         Rectangle {
                             anchors.bottom: parent.bottom
                             width: parent.width

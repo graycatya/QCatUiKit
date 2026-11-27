@@ -42,6 +42,6 @@ T.TextField {
         focused: control.enabled && control.activeFocus
         hovered: control.enabled && control.hovered
         invalid: control.invalid
-        opacity: control.enabled ? 1 : 0.6
+        opacity: control.enabled ? 1 : control.tokens.disabledOpacity / 100
     }
 }

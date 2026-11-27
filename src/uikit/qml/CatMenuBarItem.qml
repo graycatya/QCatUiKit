@@ -25,9 +25,11 @@ T.MenuBarItem {
     }
     background: Rectangle {
         radius: control.tokens.radius
-        color: control.highlighted || control.hovered || control.down ? control.tokens.surfaceHover :
-                                                                        "transparent"
+        color: control.down ? control.tokens.surfacePressed :
+               control.highlighted ? control.tokens.surfaceSelected :
+               control.hovered ? control.tokens.surfaceHover :
+               "transparent"
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

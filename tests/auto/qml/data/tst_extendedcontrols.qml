@@ -139,6 +139,84 @@ TestCase {
         mouseClick(spin, spin.width - 10, spin.height / 2);
         compare(spin.value, 20);
     }
+    function test_spinStepButtonStateVisibility() {
+        const spin = create('CatSpinBox { width: 220; from: 0; to: 20; value: 5; editable: true }');
+        verify(waitForRendering(spin));
+        const stepUp = spin.up.indicator;
+        compare(stepUp.color.a, 0);
+        mouseMove(spin, spin.width - 10, spin.height / 2);
+        tryCompare(spin.up, "hovered", true);
+        verify(Qt.colorEqual(stepUp.color, Theme.tokens.surfaceSelected));
+        verify(!Qt.colorEqual(stepUp.color, spin.background.color));
+        mousePress(spin, spin.width - 10, spin.height / 2);
+        tryCompare(spin.up, "pressed", true);
+        verify(Qt.colorEqual(stepUp.color, Theme.tokens.surfacePressed));
+        mouseRelease(spin, spin.width - 10, spin.height / 2);
+        mouseMove(test, 0, 0);
+        tryCompare(spin.up, "hovered", false);
+        compare(stepUp.color.a, 0);
+    }
+    function test_comboPopupStateVisibility() {
+        const combo = create('CatComboBox { width: 220; model: ["One", "Two", "Three"] }');
+        verify(waitForRendering(combo));
+        verify(Qt.colorEqual(combo.background.color, Theme.tokens.surface));
+        mouseClick(combo);
+        tryCompare(combo.popup, "visible", true);
+        verify(Qt.colorEqual(combo.background.color, Theme.tokens.surfaceSelected));
+        const list = combo.popup.contentItem;
+        tryVerify(() => list.itemAtIndex(combo.currentIndex) !== null);
+        const current = list.itemAtIndex(combo.currentIndex);
+        verify(Qt.colorEqual(current.background.color, Theme.tokens.surfaceSelected));
+        const other = list.itemAtIndex(1);
+        verify(other !== null);
+        verify(Qt.colorEqual(other.background.color, combo.popup.background.color));
+        mouseMove(other, other.width / 2, other.height / 2);
+        tryCompare(other, "highlighted", true);
+        verify(Qt.colorEqual(other.background.color, Theme.tokens.surfaceSelected));
+    }
+    function test_stateTokensDriveControls() {
+        const palette = Qt.createQmlObject('import QCatUiKit; ThemePalette {}', test);
+        palette.reducedMotion = true;
+        palette.colorPalette = ({
+            surfaceHover: "#010101",
+            surfaceSelected: "#020202",
+            surfacePressed: "#030303",
+            focusRing: "#040404"
+        });
+        const button = create('CatButton { width: 160; text: "Apply" }');
+        button.theme = palette;
+        verify(waitForRendering(button));
+        button.forceActiveFocus(Qt.TabFocusReason);
+        tryCompare(button, "visualFocus", true);
+        verify(Qt.colorEqual(button.background.border.color, palette.tokens.focusRing));
+        button.focus = false;
+        test.forceActiveFocus();
+        wait(10);
+        mouseMove(button, button.width / 2, button.height / 2);
+        tryCompare(button, "hovered", true);
+        verify(Qt.colorEqual(button.background.color, palette.tokens.surfaceHover));
+        mousePress(button, button.width / 2, button.height / 2);
+        tryCompare(button, "down", true);
+        verify(Qt.colorEqual(button.background.color, palette.tokens.surfacePressed));
+        mouseRelease(button, button.width / 2, button.height / 2);
+        mouseMove(test, 0, 0);
+        wait(10);
+
+        const check = create('CatCheckBox { width: 180; text: "Enabled option" }');
+        check.theme = palette;
+        verify(waitForRendering(check));
+        mousePress(check, check.indicator.x + check.indicator.width / 2, check.height / 2);
+        tryCompare(check, "down", true);
+        verify(Qt.colorEqual(check.indicator.color, palette.tokens.surfacePressed));
+        mouseRelease(check, check.indicator.x + check.indicator.width / 2, check.height / 2);
+
+        palette.overrides = ({ disabledOpacity: 25 });
+        const field = create('CatTextField { width: 160; enabled: false }');
+        field.theme = palette;
+        verify(waitForRendering(field));
+        fuzzyCompare(field.background.opacity, 0.25, 0.001);
+        palette.destroy();
+    }
     function test_passwordRevealKeyboard() {
         const password = create('CatPasswordField { width: 260; text: "secret" }');
         verify(waitForRendering(password));

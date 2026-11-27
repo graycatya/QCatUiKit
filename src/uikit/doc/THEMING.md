@@ -36,9 +36,23 @@ Component.onCompleted: {
 
 单行输入框的内容与占位提示默认垂直居中，运行时切换密度时保持输入和选区；显式设置 `verticalAlignment` 时，两者使用相同的对齐方式。密度由应用显式选择，窗口宽度和设备类型不会自动改变 Theme.density；布局响应应根据可用空间实现。
 
-颜色 Token：`primary`、`primaryHover`、`primaryPressed`、`onPrimary`、`background`、`surface`、`surfaceHover`、`text`、`textSecondary`、`textDisabled`、`border`、`disabled`、`success`、`warning`、`danger`。尺寸及行为 Token：`radius`、`fontSize`、`controlHeight`、`spacing`、`padding`、`motionDuration`、`hoverEnabled`。
+颜色 Token：`primary`、`primaryHover`、`primaryPressed`、`onPrimary`、`background`、`surface`、`surfaceHover`、`surfaceSelected`、`surfacePressed`、`focusRing`、`text`、`textSecondary`、`textDisabled`、`border`、`disabled`、`success`、`warning`、`danger`。尺寸及行为 Token：`radius`、`fontSize`、`controlHeight`、`spacing`、`padding`、`motionDuration`、`hoverEnabled`、`disabledOpacity`。
 
-`onPrimary` 根据品牌色相对亮度选择黑或白。未显式提供的 `onPrimary`、`primaryHover` 和 `primaryPressed` 从最终生效的 `primary` 推导，因此通过色板或覆盖修改品牌色后，这三项会随之重新计算。显式提供的值优先于推导结果。使用透明品牌色时，最终对比度仍由应用背景共同决定。
+`onPrimary` 根据品牌色相对亮度选择黑或白。未显式提供的 `onPrimary`、`primaryHover`、`primaryPressed` 和 `focusRing` 从最终生效的 `primary` 推导，因此通过色板或覆盖修改品牌色后，这四项会随之重新计算。显式提供的值优先于推导结果。使用透明品牌色时，最终对比度仍由应用背景共同决定。`disabledOpacity` 为 0–100 的整数百分比，组件以 `disabledOpacity / 100` 作为禁用内容透明度。
+
+## 状态映射
+
+普通表面控件的交互状态由统一 Token 驱动，设置主题即可调整全部基础组件的状态外观：
+
+| 状态 | Token |
+| --- | --- |
+| 悬停 | `surfaceHover` |
+| 按下 | `surfacePressed` |
+| 选中、当前项、键盘高亮、下拉打开 | `surfaceSelected` |
+| 键盘焦点描边 | `focusRing` |
+| 禁用 | `disabledOpacity` 与 `disabled` |
+
+`surfaceHover`、`surfaceSelected`、`surfacePressed` 默认按由浅到深排列，可在 `colorPalette` 或 `overrides` 中分别覆盖。使用 `primary` 填充的按钮和主色选中态开关继续使用 `primary`、`primaryHover`、`primaryPressed`。
 
 ## 自定义色板
 

@@ -13,8 +13,7 @@ Rectangle {
     property Component editDelegate: null
     property real padding: 8
     property color hoverColor: tokens.surfaceHover
-    property color selectedColor: Qt.rgba(tokens.primary.r, tokens.primary.g,
-                                           tokens.primary.b, 0.16)
+    property color selectedColor: tokens.surfaceSelected
     readonly property bool hovered: hoverHandler.hovered
     readonly property var tokens: (theme || Theme).tokens
     implicitWidth: 140

@@ -11,6 +11,7 @@ T.ComboBox {
     property ThemePalette theme: Theme
     readonly property var tokens: (theme || Theme).tokens
     readonly property real windowHeight: Window.height
+    readonly property bool __popupOpen: popup ? popup.visible : false
     implicitWidth: 180
     implicitHeight: Math.max(tokens.controlHeight, implicitContentHeight + topPadding
                              + bottomPadding)
@@ -72,11 +73,13 @@ T.ComboBox {
     }
     background: Rectangle {
         radius: control.tokens.radius
-        color: !control.enabled ? control.tokens.disabled : control.down || control.hovered
-                                  ? control.tokens.surfaceHover : control.tokens.surface
+        color: !control.enabled ? control.tokens.disabled : control.__popupOpen
+                                  || control.down ? control.tokens.surfaceSelected :
+                                                    control.hovered ? control.tokens.surfaceHover :
+                                                                      control.tokens.surface
         border.width: control.visualFocus || (control.editable && control.activeFocus) ? 2 : 1
         border.color: control.visualFocus || (control.editable && control.activeFocus)
-                      ? control.tokens.primary : control.tokens.border
+                      ? control.tokens.focusRing : control.tokens.border
         Behavior on color {
             ColorAnimation {
                 duration: control.tokens.motionDuration
@@ -106,8 +109,9 @@ T.ComboBox {
         }
         background: Rectangle {
             radius: Math.min(4, control.tokens.radius)
-            color: entry.highlighted || entry.hovered ? control.tokens.surfaceHover :
-                                                        control.tokens.surface
+            color: entry.highlighted ? control.tokens.surfaceSelected :
+                   entry.hovered ? control.tokens.surfaceHover :
+                   control.tokens.surface
             Rectangle {
                 width: 3
                 height: Math.max(0, parent.height - 16)

@@ -85,16 +85,17 @@ T.Button {
                                                                     control.hovered
                                                                     ? control.tokens.primaryHover :
                                                                       control.tokens.primary) :
-                                                    control.down || control.checked
-                                                    || control.hovered
-                                                    ? control.tokens.surfaceHover : control.flat
-                                                      ? "transparent" : control.tokens.surface
+                                                    control.down ? control.tokens.surfacePressed :
+                                                    control.checked ? control.tokens.surfaceSelected :
+                                                    control.hovered ? control.tokens.surfaceHover :
+                                                    control.flat ? "transparent" :
+                                                    control.tokens.surface
         border.width: control.visualFocus ? 2 : 1
-        border.color: control.visualFocus || control.checked ? control.tokens.primary :
-                                                               control.danger
-                                                               ? control.tokens.danger :
-                                                                 control.flat ? "transparent" :
-                                                                                control.tokens.border
+        border.color: control.checked ? control.tokens.primary :
+                                       control.visualFocus ? control.tokens.focusRing :
+                                       control.danger ? control.tokens.danger :
+                                       control.flat ? "transparent" :
+                                       control.tokens.border
         Behavior on color {
             ColorAnimation {
                 duration: control.tokens.motionDuration

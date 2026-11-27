@@ -27,8 +27,9 @@ T.RadioButton {
         y: (control.height - height) / 2
         radius: width / 2
         antialiasing: true
-        color: !control.enabled ? control.tokens.disabled : control.down || control.hovered
-                                  ? control.tokens.surfaceHover : control.tokens.surface
+        color: !control.enabled ? control.tokens.disabled : control.down
+                                  ? control.tokens.surfacePressed : control.hovered
+                                    ? control.tokens.surfaceHover : control.tokens.surface
         border.width: control.checked ? 2 : 1
         border.color: control.enabled && control.checked ? control.tokens.primary :
                                                            control.tokens.border
@@ -73,6 +74,6 @@ T.RadioButton {
         radius: control.tokens.radius
         color: "transparent"
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

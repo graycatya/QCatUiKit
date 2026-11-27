@@ -107,7 +107,7 @@ CatButton {
             opacity: tab.tool ? (tab.pressed ? 0.22 : tab.hovered ? 0.12 : 0) :
                                 tab.checked || tab.hovered || tab.down ? 1 : 0
             border.width: tab.visualFocus ? 1 : 0
-            border.color: tab.tokens.primary
+            border.color: tab.tokens.focusRing
         }
         Rectangle {
             anchors.bottom: parent.bottom

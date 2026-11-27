@@ -926,7 +926,7 @@ Item {
         anchors.fill: parent
         color: "transparent"
         border.width: control.__hasFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
         radius: control.tokens.radius
         z: 40
         visible: border.width > 0

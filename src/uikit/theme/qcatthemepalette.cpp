@@ -13,11 +13,12 @@ namespace
 {
 const QSet<QString> &colorTokenNames()
 {
-    static const QSet<QString> names{"primary",       "primaryHover", "primaryPressed",
-                                     "onPrimary",     "background",   "surface",
-                                     "surfaceHover",  "text",         "textSecondary",
-                                     "textDisabled",  "border",       "disabled",
-                                     "success",       "warning",      "danger"};
+    static const QSet<QString> names{"primary",        "primaryHover",   "primaryPressed",
+                                     "onPrimary",      "background",     "surface",
+                                     "surfaceHover",   "surfacePressed", "surfaceSelected",
+                                     "focusRing",      "text",           "textSecondary",
+                                     "textDisabled",   "border",         "disabled",
+                                     "success",        "warning",        "danger"};
     return names;
 }
 
@@ -40,6 +41,9 @@ QVariantMap builtinColors(bool dark, const QColor &primary)
                        {"background", QColor(dark ? "#141414" : "#f5f5f5")},
                        {"surface", QColor(dark ? "#1f1f1f" : "#ffffff")},
                        {"surfaceHover", QColor(dark ? "#303030" : "#f0f5ff")},
+                       {"surfacePressed", QColor(dark ? "#3a4a63" : "#d3e3ff")},
+                       {"surfaceSelected", QColor(dark ? "#26344d" : "#e6f0ff")},
+                       {"focusRing", primary},
                        {"text", QColor(dark ? "#f0f0f0" : "#1f1f1f")},
                        {"textSecondary", QColor(dark ? "#bfbfbf" : "#595959")},
                        {"textDisabled", QColor(dark ? "#707070" : "#8c8c8c")},
@@ -69,6 +73,12 @@ bool numericTokenRange(const QString &key, int *minimum, int *maximum)
     {
         *minimum = 0;
         *maximum = 4096;
+        return true;
+    }
+    if (key == "disabledOpacity")
+    {
+        *minimum = 0;
+        *maximum = 100;
         return true;
     }
     return false;
@@ -213,6 +223,7 @@ QVariantMap ThemePalette::tokens() const
     result.insert("padding", d->density == Desktop ? 12 : 16);
     result.insert("motionDuration", d->reducedMotion ? 0 : 160);
     result.insert("hoverEnabled", d->density == Desktop);
+    result.insert("disabledOpacity", 60);
 
     // Caller supplied values win over derived colors. Unknown override keys are kept so an
     // application can expose its own design tokens through the same map.
@@ -303,6 +314,8 @@ QVariantMap ThemePalette::tokens() const
         result["primaryHover"] = primary.lighter(115);
     if (!explicitTokens.contains("primaryPressed"))
         result["primaryPressed"] = primary.darker(115);
+    if (!explicitTokens.contains("focusRing"))
+        result["focusRing"] = primary;
 
     if (d->reducedMotion)
         result["motionDuration"] = 0;

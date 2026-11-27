@@ -33,7 +33,8 @@ T.ScrollBar {
         opacity: control.pressed ? 1 : control.hovered ? 0.9 : 0.35
     }
     background: Rectangle {
-        color: control.hovered || control.pressed ? control.tokens.surfaceHover : "transparent"
+        color: control.pressed ? control.tokens.surfacePressed :
+               control.hovered ? control.tokens.surfaceHover : "transparent"
         radius: 6
     }
 }

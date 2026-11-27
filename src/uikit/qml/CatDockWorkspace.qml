@@ -614,7 +614,7 @@ Item {
                 id: titleBar
                 width: parent.width
                 height: control.tokens.controlHeight
-                color: groupView.activePanel && control.panelHasFocus(groupView.activePanel) ? control.tokens.surfaceHover : control.tokens.surface
+                color: groupView.activePanel && control.panelHasFocus(groupView.activePanel) ? control.tokens.surfaceSelected : control.tokens.surface
                 Rectangle { width: parent.width; height: 1; color: control.tokens.border }
                 Text {
                     id: groupTitle

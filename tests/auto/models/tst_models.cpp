@@ -183,6 +183,43 @@ class ModelTests : public QObject
         theme.setOverrides({});
         QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1f1f1f"));
     }
+    void stateTokens()
+    {
+        ThemePalette theme;
+        const QVariantMap light = theme.tokens();
+        QCOMPARE(light.value("surfaceHover").value<QColor>(), QColor("#f0f5ff"));
+        QCOMPARE(light.value("surfaceSelected").value<QColor>(), QColor("#e6f0ff"));
+        QCOMPARE(light.value("surfacePressed").value<QColor>(), QColor("#d3e3ff"));
+        QCOMPARE(light.value("focusRing").value<QColor>(), QColor("#1677ff"));
+        QCOMPARE(light.value("disabledOpacity").toInt(), 60);
+
+        theme.setColorScheme(ThemePalette::Dark);
+        QCOMPARE(theme.tokens().value("surfaceSelected").value<QColor>(), QColor("#26344d"));
+        QCOMPARE(theme.tokens().value("surfacePressed").value<QColor>(), QColor("#3a4a63"));
+
+        // focusRing follows the effective primary unless explicitly supplied.
+        theme.setPrimaryColor(QColor("#13c2c2"));
+        QCOMPARE(theme.tokens().value("focusRing").value<QColor>(), QColor("#13c2c2"));
+        theme.setColorPalette({{"primary", QString("#fa8c16")}});
+        QCOMPARE(theme.tokens().value("focusRing").value<QColor>(), QColor("#fa8c16"));
+        theme.setColorPalette({{"primary", QString("#fa8c16")}, {"focusRing", QString("#722ed1")}});
+        QCOMPARE(theme.tokens().value("focusRing").value<QColor>(), QColor("#722ed1"));
+
+        // Palette supplies state colors; missing state tokens keep built-in values.
+        theme.setColorPalette({{"surfaceSelected", QString("#101418")},
+                               {"surfacePressed", QString("#1b2126")}});
+        QCOMPARE(theme.tokens().value("surfaceSelected").value<QColor>(), QColor("#101418"));
+        QCOMPARE(theme.tokens().value("surfacePressed").value<QColor>(), QColor("#1b2126"));
+        QCOMPARE(theme.tokens().value("surfaceHover").value<QColor>(), QColor("#303030"));
+
+        // disabledOpacity clamps to 0..100 and restores with an empty override map.
+        theme.setOverrides({{"disabledOpacity", 150}});
+        QCOMPARE(theme.tokens().value("disabledOpacity").toInt(), 100);
+        theme.setOverrides({{"disabledOpacity", -5}});
+        QCOMPARE(theme.tokens().value("disabledOpacity").toInt(), 0);
+        theme.setOverrides({});
+        QCOMPARE(theme.tokens().value("disabledOpacity").toInt(), 60);
+    }
     void reducedMotionOverridesAndSignals()
     {
         ThemePalette theme;

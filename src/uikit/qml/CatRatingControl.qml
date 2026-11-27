@@ -117,6 +117,6 @@ T.Control {
         color: "transparent"
         radius: control.tokens.radius
         border.width: control.visualFocus ? 2 : 0
-        border.color: control.tokens.primary
+        border.color: control.tokens.focusRing
     }
 }

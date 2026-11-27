@@ -13,7 +13,7 @@ Rectangle {
     color: hovered ? tokens.surfaceHover : tokens.surface
     radius: tokens.radius
     border.width: focused ? 2 : 1
-    border.color: invalid ? tokens.danger : focused ? tokens.primary : tokens.border
+    border.color: invalid ? tokens.danger : focused ? tokens.focusRing : tokens.border
     Behavior on color {
         ColorAnimation {
             duration: surface.tokens.motionDuration

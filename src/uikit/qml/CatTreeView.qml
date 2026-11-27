@@ -21,12 +21,12 @@ TreeView {
         implicitHeight: control.tokens.controlHeight
         palette.windowText: control.tokens.text
         palette.buttonText: control.tokens.text
-        palette.highlight: control.tokens.surfaceHover
+        palette.highlight: control.tokens.surfaceSelected
         palette.highlightedText: control.tokens.text
         palette.base: control.tokens.surface
         font.pixelSize: control.tokens.fontSize
         background: Rectangle {
-            color: entry.highlighted ? control.tokens.surfaceHover : control.tokens.surface
+            color: entry.highlighted ? control.tokens.surfaceSelected : control.tokens.surface
             border.width: entry.current ? 1 : 0
             border.color: control.tokens.primary
         }

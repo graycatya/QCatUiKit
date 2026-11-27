@@ -41,8 +41,10 @@ T.SpinBox {
         x: control.mirrored ? 0 : control.width - width
         height: control.height
         radius: control.tokens.radius
-        color: control.up.pressed || control.up.hovered ? control.tokens.surfaceHover :
-                                                          "transparent"
+        color: control.up.indicator.enabled ? (control.up.pressed ? control.tokens.surfacePressed :
+                                                                   control.up.hovered ? control.tokens.surfaceSelected :
+                                                                                        "transparent") :
+                                              "transparent"
 
         Text {
             anchors.centerIn: parent
@@ -57,8 +59,10 @@ T.SpinBox {
         x: control.mirrored ? control.width - width : 0
         height: control.height
         radius: control.tokens.radius
-        color: control.down.pressed || control.down.hovered ? control.tokens.surfaceHover :
-                                                              "transparent"
+        color: control.down.indicator.enabled ? (control.down.pressed ? control.tokens.surfacePressed :
+                                                                       control.down.hovered ? control.tokens.surfaceSelected :
+                                                                                              "transparent") :
+                                                "transparent"
 
         Text {
             anchors.centerIn: parent
@@ -72,6 +76,6 @@ T.SpinBox {
         theme: control.theme
         focused: control.activeFocus
         hovered: control.hovered
-        opacity: control.enabled ? 1 : 0.6
+        opacity: control.enabled ? 1 : control.tokens.disabledOpacity / 100
     }
 }

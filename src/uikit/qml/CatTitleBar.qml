@@ -76,7 +76,7 @@ T.Control {
             background: Rectangle {
                 color: minimizeButton.faceColor
                 border.width: minimizeButton.visualFocus ? 2 : 0
-                border.color: control.tokens.primary
+                border.color: control.tokens.focusRing
             }
         }
         CatButton {
@@ -143,7 +143,7 @@ T.Control {
             background: Rectangle {
                 color: maximizeButton.faceColor
                 border.width: maximizeButton.visualFocus ? 2 : 0
-                border.color: control.tokens.primary
+                border.color: control.tokens.focusRing
             }
         }
         CatButton {
@@ -200,7 +200,7 @@ T.Control {
             background: Rectangle {
                 color: closeButton.faceColor
                 border.width: closeButton.visualFocus ? 2 : 0
-                border.color: control.tokens.primary
+                border.color: control.tokens.focusRing
             }
         }
     }

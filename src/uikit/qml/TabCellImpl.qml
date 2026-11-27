@@ -22,9 +22,10 @@ Rectangle {
     implicitWidth: row.implicitWidth + tokens.padding * 2
     implicitHeight: tokens.controlHeight
     radius: tokens.radius
-    color: selected || hovered ? tokens.surfaceHover : tokens.surface
+    color: selected ? tokens.surfaceSelected : hovered ? tokens.surfaceHover : tokens.surface
     border.width: 1
-    border.color: selected || titleButton.visualFocus ? tokens.primary : tokens.border
+    border.color: selected ? tokens.primary : titleButton.visualFocus ? tokens.focusRing :
+                                                                        tokens.border
 
     HoverHandler {
         id: hover

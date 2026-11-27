@@ -19,7 +19,7 @@ Rectangle {
     antialiasing: true
     color: enabled ? tokens.surface : tokens.disabled
     border.width: focused ? 2 : 1
-    border.color: focused ? tokens.primary : tokens.border
+    border.color: focused ? tokens.focusRing : tokens.border
     Rectangle {
         anchors.centerIn: parent
         width: thumb.width * 6 / 11
