@@ -223,7 +223,8 @@ Item {
                             return dragged.width;
                         return 0;
                     }
-                    width: tabButton.implicitWidth + (closeButton.visible ? closeButton.width : 0)
+                    width: tabButton.implicitWidth
+                           + (closeButton.visible && !strip.rtl ? closeButton.width : 0)
                     height: row.height
                     z: lifted ? 1 : 0
                     opacity: !lifted && strip.workspace.dragId === panelId ? 0.45 : 1
@@ -266,7 +267,7 @@ Item {
                         text: cell.panel ? cell.panel.title : cell.panelId
                         checkable: true
                         checked: cell.selected
-                        leftPadding: strip.rtl ? (closeButton.visible ? 4 : 12) : 12
+                        leftPadding: strip.rtl && closeButton.visible ? closeButton.width + 4 : 12
                         rightPadding: strip.rtl ? 12 : (closeButton.visible ? 4 : 12)
                         background: null
                         onClicked: strip.workspace.controller.activatePanel(cell.panelId)

@@ -269,6 +269,8 @@ TestCase {
                "RTL tabs must run from right to left");
         const closeA = findChild(w, "dockTabClose_a");
         verify(closeA.x < 28, "RTL close target must sit on the left edge");
+        verify(a.leftPadding >= closeA.width + 4,
+               "RTL tab text must start after the left close target");
     }
     function test_minimums() {
         const w = createTemporaryObject(sample, test);
