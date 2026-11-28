@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import QtQuick
+import QtQuick.Window
 import QtTest
 import QCatUiKit
 
@@ -13,6 +14,8 @@ TestCase {
     Component { id: buttonFactory; CatButton { text: "A useful action" } }
     Component { id: progressFactory; CatProgressBar { width: 240; height: 8; indeterminate: true } }
     Component { id: fieldFactory; CatTextField { placeholderText: "Your message" } }
+    Component { id: titleBarFactory; CatTitleBar { width: 400 } }
+    Component { id: windowFactory; Window { width: 200; height: 100 } }
     function init() { failOnWarning(/.*/); Theme.reducedMotion = true; }
     function cleanup() { Theme.density = ThemePalette.Desktop; Theme.reducedMotion = false; }
     function test_buttonSizing_data() {
@@ -71,5 +74,48 @@ TestCase {
             fuzzyCompare(cursor.y + cursor.height / 2, field.height / 2, 1,
                          "Input text must remain vertically centered at density " + density);
         }
+    }
+    function test_titleBarPressedState() {
+        const target = createTemporaryObject(windowFactory, test);
+        const bar = createTemporaryObject(titleBarFactory, test, {targetWindow: target});
+        verify(bar !== null);
+        verify(waitForRendering(bar));
+        const minimize = findChild(bar, "titleBarMinimize");
+        const maximize = findChild(bar, "titleBarMaximize");
+        const close = findChild(bar, "titleBarClose");
+        verify(minimize !== null && maximize !== null && close !== null);
+
+        verify(Qt.colorEqual(minimize.faceColor, Theme.tokens.surface));
+        mouseMove(minimize, 20, 20);
+        tryCompare(minimize, "hovered", true);
+        verify(Qt.colorEqual(minimize.faceColor, Theme.tokens.surfaceHover));
+        mousePress(minimize, 20, 20);
+        tryCompare(minimize, "pressed", true);
+        verify(Qt.colorEqual(minimize.faceColor, Theme.tokens.surfacePressed));
+        verify(!Qt.colorEqual(minimize.faceColor, Theme.tokens.disabled));
+        bar.targetWindow = null;
+        mouseRelease(minimize, 20, 20);
+
+        bar.targetWindow = target;
+        verify(Qt.colorEqual(maximize.faceColor, Theme.tokens.surface));
+        mouseMove(maximize, 20, 20);
+        tryCompare(maximize, "hovered", true);
+        verify(Qt.colorEqual(maximize.faceColor, Theme.tokens.surfaceHover));
+        mousePress(maximize, 20, 20);
+        tryCompare(maximize, "pressed", true);
+        verify(Qt.colorEqual(maximize.faceColor, Theme.tokens.surfacePressed));
+        bar.targetWindow = null;
+        mouseRelease(maximize, 20, 20);
+
+        bar.targetWindow = target;
+        mouseMove(close, 20, 20);
+        tryCompare(close, "hovered", true);
+        verify(Qt.colorEqual(close.faceColor, Theme.tokens.danger));
+        mousePress(close, 20, 20);
+        tryCompare(close, "pressed", true);
+        verify(Qt.colorEqual(close.faceColor, Qt.darker(Theme.tokens.danger, 1.1)));
+        bar.targetWindow = null;
+        mouseRelease(close, 20, 20);
+        mouseMove(test, 0, 0);
     }
 }

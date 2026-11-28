@@ -57,7 +57,7 @@ T.Control {
             hoverEnabled: true
             Accessible.name: qsTr("Minimize")
             onClicked: control.targetWindow.showMinimized()
-            readonly property color faceColor: minimizeButton.pressed ? control.tokens.disabled :
+            readonly property color faceColor: minimizeButton.pressed ? control.tokens.surfacePressed :
                                                                         minimizeButton.hovered
                                                                         ? control.tokens.surfaceHover :
                                                                           control.tokens.surface
@@ -94,7 +94,7 @@ T.Control {
                            control.targetWindow.showNormal();
                        else
                            control.targetWindow.showMaximized()
-            readonly property color faceColor: maximizeButton.pressed ? control.tokens.disabled :
+            readonly property color faceColor: maximizeButton.pressed ? control.tokens.surfacePressed :
                                                                         maximizeButton.hovered
                                                                         ? control.tokens.surfaceHover :
                                                                           control.tokens.surface
