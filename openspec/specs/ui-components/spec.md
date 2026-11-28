@@ -715,6 +715,18 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 - THEN 其背景 SHALL 继续使用 `primary`、`primaryHover` 和 `primaryPressed`
 - THEN `surfacePressed` 与 `surfaceSelected` SHALL NOT 覆盖主色填充
 
+### Requirement: R20 TitleBarIcons
+
+CatTitleBar SHALL 允许通过 `minimizeIcon`、`maximizeIcon`、`restoreIcon` 和 `closeIcon` 组件覆盖对应图标；未提供时 SHALL 使用内置绘制。覆盖图标 SHALL NOT 改变按钮尺寸、可访问名称、状态背景或窗口操作。
+
+#### Scenario: 自定义图标
+
+- WHEN 应用为 `minimizeIcon`、`maximizeIcon`、`restoreIcon` 或 `closeIcon` 提供组件
+- THEN 对应按钮 SHALL 显示该组件并隐藏内置绘制图标
+- WHEN 未提供组件
+- THEN 按钮 SHALL 继续显示内置绘制图标
+- THEN 按钮尺寸、辅助名称、状态背景和窗口操作 SHALL 保持不变
+
 ## Data Model
 
 本模块无独立持久化数据模型。已核查属性：CatButton primary/danger/loading 默认 false，iconSource 默认空；CatTextField invalid 默认 false，implicitWidth=220；CatChatInput text/placeholderText 为字符串别名，submitted 参数为 string；CatCheckBox 使用 Qt checkState；CatScrollBar.revealed 默认 true；CatTitleBar.maximized 为只读派生状态。窗口按钮和滚动条状态不写入持久化数据。
