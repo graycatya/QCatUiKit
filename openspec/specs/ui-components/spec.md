@@ -173,12 +173,12 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 #### Scenario: 选中外观
 
 - WHEN 页签被选中
-- THEN 单元格背景 SHALL 使用 `surfaceHover`，边框 SHALL 使用主题 `primary` 且宽度为 1。
+- THEN 单元格背景 SHALL 使用 `surfaceSelected`，边框 SHALL 使用主题 `primary` 且宽度为 1。
 
 #### Scenario: 键盘焦点
 
 - WHEN 页签标题通过键盘获得焦点
-- THEN 单元格 SHALL 显示主题 `primary` 边框。
+- THEN 单元格 SHALL 显示 `focusRing` 颜色边框。
 
 #### Scenario: 悬停
 
@@ -651,6 +651,62 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 - WHEN 未设置 key provider 且未发生数据重置
 - THEN 布局、选择、编辑、排序、冻结、RTL 和现有宽度行为 SHALL 保持不变
 
+### Requirement: R18 ControlStateVisibility
+
+`CatSpinBox` 的步进按钮与 `CatComboBox` 的弹出列表项 SHALL 用与静止表面色可区分的背景表达悬停、按下和选中状态，SHALL NOT 让状态背景与控件或弹出层的静止背景同色。
+
+#### Scenario: 步进按钮悬停与按下
+
+- WHEN 指针位于 `CatSpinBox` 的加号或减号按钮上且该按钮可用
+- THEN 按钮 SHALL 显示主题主色低透明度的悬停背景
+- WHEN 在该按钮上按下指针
+- THEN 背景 SHALL 比悬停状态更深
+- WHEN 指针离开按钮
+- THEN 按钮背景 SHALL 恢复透明
+- WHEN 按钮禁用或 `hoverEnabled=false`
+- THEN 按钮 SHALL NOT 显示悬停背景
+
+#### Scenario: 下拉列表选中与悬停
+
+- WHEN `CatComboBox` 弹出列表打开
+- THEN 当前项与指针悬停项的列表项背景 SHALL 与弹出层表面色不同
+- THEN 当前项 SHALL 保留可辨认的主色标识
+- WHEN 指针离开列表项
+- THEN 该项背景 SHALL 恢复列表表面色
+
+### Requirement: R19 ControlStateTokens
+
+基础控件 SHALL 通过主题 token 表达悬停、按下、选中和焦点状态，SHALL NOT 将普通表面控件的前三种状态合并为同一颜色。
+
+#### Scenario: 悬停与按下
+
+- WHEN 指针悬停在可交互控件上
+- THEN 背景 SHALL 使用 `surfaceHover`
+- WHEN 在该控件上按下指针
+- THEN 背景 SHALL 使用 `surfacePressed`，且 SHALL 与悬停背景不同
+
+#### Scenario: 选中与高亮
+
+- WHEN 控件或列表项处于选中、当前或键盘高亮状态
+- THEN 背景 SHALL 使用 `surfaceSelected`
+- THEN 页签、表格单元格和树视图的选中背景 SHALL 与悬停背景不同
+
+#### Scenario: 焦点描边
+
+- WHEN 控件通过键盘获得焦点
+- THEN 焦点描边 SHALL 使用 `focusRing`
+
+#### Scenario: 禁用
+
+- WHEN 控件禁用
+- THEN 内容透明度 SHALL 使用 `disabledOpacity` 换算值，或使用 `disabled` 颜色 token
+
+#### Scenario: 主色控件不变
+
+- WHEN 控件使用 `primary` 填充或处于主色选中态
+- THEN 其背景 SHALL 继续使用 `primary`、`primaryHover` 和 `primaryPressed`
+- THEN `surfacePressed` 与 `surfaceSelected` SHALL NOT 覆盖主色填充
+
 ## Data Model
 
 本模块无独立持久化数据模型。已核查属性：CatButton primary/danger/loading 默认 false，iconSource 默认空；CatTextField invalid 默认 false，implicitWidth=220；CatChatInput text/placeholderText 为字符串别名，submitted 参数为 string；CatCheckBox 使用 Qt checkState；CatScrollBar.revealed 默认 true；CatTitleBar.maximized 为只读派生状态。窗口按钮和滚动条状态不写入持久化数据。
@@ -662,6 +718,7 @@ CatTitleBar SHALL 以绘制图标提供最小化、最大化／还原和关闭�
 - 显式 height、布局约束和应用绑定可覆盖主题推荐尺寸，主题尺寸不是强制下限。
 - 叠加滚动条的指针显隐目前由 CatScrollView 绑定；直接为 ListView、GridView 等视图创建 CatScrollBar 时仍默认常驻，需调用方自行设置 revealed。
 - 标题栏按钮的静止背景使用主题 surface；宿主完全替换标题栏背景时需同时覆盖按钮背景。
+- 多个控件使用平台字体的字符绘制符号（菜单勾选与箭头、面包屑、日历与分页箭头、步骤勾、展开折角、警告与页签关闭叉号、评分星、步进加减号）。缺字、字重与宽度随系统字体和 DPI 变化。`CatCheckBox`、`CatComboBox` 与 `CatTitleBar` 已使用绘制，不受此限制；详见 `COMPONENTS.md` 的「符号字形与平台字体」。
 
 ## Non-Goals
 

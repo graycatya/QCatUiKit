@@ -98,6 +98,71 @@ LED 基准 SHALL 校验参数、暖机并报告观测结果。
 - WHEN 指定报告文件但无法完整写入
 - THEN 程序 SHALL 以状态码 4 退出。
 
+### Requirement: R06 IconFont
+
+Gallery SHALL 使用随附图标字体渲染图标控件，SHALL NOT 依赖平台默认字体提供符号字形。
+
+#### Scenario: 字体加载
+
+- WHEN Gallery 完成模块加载
+- THEN 随附图标字体 SHALL 成功加载，图标控件使用的字体族 SHALL 为该字体的族名。
+- WHEN 宿主未经过应用启动入口加载 Gallery，例如自动测试
+- THEN 图标控件 SHALL 仍能解析到同一字体族。
+
+#### Scenario: 图标按钮尺寸
+
+- WHEN 渲染表格示例的列移动按钮
+- THEN 按钮宽高 SHALL 等于主题的 `controlHeight`，内边距 SHALL 为零，SHALL NOT 出现字形溢出内容区的情况。
+
+#### Scenario: 移动边界
+
+- WHEN 列为第一列
+- THEN 左移按钮 SHALL 禁用，右移按钮 SHALL 可用。
+- WHEN 列为最后一列
+- THEN 右移按钮 SHALL 禁用，左移按钮 SHALL 可用。
+- WHEN 移动列后顺序改变
+- THEN 边界状态 SHALL 按新顺序重新计算。
+
+#### Scenario: 图标按钮可访问名称
+
+- WHEN 图标按钮不含可见文本
+- THEN 控件 SHALL 提供说明其操作的辅助名称。
+
+#### Scenario: 第三方资源登记
+
+- WHEN 分发包含该字体的 Gallery 示例
+- THEN 仓库 SHALL 保留 `LICENSES/RemixIcon-1.0.txt`，并在 `NOTICE` 中说明来源、版本与许可。
+
+### Requirement: R07 StateTokenDemo
+
+Gallery 设置页 SHALL 展示普通表面控件的交互状态色，并 SHALL 让自定义色板覆盖 `surfaceHover`、`surfaceSelected`、`surfacePressed` 与 `focusRing`。
+
+#### Scenario: 状态色展示
+
+- WHEN 打开设置页
+- THEN 页面 SHALL 显示 `surface`、`surfaceHover`、`surfaceSelected`、`surfacePressed` 和 `focusRing` 的色块
+- THEN 每个色块的颜色 SHALL 等于当前主题 `tokens` 中同名项
+- THEN 页面 SHALL 提供普通、选中、禁用控件供交互对比
+
+#### Scenario: 自定义色板状态色
+
+- WHEN 选择 `Custom palette`
+- THEN `tokens.surfaceSelected`、`tokens.surfacePressed` 和 `tokens.focusRing` SHALL 等于该色板提供的值
+- THEN `disabledOpacity` SHALL 等于设置页通过 `overrides` 提供的值
+- THEN 按下和选中背景 SHALL NOT 回退到内置色板的值
+
+#### Scenario: 恢复内置色板
+
+- WHEN 从 `Custom palette` 切换回 `Light` 或 `Dark`
+- THEN 色板覆盖 SHALL 被清空
+- THEN `disabledOpacity` SHALL 恢复为内置默认值 60
+
+#### Scenario: 自定义色板缺失项
+
+- WHEN 自定义色板未提供某个颜色 token
+- THEN 该项 SHALL 使用当前 `colorScheme` 的内置值
+- THEN 页面 SHALL NOT 修改库的默认色板
+
 ## Data Model
 
 命令默认：page=home、density=desktop、width=1200；language 未指定时按系统语言选择。chart-demo 为 0..29；LED count 为 0..100000、interval 为 4..1000ms、layout 为 matrix/sphere、benchmark 为 1..3600 秒。目录项包含 id、name、category、title、description、icon 和示例 code。
