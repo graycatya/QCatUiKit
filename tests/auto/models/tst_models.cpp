@@ -5,6 +5,7 @@
 #include <QCatUiKit/TableModel>
 #include <QCatUiKit/ThemePalette>
 #include <QtTest>
+#include <cmath>
 using namespace QCatUiKit;
 
 class MutableTableModel : public QAbstractTableModel
@@ -183,19 +184,51 @@ class ModelTests : public QObject
         theme.setOverrides({});
         QCOMPARE(theme.tokens().value("surface").value<QColor>(), QColor("#1f1f1f"));
     }
+    static qreal relativeLuminance(const QColor &color)
+    {
+        const auto channel = [](qreal value) {
+            return value <= 0.04045 ? value / 12.92 : std::pow((value + 0.055) / 1.055, 2.4);
+        };
+        return 0.2126 * channel(color.redF()) + 0.7152 * channel(color.greenF()) +
+               0.0722 * channel(color.blueF());
+    }
     void stateTokens()
     {
         ThemePalette theme;
         const QVariantMap light = theme.tokens();
-        QCOMPARE(light.value("surfaceHover").value<QColor>(), QColor("#f0f5ff"));
-        QCOMPARE(light.value("surfaceSelected").value<QColor>(), QColor("#e6f0ff"));
-        QCOMPARE(light.value("surfacePressed").value<QColor>(), QColor("#d3e3ff"));
+        QCOMPARE(light.value("surfaceHover").value<QColor>(), QColor("#e9f2ff"));
+        QCOMPARE(light.value("surfaceSelected").value<QColor>(), QColor("#dbe8ff"));
+        QCOMPARE(light.value("surfacePressed").value<QColor>(), QColor("#c6dcff"));
         QCOMPARE(light.value("focusRing").value<QColor>(), QColor("#1677ff"));
         QCOMPARE(light.value("disabledOpacity").toInt(), 60);
 
+        // Each state stays distinguishable from the surface; Light darkens in order.
+        const qreal lightBase = relativeLuminance(light.value("surface").value<QColor>());
+        const qreal lightHover = relativeLuminance(light.value("surfaceHover").value<QColor>());
+        const qreal lightSelected = relativeLuminance(light.value("surfaceSelected").value<QColor>());
+        const qreal lightPressed = relativeLuminance(light.value("surfacePressed").value<QColor>());
+        QVERIFY(lightBase - lightHover >= 0.015);
+        QVERIFY(lightBase - lightSelected >= 0.015);
+        QVERIFY(lightBase - lightPressed >= 0.015);
+        QVERIFY(lightHover > lightSelected);
+        QVERIFY(lightSelected > lightPressed);
+
         theme.setColorScheme(ThemePalette::Dark);
-        QCOMPARE(theme.tokens().value("surfaceSelected").value<QColor>(), QColor("#26344d"));
-        QCOMPARE(theme.tokens().value("surfacePressed").value<QColor>(), QColor("#3a4a63"));
+        const QVariantMap dark = theme.tokens();
+        QCOMPARE(dark.value("surfaceHover").value<QColor>(), QColor("#333333"));
+        QCOMPARE(dark.value("surfaceSelected").value<QColor>(), QColor("#2b3a52"));
+        QCOMPARE(dark.value("surfacePressed").value<QColor>(), QColor("#3f5470"));
+
+        // Dark lifts each state above the surface and brightens in order.
+        const qreal darkBase = relativeLuminance(dark.value("surface").value<QColor>());
+        const qreal darkHover = relativeLuminance(dark.value("surfaceHover").value<QColor>());
+        const qreal darkSelected = relativeLuminance(dark.value("surfaceSelected").value<QColor>());
+        const qreal darkPressed = relativeLuminance(dark.value("surfacePressed").value<QColor>());
+        QVERIFY(darkHover - darkBase >= 0.015);
+        QVERIFY(darkSelected - darkBase >= 0.015);
+        QVERIFY(darkPressed - darkBase >= 0.015);
+        QVERIFY(darkHover < darkSelected);
+        QVERIFY(darkSelected < darkPressed);
 
         // focusRing follows the effective primary unless explicitly supplied.
         theme.setPrimaryColor(QColor("#13c2c2"));
@@ -210,7 +243,7 @@ class ModelTests : public QObject
                                {"surfacePressed", QString("#1b2126")}});
         QCOMPARE(theme.tokens().value("surfaceSelected").value<QColor>(), QColor("#101418"));
         QCOMPARE(theme.tokens().value("surfacePressed").value<QColor>(), QColor("#1b2126"));
-        QCOMPARE(theme.tokens().value("surfaceHover").value<QColor>(), QColor("#303030"));
+        QCOMPARE(theme.tokens().value("surfaceHover").value<QColor>(), QColor("#333333"));
 
         // disabledOpacity clamps to 0..100 and restores with an empty override map.
         theme.setOverrides({{"disabledOpacity", 150}});
