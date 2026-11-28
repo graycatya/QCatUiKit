@@ -195,6 +195,16 @@ qt_add_qml_module(QCatUiKit
         qml/TabCellImpl.qml
         qml/Theme.qml
 )
+# Qt 6.12.0 的 qmllint 在 Windows 上处理 CatTableView.qml 时会静默崩溃：该文件包含多个
+# 共享同一 delegate 绑定的 TableView，工具在类型推断阶段退出。暂时把该文件移出 lint
+# 文件列表；其他平台和后续 Qt 版本继续检查，升级后应复核并删除此段。
+if(WIN32 AND Qt6Qml_VERSION VERSION_EQUAL "6.12.0")
+    get_target_property(_qcat_qmllint_files QCatUiKit QT_QML_LINT_FILES)
+    if(_qcat_qmllint_files)
+        list(FILTER _qcat_qmllint_files EXCLUDE REGEX "CatTableView\\.qml$")
+        set_target_properties(QCatUiKit PROPERTIES QT_QML_LINT_FILES "${_qcat_qmllint_files}")
+    endif()
+endif()
 add_library(QCatUiKit::QCatUiKit ALIAS QCatUiKit)
 target_compile_definitions(QCatUiKit PRIVATE QCATUIKIT_BUILD)
 target_include_directories(QCatUiKit PUBLIC

@@ -46,6 +46,8 @@ ctest --test-dir build/release --output-on-failure
 
 多配置生成器使用相同的 `--config Release` 与 `ctest -C Release`。关闭 Gallery 时不会注册 Gallery 相关测试。
 
+Windows + Qt 6.12.0 的 `QCatUiKit_qmllint` 会在 `CatTableView.qml` 上静默崩溃。`src/uikit/CMakeLists.txt` 按平台和版本把该文件移出 lint 文件列表；该条件只规避工具崩溃，不表示文件已通过静态检查。升级 Qt 或改用其他平台后应删除条件并重新运行库 lint。
+
 所有测试通过 `qcat_add_test` 注册，默认超时为 300 秒；各组已有的更短超时继续生效。GPU 渲染组共享 `qcat_gpu_window` 资源锁，因此可以用 `ctest --test-dir build/release --output-on-failure -j 2` 并行运行整套测试，而不会同时启动多个 GPU 测试窗口。资源锁只协调同一次 CTest 调用；不要同时从多个终端运行 GPU 组。
 
 Windows CTest 自动补充构建库与 Qt DLL 的运行路径，并默认把系统字体目录传给 offscreen 插件。可以通过 CMake 的 `QCATUIKIT_TEST_FONT_DIR` 指定其他字体目录；Linux 等已有字体数据库的平台无需设置。QML 与 Gallery 测试启动时检查字体数据库，缺少字体直接报错，不用缺字方框的宽度判断布局。直接运行离屏测试程序时，需自行设置 `QT_QPA_FONTDIR`（Windows）。
