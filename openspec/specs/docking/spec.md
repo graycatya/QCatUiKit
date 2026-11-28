@@ -141,6 +141,8 @@
 
 滚动按钮图标 SHALL 可由应用通过 `CatDockWorkspace.tabScrollLeftIcon` 和 `tabScrollRightIcon` 覆盖；未提供时 SHALL 使用内置绘制。覆盖图标 SHALL NOT 改变按钮宽度、可用状态、滚动步长或拖动自动滚动行为。
 
+`CatDockWorkspace.rtl` 为 true 或工作区继承 `LayoutMirroring` 时，标签 SHALL 从右到左排列，关闭目标、滚动按钮和滚动方向 SHALL 镜像；标签宽度、活动状态和滚动步长 SHALL 保持不变。
+
 #### Scenario: 浏览溢出标签
 
 - **WHEN** 标签超出可见宽度且用户点击可用的滚动按钮
@@ -191,6 +193,15 @@
 
 - **WHEN** 标签位于浮动窗口并发生溢出
 - **THEN** 滚动按钮 SHALL 使用与主工作区相同的图标配置
+
+#### Scenario: RTL 标签栏
+
+- **WHEN** `rtl` 为 true 或工作区继承 `LayoutMirroring`
+- **THEN** 标签 SHALL 从右到左排列，第一个标签 SHALL 位于最右侧
+- **THEN** 标签关闭目标 SHALL 位于标签左端
+- **THEN** 滚动按钮 SHALL 交换左右位置并指向对应滚动方向
+- **THEN** 初始可见位置 SHALL 显示第一个标签
+- **THEN** 标签宽度、活动状态和滚动步长 SHALL 保持不变
 
 ## Data Model
 
