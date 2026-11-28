@@ -65,6 +65,7 @@ int main(int argc, char **argv)
     parser.addOption({"width", "Initial window width.", "pixels", "1200"});
     parser.addOption({"language", "Use en or zh_CN; defaults to the system language.", "language"});
     parser.addOption({"page", "Open home, all, settings, or a component id (e.g. button).", "page", "home"});
+    parser.addOption({"rtl", "Mirror the gallery layout for right-to-left review."});
     parser.process(app);
     const QString density = parser.value("density");
     if (density != "desktop" && density != "touch" && density != "mobile")
@@ -89,6 +90,12 @@ int main(int argc, char **argv)
         return 1;
     if (parser.isSet("language"))
         language->setLanguage(languageName);
+    if (parser.isSet("rtl")) {
+        auto *settings = engine.singletonInstance<QObject *>("QCatUiKit.Gallery", "GallerySettings");
+        if (!settings)
+            return 1;
+        settings->setProperty("rtl", true);
+    }
     engine.setInitialProperties({{"darkTheme", parser.isSet("dark")},
                                  {"initialDensity", density == "touch" ? 1 : density == "mobile" ? 2 : 0},
                                  {"initialPage", parser.value("page")},

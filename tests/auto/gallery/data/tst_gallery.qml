@@ -32,6 +32,7 @@ TestCase {
         gallery.close();
         GalleryLanguage.language = "en";
         wait(10);
+        GallerySettings.rtl = false;
         Theme.reducedMotion = false;
         Theme.colorPalette = ({});
         Theme.overrides = ({});
@@ -378,5 +379,24 @@ TestCase {
             const swatch = findControl("galleryStateSwatch_" + token);
             verify(Qt.colorEqual(swatch.color, Theme.tokens[token]));
         }
+    }
+    function test_rtlPreview() {
+        gallery.navigate("settings", "");
+        wait(10);
+        const toggle = findControl("galleryRtlToggle");
+        const sidebar = findControl("gallerySidebar");
+        verify(toggle !== null && sidebar !== null);
+        compare(GallerySettings.rtl, false);
+        compare(sidebar.x, 0);
+
+        toggle.checked = true;
+        wait(10);
+        compare(GallerySettings.rtl, true);
+        tryVerify(() => sidebar.x > gallery.width / 2);
+
+        toggle.checked = false;
+        wait(10);
+        compare(GallerySettings.rtl, false);
+        tryCompare(sidebar, "x", 0);
     }
 }

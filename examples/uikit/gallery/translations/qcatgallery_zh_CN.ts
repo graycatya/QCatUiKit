@@ -182,17 +182,17 @@
 <context>
     <name>CatDockWorkspace</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="647"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="649"/>
         <source>Float panel</source>
         <translation>浮动面板</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="656"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="658"/>
         <source>Close %1</source>
         <translation>关闭 %1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="693"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="697"/>
         <source>Resize dock panels</source>
         <translation>调整停靠面板大小</translation>
     </message>
@@ -550,17 +550,17 @@
 <context>
     <name>CatTitleBar</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="58"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="62"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="92"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="102"/>
         <source>Maximize or restore</source>
         <translation>最大化或还原</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="159"/>
+        <location filename="../../../../src/uikit/qml/CatTitleBar.qml" line="175"/>
         <source>Close window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -584,27 +584,27 @@
 <context>
     <name>DockTabStrip</name>
     <message>
-        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="63"/>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="65"/>
         <source>Scroll tabs left</source>
         <translation>向左滚动标签</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="63"/>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="65"/>
         <source>Scroll tabs right</source>
         <translation>向右滚动标签</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="260"/>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="270"/>
         <source>Float panel</source>
         <translation>浮动面板</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="266"/>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="276"/>
         <source>Float tab group</source>
         <translation>浮动标签组</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="296"/>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="306"/>
         <source>Close %1</source>
         <translation>关闭 %1</translation>
     </message>
@@ -5468,67 +5468,67 @@ Last batch: %8 operations · slowest data batch: %9 ms</source>
 <context>
     <name>GalleryDockPreview</name>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="43"/>
+        <location filename="../GalleryDockPreview.qml" line="61"/>
         <source>Add tab</source>
         <translation>添加标签页</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="89"/>
+        <location filename="../GalleryDockPreview.qml" line="107"/>
         <source>Tab %1</source>
         <translation>标签页 %1</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="19"/>
+        <location filename="../GalleryDockPreview.qml" line="37"/>
         <source>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</source>
         <translation>跨窗口拖动标签时显示随动预览；外边缘指示器可停靠为整列或整行，中央十字只拆分当前组。按 Esc 取消。</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="25"/>
+        <location filename="../GalleryDockPreview.qml" line="43"/>
         <source>Save layout</source>
         <translation>保存布局</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="29"/>
+        <location filename="../GalleryDockPreview.qml" line="47"/>
         <source>Restore layout</source>
         <translation>恢复布局</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="34"/>
+        <location filename="../GalleryDockPreview.qml" line="52"/>
         <source>Reset layout</source>
         <translation>重置布局</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="38"/>
+        <location filename="../GalleryDockPreview.qml" line="56"/>
         <source>Show log</source>
         <translation>显示日志</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="58"/>
+        <location filename="../GalleryDockPreview.qml" line="76"/>
         <source>Float editor</source>
         <translation>浮动编辑器</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="64"/>
+        <location filename="../GalleryDockPreview.qml" line="82"/>
         <source>Float editor group</source>
         <translation>浮动编辑器组</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="70"/>
+        <location filename="../GalleryDockPreview.qml" line="88"/>
         <source>Dock all windows back</source>
         <translation>全部窗口回停</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="79"/>
+        <location filename="../GalleryDockPreview.qml" line="97"/>
         <source>Lock layout</source>
         <translation>锁定布局</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="111"/>
+        <location filename="../GalleryDockPreview.qml" line="131"/>
         <source>Project</source>
         <translation>项目</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="116"/>
+        <location filename="../GalleryDockPreview.qml" line="136"/>
         <source>Workspace
   Components
   Themes
@@ -5539,49 +5539,49 @@ Last batch: %8 operations · slowest data batch: %9 ms</source>
   测试</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="122"/>
+        <location filename="../GalleryDockPreview.qml" line="142"/>
         <source>Editor</source>
         <translation>编辑器</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="126"/>
+        <location filename="../GalleryDockPreview.qml" line="146"/>
         <source>Edit this text, then move this panel. Your changes stay here.</source>
         <translation>编辑这段文字，再移动面板。修改后的内容会保留。</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="132"/>
+        <location filename="../GalleryDockPreview.qml" line="152"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="137"/>
+        <location filename="../GalleryDockPreview.qml" line="157"/>
         <source>Preview opacity</source>
         <translation>预览透明度</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="153"/>
+        <location filename="../GalleryDockPreview.qml" line="173"/>
         <source>Log</source>
         <translation>日志</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="158"/>
+        <location filename="../GalleryDockPreview.qml" line="178"/>
         <source>Workspace ready.
 Layout changes preserve panel instances.</source>
         <translation>工作区已就绪。
 布局变化会保留面板实例。</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="164"/>
+        <location filename="../GalleryDockPreview.qml" line="184"/>
         <source>Chart preview</source>
         <translation>图表预览</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="171"/>
+        <location filename="../GalleryDockPreview.qml" line="191"/>
         <source>Signal</source>
         <translation>信号</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="209"/>
+        <location filename="../GalleryDockPreview.qml" line="229"/>
         <source>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</source>
         <translation>横向滚动可访问所有面板，也可合并面板以适应工作区。</translation>
     </message>
@@ -5592,8 +5592,8 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="161"/>
         <location filename="../GalleryExtendedPreview.qml" line="249"/>
         <location filename="../GalleryExtendedPreview.qml" line="501"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1500"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1574"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1540"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1614"/>
         <source>Workspace</source>
         <translation>工作区</translation>
     </message>
@@ -5644,7 +5644,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="912"/>
         <location filename="../GalleryExtendedPreview.qml" line="926"/>
         <location filename="../GalleryExtendedPreview.qml" line="1367"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1577"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1617"/>
         <source>Documents</source>
         <translation>文档</translation>
     </message>
@@ -5654,7 +5654,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="674"/>
         <location filename="../GalleryExtendedPreview.qml" line="722"/>
         <location filename="../GalleryExtendedPreview.qml" line="912"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1580"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1620"/>
         <source>Images</source>
         <translation>图片</translation>
     </message>
@@ -5676,7 +5676,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="1015"/>
         <location filename="../GalleryExtendedPreview.qml" line="1115"/>
         <location filename="../GalleryExtendedPreview.qml" line="1367"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1585"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1625"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -5760,7 +5760,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="836"/>
         <location filename="../GalleryExtendedPreview.qml" line="873"/>
         <location filename="../GalleryExtendedPreview.qml" line="1247"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1543"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1583"/>
         <source>Choose an action</source>
         <translation>选择操作</translation>
     </message>
@@ -5778,7 +5778,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="780"/>
         <location filename="../GalleryExtendedPreview.qml" line="812"/>
         <location filename="../GalleryExtendedPreview.qml" line="1249"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1545"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1585"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -5790,7 +5790,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="859"/>
         <location filename="../GalleryExtendedPreview.qml" line="896"/>
         <location filename="../GalleryExtendedPreview.qml" line="1260"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1556"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1596"/>
         <source>Export</source>
         <translation>导出</translation>
     </message>
@@ -5858,7 +5858,7 @@ Layout changes preserve panel instances.</source>
         <location filename="../GalleryExtendedPreview.qml" line="479"/>
         <location filename="../GalleryExtendedPreview.qml" line="521"/>
         <location filename="../GalleryExtendedPreview.qml" line="1251"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1547"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1587"/>
         <source>Saved</source>
         <translation>已保存</translation>
     </message>
@@ -5876,21 +5876,21 @@ Layout changes preserve panel instances.</source>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="526"/>
         <location filename="../GalleryExtendedPreview.qml" line="1256"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1552"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1592"/>
         <source>Save a copy</source>
         <translation>保存副本</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="527"/>
         <location filename="../GalleryExtendedPreview.qml" line="1257"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1553"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1593"/>
         <source>Copy saved</source>
         <translation>副本已保存</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="531"/>
         <location filename="../GalleryExtendedPreview.qml" line="1261"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1557"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1597"/>
         <source>Export requested</source>
         <translation>已请求导出</translation>
     </message>
@@ -5978,14 +5978,14 @@ Layout changes preserve panel instances.</source>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="689"/>
         <location filename="../GalleryExtendedPreview.qml" line="1062"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1530"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1570"/>
         <source>Run action</source>
         <translation>执行操作</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="694"/>
         <location filename="../GalleryExtendedPreview.qml" line="1068"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1535"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1575"/>
         <source>Activated %1 times</source>
         <translation>已触发 %1 次</translation>
     </message>
@@ -6267,55 +6267,55 @@ Keep notes, drafts and everyday details together.</source>
         <translation>所有内容均已更新。</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1488"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1634"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1528"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1674"/>
         <source>Open sample window</source>
         <translation>打开示例窗口</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="1469"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1614"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1654"/>
         <source>Sample workspace</source>
         <translation>示例工作区</translation>
     </message>
     <message>
         <location filename="../GalleryExtendedPreview.qml" line="1475"/>
-        <location filename="../GalleryExtendedPreview.qml" line="1620"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1660"/>
         <source>Your window, your content.</source>
         <translation>你的窗口，你的内容。</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1512"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1552"/>
         <source>Show notification</source>
         <translation>显示通知</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1501"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1541"/>
         <source>Your changes have been saved.</source>
         <translation>你的更改已保存。</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1503"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1543"/>
         <source>Dismiss</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1517"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1557"/>
         <source>The notification closes automatically and pauses while hovered.</source>
         <translation>通知会自动关闭，悬停时暂停计时。</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1588"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1628"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1591"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1631"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../GalleryExtendedPreview.qml" line="1629"/>
+        <location filename="../GalleryExtendedPreview.qml" line="1669"/>
         <source>A themed application window with optional custom title bar.</source>
         <translation>支持主题与自定义标题栏的应用窗口。</translation>
     </message>
@@ -7370,6 +7370,16 @@ Keep notes, drafts and everyday details together.</source>
         <location filename="../GallerySettingsPage.qml" line="329"/>
         <source>Switch languages without leaving your current example.</source>
         <translation>即时切换语言，继续体验当前示例。</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="342"/>
+        <source>Right-to-left layout: on</source>
+        <translation>从右到左布局：开启</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="342"/>
+        <source>Right-to-left layout: off</source>
+        <translation>从右到左布局：关闭</translation>
     </message>
 </context>
 <context>
@@ -8540,59 +8550,59 @@ Keep notes, drafts and everyday details together.</source>
         <translation>QCatUiKit %1 · 组件展示库</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="113"/>
+        <location filename="../Main.qml" line="117"/>
         <source>Component Gallery</source>
         <translation>组件展示库</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="153"/>
+        <location filename="../Main.qml" line="157"/>
         <source>Open navigation</source>
         <translation>打开导航</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="178"/>
-        <location filename="../Main.qml" line="206"/>
+        <location filename="../Main.qml" line="182"/>
+        <location filename="../Main.qml" line="210"/>
         <source>Search components…</source>
         <translation>搜索组件…</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="181"/>
-        <location filename="../Main.qml" line="209"/>
+        <location filename="../Main.qml" line="185"/>
+        <location filename="../Main.qml" line="213"/>
         <source>Search components</source>
         <translation>搜索组件</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="188"/>
+        <location filename="../Main.qml" line="192"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="194"/>
+        <location filename="../Main.qml" line="198"/>
         <source>Switch to light theme</source>
         <translation>切换到亮色主题</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="194"/>
+        <location filename="../Main.qml" line="198"/>
         <source>Switch to dark theme</source>
         <translation>切换到暗色主题</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="264"/>
+        <location filename="../Main.qml" line="268"/>
         <source>Search results</source>
         <translation>搜索结果</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="271"/>
+        <location filename="../Main.qml" line="275"/>
         <source>%1 results for “%2”</source>
         <translation>“%2”的搜索结果：%1 项</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="271"/>
+        <location filename="../Main.qml" line="275"/>
         <source>Choose a component to explore its behavior and QML example.</source>
         <translation>选择一个组件，体验交互并查看 QML 示例。</translation>
     </message>
     <message>
-        <location filename="../Main.qml" line="310"/>
+        <location filename="../Main.qml" line="314"/>
         <source>No components found. Try a different name.</source>
         <translation>没有找到组件，请换个名称试试。</translation>
     </message>

@@ -337,6 +337,12 @@ ColumnLayout {
                 Accessible.name: qsTr("Language")
                 onActivated: index => GalleryLanguage.language = index === 1 ? "zh_CN" : "en"
             }
+            CatSwitch {
+                objectName: "galleryRtlToggle"
+                text: GallerySettings.rtl ? qsTr("Right-to-left layout: on") : qsTr("Right-to-left layout: off")
+                checked: GallerySettings.rtl
+                onCheckedChanged: GallerySettings.rtl = checked
+            }
         }
     }
 }

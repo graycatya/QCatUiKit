@@ -2,7 +2,7 @@
 find_package(Qt6 6.8 REQUIRED COMPONENTS LinguistTools)
 qt_add_library(qcat-gallery-ui STATIC)
 add_dependencies(qcat-gallery-ui QCatUiKitplugin)
-set_source_files_properties(GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml GallerySettings.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 qt_add_qml_module(qcat-gallery-ui
     URI QCatUiKit.Gallery
     VERSION 1.0
@@ -15,7 +15,7 @@ qt_add_qml_module(qcat-gallery-ui
         gallerytablecolumnmodel.h gallerytablecolumnmodel.cpp
         galleryleddemo.h galleryleddemo.cpp
     QML_FILES
-        Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
+        Main.qml GalleryCatalog.qml GalleryChartCatalog.qml GalleryIcons.qml GallerySettings.qml GalleryChartExamples.js GalleryChartBrowser.qml GalleryIcon.qml GalleryLogo.qml GalleryComboBox.qml
         GalleryNavigation.qml GalleryEntryCard.qml GalleryHome.qml
         GalleryChartExport.qml GalleryChartRangeControls.qml GalleryChartAxisRange.qml
         GalleryAttitudePreview.qml GalleryTiltPreview.qml GalleryDockPreview.qml

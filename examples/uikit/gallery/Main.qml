@@ -78,7 +78,11 @@ B.ApplicationWindow {
     RowLayout {
         anchors.fill: parent
         spacing: 0
+        objectName: "galleryLayout"
+        LayoutMirroring.enabled: GallerySettings.rtl
+        LayoutMirroring.childrenInherit: true
         Rectangle {
+            objectName: "gallerySidebar"
             visible: !window.compact
             Layout.preferredWidth: 232
             Layout.fillHeight: true

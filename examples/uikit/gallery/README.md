@@ -25,6 +25,7 @@ Windows 单配置程序位于 `<build>/bin/qcat-gallery.exe`，多配置程序�
 | --- | --- |
 | `--language en\|zh_CN` | 界面语言；省略时跟随系统 |
 | `--dark` | 暗色主题 |
+| `--rtl` | 镜像整个界面，用于从右到左布局预览 |
 | `--density desktop\|touch\|mobile` | 交互密度，默认 desktop |
 | `--width <pixels>` | 初始宽度，默认 1200，最小 360 |
 | `--page <id>` | home、all、settings 或组件 ID |
