@@ -31,6 +31,22 @@ TestCase {
         }
     }
     Component {
+        id: rtlSample
+        CatDockWorkspace {
+            rtl: true
+            width: 800
+            height: 600
+            CatDockPanel {
+                dockId: "a"
+                title: "Editor"
+            }
+            CatDockPanel {
+                dockId: "b"
+                title: "Log"
+            }
+        }
+    }
+    Component {
         id: customDockIcon
         Text {
             objectName: "customDockScrollIcon"
@@ -239,6 +255,20 @@ TestCase {
         verify(!glyph.visible);
         verify(findChild(right, "customDockScrollIcon") !== null);
         verify(right.enabled);
+    }
+    function test_rtlTabStrip() {
+        const w = createTemporaryObject(rtlSample, test, { width: 220, height: 600 });
+        w.registry.a.title = "Editor with a long title";
+        w.registry.b.title = "Activity log with a long title";
+        verify(waitForRendering(w));
+        tryVerify(() => findChild(w, "dockTabsScrollRight") !== null);
+        const a = findChild(w, "dockTab_a");
+        const b = findChild(w, "dockTab_b");
+        verify(w.__rtl, "workspace must report RTL");
+        verify(a.mapToItem(w, 0, 0).x > b.mapToItem(w, 0, 0).x,
+               "RTL tabs must run from right to left");
+        const closeA = findChild(w, "dockTabClose_a");
+        verify(closeA.x < 28, "RTL close target must sit on the left edge");
     }
     function test_minimums() {
         const w = createTemporaryObject(sample, test);

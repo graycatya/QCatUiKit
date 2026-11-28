@@ -394,7 +394,14 @@ TestCase {
         compare(GallerySettings.rtl, true);
         tryVerify(() => sidebar.x > gallery.width / 2);
 
-        toggle.checked = false;
+        gallery.showComponent("dock-workspace");
+        wait(10);
+        preview();
+        const workspace = findControl("demoDockWorkspace");
+        compare(workspace.rtl, true);
+        compare(workspace.__rtl, true);
+
+        GallerySettings.rtl = false;
         wait(10);
         compare(GallerySettings.rtl, false);
         tryCompare(sidebar, "x", 0);

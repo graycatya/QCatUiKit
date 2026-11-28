@@ -13,11 +13,17 @@ Item {
     property Component rightScrollIcon: null
     readonly property var tabs: record ? record.tabs : []
     readonly property var tokens: workspace.tokens
+    readonly property bool rtl: workspace ? workspace.__rtl === true : false
     readonly property bool reordering: workspace.reorderStrip === strip && workspace.reorderIndex >= 0
     readonly property int draggedIndex: reordering ? tabs.indexOf(workspace.dragId) : -1
     readonly property Item draggedTab: draggedIndex >= 0 ? cells.itemAt(draggedIndex) : null
     readonly property bool animate: !(workspace.theme || Theme).reducedMotion
     height: tokens.controlHeight
+    onRtlChanged: if (rtl)
+                       Qt.callLater(() => {
+                           if (strip)
+                               viewport.contentX = scrollLimit;
+                       })
     readonly property bool overflow: row.width > width
     readonly property real arrowWidth: overflow ? Math.min(height, width / 4) : 0
     readonly property real scrollLimit: Math.max(0, row.width - viewport.width)
@@ -57,14 +63,15 @@ Item {
             id: scrollButton
             required property int modelData
             objectName: modelData < 0 ? "dockTabsScrollLeft" : "dockTabsScrollRight"
-            x: modelData < 0 ? 0 : strip.width - width
+            x: (modelData < 0) !== strip.rtl ? 0 : strip.width - width
             width: strip.arrowWidth
             height: strip.height
             padding: 0
             theme: strip.workspace.theme
             text: modelData < 0 ? qsTr("Scroll tabs left") : qsTr("Scroll tabs right")
-            enabled: !strip.workspace.dragging && (modelData < 0 ? viewport.contentX > 0 :
-                                                                  viewport.contentX < strip.scrollLimit)
+            readonly property bool forward: (modelData > 0) !== strip.rtl
+            enabled: !strip.workspace.dragging
+                     && (forward ? viewport.contentX < strip.scrollLimit : viewport.contentX > 0)
             HoverHandler {
                 enabled: scrollButton.enabled && scrollButton.hoverEnabled
                 cursorShape: Qt.PointingHandCursor
@@ -80,6 +87,7 @@ Item {
                 id: arrow
                 readonly property color color: !scrollButton.enabled ? strip.tokens.textDisabled :
                                                 scrollButton.down ? "white" : strip.tokens.text
+                readonly property bool pointsLeft: (scrollButton.modelData < 0) !== strip.rtl
                 Loader {
                     anchors.centerIn: parent
                     sourceComponent: scrollButton.modelData < 0 ? strip.leftScrollIcon
@@ -99,19 +107,20 @@ Item {
                         capStyle: ShapePath.RoundCap
                         joinStyle: ShapePath.RoundJoin
                         fillColor: "transparent"
-                        startX: scrollButton.modelData < 0 ? chevron.width : 0
+                        startX: arrow.pointsLeft ? chevron.width : 0
                         startY: 0
                         PathLine {
-                            x: scrollButton.modelData < 0 ? 0 : chevron.width
+                            x: arrow.pointsLeft ? 0 : chevron.width
                             y: chevron.height / 2
                         }
-                        PathLine { x: scrollButton.modelData < 0 ? chevron.width : 0; y: chevron.height }
+                        PathLine { x: arrow.pointsLeft ? chevron.width : 0; y: chevron.height }
                     }
                 }
             }
             onClicked: {
                 viewport.cancelFlick();
-                strip.scrollBy(modelData * Math.max(strip.height, viewport.width / 2));
+                strip.scrollBy((scrollButton.forward ? 1 : -1)
+                               * Math.max(strip.height, viewport.width / 2));
             }
         }
     }
@@ -170,6 +179,13 @@ Item {
         flickableDirection: Flickable.HorizontalFlick
         boundsBehavior: Flickable.StopAtBounds
         clip: true
+        Component.onCompleted: if (strip.rtl)
+                                   Qt.callLater(() => {
+                                       if (strip)
+                                           contentX = strip.scrollLimit;
+                                   })
+        onWidthChanged: if (strip && strip.rtl && contentX > strip.scrollLimit)
+                            contentX = strip.scrollLimit
 
         WheelHandler {
             enabled: !strip.workspace.dragging
@@ -177,13 +193,15 @@ Item {
             onWheel: event => {
                 const delta = event.pixelDelta.x || event.pixelDelta.y
                               || (event.angleDelta.x || event.angleDelta.y) / 120 * strip.tokens.controlHeight;
-                event.accepted = strip.scrollBy(-delta);
+                event.accepted = strip.scrollBy(strip.rtl ? delta : -delta);
             }
         }
 
         Row {
             id: row
             height: strip.height
+            layoutDirection: strip.rtl && !strip.LayoutMirroring.enabled
+                             ? Qt.RightToLeft : Qt.LeftToRight
             Repeater {
                 id: cells
                 model: strip.tabs.length
@@ -248,8 +266,8 @@ Item {
                         text: cell.panel ? cell.panel.title : cell.panelId
                         checkable: true
                         checked: cell.selected
-                        leftPadding: 12
-                        rightPadding: closeButton.visible ? 4 : 12
+                        leftPadding: strip.rtl ? (closeButton.visible ? 4 : 12) : 12
+                        rightPadding: strip.rtl ? 12 : (closeButton.visible ? 4 : 12)
                         background: null
                         onClicked: strip.workspace.controller.activatePanel(cell.panelId)
                         Keys.onLeftPressed: {
@@ -298,7 +316,7 @@ Item {
                         theme: strip.workspace.theme
                         width: 28
                         height: parent.height
-                        anchors.right: parent.right
+                        x: strip.rtl ? 0 : parent.width - width
                         padding: 0
                         tool: true
                         symbol: 2

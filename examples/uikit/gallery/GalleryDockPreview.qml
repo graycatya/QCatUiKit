@@ -124,6 +124,7 @@ ColumnLayout {
             objectName: "demoDockWorkspace"
             width: viewport.contentWidth
             height: viewport.availableHeight
+            rtl: GallerySettings.rtl
             tabScrollLeftIcon: dockScrollLeftIcon
             tabScrollRightIcon: dockScrollRightIcon
             CatDockPanel {

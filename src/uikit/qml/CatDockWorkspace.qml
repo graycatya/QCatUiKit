@@ -11,8 +11,10 @@ Item {
     property ThemePalette theme: Theme
     property Component tabScrollLeftIcon: null
     property Component tabScrollRightIcon: null
+    property bool rtl: false
     readonly property var dragStyleHints: Qt.styleHints
     readonly property var tokens: (theme || Theme).tokens
+    readonly property bool __rtl: rtl || control.LayoutMirroring.enabled
     readonly property DockController controller: dockState
     default property alias panels: panelLayer.data
     readonly property var minimumSize: Geometry.measure(dockState.layout, registry, headerHeight, 8)
