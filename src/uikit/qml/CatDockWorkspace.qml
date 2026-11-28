@@ -9,6 +9,8 @@ import "DockGeometry.js" as Geometry
 Item {
     id: control
     property ThemePalette theme: Theme
+    property Component tabScrollLeftIcon: null
+    property Component tabScrollRightIcon: null
     readonly property var dragStyleHints: Qt.styleHints
     readonly property var tokens: (theme || Theme).tokens
     readonly property DockController controller: dockState
@@ -665,6 +667,8 @@ Item {
                 width: parent.width
                 workspace: control
                 record: groupView.group
+                leftScrollIcon: control.tabScrollLeftIcon
+                rightScrollIcon: control.tabScrollRightIcon
             }
         }
     }

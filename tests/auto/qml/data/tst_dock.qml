@@ -30,6 +30,13 @@ TestCase {
             }
         }
     }
+    Component {
+        id: customDockIcon
+        Text {
+            objectName: "customDockScrollIcon"
+            text: ">"
+        }
+    }
     function test_contentAndRestore() {
         const w = createTemporaryObject(sample, test);
         verify(w !== null);
@@ -215,6 +222,23 @@ TestCase {
         compare(w.dropTarget, null);
         mouseRelease(w, edge.x, edge.y);
         compare(Array.from(w.geometry.groups[0].tabs), ["b", "a"]);
+    }
+    function test_scrollIconOverride() {
+        const w = createTemporaryObject(sample, test, { width: 220 });
+        w.registry.a.title = "Editor with a long title";
+        w.registry.b.title = "Activity log with a long title";
+        verify(waitForRendering(w));
+        tryVerify(() => findChild(w, "dockTabsScrollRight") !== null);
+        const right = findChild(w, "dockTabsScrollRight");
+        const glyph = findChild(right, "dockScrollRightGlyph");
+        verify(glyph !== null);
+        verify(glyph.visible);
+        w.tabScrollLeftIcon = customDockIcon;
+        w.tabScrollRightIcon = customDockIcon;
+        wait(10);
+        verify(!glyph.visible);
+        verify(findChild(right, "customDockScrollIcon") !== null);
+        verify(right.enabled);
     }
     function test_minimums() {
         const w = createTemporaryObject(sample, test);

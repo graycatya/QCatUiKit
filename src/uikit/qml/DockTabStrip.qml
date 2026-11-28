@@ -9,6 +9,8 @@ Item {
     required property var workspace
     required property var record
     property string floatingWindowId: ""
+    property Component leftScrollIcon: null
+    property Component rightScrollIcon: null
     readonly property var tabs: record ? record.tabs : []
     readonly property var tokens: workspace.tokens
     readonly property bool reordering: workspace.reorderStrip === strip && workspace.reorderIndex >= 0
@@ -78,9 +80,17 @@ Item {
                 id: arrow
                 readonly property color color: !scrollButton.enabled ? strip.tokens.textDisabled :
                                                 scrollButton.down ? "white" : strip.tokens.text
+                Loader {
+                    anchors.centerIn: parent
+                    sourceComponent: scrollButton.modelData < 0 ? strip.leftScrollIcon
+                                                                : strip.rightScrollIcon
+                }
                 Shape {
                     id: chevron
+                    objectName: scrollButton.modelData < 0 ? "dockScrollLeftGlyph" : "dockScrollRightGlyph"
                     anchors.centerIn: parent
+                    visible: (scrollButton.modelData < 0 ? strip.leftScrollIcon
+                                                         : strip.rightScrollIcon) === null
                     width: Math.min(5, arrow.width / 2)
                     height: Math.min(8, arrow.height / 2)
                     ShapePath {

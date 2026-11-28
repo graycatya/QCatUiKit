@@ -102,6 +102,8 @@ Window {
             workspace: floating.workspace
             record: floating.record
             floatingWindowId: floating.record.id || ""
+            leftScrollIcon: floating.workspace.tabScrollLeftIcon
+            rightScrollIcon: floating.workspace.tabScrollRightIcon
         }
     }
     Item {

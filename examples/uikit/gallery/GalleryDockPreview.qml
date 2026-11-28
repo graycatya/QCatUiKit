@@ -12,6 +12,24 @@ ColumnLayout {
     property string initialLayout: ""
     property real previewOpacity: 0.8
     property int nextTabNumber: 1
+    Component {
+        id: dockScrollLeftIcon
+        Text {
+            text: GalleryIcons.chevronLeft
+            font.family: GalleryIcons.family
+            font.pixelSize: 14
+            color: Theme.tokens.text
+        }
+    }
+    Component {
+        id: dockScrollRightIcon
+        Text {
+            text: GalleryIcons.chevronRight
+            font.family: GalleryIcons.family
+            font.pixelSize: 14
+            color: Theme.tokens.text
+        }
+    }
     spacing: Theme.tokens.spacing
     CatLabel {
         Layout.fillWidth: true
@@ -106,6 +124,8 @@ ColumnLayout {
             objectName: "demoDockWorkspace"
             width: viewport.contentWidth
             height: viewport.availableHeight
+            tabScrollLeftIcon: dockScrollLeftIcon
+            tabScrollRightIcon: dockScrollRightIcon
             CatDockPanel {
                 dockId: "project"
                 title: qsTr("Project")
