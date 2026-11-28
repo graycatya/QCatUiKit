@@ -13,6 +13,10 @@ T.Control {
     readonly property var tokens: (theme || Theme).tokens
     property Window targetWindow
     property string title: targetWindow ? targetWindow.title : ""
+    property Component minimizeIcon: null
+    property Component maximizeIcon: null
+    property Component restoreIcon: null
+    property Component closeIcon: null
     readonly property bool maximized: targetWindow !== null
                                           && targetWindow.visibility === Window.Maximized
     implicitWidth: 400
@@ -64,8 +68,14 @@ T.Control {
             contentItem: Item {
                 implicitWidth: 14
                 implicitHeight: 14
-                Rectangle {
+                Loader {
                     anchors.centerIn: parent
+                    sourceComponent: control.minimizeIcon
+                }
+                Rectangle {
+                    objectName: "titleBarMinimizeGlyph"
+                    anchors.centerIn: parent
+                    visible: control.minimizeIcon === null
                     width: 10
                     height: 1.5
                     radius: 0.75
@@ -103,21 +113,27 @@ T.Control {
             contentItem: Item {
                 implicitWidth: 14
                 implicitHeight: 14
+                Loader {
+                    anchors.centerIn: parent
+                    sourceComponent: control.maximized ? control.restoreIcon : control.maximizeIcon
+                }
                 Rectangle {
+                    objectName: "titleBarMaximizeGlyph"
                     anchors.centerIn: parent
                     width: 10
                     height: 10
                     radius: 2
-                    visible: !control.maximized
+                    visible: !control.maximized && control.maximizeIcon === null
                     color: "transparent"
                     border.width: 1.2
                     border.color: maximizeButton.iconColor
                 }
                 Item {
+                    objectName: "titleBarRestoreGlyph"
                     anchors.centerIn: parent
                     width: 13
                     height: 13
-                    visible: control.maximized
+                    visible: control.maximized && control.restoreIcon === null
                     Rectangle {
                         x: 3
                         y: 0
@@ -170,8 +186,14 @@ T.Control {
             contentItem: Item {
                 implicitWidth: 14
                 implicitHeight: 14
-                Shape {
+                Loader {
                     anchors.centerIn: parent
+                    sourceComponent: control.closeIcon
+                }
+                Shape {
+                    objectName: "titleBarCloseGlyph"
+                    anchors.centerIn: parent
+                    visible: control.closeIcon === null
                     width: 12
                     height: 12
                     preferredRendererType: Shape.CurveRenderer

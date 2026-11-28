@@ -1477,12 +1477,52 @@ Item {
                     }
                 }
             }
+            Component {
+                id: minimizeTitleIcon
+                Text {
+                    text: GalleryIcons.minimize
+                    font.family: GalleryIcons.family
+                    font.pixelSize: 14
+                    color: Theme.tokens.textSecondary
+                }
+            }
+            Component {
+                id: maximizeTitleIcon
+                Text {
+                    text: GalleryIcons.maximize
+                    font.family: GalleryIcons.family
+                    font.pixelSize: 14
+                    color: Theme.tokens.textSecondary
+                }
+            }
+            Component {
+                id: restoreTitleIcon
+                Text {
+                    text: GalleryIcons.restore
+                    font.family: GalleryIcons.family
+                    font.pixelSize: 14
+                    color: Theme.tokens.textSecondary
+                }
+            }
+            Component {
+                id: closeTitleIcon
+                Text {
+                    text: GalleryIcons.close
+                    font.family: GalleryIcons.family
+                    font.pixelSize: 14
+                    color: Theme.tokens.textSecondary
+                }
+            }
             ColumnLayout {
                 id: sceneLayout
                 width: parent.width
                 CatTitleBar {
                     targetWindow: sample
                     Layout.fillWidth: true
+                    minimizeIcon: minimizeTitleIcon
+                    maximizeIcon: maximizeTitleIcon
+                    restoreIcon: restoreTitleIcon
+                    closeIcon: closeTitleIcon
                 }
                 CatButton {
                     text: qsTr("Open sample window")

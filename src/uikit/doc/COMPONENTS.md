@@ -235,7 +235,7 @@
 
 | 组件 | 主要 API / 行为 |
 | --- | --- |
-| [CatTitleBar](../qml/CatTitleBar.qml) | `targetWindow`, `title`；移动窗口，并执行最小化、最大化及关闭操作。 |
+| [CatTitleBar](../qml/CatTitleBar.qml) | `targetWindow`、`title`、`minimizeIcon`、`maximizeIcon`、`restoreIcon`、`closeIcon`；移动窗口并执行最小化、最大化及关闭。图标组件为可选覆盖，未提供时使用内置绘制；按钮尺寸、状态背景、辅助名称和窗口操作不随图标变化。覆盖图标的颜色与禁用反馈由宿主组件自行处理。 |
 | [CatWindow](../qml/CatWindow.qml) | `frameless`；用主题颜色承载内容，并可启用自定义标题栏。 |
 
 ## 组合与边界

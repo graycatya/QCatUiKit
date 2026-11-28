@@ -16,6 +16,10 @@ TestCase {
     Component { id: fieldFactory; CatTextField { placeholderText: "Your message" } }
     Component { id: titleBarFactory; CatTitleBar { width: 400 } }
     Component { id: windowFactory; Window { width: 200; height: 100 } }
+    Component { id: customMinimizeIcon; Text { objectName: "customMinimizeIcon"; text: "x" } }
+    Component { id: customMaximizeIcon; Text { objectName: "customMaximizeIcon"; text: "x" } }
+    Component { id: customRestoreIcon; Text { objectName: "customRestoreIcon"; text: "x" } }
+    Component { id: customCloseIcon; Text { objectName: "customCloseIcon"; text: "x" } }
     function init() { failOnWarning(/.*/); Theme.reducedMotion = true; }
     function cleanup() { Theme.density = ThemePalette.Desktop; Theme.reducedMotion = false; }
     function test_buttonSizing_data() {
@@ -117,5 +121,27 @@ TestCase {
         bar.targetWindow = null;
         mouseRelease(close, 20, 20);
         mouseMove(test, 0, 0);
+    }
+    function test_titleBarCustomIcons() {
+        const target = createTemporaryObject(windowFactory, test);
+        const bar = createTemporaryObject(titleBarFactory, test, {targetWindow: target});
+        verify(waitForRendering(bar));
+        const minimizeGlyph = findChild(bar, "titleBarMinimizeGlyph");
+        const maximizeGlyph = findChild(bar, "titleBarMaximizeGlyph");
+        const closeGlyph = findChild(bar, "titleBarCloseGlyph");
+        verify(minimizeGlyph.visible && maximizeGlyph.visible && closeGlyph.visible);
+
+        bar.minimizeIcon = customMinimizeIcon;
+        bar.maximizeIcon = customMaximizeIcon;
+        bar.restoreIcon = customRestoreIcon;
+        bar.closeIcon = customCloseIcon;
+        wait(10);
+        verify(!minimizeGlyph.visible);
+        verify(!maximizeGlyph.visible);
+        verify(!closeGlyph.visible);
+        verify(findChild(bar, "customMinimizeIcon") !== null);
+        verify(findChild(bar, "customMaximizeIcon") !== null);
+        verify(findChild(bar, "customCloseIcon") !== null);
+        compare(findChild(bar, "titleBarMinimize").width, 46);
     }
 }
