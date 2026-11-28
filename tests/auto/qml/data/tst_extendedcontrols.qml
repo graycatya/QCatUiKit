@@ -503,4 +503,42 @@ TestCase {
         compare(point.x, 30);
         compare(point.y, 30);
     }
+    function test_comboKeyboardNavigation() {
+        const combo = create('CatComboBox { width: 220; model: ["One", "Two", "Three"] }');
+        verify(waitForRendering(combo));
+        combo.forceActiveFocus(Qt.TabFocusReason);
+        tryCompare(combo, "visualFocus", true);
+        verify(Qt.colorEqual(combo.background.border.color, Theme.tokens.focusRing));
+        compare(combo.background.border.width, 2);
+
+        keyClick(Qt.Key_Space);
+        tryCompare(combo.popup, "visible", true);
+        tryCompare(combo, "highlightedIndex", 0);
+        keyClick(Qt.Key_Down);
+        compare(combo.highlightedIndex, 1);
+        keyClick(Qt.Key_Up);
+        compare(combo.highlightedIndex, 0);
+        keyClick(Qt.Key_End);
+        compare(combo.highlightedIndex, 2);
+        keyClick(Qt.Key_Home);
+        compare(combo.highlightedIndex, 0);
+        keyClick(Qt.Key_Escape);
+        tryCompare(combo.popup, "visible", false);
+        compare(combo.currentIndex, 0);
+    }
+    function test_spinKeyboardSteps() {
+        const spin = create('CatSpinBox { width: 220; from: 0; to: 10; value: 5 }');
+        verify(waitForRendering(spin));
+        spin.forceActiveFocus();
+        keyClick(Qt.Key_Up);
+        compare(spin.value, 6);
+        keyClick(Qt.Key_Down);
+        compare(spin.value, 5);
+        spin.value = 10;
+        keyClick(Qt.Key_Up);
+        compare(spin.value, 10);
+        spin.value = 0;
+        keyClick(Qt.Key_Down);
+        compare(spin.value, 0);
+    }
 }

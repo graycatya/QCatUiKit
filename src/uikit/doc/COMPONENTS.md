@@ -63,7 +63,7 @@
 | [CatPasswordField](../qml/CatPasswordField.qml) | `password`, `revealed`, `revealEnabled`；输入密码，并通过支持键盘操作的开关显示明文。 |
 | [CatRatingControl](../qml/CatRatingControl.qml) | `value`, `placeholderValue`, `maxRating`, `isReadOnly`, `isClearEnabled`, `caption`, `stepSize`, `ratingEdited()`；选择或清除评分，支持小数显示及键盘步进。 |
 | [CatRepeatButton](../qml/CatRepeatButton.qml) | `delay`, `interval`；在按住鼠标或按键期间重复触发操作。 |
-| [CatSpinBox](../qml/CatSpinBox.qml) | 通过文字、按钮或键盘编辑范围内的整数。 |
+| [CatSpinBox](../qml/CatSpinBox.qml) | 通过文字、按钮或键盘编辑范围内的整数；Up/Down 按 `stepSize` 步进，到达 `from`/`to` 后保持边界值。 |
 | [CatSplitButton](../qml/CatSplitButton.qml) | `text`, `iconSource`, `primary`, `checkable`, `checked`, `isOpen`；将主要操作与更多菜单操作分开。 |
 | [CatTextArea](../qml/CatTextArea.qml) | `invalid`；编辑、选择多行文本，并显示主题焦点及校验状态。 |
 | [CatToggleButton](../qml/CatToggleButton.qml) | `threeState`, `checkState`；保持选中状态，或在三种选择状态之间循环。 |
@@ -74,7 +74,7 @@
 | [CatSlider](../qml/CatSlider.qml) | 单值滑块；刻度、提示、居中填充、默认值恢复；[滑块 API](SLIDERS.md) |
 | [CatRangeSlider](../qml/CatRangeSlider.qml) | 双端区间、跨度限制、固定跨度、整段拖动；[滑块 API](SLIDERS.md) |
 | [CatSliderField](../qml/CatSliderField.qml) | 滑块与精确数值框、单位、默认值恢复、自适应布局；[滑块 API](SLIDERS.md) |
-| [CatComboBox](../qml/CatComboBox.qml) | 标准 ComboBox；可编辑、textRole/valueRole、键盘导航与主题弹出列表 |
+| [CatComboBox](../qml/CatComboBox.qml) | 标准 ComboBox；可编辑、textRole/valueRole、主题弹出列表；Space 打开、Esc 关闭、方向键与 Home/End 移动高亮。 |
 | [CatButton](../qml/CatButton.qml) | 标准 Button；`primary`, `danger`, `loading`, `iconSource`；loading 临时禁用并恢复 enabled；primary 决定填充，danger 决定危险边框/普通文字 |
 | [CatTextField](../qml/CatTextField.qml) | 标准 TextField；`invalid` 控制错误边框；可配置 validator / inputMethodHints |
 | [CatIpAddressField](../qml/CatIpAddressField.qml) | 单输入框 IPv4；使用 `acceptableInput` 判断可提交性；聚焦时允许中间输入状态 |
