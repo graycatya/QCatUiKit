@@ -249,6 +249,28 @@
 
 键盘可通过 Tab 聚焦，标准按钮用 Space 激活。输入控件使用 Qt 的文字编辑和输入法机制。RTL 可通过 LayoutMirroring 配置；屏幕阅读器、输入法和系统窗口行为应在目标平台验证。
 
+## 符号字形与平台字体
+
+库不加载、不内嵌图标字体，下列符号由 QML 引擎的默认字体提供：
+
+| 控件 | 字符 | 用途 |
+| --- | --- | --- |
+| CatMenuItem | `✓`、`›`、`‹` | 勾选状态与子菜单箭头 |
+| CatStepper | `✓` | 已完成步骤的序号替换 |
+| CatBreadcrumb | `›`、`‹` | 层级分隔与镜像方向 |
+| CatCalendar | `‹`、`›` | 上一月／下一月 |
+| CatPipsPager | `‹`、`›` | 上一页／下一页 |
+| CatRatingControl | `★` | 评分符号 |
+| CatExpander | `▾`、`▸` | 展开与收起 |
+| CatMultiSelectComboBox、CatDropDownButton | `▾` | 下拉指示 |
+| CatAlert、TabCellImpl | `×` | 关闭 |
+| CatSpinBox | `+`、`−` | 数值步进 |
+
+- 缺字、字体回退、字重和行高度量随平台与系统字体变化；字符宽度参与隐式尺寸计算，更换字体或调整 DPI 可能改变布局。
+- 已使用绘制的对照：`CatCheckBox` 的勾选标记、`CatComboBox` 的下折角、`CatTitleBar` 的窗口按钮，不受系统字体影响。
+- Gallery 的图标按钮使用随附 RemixIcon 字体，仅随 Gallery 分发，不是库资源；来源与许可见 `NOTICE` 和 `LICENSES`。
+- 若后续要求跨平台一致或消除字体依赖，需要逐项改为绘制或决定随库引入字体，并补充像素级验收；本页只记录当前限制，不构成实施计划。
+
 ## 主题、模型与版本
 
 | 类型 | 说明 |

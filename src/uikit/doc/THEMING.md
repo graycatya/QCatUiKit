@@ -52,7 +52,7 @@ Component.onCompleted: {
 | 键盘焦点描边 | `focusRing` |
 | 禁用 | `disabledOpacity` 与 `disabled` |
 
-`surfaceHover`、`surfaceSelected`、`surfacePressed` 默认按由浅到深排列，可在 `colorPalette` 或 `overrides` 中分别覆盖。使用 `primary` 填充的按钮和主色选中态开关继续使用 `primary`、`primaryHover`、`primaryPressed`。
+`surfaceHover`、`surfaceSelected`、`surfacePressed` 默认按由浅到深排列，且每个状态与 `surface` 的相对亮度差不低于 0.015；Light 依次变深，Dark 依次变亮。可在 `colorPalette` 或 `overrides` 中分别覆盖；应用自定义色板时需自行保证同样的可辨识度。使用 `primary` 填充的按钮和主色选中态开关继续使用 `primary`、`primaryHover`、`primaryPressed`。
 
 ## 自定义色板
 
@@ -66,6 +66,9 @@ ThemePalette {
         background: "#002b36",
         surface: "#073642",
         surfaceHover: "#0a4453",
+        surfaceSelected: "#0d5263",
+        surfacePressed: "#105d72",
+        focusRing: "#2aa198",
         text: "#93a1a1",
         textSecondary: "#839496",
         border: "#586e75",
@@ -73,12 +76,13 @@ ThemePalette {
         warning: "#b58900",
         danger: "#dc322f"
     })
+    overrides: ({ disabledOpacity: 45 })
 }
 CatPane { theme: solarized; /* ... */ }
 ```
 
 - 未在 `colorPalette` 中出现的颜色使用当前 `colorScheme` 的内置值；设为空 map 即回到内置色板。
-- `colorPalette` 只接受颜色 token。尺寸和行为仍由 `colorScheme`、`density`、`radius`、`fontSize` 与 `reducedMotion` 决定，避免出现"色板决定控件尺寸"的双重来源。
+- `colorPalette` 只接受颜色 token；`disabledOpacity` 等尺寸和行为 token 通过 `overrides` 提供。尺寸和行为仍由 `colorScheme`、`density`、`radius`、`fontSize` 与 `reducedMotion` 决定，避免出现"色板决定控件尺寸"的双重来源。
 - 不同 `ThemePalette` 实例的色板互不影响，因此同一窗口可以并排显示两种视觉风格。
 - 无效颜色或非颜色键会被忽略，并输出 `qcatuikit.theme` 类别的警告，不会影响其它 token。
 
