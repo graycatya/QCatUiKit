@@ -139,6 +139,8 @@
 
 主工作区和浮动窗口的标签 SHALL 单行排列。标签超出栏宽时，左右两端 SHALL 提供滚动按钮，仅可继续滚动的方向可用。标签 SHALL 保持滚轮浏览能力。
 
+滚动按钮图标 SHALL 可由应用通过 `CatDockWorkspace.tabScrollLeftIcon` 和 `tabScrollRightIcon` 覆盖；未提供时 SHALL 使用内置绘制。覆盖图标 SHALL NOT 改变按钮宽度、可用状态、滚动步长或拖动自动滚动行为。
+
 #### Scenario: 浏览溢出标签
 
 - **WHEN** 标签超出可见宽度且用户点击可用的滚动按钮
@@ -176,6 +178,19 @@
 
 - **WHEN** 应用使用 xcb／XWayland、macOS 或 Windows 平台插件
 - **THEN** 标签拖动 SHALL 保留原有鼠标拖动与随动缩略窗路径。
+
+#### Scenario: 自定义滚动图标
+
+- **WHEN** 应用提供 `tabScrollLeftIcon` 或 `tabScrollRightIcon`
+- **THEN** 对应滚动按钮 SHALL 显示该组件并隐藏内置绘制图标
+- **WHEN** 未提供组件
+- **THEN** 按钮 SHALL 继续显示内置绘制图标
+- **THEN** 按钮宽度、可用状态和滚动行为 SHALL 保持不变
+
+#### Scenario: 浮窗一致
+
+- **WHEN** 标签位于浮动窗口并发生溢出
+- **THEN** 滚动按钮 SHALL 使用与主工作区相同的图标配置
 
 ## Data Model
 
