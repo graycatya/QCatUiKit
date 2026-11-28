@@ -133,7 +133,7 @@
 <context>
     <name>CatCommandBar</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatCommandBar.qml" line="35"/>
+        <location filename="../../../../src/uikit/qml/CatCommandBar.qml" line="40"/>
         <source>More commands</source>
         <translation>More commands</translation>
     </message>
@@ -182,24 +182,17 @@
 <context>
     <name>CatDockWorkspace</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="623"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="703"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="647"/>
         <source>Float panel</source>
         <translation>Float panel</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="709"/>
-        <source>Float tab group</source>
-        <translation>Float tab group</translation>
-    </message>
-    <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="632"/>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="735"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="656"/>
         <source>Close %1</source>
         <translation>Close %1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="768"/>
+        <location filename="../../../../src/uikit/qml/CatDockWorkspace.qml" line="693"/>
         <source>Resize dock panels</source>
         <translation>Resize dock panels</translation>
     </message>
@@ -387,19 +380,27 @@
 <context>
     <name>CatTabView</name>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTabView.qml" line="33"/>
+        <location filename="../../../../src/uikit/qml/CatTabView.qml" line="34"/>
         <source>Tab %1</source>
         <translation>Tab %1</translation>
     </message>
     <message>
-        <location filename="../../../../src/uikit/qml/CatTabView.qml" line="44"/>
-        <source>Close tab %1</source>
-        <translation>Close tab %1</translation>
-    </message>
-    <message>
-        <location filename="../../../../src/uikit/qml/CatTabView.qml" line="55"/>
+        <location filename="../../../../src/uikit/qml/CatTabView.qml" line="47"/>
         <source>Add tab</source>
         <translation>Add tab</translation>
+    </message>
+</context>
+<context>
+    <name>CatTableView</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatTableView.qml" line="20"/>
+        <source>Table</source>
+        <translation>Table</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/CatTableView.qml" line="23"/>
+        <source>%1 rows, %2 columns</source>
+        <translation>%1 rows, %2 columns</translation>
     </message>
 </context>
 <context>
@@ -575,25 +576,37 @@
 <context>
     <name>DockFloatingWindow</name>
     <message>
-        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="93"/>
+        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="92"/>
         <source>Dock back</source>
         <translation>Dock back</translation>
-    </message>
-    <message>
-        <location filename="../../../../src/uikit/qml/DockFloatingWindow.qml" line="176"/>
-        <source>Close %1</source>
-        <translation>Close %1</translation>
     </message>
 </context>
 <context>
     <name>DockTabStrip</name>
     <message>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="63"/>
         <source>Scroll tabs left</source>
         <translation>Scroll tabs left</translation>
     </message>
     <message>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="63"/>
         <source>Scroll tabs right</source>
         <translation>Scroll tabs right</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="260"/>
+        <source>Float panel</source>
+        <translation>Float panel</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="266"/>
+        <source>Float tab group</source>
+        <translation>Float tab group</translation>
+    </message>
+    <message>
+        <location filename="../../../../src/uikit/qml/DockTabStrip.qml" line="296"/>
+        <source>Close %1</source>
+        <translation>Close %1</translation>
     </message>
 </context>
 <context>
@@ -4973,362 +4986,390 @@ Slowest data batch: %6 ms</translation>
 <context>
     <name>GalleryDataPreview</name>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="59"/>
+        <location filename="../GalleryDataPreview.qml" line="100"/>
         <source>Edit real model cells, select and locate rows, resize columns, and keep scrolling while data changes.</source>
         <translation>Edit real model cells, select and locate rows, resize columns, and keep scrolling while data changes.</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="61"/>
+        <location filename="../GalleryDataPreview.qml" line="102"/>
         <source>Try Send or Enter, whitespace rejection and long single-line text. Continuous submissions use this same composer and appear in the history below.</source>
         <translation>Try Send or Enter, whitespace rejection and long single-line text. Continuous submissions use this same composer and appear in the history below.</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="62"/>
+        <location filename="../GalleryDataPreview.qml" line="103"/>
         <source>Try incoming and outgoing messages, delivery states, long text and attachment placeholders. Turn off tail following to read history during live updates.</source>
         <translation>Try incoming and outgoing messages, delivery states, long text and attachment placeholders. Turn off tail following to read history during live updates.</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="69"/>
+        <location filename="../GalleryDataPreview.qml" line="110"/>
         <source>Add a batch</source>
         <translation>Add a batch</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <location filename="../GalleryDataPreview.qml" line="117"/>
         <source>Update a batch</source>
         <translation>Update a batch</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="76"/>
+        <location filename="../GalleryDataPreview.qml" line="117"/>
         <source>Change delivery states</source>
         <translation>Change delivery states</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="83"/>
+        <location filename="../GalleryDataPreview.qml" line="124"/>
         <source>Remove latest batch</source>
         <translation>Remove latest batch</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="89"/>
+        <location filename="../GalleryDataPreview.qml" line="130"/>
         <source>Clear data</source>
         <translation>Clear data</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="95"/>
+        <location filename="../GalleryDataPreview.qml" line="136"/>
         <source>Restore demo</source>
         <translation>Restore demo</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <location filename="../GalleryDataPreview.qml" line="141"/>
         <source>Stop stress test</source>
         <translation>Stop stress test</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="100"/>
+        <location filename="../GalleryDataPreview.qml" line="141"/>
         <source>Start stress test</source>
         <translation>Start stress test</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="109"/>
+        <location filename="../GalleryDataPreview.qml" line="150"/>
         <source>%1 / %2 rows</source>
         <translation>%1 / %2 rows</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="110"/>
+        <location filename="../GalleryDataPreview.qml" line="151"/>
         <source>%1 / %2 messages</source>
         <translation>%1 / %2 messages</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <location filename="../GalleryDataPreview.qml" line="188"/>
         <source>No rows. Add data to begin.</source>
         <translation>No rows. Add data to begin.</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="137"/>
+        <location filename="../GalleryDataPreview.qml" line="188"/>
         <source>No messages yet. Send one to begin.</source>
         <translation>No messages yet. Send one to begin.</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="145"/>
+        <location filename="../GalleryDataPreview.qml" line="196"/>
         <source>Resizable columns</source>
         <translation>Resizable columns</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="146"/>
+        <location filename="../GalleryDataPreview.qml" line="197"/>
         <source>First row</source>
         <translation>First row</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="147"/>
+        <location filename="../GalleryDataPreview.qml" line="198"/>
         <source>Last row</source>
         <translation>Last row</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="152"/>
+        <location filename="../GalleryDataPreview.qml" line="383"/>
         <source>Select a row, then edit a cell</source>
         <translation>Select a row, then edit a cell</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="161"/>
+        <location filename="../GalleryDataPreview.qml" line="392"/>
         <source>Row number</source>
         <translation>Row number</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <location filename="../GalleryDataPreview.qml" line="398"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <location filename="../GalleryDataPreview.qml" line="398"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="167"/>
+        <location filename="../GalleryDataPreview.qml" line="398"/>
         <source>Value</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="168"/>
+        <location filename="../GalleryDataPreview.qml" line="399"/>
         <source>Column to edit</source>
         <translation>Column to edit</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="172"/>
+        <location filename="../GalleryDataPreview.qml" line="403"/>
         <source>Delete selected row</source>
         <translation>Delete selected row</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="183"/>
+        <location filename="../GalleryDataPreview.qml" line="414"/>
         <source>Cell content</source>
         <translation>Cell content</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="188"/>
+        <location filename="../GalleryDataPreview.qml" line="419"/>
         <source>Apply cell edit</source>
         <translation>Apply cell edit</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="201"/>
+        <location filename="../GalleryDataPreview.qml" line="432"/>
         <source>Follow latest messages</source>
         <translation>Follow latest messages</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="204"/>
+        <location filename="../GalleryDataPreview.qml" line="435"/>
         <source>First message</source>
         <translation>First message</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="205"/>
+        <location filename="../GalleryDataPreview.qml" line="436"/>
         <source>Latest message</source>
         <translation>Latest message</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <location filename="../GalleryDataPreview.qml" line="455"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <location filename="../GalleryDataPreview.qml" line="455"/>
         <source>Image placeholder</source>
         <translation>Image placeholder</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <location filename="../GalleryDataPreview.qml" line="455"/>
         <source>Audio placeholder</source>
         <translation>Audio placeholder</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="224"/>
+        <location filename="../GalleryDataPreview.qml" line="455"/>
         <source>Video placeholder</source>
         <translation>Video placeholder</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="225"/>
+        <location filename="../GalleryDataPreview.qml" line="456"/>
         <source>Message type</source>
         <translation>Message type</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="229"/>
+        <location filename="../GalleryDataPreview.qml" line="460"/>
         <source>Receive a message</source>
         <translation>Receive a message</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="234"/>
+        <location filename="../GalleryDataPreview.qml" line="465"/>
         <source>Send a sample</source>
         <translation>Send a sample</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="238"/>
+        <location filename="../GalleryDataPreview.qml" line="469"/>
         <source>Message length</source>
         <translation>Message length</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="244"/>
+        <location filename="../GalleryDataPreview.qml" line="475"/>
         <source>Generated message length</source>
         <translation>Generated message length</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="258"/>
+        <location filename="../GalleryDataPreview.qml" line="489"/>
         <source>Load long text</source>
         <translation>Load long text</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="259"/>
+        <location filename="../GalleryDataPreview.qml" line="490"/>
         <source>Long text with spaces, numbers 123 and punctuation. </source>
         <translation>Long text with spaces, numbers 123 and punctuation. </translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="263"/>
+        <location filename="../GalleryDataPreview.qml" line="494"/>
         <source>Try whitespace</source>
         <translation>Try whitespace</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="266"/>
+        <location filename="../GalleryDataPreview.qml" line="497"/>
         <source>Clear draft</source>
         <translation>Clear draft</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="273"/>
+        <location filename="../GalleryDataPreview.qml" line="504"/>
         <source>Draft: %1 characters · whitespace-only submissions are ignored</source>
         <translation>Draft: %1 characters · whitespace-only submissions are ignored</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="278"/>
+        <location filename="../GalleryDataPreview.qml" line="509"/>
         <source>Inspect a message and change its delivery state</source>
         <translation>Inspect a message and change its delivery state</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="290"/>
+        <location filename="../GalleryDataPreview.qml" line="521"/>
         <source>Message number</source>
         <translation>Message number</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <location filename="../GalleryDataPreview.qml" line="526"/>
         <source>Pending</source>
         <translation>Pending</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <location filename="../GalleryDataPreview.qml" line="526"/>
         <source>Sent</source>
         <translation>Sent</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="295"/>
+        <location filename="../GalleryDataPreview.qml" line="526"/>
         <source>Failed</source>
         <translation>Failed</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="299"/>
+        <location filename="../GalleryDataPreview.qml" line="530"/>
         <source>Delivery state</source>
         <translation>Delivery state</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="303"/>
+        <location filename="../GalleryDataPreview.qml" line="534"/>
         <source>Delete selected message</source>
         <translation>Delete selected message</translation>
     </message>
     <message>
-        <location filename="../GalleryDataPreview.qml" line="318"/>
+        <location filename="../GalleryDataPreview.qml" line="549"/>
         <source>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</source>
         <translation>Image, audio and video entries demonstrate attachment metadata; this component does not download or play media.</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="203"/>
         <source>Freeze panes</source>
         <translation>Freeze panes</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="216"/>
         <source>Frozen columns</source>
         <translation>Frozen columns</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="227"/>
         <source>Frozen rows</source>
         <translation>Frozen rows</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="231"/>
         <source>Freeze first column and row</source>
         <translation>Freeze first column and row</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="236"/>
         <source>Clear freeze</source>
         <translation>Clear freeze</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="243"/>
+        <location filename="../GalleryDataPreview.qml" line="246"/>
         <source>Right-to-left layout</source>
         <translation>Right-to-left layout</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="250"/>
         <source>Load 100,000 rows in RTL</source>
         <translation>Load 100,000 rows in RTL</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="266"/>
         <source>RTL is applied before loading, avoiding a full model reset.</source>
         <translation>RTL is applied before loading, avoiding a full model reset.</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="272"/>
         <source>Table customization</source>
         <translation>Table customization</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="318"/>
         <source>Table columns</source>
         <translation>Table columns</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="342"/>
         <source>Move column left</source>
         <translation>Move column left</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="357"/>
         <source>Move column right</source>
         <translation>Move column right</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="370"/>
         <source>Reset columns</source>
         <translation>Reset columns</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="279"/>
+        <location filename="../GalleryDataPreview.qml" line="281"/>
         <source>Sortable header</source>
         <translation>Sortable header</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="31"/>
         <source>Sorted ascending</source>
         <translation>Sorted ascending</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="31"/>
         <source>Sorted descending</source>
         <translation>Sorted descending</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="286"/>
+        <location filename="../GalleryDataPreview.qml" line="288"/>
         <source>Table toolbar</source>
         <translation>Table toolbar</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="293"/>
+        <location filename="../GalleryDataPreview.qml" line="295"/>
         <source>Show loading</source>
         <translation>Show loading</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="299"/>
         <source>Show empty state</source>
         <translation>Show empty state</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="309"/>
         <source>Restore rows</source>
         <translation>Restore rows</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="597"/>
         <source>Custom toolbar</source>
         <translation>Custom toolbar</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="599"/>
         <source>Toolbar action</source>
         <translation>Toolbar action</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="611"/>
         <source>No rows to display.</source>
         <translation>No rows to display.</translation>
     </message>
     <message>
+        <location filename="../GalleryDataPreview.qml" line="623"/>
         <source>Loading rows...</source>
         <translation>Loading rows...</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>GalleryDataStressPanel</name>
     <message>
@@ -5427,65 +5468,67 @@ Last batch: %8 operations · slowest data batch: %9 ms</translation>
 <context>
     <name>GalleryDockPreview</name>
     <message>
+        <location filename="../GalleryDockPreview.qml" line="43"/>
         <source>Add tab</source>
         <translation>Add tab</translation>
     </message>
     <message>
+        <location filename="../GalleryDockPreview.qml" line="89"/>
         <source>Tab %1</source>
         <translation>Tab %1</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="18"/>
+        <location filename="../GalleryDockPreview.qml" line="19"/>
         <source>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</source>
         <translation>Drag tabs between windows with a moving preview. Outer edge guides dock full columns or rows; the center cross splits one group. Press Esc to cancel.</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="24"/>
+        <location filename="../GalleryDockPreview.qml" line="25"/>
         <source>Save layout</source>
         <translation>Save layout</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="28"/>
+        <location filename="../GalleryDockPreview.qml" line="29"/>
         <source>Restore layout</source>
         <translation>Restore layout</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="33"/>
+        <location filename="../GalleryDockPreview.qml" line="34"/>
         <source>Reset layout</source>
         <translation>Reset layout</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="37"/>
+        <location filename="../GalleryDockPreview.qml" line="38"/>
         <source>Show log</source>
         <translation>Show log</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="42"/>
+        <location filename="../GalleryDockPreview.qml" line="58"/>
         <source>Float editor</source>
         <translation>Float editor</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="48"/>
+        <location filename="../GalleryDockPreview.qml" line="64"/>
         <source>Float editor group</source>
         <translation>Float editor group</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="54"/>
+        <location filename="../GalleryDockPreview.qml" line="70"/>
         <source>Dock all windows back</source>
         <translation>Dock all windows back</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="63"/>
+        <location filename="../GalleryDockPreview.qml" line="79"/>
         <source>Lock layout</source>
         <translation>Lock layout</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="81"/>
+        <location filename="../GalleryDockPreview.qml" line="111"/>
         <source>Project</source>
         <translation>Project</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="86"/>
+        <location filename="../GalleryDockPreview.qml" line="116"/>
         <source>Workspace
   Components
   Themes
@@ -5496,49 +5539,49 @@ Last batch: %8 operations · slowest data batch: %9 ms</translation>
   Tests</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="92"/>
+        <location filename="../GalleryDockPreview.qml" line="122"/>
         <source>Editor</source>
         <translation>Editor</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="96"/>
+        <location filename="../GalleryDockPreview.qml" line="126"/>
         <source>Edit this text, then move this panel. Your changes stay here.</source>
         <translation>Edit this text, then move this panel. Your changes stay here.</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="102"/>
+        <location filename="../GalleryDockPreview.qml" line="132"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="107"/>
+        <location filename="../GalleryDockPreview.qml" line="137"/>
         <source>Preview opacity</source>
         <translation>Preview opacity</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="123"/>
+        <location filename="../GalleryDockPreview.qml" line="153"/>
         <source>Log</source>
         <translation>Log</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="128"/>
+        <location filename="../GalleryDockPreview.qml" line="158"/>
         <source>Workspace ready.
 Layout changes preserve panel instances.</source>
         <translation>Workspace ready.
 Layout changes preserve panel instances.</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="134"/>
+        <location filename="../GalleryDockPreview.qml" line="164"/>
         <source>Chart preview</source>
         <translation>Chart preview</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="141"/>
+        <location filename="../GalleryDockPreview.qml" line="171"/>
         <source>Signal</source>
         <translation>Signal</translation>
     </message>
     <message>
-        <location filename="../GalleryDockPreview.qml" line="179"/>
+        <location filename="../GalleryDockPreview.qml" line="209"/>
         <source>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</source>
         <translation>Scroll horizontally to reach all panels, or merge panels to fit the workspace.</translation>
     </message>
@@ -7171,125 +7214,160 @@ Keep notes, drafts and everyday details together.</translation>
 <context>
     <name>GallerySettingsPage</name>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="34"/>
+        <location filename="../GallerySettingsPage.qml" line="41"/>
         <source>Make it yours.</source>
         <translation>Make it yours.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="41"/>
+        <location filename="../GallerySettingsPage.qml" line="48"/>
         <source>One theme, every component. Changes apply throughout the gallery.</source>
         <translation>One theme, every component. Changes apply throughout the gallery.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="52"/>
+        <location filename="../GallerySettingsPage.qml" line="59"/>
         <source>Appearance</source>
         <translation>Appearance</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="57"/>
+        <location filename="../GallerySettingsPage.qml" line="64"/>
         <source>Choose the colors that feel right for your workspace.</source>
         <translation>Choose the colors that feel right for your workspace.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="67"/>
+        <location filename="../GallerySettingsPage.qml" line="74"/>
         <source>Light</source>
         <translation>Light</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="76"/>
+        <location filename="../GallerySettingsPage.qml" line="84"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="85"/>
+        <location filename="../GallerySettingsPage.qml" line="94"/>
         <source>Custom palette</source>
         <translation>Custom palette</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="94"/>
+        <location filename="../GallerySettingsPage.qml" line="104"/>
         <source>Accent color</source>
         <translation>Accent color</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="107"/>
+        <location filename="../GallerySettingsPage.qml" line="117"/>
         <source>Accent %1</source>
         <translation>Accent %1</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="132"/>
+        <location filename="../GallerySettingsPage.qml" line="142"/>
+        <source>Interaction states</source>
+        <translation>Interaction states</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="147"/>
+        <source>Ordinary surfaces map hover, press, selection and focus to separate tokens. Hover, press and Tab through the controls to compare them.</source>
+        <translation>Ordinary surfaces map hover, press, selection and focus to separate tokens. Hover, press and Tab through the controls to compare them.</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="183"/>
+        <source>Default</source>
+        <translation>Default</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="186"/>
+        <source>Selected</source>
+        <translation>Selected</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="190"/>
+        <source>Disabled</source>
+        <translation>Disabled</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="194"/>
+        <source>Checked</source>
+        <translation>Checked</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="198"/>
+        <source>On</source>
+        <translation>On</translation>
+    </message>
+    <message>
+        <location filename="../GallerySettingsPage.qml" line="210"/>
         <source>Two themes side by side</source>
         <translation>Two themes side by side</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="137"/>
+        <location filename="../GallerySettingsPage.qml" line="215"/>
         <source>The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.</source>
         <translation>The right pane receives a local ThemePalette, so one window can present two visual styles. Both panes use public API only.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="152"/>
+        <location filename="../GallerySettingsPage.qml" line="230"/>
         <source>Default theme</source>
         <translation>Default theme</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="156"/>
-        <location filename="../GallerySettingsPage.qml" line="182"/>
+        <location filename="../GallerySettingsPage.qml" line="234"/>
+        <location filename="../GallerySettingsPage.qml" line="260"/>
         <source>Primary action</source>
         <translation>Primary action</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="161"/>
-        <location filename="../GallerySettingsPage.qml" line="188"/>
+        <location filename="../GallerySettingsPage.qml" line="239"/>
+        <location filename="../GallerySettingsPage.qml" line="266"/>
         <source>Secondary information</source>
         <translation>Secondary information</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="177"/>
+        <location filename="../GallerySettingsPage.qml" line="255"/>
         <source>Custom palette theme</source>
         <translation>Custom palette theme</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="204"/>
+        <location filename="../GallerySettingsPage.qml" line="282"/>
         <source>Interaction density</source>
         <translation>Interaction density</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="209"/>
+        <location filename="../GallerySettingsPage.qml" line="287"/>
         <source>Adapt control sizes for a mouse, a touch screen or a mobile device.</source>
         <translation>Adapt control sizes for a mouse, a touch screen or a mobile device.</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="218"/>
+        <location filename="../GallerySettingsPage.qml" line="296"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="223"/>
+        <location filename="../GallerySettingsPage.qml" line="301"/>
         <source>Touch</source>
         <translation>Touch</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="228"/>
+        <location filename="../GallerySettingsPage.qml" line="306"/>
         <source>Mobile</source>
         <translation>Mobile</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="234"/>
+        <location filename="../GallerySettingsPage.qml" line="312"/>
         <source>Reduced motion: on</source>
         <translation>Reduced motion: on</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="234"/>
+        <location filename="../GallerySettingsPage.qml" line="312"/>
         <source>Reduced motion: off</source>
         <translation>Reduced motion: off</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="246"/>
-        <location filename="../GallerySettingsPage.qml" line="259"/>
+        <location filename="../GallerySettingsPage.qml" line="324"/>
+        <location filename="../GallerySettingsPage.qml" line="337"/>
         <source>Language</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../GallerySettingsPage.qml" line="251"/>
+        <location filename="../GallerySettingsPage.qml" line="329"/>
         <source>Switch languages without leaving your current example.</source>
         <translation>Switch languages without leaving your current example.</translation>
     </message>
@@ -8524,12 +8602,12 @@ Keep notes, drafts and everyday details together.</translation>
     <message>
         <location filename="../../../../src/uikit/qml/MascotSprite.qml" line="80"/>
         <source>Cannot load sprite atlas: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot load sprite atlas: %1</translation>
     </message>
     <message>
         <location filename="../../../../src/uikit/qml/MascotSprite.qml" line="112"/>
         <source>Character unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Character unavailable</translation>
     </message>
 </context>
 <context>
@@ -8904,6 +8982,14 @@ Keep notes, drafts and everyday details together.</translation>
         <location filename="../../../../src/uikit/led/qcatledeffectregistry.cpp" line="113"/>
         <source>Channel chase</source>
         <translation>Channel chase</translation>
+    </message>
+</context>
+<context>
+    <name>TabCellImpl</name>
+    <message>
+        <location filename="../../../../src/uikit/qml/TabCellImpl.qml" line="58"/>
+        <source>Close tab %1</source>
+        <translation>Close tab %1</translation>
     </message>
 </context>
 </TS>

@@ -34,6 +34,7 @@ TestCase {
         wait(10);
         Theme.reducedMotion = false;
         Theme.colorPalette = ({});
+        Theme.overrides = ({});
         Theme.colorScheme = ThemePalette.Light;
     }
     function findControl(name) {
@@ -357,10 +358,25 @@ TestCase {
         verify(Object.keys(Theme.colorPalette).length > 0);
         verify(Qt.colorEqual(Theme.tokens.surface, "#073642"));
         verify(Qt.colorEqual(Theme.tokens.background, "#002b36"));
+        verify(Qt.colorEqual(Theme.tokens.surfaceSelected, "#0d5263"));
+        verify(Qt.colorEqual(Theme.tokens.surfacePressed, "#105d72"));
+        verify(Qt.colorEqual(Theme.tokens.focusRing, "#2aa198"));
+        compare(Theme.tokens.disabledOpacity, 45);
 
         mouseClick(findControl("gallerySchemeLight"));
         wait(10);
         compare(Theme.colorScheme, ThemePalette.Light);
         compare(Object.keys(Theme.colorPalette).length, 0);
+        compare(Theme.tokens.disabledOpacity, 60);
+        verify(Qt.colorEqual(Theme.tokens.surfaceSelected, "#dbe8ff"));
+    }
+    function test_stateTokenDemo() {
+        gallery.navigate("settings", "");
+        wait(10);
+        const tokens = ["surface", "surfaceHover", "surfaceSelected", "surfacePressed", "focusRing"];
+        for (const token of tokens) {
+            const swatch = findControl("galleryStateSwatch_" + token);
+            verify(Qt.colorEqual(swatch.color, Theme.tokens[token]));
+        }
     }
 }

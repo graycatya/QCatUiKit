@@ -13,6 +13,9 @@ ColumnLayout {
         background: "#002b36",
         surface: "#073642",
         surfaceHover: "#0a4453",
+        surfaceSelected: "#0d5263",
+        surfacePressed: "#105d72",
+        focusRing: "#2aa198",
         text: "#93a1a1",
         textSecondary: "#839496",
         textDisabled: "#586e75",
@@ -23,6 +26,10 @@ ColumnLayout {
         danger: "#dc322f"
     })
     readonly property int schemeIndex: Object.keys(Theme.colorPalette).length > 0 ? 2 : (Theme.colorScheme === ThemePalette.Dark ? 1 : 0)
+    function stateColor(token) {
+        var value = Theme.tokens[token];
+        return value === undefined ? "transparent" : value;
+    }
     ThemePalette {
         id: solarizedTheme
         colorScheme: ThemePalette.Dark
@@ -68,6 +75,7 @@ ColumnLayout {
                     checked: control.schemeIndex === 0
                     onClicked: {
                         Theme.colorPalette = ({});
+                        Theme.overrides = ({});
                         Theme.colorScheme = ThemePalette.Light;
                     }
                 }
@@ -77,6 +85,7 @@ ColumnLayout {
                     checked: control.schemeIndex === 1
                     onClicked: {
                         Theme.colorPalette = ({});
+                        Theme.overrides = ({});
                         Theme.colorScheme = ThemePalette.Dark;
                     }
                 }
@@ -87,6 +96,7 @@ ColumnLayout {
                     onClicked: {
                         Theme.colorScheme = ThemePalette.Dark;
                         Theme.colorPalette = control.solarizedPalette;
+                        Theme.overrides = ({ disabledOpacity: 45 });
                     }
                 }
             }
@@ -119,6 +129,74 @@ ColumnLayout {
                             verticalAlignment: Text.AlignVCenter
                         }
                     }
+                }
+            }
+        }
+    }
+    CatPane {
+        Layout.fillWidth: true
+        padding: 24
+        contentItem: ColumnLayout {
+            spacing: 16
+            CatLabel {
+                text: qsTr("Interaction states")
+                font.pixelSize: 19
+                font.bold: true
+            }
+            CatLabel {
+                text: qsTr("Ordinary surfaces map hover, press, selection and focus to separate tokens. Hover, press and Tab through the controls to compare them.")
+                color: Theme.tokens.textSecondary
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+            }
+            Flow {
+                objectName: "galleryStateSwatches"
+                Layout.fillWidth: true
+                spacing: 12
+                Repeater {
+                    model: ["surface", "surfaceHover", "surfaceSelected", "surfacePressed", "focusRing"]
+                    delegate: Column {
+                        id: swatchColumn
+                        required property string modelData
+                        spacing: 6
+                        Rectangle {
+                            objectName: "galleryStateSwatch_" + swatchColumn.modelData
+                            width: 104
+                            height: 44
+                            radius: Theme.tokens.radius
+                            color: control.stateColor(swatchColumn.modelData)
+                            border.width: 1
+                            border.color: Theme.tokens.border
+                        }
+                        CatLabel {
+                            text: swatchColumn.modelData
+                            color: Theme.tokens.textSecondary
+                            font.pixelSize: 12
+                        }
+                    }
+                }
+            }
+            Flow {
+                Layout.fillWidth: true
+                spacing: 12
+                CatButton {
+                    text: qsTr("Default")
+                }
+                CatButton {
+                    text: qsTr("Selected")
+                    checked: true
+                }
+                CatButton {
+                    text: qsTr("Disabled")
+                    enabled: false
+                }
+                CatCheckBox {
+                    text: qsTr("Checked")
+                    checked: true
+                }
+                CatSwitch {
+                    text: qsTr("On")
+                    checked: true
                 }
             }
         }
